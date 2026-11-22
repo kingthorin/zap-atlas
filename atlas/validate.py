@@ -51,6 +51,18 @@ def validate_dataset(dataset: Path) -> bool:
             if v and v not in known_ids:
                 errors.append(f"relationship {row.get('type')} references unknown {end}: {v}")
 
+    # Stories: every reference must exist in the dataset; evidence links must be https.
+    for story in all_rows.get("stories", []):
+        refs = [(k, v) for k in ("entities", "commits", "documents") for v in story.get(k, [])]
+        for ch in story.get("chapters", []):
+            refs += [(k, v) for k in ("entities", "commits", "documents") for v in ch.get(k, [])]
+            for ev in ch.get("evidence", []):
+                if not str(ev.get("url", "")).startswith("https://"):
+                    errors.append(f"story {story['id']} has non-https evidence url: {ev.get('url')}")
+        for kind, ref in refs:
+            if ref not in known_ids:
+                errors.append(f"story {story['id']} references unknown {kind[:-1]}: {ref}")
+
     # Commit parents must exist
     commit_ids = {r["id"] for r in all_rows.get("commits", [])}
     for row in all_rows.get("commits", []):

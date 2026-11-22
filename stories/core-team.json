@@ -1,0 +1,116 @@
+{
+  "title": "The evolution of the ZAP Core Team",
+  "description": "Who the ZAP credits page listed as the Core Team over time, from the page's own revision history, and how that lines up with the student projects.",
+  "audience": "community",
+  "status": "draft",
+  "chapters": [
+    {
+      "title": "2012: the first Core Team list",
+      "text": "On 2012-08-22 the credits page gets a \"ZAP Core Team\" section listing Simon Bennetts (Psiinon), Axel Neumann (Compass Security AG), Cosmin Stefan, Guifre Ruiz Utges, Robert Koch and Colm O'Flaherty (Encription Ireland Ltd). Raul Siles (Taddong) is added in the same sitting, and Simon Bennetts is shown as working for Mozilla. Cosmin Stefan, Guifre Ruiz and Robert Koch are the three students the Hall of Fame lists for 2012 Summer GSoC.",
+      "commits": [
+        "commit:zap-core-help:1096cfa9505d687fcbc7da7fd2845f9741e2e744",
+        "commit:zap-core-help:aaf58149288472a42f01946c37a4c573361a842d",
+        "commit:zap-core-help:fcf05bef47988eee5c1881f9f5fc2e5fd9da68ab"
+      ],
+      "evidence": [
+        {
+          "label": "ZAP credits page (zap-core-help)",
+          "url": "https://github.com/zaproxy/zap-core-help/blob/main/addOns/help/src/main/javahelp/contents/credits.html"
+        }
+      ]
+    },
+    {
+      "title": "2013: students join, others are removed",
+      "text": "In 2013 entries are added for Martin Walton, Björn Kimminich, Prasad N. Shenoy, Patrick Galley, Andrea Pompili, Mark Goodwin and Amro Alolaqi. On 2013-12-16 the 2013 Summer GSoC students Alessandro Secco, Pulasthi Mahawithana, Rauf Butt and Abdelhadi Azouni appear, together with Kevin Wall, Johanna Curiel and Mennouchi Islam Azeddine, while Axel Neumann, Patrick Galley, Raul Siles and Martin Walton are no longer in the section.",
+      "commits": [
+        "commit:zap-core-help:affbd79c069d387ed5ff13885d0bd3d705b3a2c1",
+        "commit:zap-core-help:84e5cff48efda02d2e72a1ac64e3c7b2ede06c84",
+        "commit:zap-core-help:5ef28cb12081bced0a9f38826f925f3f6933f370"
+      ],
+      "evidence": [
+        {
+          "label": "ZAP credits page (zap-core-help)",
+          "url": "https://github.com/zaproxy/zap-core-help/blob/main/addOns/help/src/main/javahelp/contents/credits.html"
+        }
+      ]
+    },
+    {
+      "title": "2014 and 2015: Kingthorin joins; two 2012 students leave the list",
+      "text": "70pointer is added on 2014-01-06 and Kingthorin on 2014-07-28. On 2015-01-05 Robert Koch and Guifre Ruiz Utges are removed from the section and Stefan Østergaard Pedersen and Lars Kristensen are added.",
+      "commits": [
+        "commit:zap-core-help:2a71001f2f823163ae71fa50dafd7a084329fcfe",
+        "commit:zap-core-help:0c740d4847e4f6b9ea7850b25586aef5ed39d14b",
+        "commit:zap-core-help:c3562090cacbee1cd0f5d8c8571c155862b35f65"
+      ],
+      "evidence": [
+        {
+          "label": "ZAP credits page (zap-core-help)",
+          "url": "https://github.com/zaproxy/zap-core-help/blob/main/addOns/help/src/main/javahelp/contents/credits.html"
+        }
+      ]
+    },
+    {
+      "title": "2016: the list is cut to three, then grows",
+      "text": "On 2016-05-16 the section is rewritten: thc202 (\"Sponsored by the Linux Foundation\") and Rick Mitchell (Kingthorin) are listed next to Simon Bennetts, and seventeen other names are no longer in the Core Team section (the Kingthorin entry becomes Rick Mitchell (Kingthorin)), including most of the 2013 additions. Three of them (70pointer, Abdelhadi Azouni, Amro Alolaqi) appear in the Extended Team list in 2017. Goran Sarenkapa (JordanGS) and Sherif Mansour are added on 2016-12-16.",
+      "commits": [
+        "commit:zap-core-help:ab9e305b019f59ef08de604d9d1d4e6bdb16ecc3",
+        "commit:zap-core-help:6b32fee924addfc8b00edc7ec034e3793f753c2f"
+      ],
+      "evidence": [
+        {
+          "label": "ZAP credits page (zap-core-help)",
+          "url": "https://github.com/zaproxy/zap-core-help/blob/main/addOns/help/src/main/javahelp/contents/credits.html"
+        }
+      ]
+    },
+    {
+      "title": "2019 to 2021: the HUD developer and GitHub Actions author",
+      "text": "David Scrobonia, whose ZAP HUD work (2016 to 2018) the Hall of Fame lists, is added on 2019-03-27, replacing Goran Sarenkapa. Nirojan Selvanathan, listed there for GitHub Actions work in 2020, is added on 2020-02-28. On 2020-09-15 David Scrobonia and Sherif Mansour are removed and Simon Bennetts's affiliation changes from Mozilla to StackHawk. Akshath Kothari, the GraphQL and OAST student, is added on 2020-10-27. Nirojan Selvanathan is removed on 2021-08-06.",
+      "commits": [
+        "commit:zap-core-help:43243aa2f1ba1a0122a446cb62c37db318a2076b",
+        "commit:zap-core-help:9691b71990496e5d23ce86c0148633b1a76149a3",
+        "commit:zap-core-help:825e69d60c736e67e9add7504809e582cccc2355",
+        "commit:zap-core-help:befe3c3e9b86d131a72398330b693a8b6896a6e2",
+        "commit:zap-core-help:ca0a72c5209b15512d4fa706eaf44e97da13d938"
+      ],
+      "evidence": [
+        {
+          "label": "ZAP credits page (zap-core-help)",
+          "url": "https://github.com/zaproxy/zap-core-help/blob/main/addOns/help/src/main/javahelp/contents/credits.html"
+        }
+      ]
+    },
+    {
+      "title": "2021 to 2022: sponsorship moves to GitHub",
+      "text": "Between 2021-10-06 and 2022-07-08 each remaining member's affiliation text becomes \"Sponsor on GitHub\".",
+      "commits": [
+        "commit:zap-core-help:2a729af707f4c55c7d22560f0bf7cbefa6ab0f6d",
+        "commit:zap-core-help:062b830d64f9fffdd8841231d537866176aa13e4",
+        "commit:zap-core-help:8da67dec19b90b67b1b1fbf4cb958322928878ae"
+      ],
+      "evidence": [
+        {
+          "label": "ZAP credits page (zap-core-help)",
+          "url": "https://github.com/zaproxy/zap-core-help/blob/main/addOns/help/src/main/javahelp/contents/credits.html"
+        }
+      ]
+    },
+    {
+      "title": "2026: sponsored by Checkmarx",
+      "text": "On 2026-08-26 the section lists Simon Bennetts, Ricardo Pereira and Rick Mitchell as \"Sponsored by Checkmarx\" and Akshath Kothari with \"Sponsor on GitHub\". The entry for thc202 is replaced by Ricardo Pereira, whose link points to the same team page (docs/team/thc202).",
+      "commits": [
+        "commit:zap-core-help:81399714771ede3ffd37538ac19e9d2da473475d"
+      ],
+      "evidence": [
+        {
+          "label": "ZAP credits page (zap-core-help)",
+          "url": "https://github.com/zaproxy/zap-core-help/blob/main/addOns/help/src/main/javahelp/contents/credits.html"
+        },
+        {
+          "label": "ZAP ownership",
+          "url": "https://www.zaproxy.org/docs/zap-ownership/"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "title": "From Ant to Gradle across ZAP's repositories",
+  "description": "How the zaproxy, zap-extensions and zap-core-help builds moved from Ant to Gradle in 2019, as recorded in the repository history.",
+  "audience": "developers",
+  "status": "draft",
+  "chapters": [
+    {
+      "title": "An Ant build from the 1.0.0 era",
+      "text": "The commit titled \"Version 1.0.0\" (2010-09-04) adds build/build.xml, an Ant build file.",
+      "entities": [
+        "repo:zaproxy"
+      ],
+      "commits": [
+        "commit:zaproxy:544e8a59a432be2cd5807ad0f85e7f487224bce1"
+      ]
+    },
+    {
+      "title": "Gradle tasks appear alongside Ant",
+      "text": "On 2016-07-21 a commit titled \"Add Gradle tasks to build/publish zap-2.5.0.jar\" adds build.gradle. The Ant build file is still present at that point.",
+      "commits": [
+        "commit:zaproxy:f1f21050fb878fbe937e46c16acf0b13530f7b77"
+      ]
+    },
+    {
+      "title": "zap-core-help sets up Gradle first",
+      "text": "On 2019-02-08 zap-core-help gets \"Initial set up to build the add-ons\", its first Gradle build. No Ant build file (build.xml) appears anywhere in that repository's history.",
+      "entities": [
+        "repo:zap-core-help"
+      ],
+      "commits": [
+        "commit:zap-core-help:a6d1cd02e8e881179276f0133f8c965c34807e24"
+      ]
+    },
+    {
+      "title": "zap-extensions drops Ant on 2019-04-03",
+      "text": "zap-extensions had an Ant build file from its first commit (2011-12-12). On 2019-04-03 the commit \"Remove Ant build and set up Gradle build\" removes it and adds the Gradle build. The add-ons are then relocated into their own projects, one commit each, starting minutes later.",
+      "entities": [
+        "repo:zap-extensions"
+      ],
+      "commits": [
+        "commit:zap-extensions:13497793c115e4da8068181e31d7b715658700c4"
+      ]
+    },
+    {
+      "title": "zaproxy follows on 2019-05-22",
+      "text": "On 2019-05-22 the commit \"Remove Ant build and set up Gradle build\" deletes build/build.xml and adds build.gradle.kts. Shortly afterwards \"Add zap project\" adds zap/zap.gradle.kts, the module that holds the core sources today.",
+      "entities": [
+        "module:zaproxy:zap"
+      ],
+      "commits": [
+        "commit:zaproxy:d0c70dc72ba0268fe6f7111715370c99c63a0245",
+        "commit:zaproxy:83e1f04a7e59283583bc6527018f74312ece12da"
+      ]
+    }
+  ]
+}

@@ -43,6 +43,7 @@ class AtlasConfig:
     # Working directories.
     sources_dir: Path = Path("sources")
     output_dir: Path = Path("data")
+    stories_dir: Path = Path("stories")
 
     # Vertical-slice MVP focus (subset for the first real-data slice).
     # None = process everything once scaled.

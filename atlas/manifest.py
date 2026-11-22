@@ -15,6 +15,7 @@ from pathlib import Path
 from atlas.config import AtlasConfig
 from atlas.ecosystem import discover_ecosystem
 from atlas.git_history import extract as extract_history
+from atlas.stories import load_stories
 from atlas.java_parser import JavaParser
 from atlas.schema import (
     SCHEMA_VERSION, GENERATOR_VERSION, Manifest, DatasetInventory,
@@ -71,6 +72,7 @@ class AtlasGenerator:
         output_dir.mkdir(parents=True, exist_ok=True)
         from atlas.sources import checkout_sources
         checkouts = checkout_sources(self.config, sources_dir)
+        self.rows[CHUNK_STORIES] = load_stories(self.config.stories_dir)
 
         names = [s.name for s in self.config.sources]
         for repo_name, repo_path in checkouts.items():
