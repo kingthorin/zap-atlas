@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
 const MenuIcon = () => (
@@ -36,6 +36,44 @@ export const NAV = [
   { to: "/stories", label: "Stories", icon: BookIcon },
 ];
 
+type Theme = "light" | "dark" | "system";
+const THEMES: Theme[] = ["system", "light", "dark"];
+const THEME_LABEL: Record<Theme, string> = { system: "Auto", light: "Light", dark: "Dark" };
+
+function readTheme(): Theme {
+  try {
+    const t = localStorage.getItem("atlas-theme");
+    return t === "light" || t === "dark" ? t : "system";
+  } catch { return "system"; }
+}
+
+function useTheme(): [Theme, () => void] {
+  const [theme, setTheme] = useState<Theme>(readTheme);
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    const apply = () =>
+      document.documentElement.classList.toggle("dark", theme === "dark" || (theme === "system" && mq.matches));
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
+  }, [theme]);
+  const cycle = () => {
+    const next = THEMES[(THEMES.indexOf(theme) + 1) % THEMES.length];
+    try { localStorage.setItem("atlas-theme", next); } catch { /* ignore */ }
+    setTheme(next);
+  };
+  return [theme, cycle];
+}
+
+function ThemeButton() {
+  const [theme, cycle] = useTheme();
+  return (
+    <button onClick={cycle} className="px-3 py-2 rounded text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800" aria-label={`Theme: ${THEME_LABEL[theme]} (click to change)`} title="Change theme">
+      Theme: {THEME_LABEL[theme]}
+    </button>
+  );
+}
+
 export function Nav() {
   const [open, setOpen] = useState(false);
   const location = useLocation();
@@ -48,11 +86,13 @@ export function Nav() {
         </button>
         <div className="hidden md:flex md:flex-row md:space-x-2">
           <NavLinks pathname={location.pathname} />
+          <ThemeButton />
         </div>
       </div>
       {open && (
         <div className="md:hidden flex flex-col p-4 pt-0 space-y-1" onClick={() => setOpen(false)}>
           <NavLinks pathname={location.pathname} />
+          <ThemeButton />
         </div>
       )}
     </nav>

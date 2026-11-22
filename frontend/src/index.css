@@ -1,3 +1,25 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Dark theme: remaps the light slate/indigo utilities used by the components. */
+.dark { color-scheme: dark; }
+.dark .bg-white { background-color: #1e293b; }
+.dark .bg-slate-50 { background-color: #0f172a; }
+.dark .hover\:bg-slate-50:hover { background-color: #263349; }
+.dark .text-slate-900 { color: #f1f5f9; }
+.dark .text-slate-700 { color: #cbd5e1; }
+.dark .text-slate-600 { color: #cbd5e1; }
+.dark .text-slate-500 { color: #94a3b8; }
+.dark .text-slate-400 { color: #94a3b8; }
+.dark .border-slate-200,
+.dark .border-slate-300 { border-color: #334155; }
+.dark .divide-slate-100 > :not([hidden]) ~ :not([hidden]),
+.dark .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-color: #334155; }
+.dark .bg-indigo-100 { background-color: rgb(99 102 241 / 0.2); }
+.dark .text-indigo-700,
+.dark .text-indigo-600 { color: #a5b4fc; }
+.dark .bg-red-50 { background-color: rgb(127 29 29 / 0.3); }
+.dark .border-red-200 { border-color: #7f1d1d; }
+.dark .text-red-800 { color: #fecaca; }
+.dark nav { border-bottom: 1px solid #1e293b; }
