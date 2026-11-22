@@ -58,8 +58,15 @@ def checkout_sources(config: AtlasConfig, sources_dir: Path) -> dict[str, Path]:
 
         # Resolve the revision to check out.
         ref = repo.sha or repo.branch or repo.default_branch or discover_default_branch(repo.url)
-        _run(["git", "checkout", ref], cwd=target, check=True)
-        _run(["git", "reset", "--hard", ref], cwd=target, check=True)
+        # For a branch, follow the freshly fetched remote branch, not a stale local one.
+        remote = subprocess.run(["git", "rev-parse", "--verify", "--quiet", f"origin/{ref}"],
+                                cwd=target, capture_output=True, text=True)
+        if remote.returncode == 0:
+            _run(["git", "checkout", "-B", ref, f"origin/{ref}"], cwd=target, check=True)
+            repo.default_branch = repo.branch or ref
+        else:
+            _run(["git", "checkout", ref], cwd=target, check=True)
+        _run(["git", "reset", "--hard", ref if remote.returncode else f"origin/{ref}"], cwd=target, check=True)
 
         full_sha = _run(["git", "rev-parse", "HEAD"], cwd=target)
         repo.sha = full_sha
