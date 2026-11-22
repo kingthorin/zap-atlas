@@ -1,0 +1,1 @@
+{"id": "symbol:fix:org.zaproxy.Hello", "repository": "fix", "file": "file:fix:9272ae932fd41826ee46f6f31b4f99576ce8eb89:src/org/zaproxy/Hello.java", "qualified_name": "org.zaproxy.Hello", "kind": "class", "signature": "Hello", "start_line": 2, "end_line": 5, "resolution": "syntactic"}

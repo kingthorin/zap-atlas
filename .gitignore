@@ -1,0 +1,51 @@
+# Python
+.venv/
+__pycache__/
+*.py[c]
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.sha
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Node
+node_modules/
+dist/
+build/
+*.local
+.env
+.env.local
+*.env.*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Generated atlas data (not committed to main)
+data/
+sources/
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+EOF

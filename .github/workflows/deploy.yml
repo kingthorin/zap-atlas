@@ -1,0 +1,183 @@
+name: ZAP Atlas — analyze, build, deploy to GitHub Pages
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Git ref (branch/tag/SHA) to analyze (all repos unless overridden)"
+        required: false
+        default: ""
+      repo_refs:
+        description: "JSON map of repo name -> ref, e.g. {\"zaproxy\":\"main\"}"
+        required: false
+        default: "{}"
+  schedule:
+    - cron: "0 2 * * 1"
+
+concurrency:
+  group: pages-deploy
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  analyze:
+    name: Analyze sources & validate data
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      sources_json: ${{ steps.sources.outputs.sources_json }}
+    steps:
+      - name: Checkout Atlas repo
+        uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5.3.0
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install generator dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install tree-sitter tree-sitter-java pytest
+
+      - name: Check out upstream sources (full history)
+        id: sources
+        run: |
+          python - << 'PY'
+          import json, os, subprocess
+          refs = json.loads(os.environ.get("REPO_REFS", "{}"))
+          single = os.environ.get("REF", "").strip()
+          repos = [
+            ("zaproxy", "https://github.com/zaproxy/zaproxy.git"),
+            ("zap-extensions", "https://github.com/zaproxy/zap-extensions.git"),
+            ("zap-core-help", "https://github.com/zaproxy/zap-core-help.git"),
+          ]
+          out = {}
+          for name, url in repos:
+            ref = refs.get(name) or single or None
+            dest = f"sources/{name}"
+            if not os.path.isdir(dest):
+              subprocess.run(["git", "clone", "--no-local", "--", url, dest], check=True)
+            if not ref:
+              sym = subprocess.check_output(
+                ["git", "ls-remote", "--symref", url, "HEAD"], text=True
+              )
+              ref = "main"
+              for line in sym.splitlines():
+                if line.startswith("ref:"):
+                  r = line.split()[0].split("ref: ", 1)[1]
+                  if r.startswith("refs/heads/"):
+                    ref = r[len("refs/heads/"):]
+            subprocess.run(["git", "-C", dest, "fetch", "--tags", "--prune"], check=True)
+            subprocess.run(["git", "-C", dest, "checkout", ref], check=True)
+            subprocess.run(["git", "-C", dest, "reset", "--hard", ref], check=True)
+            sha = subprocess.check_output(["git", "-C", dest, "rev-parse", "HEAD"], text=True).strip()
+            out[name] = {"url": url, "sha": sha, "ref": ref}
+            print(f"{name} @ {sha} (ref={ref})")
+          with open("sources_manifest.json", "w") as f:
+            json.dump(out, f, indent=2)
+          print(f"::set-output name=sources_json::{json.dumps(out)}")
+          PY
+        env:
+          REF: ${{ inputs.ref }}
+          REPO_REFS: ${{ inputs.repo_refs }}
+
+      - name: Run generator
+        run: python -m atlas analyze --sources ./sources --output ./data
+
+      - name: Validate generated data
+        run: python -m atlas validate ./data
+
+      - name: Report dataset sizes
+        run: ls -lh data/ && python -c "import json;m=json.load(open('data/manifest.json'));print(json.dumps(m.get('inventory',[]),indent=2))"
+
+      - name: Upload data artifact
+        uses: actions/upload-artifact@v4.4.3
+        with:
+          name: atlas-data
+          path: data/
+          retention-days: 1
+
+  build:
+    name: Build frontend + bundle data
+    needs: analyze
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Atlas repo
+        uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
+
+      - name: Download data artifact
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: atlas-data
+          path: data/
+
+      - name: Set up Node
+        uses: actions/setup-node@v4.1.0
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Build frontend
+        working-directory: frontend
+        run: npm run build
+
+      - name: Bundle data into dist
+        run: |
+          mkdir -p frontend/dist/data
+          cp -r data/. frontend/dist/data/
+
+      - name: Upload site artifact
+        uses: actions/upload-artifact@v4.4.3
+        with:
+          name: atlas-site
+          path: frontend/dist/
+          retention-days: 1
+
+  deploy:
+    name: Deploy to gh-pages (preserves last good on failure)
+    needs: build
+    if: success()
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download site artifact
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: atlas-site
+          path: site/
+
+      - name: Publish to gh-pages branch (root)
+        run: |
+          rm -rf gh-pages-stage && mkdir gh-pages-stage
+          cd gh-pages-stage
+          git init -q -b gh-pages
+          git remote add origin "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
+          git fetch --depth=1 origin gh-pages 2>/dev/null || true
+          if git rev-parse --verify gh-pages >/dev/null 2>&1; then
+            git checkout -q gh-pages
+          fi
+          find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+          cp -a ../site/. .
+          touch .nojekyll
+          git add -A
+          git -c user.name="github-actions[bot]" -c user.email="github-actions[bot]@users.noreply.github.com" \
+            commit -qm "Atlas deploy: $(date -u +%Y-%m-%dT%H:%M:%SZ)" || true
+          git push -f origin gh-pages
+          echo "Deployed to gh-pages branch (root)"
