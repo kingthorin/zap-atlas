@@ -40,25 +40,38 @@ export function Nav() {
   const [open, setOpen] = useState(false);
   const location = useLocation();
   return (
-    <nav className="fixed inset-0 z-50 bg-slate-900 text-white transform transition-transform duration-300 -translate-x-full md:translate-x-0 md:relative md:static md:inset-auto md:bg-transparent md:text-slate-700" aria-label="Main navigation">
-      <div className="flex items-center justify-between p-4 border-b border-slate-800 md:border-b-0">
+    <nav className="bg-slate-900 text-white" aria-label="Main navigation">
+      <div className="flex items-center justify-between p-4">
         <Link to="/" className="font-bold text-xl tracking-tight">ZAP<span className="text-indigo-400">Atlas</span></Link>
         <button className="md:hidden p-2 text-slate-400 hover:text-white" onClick={() => setOpen(!open)} aria-label="Toggle menu">
           {open ? <XIcon /> : <MenuIcon />}
         </button>
+        <div className="hidden md:flex md:flex-row md:space-x-2">
+          <NavLinks pathname={location.pathname} />
+        </div>
       </div>
-      <div className={`flex flex-col p-4 space-y-2 ${open ? "translate-x-0" : "-translate-x-full"} transition-transform duration-300 md:flex md:translate-x-0 md:space-y-0 md:space-x-4 md:flex-row md:p-0 md:border-0`}>
-        {NAV.map(n => {
-          const Icon: any = n.icon;
-          const active = location.pathname === n.to;
-          return (
-            <Link key={n.to} to={n.to} className={`flex items-center gap-3 px-3 py-2 rounded text-sm font-medium transition ${active ? "bg-indigo-500/20 text-indigo-400" : "text-slate-300 hover:text-white hover:bg-slate-800"}`} aria-current={active ? "page" : undefined}>
-              <Icon className="w-4 h-4 max-w-max max-h-4" /> {n.label}
-            </Link>
-          );
-        })}
-      </div>
+      {open && (
+        <div className="md:hidden flex flex-col p-4 pt-0 space-y-1" onClick={() => setOpen(false)}>
+          <NavLinks pathname={location.pathname} />
+        </div>
+      )}
     </nav>
+  );
+}
+
+function NavLinks({ pathname }: { pathname: string }) {
+  return (
+    <>
+      {NAV.map(n => {
+        const Icon: any = n.icon;
+        const active = pathname === n.to;
+        return (
+          <Link key={n.to} to={n.to} className={`flex items-center gap-2 px-3 py-2 rounded text-sm font-medium transition ${active ? "bg-indigo-500/20 text-indigo-400" : "text-slate-300 hover:text-white hover:bg-slate-800"}`} aria-current={active ? "page" : undefined}>
+            <Icon /> {n.label}
+          </Link>
+        );
+      })}
+    </>
   );
 }
 
@@ -66,7 +79,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
       <Nav />
-      <main className="md:ml-64 p-4 md:p-6">
+      <main className="p-4 md:p-6 max-w-6xl mx-auto">
         {children}
       </main>
     </div>
