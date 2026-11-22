@@ -32,8 +32,8 @@ export const NAV = [
   { to: "/architecture", label: "Architecture", icon: DatabaseIcon },
   { to: "/history", label: "History", icon: ActivityIcon },
   { to: "/source", label: "Source", icon: FileIcon },
-  { to: "/search", label: "Search", icon: SearchIcon },
   { to: "/stories", label: "Stories", icon: BookIcon },
+  { to: "/search", label: "Search", icon: SearchIcon },
 ];
 
 type Theme = "light" | "dark" | "system";
