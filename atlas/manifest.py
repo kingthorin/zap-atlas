@@ -127,7 +127,7 @@ class AtlasGenerator:
             ).__dict__)
 
         # MVP: limit Java files per repo for fast iteration
-        java_max = config.focus_modules[0] if config.focus_modules else 50
+        java_max = self.config.focus_modules[0] if self.config.focus_modules else 50
         java_files = sorted(repo_path.rglob("*.java"))[:java_max]
         for jf in java_files:
             result = self.java_parser.parse_file(
