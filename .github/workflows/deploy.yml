@@ -83,11 +83,6 @@ jobs:
             print(f"{name} @ {sha} (ref={ref})")
           with open("sources_manifest.json", "w") as f:
             json.dump(out, f, indent=2)
-          with open("sources_manifest.json", "w") as f:
-              json.dump(out, f, indent=2)
-              with open("sources_manifest.json") as f:
-              sources_manifest = json.load(f)
-              print(f"Sources: {sources_manifest}")
           PY
         env:
           REF: ${{ inputs.ref }}

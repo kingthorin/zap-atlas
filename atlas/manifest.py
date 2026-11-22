@@ -147,7 +147,7 @@ class AtlasGenerator:
 
     def _build_manifest(self, output_dir: Path, chunk_names: list[str]) -> Manifest:
         inventory = []
-        for name in chunk_names + [CHUNK_MANIFEST]:
+        for name in chunk_names:
             p = output_dir / name
             inventory.append(DatasetInventory(name=name, items=0,
                                               size_bytes=p.stat().st_size,
