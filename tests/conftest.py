@@ -12,8 +12,10 @@ _ENV = {
 }
 
 
-def _git(repo, *args, when=None):
+def _git(repo, *args, when=None, author=None):
     env = {**os.environ, **_ENV}
+    if author:
+        env["GIT_AUTHOR_NAME"] = author
     if when:
         env["GIT_AUTHOR_DATE"] = env["GIT_COMMITTER_DATE"] = when
     subprocess.run(["git", "-C", str(repo), *args], check=True, env=env,
@@ -27,18 +29,20 @@ def gitrepo(tmp_path_factory):
     r.mkdir()
     n = [0]
 
-    def commit(msg, *files):
+    def commit(msg, *files, author=None, body=None):
         n[0] += 1
         for rel, text in files:
             f = r / rel
             f.parent.mkdir(parents=True, exist_ok=True)
             f.write_text(text)
         _git(r, "add", "-A")
-        _git(r, "commit", "-q", "-m", msg, when=f"2024-01-0{n[0]}T00:00:00+0000")
+        extra = ["-m", body] if body else []
+        _git(r, "commit", "-q", "-m", msg, *extra, when=f"2024-01-0{n[0]}T00:00:00+0000", author=author)
 
     _git(r, "init", "-q", "-b", "main")
     commit("c1 add file_a", ("file_a.txt", "a\n"))
-    commit("c2 add file_b", ("file_b.txt", "b\n"))
+    commit("c2 add file_b", ("file_b.txt", "b\n"), author="dev@example.org",
+           body="Signed-off-by: Dev <dev@example.org>")
     _git(r, "tag", "v1.0")
     _git(r, "checkout", "-q", "-b", "feature")
     commit("c3 add file_c", ("file_c.txt", "c\n"))

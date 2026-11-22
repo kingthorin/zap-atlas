@@ -19,16 +19,17 @@ def validate_dataset(dataset: Path) -> bool:
         return False
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
 
-    # Load all jsonl rows
+    # Load all jsonl rows. Sharded chunks (commits/<repo>/<year>.jsonl) are merged
+    # by kind, the first path segment without its extension.
     all_rows: dict[str, list[dict]] = {}
-    for p in dataset.glob("*.jsonl"):
+    for p in sorted(dataset.rglob("*.jsonl")):
+        kind = p.relative_to(dataset).parts[0].removesuffix(".jsonl")
         rows = [json.loads(l) for l in p.read_text(encoding="utf-8").splitlines() if l.strip()]
-        all_rows[p.name] = rows
+        all_rows.setdefault(kind, []).extend(rows)
 
     # Unique IDs per entity chunk
-    id_chunks = ["repos.jsonl", "commits.jsonl", "modules.jsonl", "addons.jsonl",
-                 "files.jsonl", "symbols.jsonl", "branches.jsonl", "tags.jsonl",
-                 "contributors.jsonl", "docs.jsonl", "stories.jsonl"]
+    id_chunks = ["repos", "commits", "modules", "addons", "files", "symbols",
+                 "branches", "tags", "contributors", "docs", "stories"]
     seen_ids = set()
     for chunk in id_chunks:
         for row in all_rows.get(chunk, []):
@@ -42,7 +43,7 @@ def validate_dataset(dataset: Path) -> bool:
     known_ids = set(seen_ids)
     # Syntactic (unresolved) edges may point at external types, bare method names,
     # or entities not emitted yet, so only non-syntactic edges are checked.
-    for row in all_rows.get("relationships.jsonl", []):
+    for row in all_rows.get("relationships", []):
         if row.get("evidence_type") == "syntactic":
             continue
         for end in ("source", "target"):
@@ -51,17 +52,20 @@ def validate_dataset(dataset: Path) -> bool:
                 errors.append(f"relationship {row.get('type')} references unknown {end}: {v}")
 
     # Commit parents must exist
-    commit_ids = {r["id"] for r in all_rows.get("commits.jsonl", [])}
-    for row in all_rows.get("commits.jsonl", []):
+    commit_ids = {r["id"] for r in all_rows.get("commits", [])}
+    for row in all_rows.get("commits", []):
         for p in row.get("parents", []):
             if p not in commit_ids:
                 errors.append(f"commit {row['id']} has unknown parent {p}")
 
-    # Privacy: no raw emails in contributors
-    for row in all_rows.get("contributors.jsonl", []):
-        email = row.get("email_norm", "")
-        if "@" in email and "***" not in email:
-            errors.append(f"contributor {row['id']} may contain raw email: {email}")
+    # Privacy: no email-shaped text in any published commit/contributor field.
+    from atlas.git_history import EMAIL_RE
+    for kind, fields in (("commits", ("author_name", "subject", "message")),
+                         ("contributors", ("name", "email_norm"))):
+        for row in all_rows.get(kind, []):
+            for f in fields:
+                if EMAIL_RE.search(row.get(f) or "") or (f == "email_norm" and "@" in (row.get(f) or "")):
+                    errors.append(f"{kind[:-1]} {row.get('id')} has email-like text in {f}")
 
     # Manifest sources have SHAs
     for src in manifest.get("sources", []):

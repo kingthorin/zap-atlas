@@ -1,18 +1,53 @@
-"""Tree-sitter Java syntax extraction (syntactic relationships only)."""
+"""Tree-sitter Java syntax extraction.
+
+Emits types (including nested), methods, constructors and fields as symbols with
+overload-safe ids, plus CONTAINS / EXTENDS / IMPLEMENTS / IMPORTS / CALLS edges.
+
+Evidence levels:
+* ``syntactic``: read from source, target not resolved (bare or imported names).
+* ``resolved``: only for facts that follow from Java scoping within the file
+  (a receiver-less call matching exactly one method of the same name and arity
+  declared in the enclosing type). Cross-file resolution happens later, against
+  the whole symbol table.
+* ``inferred``: an unqualified call that matches several same-arity overloads.
+
+Calls that cannot be tied to a declaration in the same type are not emitted as
+edges; they are only counted in ``JavaFileResult.unresolved_calls``.
+"""
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass, field
+from pathlib import Path
 
-from tree_sitter import Parser, Tree
+from tree_sitter import Tree
 
-from atlas.schema import Symbol, Relationship, symbol_id, file_id
+from atlas.schema import Relationship, Symbol, file_id, symbol_id
+
+_TYPE_NODES = ("class_declaration", "interface_declaration",
+               "enum_declaration", "record_declaration", "annotation_type_declaration")
+
+
+def _text(n) -> str:
+    return n.text.decode("utf8", "replace")
+
+
+def _erase(type_text: str) -> str:
+    """Drop generics and whitespace: ``Map<String, List<X>>`` -> ``Map``."""
+    prev = None
+    while prev != type_text:
+        prev = type_text
+        type_text = re.sub(r"<[^<>]*>", "", type_text)
+    return re.sub(r"\s+", "", type_text)
 
 
 @dataclass
-class JavaCall:
-    caller_symbol: str | None
-    callee_text: str
+class _Call:
+    caller: str
+    type_qual: str
+    name: str
+    arity: int
     line: int
 
 
@@ -22,8 +57,8 @@ class JavaFileResult:
     package: str | None = None
     imports: list[str] = field(default_factory=list)
     symbols: list[Symbol] = field(default_factory=list)
-    calls: list[JavaCall] = field(default_factory=list)
     relationships: list[Relationship] = field(default_factory=list)
+    unresolved_calls: int = 0
 
 
 class JavaParser:
@@ -39,139 +74,181 @@ class JavaParser:
         r = JavaFileResult(path=path)
         r.package = self._pkg(tree)
         r.imports = self._imports(tree)
-        r.symbols, r.relationships = self._types(tree, repo, sha, path, r)
-        r.calls = self._calls(tree, repo, r)
-        r.relationships += self._call_rels(repo, path, r)
+        fid = file_id(repo, sha, path)
+        ctx = _Ctx(repo, fid, path, r)
+        for n in tree.root_node.children:
+            if n.type in _TYPE_NODES:
+                self._type(n, None, ctx)
+        # Imports are file-level in Java; attribute them to the file's primary type
+        # (the one named like the file, else the first), which is a real symbol.
+        if ctx.top_level:
+            primary = next((sid for sid, name in ctx.top_level if name == Path(path).stem), ctx.top_level[0][0])
+            for imp in r.imports:
+                if not imp.endswith("*") and not imp.startswith("static "):
+                    r.relationships.append(Relationship(
+                        source=primary, target=symbol_id(repo, imp), type="IMPORTS", repository=repo,
+                        evidence_type="syntactic", source_file=path))
+        self._resolve_calls(ctx)
         return r
+
+    # -- file level -------------------------------------------------------
 
     def _pkg(self, tree: Tree) -> str | None:
         for n in tree.root_node.children:
             if n.type == "package_declaration":
                 for c in n.children:
-                    if c.type == "scoped_identifier":
-                        return c.text.decode("utf8", "replace")
+                    if c.type in ("scoped_identifier", "identifier"):
+                        return _text(c)
         return None
 
     def _imports(self, tree: Tree) -> list[str]:
         out = []
         for n in tree.root_node.children:
             if n.type == "import_declaration":
-                name = n.text.decode("utf8", "replace")
-                name = name.replace("import", "").replace("static", "").replace(";", "").strip()
+                name = re.sub(r"^import\s+|;\s*$", "", _text(n)).strip()
                 if name:
                     out.append(name)
         return out
 
-    def _types(self, tree, repo, sha, path, result):
-        syms, rels = [], []
-        for n in tree.root_node.children:
-            if n.type in ("class_declaration", "interface_declaration",
-                          "enum_declaration", "record_declaration"):
-                s, rs = self._type(n, repo, sha, path, result)
-                if s:
-                    syms.append(s); rels += rs
-        return syms, rels
+    # -- types and members --------------------------------------------------
 
-    def _type(self, node, repo, sha, path, result):
-        name = None
+    def _resolve_name(self, name: str, ctx: "_Ctx") -> str:
+        """Best-effort fully-qualified candidate for a type name used in this file."""
+        name = _erase(name)
+        if "." in name:
+            return name
+        for imp in ctx.result.imports:
+            if imp.endswith("." + name):
+                return imp
+        if ctx.result.package:
+            return f"{ctx.result.package}.{name}"
+        return name
+
+    def _type(self, node, outer: str | None, ctx: "_Ctx") -> None:
+        name_node = node.child_by_field_name("name")
+        if name_node is None:
+            return
+        name = _text(name_node)
+        base = outer or ctx.result.package
+        qual = f"{base}.{name}" if base else name
+        sid = symbol_id(ctx.repo, qual)
+        sym = self._symbol(ctx, sid, qual, node.type.replace("_declaration", ""), name, node)
+        if not outer:
+            ctx.top_level.append((sid, name))
+        parent = symbol_id(ctx.repo, outer) if outer else ctx.fid
+        self._rel(ctx, parent, sid, "CONTAINS", "resolved" if outer else "syntactic", sym.start_line)
+
         for c in node.children:
-            if c.type == "identifier":
-                name = c.text.decode("utf8", "replace"); break
-        if not name:
-            return None, []
-        qual = f"{result.package}.{name}" if result.package else name
-        sym = Symbol(id=symbol_id(repo, qual), repository=repo,
-                     file=file_id(repo, sha, path), qualified_name=qual,
-                     kind=node.type.replace("_declaration", ""), signature=name,
-                     start_line=node.start_point[0] + 1,
-                     end_line=node.end_point[0] + 1, resolution="syntactic")
-        rels = [Relationship(source=file_id(repo, sha, path), target=sym.id,
-                             type="CONTAINS", repository=repo,
-                             evidence_type="syntactic", source_file=path,
-                             source_line=sym.start_line)]
+            if c.type in ("superclass", "extends_interfaces", "super_interfaces",
+                          "permits"):
+                kind = "IMPLEMENTS" if c.type == "super_interfaces" else "EXTENDS"
+                if c.type == "permits":
+                    continue
+                for t in self._type_names(c):
+                    self._rel(ctx, sid, symbol_id(ctx.repo, self._resolve_name(t, ctx)),
+                              kind, "syntactic", sym.start_line)
+
+        body = node.child_by_field_name("body")
+        if body is None:
+            return
+        members = []
+        for c in body.children:
+            if c.type == "enum_body_declarations":
+                members += c.children
+            else:
+                members.append(c)
+        for m in members:
+            if m.type in _TYPE_NODES:
+                self._type(m, qual, ctx)
+            elif m.type in ("method_declaration", "constructor_declaration"):
+                self._method(m, qual, name, sid, ctx)
+            elif m.type == "field_declaration":
+                for d in m.children:
+                    if d.type == "variable_declarator":
+                        fname = _text(d.child_by_field_name("name"))
+                        fsid = symbol_id(ctx.repo, qual, fname)
+                        s = self._symbol(ctx, fsid, f"{qual}#{fname}", "field", fname, m)
+                        self._rel(ctx, sid, fsid, "CONTAINS", "resolved", s.start_line)
+
+    def _type_names(self, node) -> list[str]:
+        out = []
         for c in node.children:
-            if c.type == "superclass":
-                for cc in c.children:
-                    if cc.type == "type_identifier":
-                        rels.append(Relationship(source=sym.id,
-                            target=symbol_id(repo, cc.text.decode("utf8","replace")),
-                            type="EXTENDS", repository=repo, evidence_type="syntactic",
-                            source_file=path, source_line=sym.start_line))
-            if c.type == "super_interfaces":
-                for cc in c.children:
-                    if cc.type in ("type_list", "super_interfaces"):
-                        for ccc in cc.children:
-                            if ccc.type == "type_identifier":
-                                rels.append(Relationship(source=sym.id,
-                                    target=symbol_id(repo, ccc.text.decode("utf8","replace")),
-                                    type="IMPLEMENTS", repository=repo,
-                                    evidence_type="syntactic", source_file=path,
-                                    source_line=sym.start_line))
-        return sym, rels
+            if c.type in ("type_identifier", "generic_type", "scoped_type_identifier"):
+                out.append(_text(c))
+            elif c.type == "type_list":
+                out += self._type_names(c)
+        return out
 
-    def _calls(self, tree, repo, result):
-        calls = []
-        # Stack of (type_qual, method_name) for the enclosing context.
-        ctx = [None, None]  # [type_qual, method_name]
+    def _method(self, node, type_qual: str, type_name: str, type_sid: str, ctx: "_Ctx") -> None:
+        is_ctor = node.type == "constructor_declaration"
+        name = _text(node.child_by_field_name("name"))
+        params = node.child_by_field_name("parameters")
+        ptypes = []
+        if params is not None:
+            for p in params.named_children:
+                t = p.child_by_field_name("type")
+                if t is None and p.type == "spread_parameter":  # varargs has no "type" field
+                    t = next((c for c in p.named_children
+                              if c.type not in ("modifiers", "variable_declarator")), None)
+                if t is not None:
+                    dims = p.child_by_field_name("dimensions")  # C-style: String s[]
+                    ptypes.append(_erase(_text(t)) + (_erase(_text(dims)) if dims is not None else "")
+                                  + ("..." if p.type == "spread_parameter" else ""))
+        sig = f"{name}({','.join(ptypes)})"
+        sid = symbol_id(ctx.repo, type_qual, sig)
+        s = self._symbol(ctx, sid, f"{type_qual}#{sig}", "constructor" if is_ctor else "method", sig, node)
+        self._rel(ctx, type_sid, sid, "CONTAINS", "resolved", s.start_line)
+        ctx.methods.setdefault((type_qual, name), []).append((len(ptypes), sid))
+        body = node.child_by_field_name("body")
+        if body is not None:
+            self._collect_calls(body, sid, type_qual, ctx)
 
-        def walk(n):
-            # Enter a top-level type declaration -> set type context.
-            if n.type in ("class_declaration", "interface_declaration",
-                          "enum_declaration", "record_declaration"):
-                name = None
-                for c in n.children:
-                    if c.type == "identifier":
-                        name = c.text.decode("utf8", "replace"); break
-                tq = f"{result.package}.{name}" if (result.package and name) else name
-                saved_tq, saved_m = ctx[0], ctx[1]
-                ctx[0], ctx[1] = tq, None
-                for c in n.children:
-                    walk(c)
-                ctx[0], ctx[1] = saved_tq, saved_m
-                return
+    def _symbol(self, ctx, sid, qual, kind, signature, node) -> Symbol:
+        s = Symbol(id=sid, repository=ctx.repo, file=ctx.fid, qualified_name=qual, kind=kind,
+                   signature=signature, start_line=node.start_point[0] + 1,
+                   end_line=node.end_point[0] + 1, resolution="syntactic")
+        ctx.result.symbols.append(s)
+        return s
 
+    def _rel(self, ctx, source, target, rtype, evidence, line, confidence=1.0) -> None:
+        ctx.result.relationships.append(Relationship(
+            source=source, target=target, type=rtype, repository=ctx.repo,
+            evidence_type=evidence, confidence=confidence, source_file=ctx.path, source_line=line))
+
+    # -- calls ---------------------------------------------------------------
+
+    def _collect_calls(self, node, caller: str, type_qual: str, ctx: "_Ctx") -> None:
+        stack = [node]
+        while stack:
+            n = stack.pop()
+            if n.type in _TYPE_NODES:
+                continue  # nested/local types are visited as members, not as part of this method
             if n.type == "method_invocation":
-                for c in n.children:
-                    if c.type == "identifier":
-                        callee = c.text.decode("utf8", "replace")
-                        caller = None
-                        if ctx[0] and ctx[1]:
-                            caller = symbol_id(repo, f"{ctx[0]}#{ctx[1]}")
-                        calls.append(JavaCall(caller, callee,
-                                              n.start_point[0] + 1))
-                        break
-                # do not recurse into arguments' identifiers as calls
-                for c in n.children:
-                    if c.type == "argument_list":
-                        continue
-                    walk(c)
-                return
+                obj = n.child_by_field_name("object")
+                if obj is None or obj.type == "this":
+                    args = n.child_by_field_name("arguments")
+                    ctx.calls.append(_Call(caller, type_qual, _text(n.child_by_field_name("name")),
+                                           len(args.named_children) if args is not None else 0,
+                                           n.start_point[0] + 1))
+                else:
+                    ctx.result.unresolved_calls += 1
+            stack.extend(n.children)
 
-            if n.type == "method_declaration":
-                name = None
-                for c in n.children:
-                    if c.type == "identifier":
-                        name = c.text.decode("utf8", "replace"); break
-                saved_m = ctx[1]
-                ctx[1] = name
-                for c in n.children:
-                    walk(c)
-                ctx[1] = saved_m
-                return
+    def _resolve_calls(self, ctx: "_Ctx") -> None:
+        for c in ctx.calls:
+            cands = [sid for arity, sid in ctx.methods.get((c.type_qual, c.name), []) if arity == c.arity]
+            if not cands:
+                ctx.result.unresolved_calls += 1
+            elif len(cands) == 1:
+                self._rel(ctx, c.caller, cands[0], "CALLS", "resolved", c.line)
+            else:
+                for sid in cands:
+                    self._rel(ctx, c.caller, sid, "CALLS", "inferred", c.line, 1 / len(cands))
 
-            for c in n.children:
-                walk(c)
 
-        walk(tree.root_node)
-        return calls
-
-    def _call_rels(self, repo, path, result):
-        rels = []
-        for call in result.calls:
-            if call.caller_symbol:
-                rels.append(Relationship(source=call.caller_symbol,
-                    target=symbol_id(repo, call.callee_text), type="CALLS",
-                    repository=repo, evidence_type="syntactic",
-                    source_file=path, source_line=call.line))
-        return rels
-
+class _Ctx:
+    def __init__(self, repo: str, fid: str, path: str, result: JavaFileResult) -> None:
+        self.repo, self.fid, self.path, self.result = repo, fid, path, result
+        self.methods: dict[tuple[str, str], list[tuple[int, str]]] = {}
+        self.calls: list[_Call] = []
+        self.top_level: list[tuple[str, str]] = []

@@ -62,3 +62,25 @@ def test_raw_email_fails_privacy():
         }
         _write_dataset(tmp, rows)
         assert validate_dataset(Path(tmp)) is False
+
+
+def test_sharded_chunks_are_merged(tmp_path):
+    (tmp_path / "commits" / "fix").mkdir(parents=True)
+    (tmp_path / "commits/fix/2023.jsonl").write_text(
+        json.dumps({"id": "commit:fix:b", "repository": "fix", "parents": ["commit:fix:a"]}) + "\n")
+    (tmp_path / "commits/fix/2022.jsonl").write_text(
+        json.dumps({"id": "commit:fix:a", "repository": "fix", "parents": []}) + "\n")
+    _write_dataset(tmp_path, {})
+    assert validate_dataset(tmp_path) is True
+    (tmp_path / "commits/fix/2022.jsonl").unlink()
+    assert validate_dataset(tmp_path) is False  # parent now missing
+
+
+def test_email_in_commit_fields_fails_privacy(tmp_path):
+    for field in ("author_name", "subject", "message"):
+        row = {"id": "commit:fix:a", "repository": "fix", "parents": [],
+               "author_name": "x", "subject": "s", "message": "m"}
+        row[field] = "Signed-off-by: A <a@b.com>"
+        (tmp_path / "commits.jsonl").write_text(json.dumps(row) + "\n")
+        _write_dataset(tmp_path, {})
+        assert validate_dataset(tmp_path) is False, field

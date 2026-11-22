@@ -29,6 +29,9 @@ def _build_parser() -> argparse.ArgumentParser:
     p_analyze.add_argument("--focus", action="append", default=None,
                            help="Restrict to a module/addon (repeatable)")
 
+    p_index = sub.add_parser("index", help="(Re)build the static search index for a generated dataset")
+    p_index.add_argument("dataset", type=Path)
+
     p_validate = sub.add_parser("validate", help="Validate generated data")
     p_validate.add_argument("dataset", type=Path)
 
@@ -47,6 +50,10 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "analyze":
         return cmd_analyze(args)
+    if args.command == "index":
+        from atlas.search_index import build_search_index
+        print(f"[atlas] index {args.dataset}: {build_search_index(args.dataset)}")
+        return 0
     if args.command == "validate":
         return cmd_validate(args)
     if args.command == "inspect":
@@ -65,6 +72,8 @@ def cmd_analyze(args) -> int:
     from atlas.manifest import AtlasGenerator
     gen = AtlasGenerator(config)
     gen.run(args.sources, args.output)
+    from atlas.search_index import build_search_index
+    build_search_index(args.output)
     print("[atlas] analyze complete")
     return 0
 

@@ -24,6 +24,7 @@ from atlas.schema import (
 )
 
 CHUNK_MANIFEST = "manifest.json"
+HISTORY_INDEX = "history_index.json"
 CHUNK_REPOS = "repos.jsonl"
 CHUNK_COMMITS = "commits.jsonl"
 CHUNK_MODULES = "modules.jsonl"
@@ -44,6 +45,7 @@ def _sha256_file(path: Path) -> str:
 
 
 def _write_jsonl(path: Path, rows: list[dict]) -> int:
+    path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8") as f:
         for row in rows:
             f.write(json.dumps(row, ensure_ascii=False) + "\n")
@@ -56,6 +58,7 @@ class AtlasGenerator:
     def __init__(self, config: AtlasConfig) -> None:
         self.config = config
         self.ecosystem_coverage: dict[str, dict] = {}
+        self.java_coverage: dict = {}
         self.java_parser = JavaParser()
         self.rows: dict[str, list[dict]] = {
             CHUNK_REPOS: [], CHUNK_COMMITS: [], CHUNK_MODULES: [],
@@ -74,8 +77,13 @@ class AtlasGenerator:
             repo = self.config.sources[names.index(repo_name)]
             self._process_repo(repo, repo_path)
 
-        chunk_names = []
+        self._resolve_cross_file()
+        chunk_names = self._write_history_shards(output_dir)
+        chunk_names += self._write_repo_shards(output_dir, CHUNK_SYMBOLS, "symbols")
+        chunk_names += self._write_repo_shards(output_dir, CHUNK_RELS, "relationships")
         for name, rows in self.rows.items():
+            if name in (CHUNK_COMMITS, CHUNK_FILES, CHUNK_SYMBOLS, CHUNK_RELS):
+                continue
             chunk_path = output_dir / name
             count = _write_jsonl(chunk_path, rows)
             chunk_names.append(name)
@@ -87,6 +95,26 @@ class AtlasGenerator:
         )
         print(f"[atlas] wrote {len(chunk_names)} chunks + manifest to {output_dir}")
         return manifest
+
+    def _write_history_shards(self, output_dir: Path) -> list[str]:
+        """Write commits and file changes as <kind>/<repo>/<year>.jsonl plus history_index.json."""
+        year_of = {c["id"]: c["committer_date"][:4] for c in self.rows[CHUNK_COMMITS]}
+        names: list[str] = []
+        index: dict[str, dict[str, dict[str, int]]] = {}
+        for kind, chunk in (("commits", CHUNK_COMMITS), ("files", CHUNK_FILES)):
+            buckets: dict[tuple[str, str], list[dict]] = {}
+            for row in self.rows[chunk]:
+                commit = row["id"] if kind == "commits" else row["commit"]
+                key = (row["repository"], year_of.get(commit) or "unknown")
+                buckets.setdefault(key, []).append(row)
+            for (repo, year), rows in sorted(buckets.items()):
+                name = f"{kind}/{repo}/{year}.jsonl"
+                _write_jsonl(output_dir / name, rows)
+                names.append(name)
+                index.setdefault(repo, {}).setdefault(year, {})[kind] = len(rows)
+        (output_dir / HISTORY_INDEX).write_text(json.dumps(index, indent=1), encoding="utf-8")
+        names.append(HISTORY_INDEX)
+        return names
 
     def _process_repo(self, repo, repo_path: Path) -> None:
         repo_obj = Repository(id=repo_id(repo.name), name=repo.name, url=repo.url,
@@ -135,23 +163,50 @@ class AtlasGenerator:
                 name=c.author_name, email_norm=c.author_email_norm,
             ).__dict__)
 
-        # MVP: limit Java files per repo for fast iteration
-        java_max = 50 if not os.environ.get("ATLAS_JAVA_MAX") else int(os.environ.get("ATLAS_JAVA_MAX"))
+        java_max = int(os.environ["ATLAS_JAVA_MAX"]) if os.environ.get("ATLAS_JAVA_MAX") else None
         java_files = sorted(repo_path.rglob("*.java"))[:java_max]
+        stats = {"java_files": 0, "java_parse_errors": 0, "unresolved_calls": 0}
         for jf in java_files:
             rel = jf.relative_to(repo_path).as_posix()
-            result = self.java_parser.parse_file(
-                repo.name, repo.sha or "", rel, jf.read_text(errors="replace"))
-            for s in result.symbols:
-                self.rows[CHUNK_SYMBOLS].append(s.__dict__)
+            try:
+                result = self.java_parser.parse_file(
+                    repo.name, repo.sha or "", rel, jf.read_text(errors="replace"))
+            except Exception as e:  # tolerate malformed/unsupported files, but report them
+                stats["java_parse_errors"] += 1
+                print(f"[atlas] warning: could not parse {repo.name}:{rel}: {e}")
+                continue
+            stats["java_files"] += 1
+            stats["unresolved_calls"] += result.unresolved_calls
+            for sym in result.symbols:
+                self.rows[CHUNK_SYMBOLS].append(sym.__dict__)
             for rel_ in result.relationships:
-                self.rows[CHUNK_RELS].append({
-                    "source": rel_.source, "target": rel_.target, "type": rel_.type,
-                    "repository": rel_.repository, "source_revision": rel_.source_revision,
-                    "evidence_type": rel_.evidence_type, "confidence": rel_.confidence,
-                    "source_file": rel_.source_file, "source_line": rel_.source_line,
-                    "valid_from": rel_.valid_from, "valid_to": rel_.valid_to,
-                })
+                self.rows[CHUNK_RELS].append(asdict(rel_))
+        self.java_coverage[repo.name] = stats
+
+    def _resolve_cross_file(self) -> None:
+        """Point IMPORTS/EXTENDS/IMPLEMENTS at declared types (any repo) by qualified name."""
+        types = {"class", "interface", "enum", "record", "annotation_type"}
+        by_qname = {s["qualified_name"]: s["id"] for s in self.rows[CHUNK_SYMBOLS] if s["kind"] in types}
+        resolved = 0
+        for r in self.rows[CHUNK_RELS]:
+            if r["type"] in ("IMPORTS", "EXTENDS", "IMPLEMENTS") and r["evidence_type"] == "syntactic":
+                target = by_qname.get(r["target"].split(":", 2)[2])
+                if target:
+                    r["target"], r["evidence_type"] = target, "resolved"
+                    resolved += 1
+        self.java_coverage["resolved_type_references"] = resolved
+
+    def _write_repo_shards(self, output_dir: Path, chunk: str, kind: str) -> list[str]:
+        # One shard per repo, even when empty (e.g. a docs-only repo), so lookups never 404.
+        buckets: dict[str, list[dict]] = {r["name"]: [] for r in self.rows[CHUNK_REPOS]}
+        for row in self.rows[chunk]:
+            buckets.setdefault(row["repository"], []).append(row)
+        names = []
+        for repo, rows in sorted(buckets.items()):
+            name = f"{kind}/{repo}.jsonl"
+            _write_jsonl(output_dir / name, rows)
+            names.append(name)
+        return names
 
     def _build_manifest(self, output_dir: Path, chunk_names: list[str]) -> Manifest:
         inventory = []
@@ -169,7 +224,8 @@ class AtlasGenerator:
             inventory=inventory,
             coverage={"note": "Modules, add-ons and help reflect current structure at the checked-out HEAD only; "
                       "help is English only; older (Ant-era) layouts are not parsed.",
-                      "ecosystem": self.ecosystem_coverage},
+                      "ecosystem": self.ecosystem_coverage,
+                      "java": self.java_coverage},
             chunks=chunk_names,
         )
 

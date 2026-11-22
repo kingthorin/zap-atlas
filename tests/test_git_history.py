@@ -31,9 +31,21 @@ def test_extract_detects_rename(gitrepo):
 
 
 def test_no_raw_emails(gitrepo):
+    from atlas.git_history import EMAIL_RE
     history = extract(gitrepo, "fix")
     for c in history.commits.values():
-        assert "***" in c.author_email_norm or c.author_email_norm == "unknown", c.author_email_norm
+        assert c.author_email_norm == "unknown" or c.author_email_norm.startswith("u-"), c.author_email_norm
+        for text in (c.author_name, c.subject, c.message, c.author_email_norm):
+            assert not EMAIL_RE.search(text), text
+    c2 = next(c for c in history.commits.values() if c.subject.startswith("c2"))
+    assert c2.author_name == "[email redacted]"
+    assert "Signed-off-by: Dev <[email redacted]>" in c2.message
+
+
+def test_contributor_key_is_stable_and_distinct(gitrepo):
+    history = extract(gitrepo, "fix")
+    keys = {c.author_email_norm for c in history.commits.values()}
+    assert len(keys) == 1  # one email address -> one pseudonymous key
 
 
 def test_commit_count(gitrepo):

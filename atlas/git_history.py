@@ -6,9 +6,20 @@ preserved, including merge parents. The DAG is NOT flattened into a date list.
 
 from __future__ import annotations
 
+import hashlib
+import re
 import subprocess
 from dataclasses import dataclass, field
 from pathlib import Path
+
+
+EMAIL_RE = re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}")
+REDACTED = "[email redacted]"
+
+
+def scrub_emails(text: str) -> str:
+    """Replace anything shaped like an email address (names, trailers, bodies)."""
+    return EMAIL_RE.sub(REDACTED, text)
 
 
 @dataclass
@@ -61,7 +72,7 @@ def extract(repo_path: Path, repo_name: str) -> GitHistory:
     history = GitHistory(repo_name)
 
     # All commits reachable from all refs, with parents and full message.
-    fmt = "%H%x00%P%x00%an%x00%ae%x00%ad%x00%cn%x00%cd%x00%s%x00%B%x00%x01"
+    fmt = "%H%x00%P%x00%an%x00%ae%x00%aI%x00%cn%x00%cI%x00%s%x00%B%x00%x01"
     out = _git(repo_path, ["git", "log", "--all", f"--format={fmt}", "--reverse"])
     for record in out.split("\x01"):
         record = record.lstrip("\n")
@@ -72,7 +83,8 @@ def extract(repo_path: Path, repo_name: str) -> GitHistory:
         if len(parts) < 8:
             continue
         sha, parents, an, ae, ad, cn, cd, subject = parts[:8]
-        message = parts[8].strip() if len(parts) > 8 else ""
+        message = scrub_emails(parts[8].strip()) if len(parts) > 8 else ""
+        an, subject = scrub_emails(an), scrub_emails(subject)
         parent_list = [p for p in parents.split() if p]
         history.commits[sha] = Commit(
             sha=sha,
@@ -133,9 +145,8 @@ def _git(repo_path: Path, cmd: list[str]) -> str:
 
 
 def _normalize_email(email: str) -> str:
-    """Normalize contributor identifier; never publish raw email."""
+    """Stable pseudonymous contributor key. The address itself is never published."""
+    email = email.strip().lower()
     if not email:
         return "unknown"
-    local, _, domain = email.partition("@")
-    return f"{local[:2]}***@{domain}" if domain else "user"
-
+    return "u-" + hashlib.sha256(email.encode("utf8")).hexdigest()[:12]
