@@ -49,3 +49,7 @@ sources/
 *.iml
 
 tests/fixture_sandbox/
+
+# Playwright output
+frontend/test-results/
+frontend/playwright-report/
