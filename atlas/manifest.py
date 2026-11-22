@@ -4,6 +4,7 @@ Produces the versioned manifest and chunked JSON/JSONL static data.
 """
 
 from __future__ import annotations
+import os
 
 import hashlib
 import json
