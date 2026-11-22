@@ -22,7 +22,6 @@ export default function AddOnPage() {
   if (!addon) return <ErrorBox message={`Unknown add-on ${id}.`} />;
 
   const mod = data.modules.find(m => m.id === addon.module);
-  const repo = data.repos.find(r => r.name === mod?.repository);
   const known = new Set(data.addons.map(a => a.id));
   const dependents = data.addons.filter(a => a.dependencies.includes(addon.id));
   const docs = data.docs.filter(d => d.module === addon.module);
@@ -55,7 +54,7 @@ export default function AddOnPage() {
         <ul className="text-sm divide-y divide-slate-100">
           {docs.map(d => (
             <li key={d.id} className="py-1">
-              {repo ? <a className="text-indigo-600 hover:underline" href={`${repo.url.replace(/\.git$/, "")}/blob/${repo.sha}/${d.path}`}>{d.title}</a> : d.title}
+              <Link className="text-indigo-600 hover:underline" to={`/doc/${encodeURIComponent(d.id)}`}>{d.title}</Link>
               {d.headings.length > 1 && <span className="text-slate-400"> · {d.headings.slice(1, 4).join(" · ")}</span>}
             </li>
           ))}

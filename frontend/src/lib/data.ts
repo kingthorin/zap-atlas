@@ -10,7 +10,7 @@ export interface Module { id: string; repository: string; name: string; path: st
 export interface AddOn { id: string; module: string; name: string; status: string; author: string; url: string; dependencies: string[] }
 export interface Symbol { id: string; repository: string; file: string; qualified_name: string; kind: string; signature: string; start_line: number; end_line: number; resolution: string }
 export interface Relationship { source: string; target: string; type: string; repository: string; evidence_type: string; source_file?: string; source_line?: number }
-export interface Doc { id: string; repository: string; module?: string; path: string; title: string; headings: string[]; anchors: string[] }
+export interface Doc { id: string; repository: string; module?: string; commit_count?: number; last_changed?: string | null; commits?: string[]; path: string; title: string; headings: string[]; anchors: string[] }
 export interface Story { id: string; status?: string; title: string; description: string; audience: string; chapters: any[]; entities: string[]; commits: string[]; documents: string[] }
 export interface Manifest { schema_version: string; generator_version: string; generated_at: string; sources: any[]; inventory: any[]; coverage: any; chunks: string[] }
 
@@ -152,4 +152,9 @@ export function loadSearchGroup(group: SearchGroup): Promise<SearchRecord[]> {
     searchCache.set(group, fetchText(`${DATA_DIR}/search/${group}.json`).then(t => JSON.parse(t)));
   }
   return searchCache.get(group)!;
+}
+
+export interface LanguageRow { id: string; repository: string; module: string; language: string; files: number; lines: number }
+export async function loadLanguages(): Promise<LanguageRow[]> {
+  return loadChunk("languages.jsonl") as Promise<LanguageRow[]>;
 }

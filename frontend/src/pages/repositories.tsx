@@ -1,16 +1,17 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { loadRepos, loadModules } from "../lib/data";
+import { LanguageRow, loadRepos, loadModules, loadLanguages } from "../lib/data";
 import { Loading, ErrorBox } from "../components/ui";
 
 export default function Repositories() {
   const [repos, setRepos] = useState<any[]>([]);
   const [modules, setModules] = useState<any[]>([]);
+  const [langs, setLangs] = useState<LanguageRow[]>([]);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    Promise.all([loadRepos(), loadModules()])
-      .then(([r, m]) => { setRepos(r); setModules(m); })
+    Promise.all([loadRepos(), loadModules(), loadLanguages()])
+      .then(([r, m, l]) => { setRepos(r); setModules(m); setLangs(l); })
       .catch(e => setError(e.message));
   }, []);
 
@@ -40,6 +41,7 @@ export default function Repositories() {
               </div>
               <div className="text-xs text-slate-500 mb-3">{repo.url}</div>
               <div className="text-sm font-mono text-slate-400 mb-3">SHA {repo.sha?.slice(0,10)}…</div>
+              <LanguageBars rows={langs.filter(l => l.repository === repo.name)} />
               <ul className="divide-y divide-slate-100">
                 {mods.map(m => (
                   <li key={m.id} className="p-2">
@@ -57,5 +59,30 @@ export default function Repositories() {
         })}
       </div>
     </div>
+  );
+}
+
+/** Lines per language for one repo, as a labelled table with bars (not colour-only). */
+function LanguageBars({ rows }: { rows: LanguageRow[] }) {
+  const totals = new Map<string, { files: number; lines: number }>();
+  for (const r of rows) {
+    const t = totals.get(r.language) ?? { files: 0, lines: 0 };
+    t.files += r.files; t.lines += r.lines; totals.set(r.language, t);
+  }
+  const top = [...totals.entries()].filter(([, t]) => t.lines > 0).sort((a, b) => b[1].lines - a[1].lines).slice(0, 5);
+  const max = top[0]?.[1].lines || 1;
+  if (!top.length) return null;
+  return (
+    <table className="w-full text-xs mb-3" aria-label="Lines of code by language">
+      <tbody>
+        {top.map(([lang, t]) => (
+          <tr key={lang}>
+            <td className="pr-2 w-20">{lang}</td>
+            <td className="w-full"><div className="h-2 rounded bg-indigo-500" style={{ width: `${Math.max(2, (t.lines / max) * 100)}%` }} /></td>
+            <td className="pl-2 whitespace-nowrap text-right text-slate-500">{t.lines.toLocaleString()} lines · {t.files.toLocaleString()} files</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   );
 }
