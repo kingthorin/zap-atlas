@@ -90,3 +90,10 @@ def test_doc_with_unknown_commit_fails(tmp_path):
     (tmp_path / "docs.jsonl").write_text(json.dumps({"id": "doc:r:a.html", "commits": ["commit:r:zzz"]}) + "\n")
     _write_dataset(tmp_path, {})
     assert validate_dataset(tmp_path) is False
+
+
+def test_contract_detects_missing_per_repo_shard(tmp_path):
+    from atlas.validate import check_contract
+    _write_dataset(tmp_path, {"repos.jsonl": [{"id": "repo:r", "name": "r"}]})
+    problems = check_contract(tmp_path)
+    assert "missing symbols/r.jsonl" in problems and "missing search/commits.json" in problems

@@ -34,6 +34,11 @@ def _build_parser() -> argparse.ArgumentParser:
 
     p_validate = sub.add_parser("validate", help="Validate generated data")
     p_validate.add_argument("dataset", type=Path)
+    p_validate.add_argument("--contract", action="store_true",
+                            help="also check the files the frontend fetches exist (run after analyze)")
+
+    p_report = sub.add_parser("report", help="Print a Markdown report of a generated dataset")
+    p_report.add_argument("dataset", type=Path)
 
     p_inspect = sub.add_parser("inspect", help="Inspect a single entity")
     p_inspect.add_argument("--entity", required=True, help="Entity ID, e.g. addon:ascanrules")
@@ -53,6 +58,10 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "index":
         from atlas.search_index import build_search_index
         print(f"[atlas] index {args.dataset}: {build_search_index(args.dataset)}")
+        return 0
+    if args.command == "report":
+        from atlas.report import build_report
+        print(build_report(args.dataset))
         return 0
     if args.command == "validate":
         return cmd_validate(args)
@@ -81,6 +90,12 @@ def cmd_analyze(args) -> int:
 def cmd_validate(args) -> int:
     print(f"[atlas] validate {args.dataset}")
     ok = validate_dataset(args.dataset)
+    if args.contract:
+        from atlas.validate import check_contract
+        problems = check_contract(args.dataset)
+        for p in problems[:50]:
+            print(f"[validate] contract: {p}")
+        ok = ok and not problems
     return 0 if ok else 1
 
 
