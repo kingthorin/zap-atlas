@@ -84,3 +84,9 @@ def test_email_in_commit_fields_fails_privacy(tmp_path):
         (tmp_path / "commits.jsonl").write_text(json.dumps(row) + "\n")
         _write_dataset(tmp_path, {})
         assert validate_dataset(tmp_path) is False, field
+
+
+def test_doc_with_unknown_commit_fails(tmp_path):
+    (tmp_path / "docs.jsonl").write_text(json.dumps({"id": "doc:r:a.html", "commits": ["commit:r:zzz"]}) + "\n")
+    _write_dataset(tmp_path, {})
+    assert validate_dataset(tmp_path) is False

@@ -5,7 +5,7 @@ docs, stories), ``symbols`` (declared types only; members stay reachable from
 their type/module pages) and ``commits`` (subject, short SHA, repo).
 
 Record: ``k`` kind, ``i`` entity id, ``t`` title, ``x`` extra searchable text,
-``u`` external URL (docs only), ``y`` year (commits only, used for the commit shard hint).
+``y`` year (commits only, used for the commit shard hint).
 """
 
 from __future__ import annotations
@@ -37,9 +37,8 @@ def build_search_index(dataset: Path) -> list[str]:
         eco.append({"k": "addon", "i": a["id"], "t": a["name"],
                     "x": " ".join([a["id"].removeprefix("addon:"), a.get("status") or "", a.get("author") or ""])})
     for d in _rows(dataset, "docs.jsonl"):
-        repo = repos.get(d["repository"])
-        url = f'{repo["url"].removesuffix(".git")}/blob/{repo["sha"]}/{d["path"]}' if repo else None
-        eco.append({"k": "doc", "i": d["id"], "t": d["title"], "x": " ".join(d.get("headings", [])[1:]), "u": url})
+        eco.append({"k": "doc", "i": d["id"], "t": d["title"],
+                    "x": " ".join(d.get("headings", [])[1:] + d.get("anchors", []))})
     for s in _rows(dataset, "stories.jsonl"):
         eco.append({"k": "story", "i": s["id"], "t": s["title"], "x": s.get("description", "")})
 

@@ -33,3 +33,30 @@ def test_help_docs_english_only_and_relative(ecosystem_repo):
     assert d["module"] == "module:fix:addOns/alpha"
     assert any(r["type"] == "DOCUMENTS" and r["source"] == d["id"] and r["target"] == "addon:alpha"
                for r in eco.relationships)
+
+
+def test_help_links_become_references_and_are_counted(tmp_path):
+    h = tmp_path / "addOns/a/src/main/javahelp/org/x/help/contents"
+    h.mkdir(parents=True)
+    (tmp_path / "addOns/a").joinpath("a.gradle.kts").write_text('zapAddOn { addOnName.set("A") }')
+    (h / "a.html").write_text('<h1>A</h1><a href="b.html#top">b</a> <a href="b.html#nope">b2</a> <a href="#me">self</a>'
+                              '<a href="missing.html">m</a><a href="https://example.org/">e</a><a href="map:x">map</a>'
+                              '<a name="me"></a><img src="images/gone.png">')
+    (h / "b.html").write_text('<h1>B</h1><a name="top"></a>')
+    eco = discover_ecosystem("fix", tmp_path)
+    refs = [(r["source"].split("/")[-1], r["target"].split("/")[-1]) for r in eco.relationships if r["type"] == "REFERENCES"]
+    assert refs == [("a.html", "b.html")]  # one edge per pair; self links make no edge
+    c = eco.coverage
+    assert (c["links_total"], c["links_resolved"], c["links_external"], c["links_other_scheme"]) == (6, 3, 1, 1)
+    assert (c["links_broken"], c["anchors_broken"], c["images_missing"]) == (1, 1, 1)
+
+
+def test_images_from_shared_common_files_are_not_missing(tmp_path):
+    h = tmp_path / "addOns/a/src/main/javahelp/contents/ui"
+    h.mkdir(parents=True)
+    (tmp_path / "addOns/a/a.gradle.kts").write_text('zapAddOn { addOnName.set("A") }')
+    (h / "p.html").write_text('<h1>P</h1><img src="../images/shared.png"><img src="../images/nowhere.png">')
+    shared = tmp_path / "commonFiles/src/main/resources/contents/images"
+    shared.mkdir(parents=True)
+    (shared / "shared.png").write_bytes(b"x")
+    assert discover_ecosystem("fix", tmp_path).coverage["images_missing"] == 1

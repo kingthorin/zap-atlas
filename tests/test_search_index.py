@@ -26,7 +26,7 @@ def test_index_groups_and_manifest_registration(tmp_path):
     eco = json.loads((tmp_path / "search/ecosystem.json").read_text())
     assert {e["k"] for e in eco} == {"repository", "module", "addon", "doc"}
     doc = next(e for e in eco if e["k"] == "doc")
-    assert doc["u"] == "https://github.com/o/r/blob/abc/h.html" and doc["x"] == "Sub"
+    assert doc["x"] == "Sub" and "u" not in doc
     assert [s["t"] for s in json.loads((tmp_path / "search/symbols.json").read_text())] == ["p.A"]  # types only
     assert json.loads((tmp_path / "search/commits.json").read_text())[0]["y"] == "2024"
     m = json.loads((tmp_path / "manifest.json").read_text())

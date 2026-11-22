@@ -30,3 +30,18 @@ def test_every_repo_gets_symbol_and_relationship_shards_even_when_empty(tmp_path
     names = gen._write_repo_shards(tmp_path, "symbols.jsonl", "symbols")
     assert names == ["symbols/code.jsonl", "symbols/docs.jsonl"]
     assert (tmp_path / "symbols/docs.jsonl").read_text() == ""
+
+
+def test_doc_history_follows_renames(tmp_path):
+    from types import SimpleNamespace as NS
+    gen = AtlasGenerator(AtlasConfig())
+    gen.rows["docs.jsonl"] = [{"repository": "r", "path": "new/h.html"}]
+    commits = {s: NS(committer_date=f"2024-0{i}-01T00:00:00Z") for i, s in enumerate(["c1", "c2", "c3"], 1)}
+    changes = [NS(sha="c1", path="old/h.html", change_type="A", old_path=None),
+               NS(sha="c2", path="new/h.html", change_type="R100", old_path="old/h.html"),
+               NS(sha="c3", path="new/h.html", change_type="M", old_path=None),
+               NS(sha="c3", path="other.html", change_type="M", old_path=None)]
+    gen._attach_doc_history("r", NS(commits=commits, file_changes=changes))
+    d = gen.rows["docs.jsonl"][0]
+    assert d["commits"] == ["commit:r:c3", "commit:r:c2", "commit:r:c1"] and d["commit_count"] == 3
+    assert d["last_changed"] == "2024-03-01T00:00:00Z"

@@ -29,7 +29,7 @@ def validate_dataset(dataset: Path) -> bool:
 
     # Unique IDs per entity chunk
     id_chunks = ["repos", "commits", "modules", "addons", "files", "symbols",
-                 "branches", "tags", "contributors", "docs", "stories"]
+                 "branches", "tags", "contributors", "docs", "stories", "languages"]
     seen_ids = set()
     for chunk in id_chunks:
         for row in all_rows.get(chunk, []):
@@ -69,6 +69,12 @@ def validate_dataset(dataset: Path) -> bool:
         for p in row.get("parents", []):
             if p not in commit_ids:
                 errors.append(f"commit {row['id']} has unknown parent {p}")
+
+    # Help pages: recorded commits must exist.
+    for doc in all_rows.get("docs", []):
+        for c in doc.get("commits", []):
+            if c not in commit_ids:
+                errors.append(f"doc {doc['id']} references unknown commit {c}")
 
     # Privacy: no email-shaped text in any published commit/contributor field.
     from atlas.git_history import EMAIL_RE

@@ -5,6 +5,7 @@ Current structure only (HEAD checkout): older Ant-era revisions are not parsed.
 
 from __future__ import annotations
 
+import posixpath
 import re
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
@@ -32,6 +33,7 @@ def discover_ecosystem(repo_name: str, repo_path: Path, revision: str | None = N
     known_addons = {Path(m.path).name for m in mods if m.is_addon}
     cov = {"modules": len(mods), "addons": 0, "addons_without_status": 0,
            "addons_without_name": 0, "docs": 0, "unresolved_dependencies": 0}
+    topics: list[tuple[str, object, str]] = []  # (doc id, HelpTopic, javahelp dir) for link resolution
 
     for m in mods:
         mid = module_id(repo_name, m.path)
@@ -68,8 +70,52 @@ def discover_ecosystem(repo_name: str, repo_path: Path, revision: str | None = N
                                             title=t.title, headings=t.headings,
                                             anchors=sorted(set(t.anchors)))))
             cov["docs"] += 1
+            topics.append((did, t, f"{m.path}/src/main/javahelp"))
             eco.relationships.append(asdict(Relationship(
                 source=did, target=addon_id(slug), type="DOCUMENTS", repository=repo_name,
                 source_revision=revision, evidence_type="resolved", source_file=t.path)))
+    _resolve_doc_links(repo_name, repo_path, revision, topics, eco, cov)
     eco.coverage = cov
     return eco
+
+
+def _resolve_doc_links(repo_name, repo_path, revision, topics, eco, cov) -> None:
+    """REFERENCES edges between help pages; every other link is counted, never dropped silently."""
+    by_path = {t.path: (did, t) for did, t, _ in topics}
+    stats = {"links_total": 0, "links_resolved": 0, "links_external": 0, "links_other_scheme": 0,
+             "links_to_other_files": 0, "links_broken": 0, "anchors_broken": 0, "images_missing": 0}
+    seen = set()
+    shared = repo_path / "commonFiles" / "src" / "main" / "resources"  # merged into every help add-on at build time
+    for did, t, jh in topics:
+        for href in t.links:
+            stats["links_total"] += 1
+            href = href.strip()
+            if re.match(r"https?://", href, re.I):
+                stats["links_external"] += 1
+                continue
+            if re.match(r"[a-z][a-z0-9+.-]*:", href, re.I):
+                stats["links_other_scheme"] += 1  # mailto:, javascript:, JavaHelp map ids, ...
+                continue
+            file_part, _, anchor = href.partition("#")
+            target = t.path if not file_part else posixpath.normpath(posixpath.join(posixpath.dirname(t.path), file_part))
+            hit = by_path.get(target)
+            if hit:
+                tid, tt = hit
+                stats["links_resolved"] += 1
+                if anchor and anchor not in tt.anchors:
+                    stats["anchors_broken"] += 1
+                if tid != did and (did, tid) not in seen:
+                    seen.add((did, tid))
+                    eco.relationships.append(asdict(Relationship(
+                        source=did, target=tid, type="REFERENCES", repository=repo_name,
+                        source_revision=revision, evidence_type="resolved", source_file=t.path)))
+            elif (repo_path / target).exists():
+                stats["links_to_other_files"] += 1
+            else:
+                stats["links_broken"] += 1
+        for src in t.images:
+            if not src.startswith(("http://", "https://", "data:")):
+                img = posixpath.normpath(posixpath.join(posixpath.dirname(t.path), src.split("#")[0]))
+                if not ((repo_path / img).exists() or (shared / posixpath.relpath(img, jh)).exists()):
+                    stats["images_missing"] += 1
+    cov.update(stats)

@@ -230,6 +230,9 @@ class Document:
     headings: list[str] = field(default_factory=list)
     anchors: list[str] = field(default_factory=list)
     language: str = "en"
+    commit_count: int = 0
+    last_changed: str | None = None
+    commits: list[str] = field(default_factory=list)  # newest first, capped
 
 
 @dataclass

@@ -15,6 +15,7 @@ from pathlib import Path
 from atlas.config import AtlasConfig
 from atlas.ecosystem import discover_ecosystem
 from atlas.git_history import extract as extract_history
+from atlas.languages import count_languages
 from atlas.stories import load_stories
 from atlas.java_parser import JavaParser
 from atlas.schema import (
@@ -35,6 +36,7 @@ CHUNK_SYMBOLS = "symbols.jsonl"
 CHUNK_RELS = "relationships.jsonl"
 CHUNK_DOCS = "docs.jsonl"
 CHUNK_STORIES = "stories.jsonl"
+CHUNK_LANGS = "languages.jsonl"
 
 
 def _sha256_file(path: Path) -> str:
@@ -64,7 +66,7 @@ class AtlasGenerator:
         self.rows: dict[str, list[dict]] = {
             CHUNK_REPOS: [], CHUNK_COMMITS: [], CHUNK_MODULES: [],
             CHUNK_ADDONS: [], CHUNK_FILES: [], CHUNK_SYMBOLS: [],
-            CHUNK_RELS: [], CHUNK_DOCS: [], CHUNK_STORIES: [],
+            CHUNK_RELS: [], CHUNK_DOCS: [], CHUNK_STORIES: [], CHUNK_LANGS: [],
             "branches.jsonl": [], "tags.jsonl": [], "contributors.jsonl": [],
         }
 
@@ -130,8 +132,10 @@ class AtlasGenerator:
         self.rows[CHUNK_DOCS] += eco.docs
         self.rows[CHUNK_RELS] += eco.relationships
         self.ecosystem_coverage[repo.name] = eco.coverage
+        self.rows[CHUNK_LANGS] += count_languages(repo.name, repo_path, [m["path"] for m in eco.modules])
 
         history = extract_history(repo_path, repo.name)
+        self._attach_doc_history(repo.name, history)
         for c in history.commits.values():
             self.rows[CHUNK_COMMITS].append(Commit(
                 id=commit_id(repo.name, c.sha), repository=repo.name, sha=c.sha,
@@ -184,6 +188,30 @@ class AtlasGenerator:
             for rel_ in result.relationships:
                 self.rows[CHUNK_RELS].append(asdict(rel_))
         self.java_coverage[repo.name] = stats
+
+    def _attach_doc_history(self, repo_name: str, history) -> None:
+        """Commit count, last change and recent commits per help page, following renames."""
+        docs = [d for d in self.rows[CHUNK_DOCS] if d["repository"] == repo_name]
+        if not docs:
+            return
+        order = {sha: i for i, sha in enumerate(history.commits)}
+        changes = sorted(history.file_changes, key=lambda fc: order.get(fc.sha, 0), reverse=True)  # newest first
+        tracked = {d["path"]: d["path"] for d in docs}  # name at that point in time -> current path
+        found: dict[str, list[str]] = {}
+        for fc in changes:
+            cur = tracked.get(fc.path)
+            if cur is None:
+                continue
+            shas = found.setdefault(cur, [])
+            if not shas or shas[-1] != fc.sha:
+                shas.append(fc.sha)
+            if fc.change_type.startswith("R") and fc.old_path:
+                tracked[fc.old_path] = cur
+        for d in docs:
+            shas = found.get(d["path"], [])
+            d["commit_count"] = len(shas)
+            d["last_changed"] = history.commits[shas[0]].committer_date if shas else None
+            d["commits"] = [commit_id(repo_name, s) for s in shas[:50]]
 
     def _resolve_cross_file(self) -> None:
         """Point IMPORTS/EXTENDS/IMPLEMENTS at declared types (any repo) by qualified name."""
