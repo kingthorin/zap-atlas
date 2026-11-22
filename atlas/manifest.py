@@ -130,8 +130,8 @@ class AtlasGenerator:
         # MVP: limit Java files per repo for fast iteration
         java_max = 50 if not os.environ.get("ATLAS_JAVA_MAX") else int(os.environ.get("ATLAS_JAVA_MAX"))
         java_files = sorted(repo_path.rglob("*.java"))[:java_max]
-        rel = jf.relative_to(repo_path).as_posix()
         for jf in java_files:
+            rel = jf.relative_to(repo_path).as_posix()
             result = self.java_parser.parse_file(
                 repo.name, repo.sha or "", rel, jf.read_text(errors="replace"))
             for s in result.symbols:
