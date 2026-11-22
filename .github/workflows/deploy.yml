@@ -134,48 +134,31 @@ jobs:
       - name: Build frontend
         working-directory: frontend
         run: npm run build
+        env:
+          ATLAS_BASE_PATH: /${{ github.event.repository.name }}/
 
       - name: Bundle data into dist
         run: |
           mkdir -p frontend/dist/data
           cp -r data/. frontend/dist/data/
 
-      - name: Upload site artifact
-        uses: actions/upload-artifact@v7.0.2
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v5.0.0
         with:
-          name: atlas-site
           path: frontend/dist/
-          retention-days: 1
 
   deploy:
-    name: Deploy to gh-pages (preserves last good on failure)
+    name: Deploy to GitHub Pages (preserves last good on failure)
     needs: build
     if: success()
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Download site artifact
-        uses: actions/download-artifact@v8.0.2
-        with:
-          name: atlas-site
-          path: site/
-
-      - name: Publish to gh-pages branch (root)
-        run: |
-          rm -rf gh-pages-stage && mkdir gh-pages-stage
-          cd gh-pages-stage
-          git init -q -b gh-pages
-          git remote add origin "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
-          git fetch --depth=1 origin gh-pages 2>/dev/null || true
-          if git rev-parse --verify gh-pages >/dev/null 2>&1; then
-            git checkout -q gh-pages
-          fi
-          find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
-          cp -a ../site/. .
-          touch .nojekyll
-          git add -A
-          git -c user.name="github-actions[bot]" -c user.email="github-actions[bot]@users.noreply.github.com" \
-            commit -qm "Atlas deploy: $(date -u +%Y-%m-%dT%H:%M:%SZ)" || true
-          git push -f origin gh-pages
-          echo "Deployed to gh-pages branch (root)"
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5.0.1
