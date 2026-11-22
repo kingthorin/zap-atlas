@@ -1,8 +1,4 @@
-"""Configuration for the ZAP Atlas generator.
-
-Source repository identity and Pages base path are intentionally configurable
-because the Atlas repository owner/name is not yet decided.
-"""
+"""Configuration for the ZAP Atlas generator."""
 
 from __future__ import annotations
 
@@ -37,10 +33,6 @@ class AtlasConfig:
                 name="zap-extensions",
                 url="https://github.com/zaproxy/zap-extensions.git",
             ),
-            SourceRepo(
-                name="zap-core-help",
-                url="https://github.com/zaproxy/zap-core-help.git",
-            ),
         ]
     )
 
@@ -50,15 +42,21 @@ class AtlasConfig:
 
     # Vertical-slice MVP focus (subset for the first real-data slice).
     # None = process everything once scaled.
+
     focus_modules: list[str] | None = None
 
     # Schema / generator versions embedded in the manifest.
+
     schema_version: str = "1.0"
+
     generator_version: str = __import__("atlas", fromlist=["__version__"]).__version__
 
     # Git history depth. None = full history (mandatory for MVP).
+
     history_depth: int | None = None
 
 
+
 DEFAULT_CONFIG = AtlasConfig()
+
 
