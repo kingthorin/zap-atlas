@@ -48,4 +48,5 @@ sources/
 .idea/
 *.iml
 
-EOF
+EOFtests/fixture_sandbox/
+tests/fixture_sandbox/
