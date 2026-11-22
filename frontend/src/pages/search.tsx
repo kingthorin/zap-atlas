@@ -21,7 +21,7 @@ function routeFor(r: SearchRecord): string | null {
     case "repository": return "/repositories";
     case "module": return `/module/${a}/${b}`;
     case "addon": return `/addon/${encodeURIComponent(r.i)}`;
-    case "story": return "/stories";
+    case "story": return `/stories/${r.i.split(":").pop()}`;
     case "doc": return null;
     case "commit": return `/commit/${a}/${b}${r.y ? `?y=${r.y}` : ""}`;
     default: return `/symbol/${encodeURIComponent(r.i)}`; // class, interface, enum, ...
