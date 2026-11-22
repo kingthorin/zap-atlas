@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { loadSymbols } from "../lib/data";
 import { Loading, ErrorBox } from "../components/ui";
 
@@ -43,7 +44,7 @@ export default function Source() {
             {filtered.slice(0, 200).map(s => (
               <tr key={s.id} className="hover:bg-slate-50">
                 <td className="pb-2 text-slate-600">{s.kind}</td>
-                <td className="pb-2 pl-4 text-slate-700 truncate max-w-[40%]">{s.qualified_name}</td>
+                <td className="pb-2 pl-4 text-slate-700 truncate max-w-[40%]"><Link className="text-indigo-600 hover:underline" to={`/symbol/${encodeURIComponent(s.id)}`}>{s.qualified_name}</Link></td>
                 <td className="pb-2 pl-4 text-[11px] font-mono text-slate-500">{s.file}</td>
                 <td className="pb-2 text-slate-600">{s.start_line}-{s.end_line}</td>
                 <td className="pb-2 text-slate-400">{s.resolution}</td>

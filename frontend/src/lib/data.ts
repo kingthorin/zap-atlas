@@ -10,7 +10,7 @@ export interface Module { id: string; repository: string; name: string; path: st
 export interface AddOn { id: string; module: string; name: string; status: string; author: string; url: string; dependencies: string[] }
 export interface Symbol { id: string; repository: string; file: string; qualified_name: string; kind: string; signature: string; start_line: number; end_line: number; resolution: string }
 export interface Relationship { source: string; target: string; type: string; repository: string; evidence_type: string; source_file?: string; source_line?: number }
-export interface Doc { id: string; repository: string; path: string; title: string; headings: string[]; anchors: string[] }
+export interface Doc { id: string; repository: string; module?: string; path: string; title: string; headings: string[]; anchors: string[] }
 export interface Story { id: string; title: string; description: string; audience: string; chapters: any[]; entities: string[]; commits: string[]; documents: string[] }
 export interface Manifest { schema_version: string; generator_version: string; generated_at: string; sources: any[]; inventory: any[]; coverage: any; chunks: string[] }
 
@@ -22,7 +22,12 @@ const jsonlCache = new Map<string, any[]>();
 async function fetchText(url: string): Promise<string> {
   const res = await fetch(url, { cache: "no-store" });
   if (!res.ok) throw new Error(`fetch ${url} failed: ${res.status}`);
-  return res.text();
+  const text = await res.text();
+  // Static hosts and the dev server answer unknown paths with index.html; report that clearly.
+  if (res.headers.get("content-type")?.includes("text/html") && !url.endsWith(".html")) {
+    throw new Error(`data file missing: ${url}`);
+  }
+  return text;
 }
 
 async function parseJsonl(text: string): Promise<any[]> {
@@ -48,8 +53,19 @@ export async function loadRepos(): Promise<Repo[]> {
   const rows = await loadChunk("repos.jsonl");
   return rows as Repo[];
 }
-export async function loadCommits(): Promise<Commit[]> {
-  return loadChunk("commits.jsonl") as Promise<Commit[]>;
+/** repo -> year -> row counts per kind; small, tells the UI which shards exist. */
+export type HistoryIndex = Record<string, Record<string, { commits?: number; files?: number }>>;
+
+let historyIndexCache: HistoryIndex | null = null;
+export async function loadHistoryIndex(): Promise<HistoryIndex> {
+  if (historyIndexCache) return historyIndexCache;
+  historyIndexCache = JSON.parse(await fetchText(`${DATA_DIR}/history_index.json`));
+  return historyIndexCache!;
+}
+
+/** Commits for one repository and year (one lazily loaded shard). */
+export async function loadCommits(repo: string, year: string): Promise<Commit[]> {
+  return loadChunk(`commits/${repo}/${year}.jsonl`) as Promise<Commit[]>;
 }
 export async function loadModules(): Promise<Module[]> {
   return loadChunk("modules.jsonl") as Promise<Module[]>;
@@ -57,11 +73,17 @@ export async function loadModules(): Promise<Module[]> {
 export async function loadAddons(): Promise<AddOn[]> {
   return loadChunk("addons.jsonl") as Promise<AddOn[]>;
 }
+/** Load every per-repository shard of a kind (e.g. symbols/<repo>.jsonl), as listed in the manifest. */
+async function loadShards(kind: string): Promise<any[]> {
+  const m = await loadManifest();
+  const parts = await Promise.all(m.chunks.filter(c => c.startsWith(`${kind}/`)).map(loadChunk));
+  return parts.flat();
+}
 export async function loadSymbols(): Promise<Symbol[]> {
-  return loadChunk("symbols.jsonl") as Promise<Symbol[]>;
+  return loadShards("symbols") as Promise<Symbol[]>;
 }
 export async function loadRelationships(): Promise<Relationship[]> {
-  return loadChunk("relationships.jsonl") as Promise<Relationship[]>;
+  return loadShards("relationships") as Promise<Relationship[]>;
 }
 export async function loadDocs(): Promise<Doc[]> {
   return loadChunk("docs.jsonl") as Promise<Doc[]>;
@@ -70,11 +92,64 @@ export async function loadStories(): Promise<Story[]> {
   return loadChunk("stories.jsonl") as Promise<Story[]>;
 }
 
+export interface FileChange { id: string; commit: string; repository: string; path: string; change_type: string; old_path: string | null; additions: number; deletions: number }
+
+export async function loadRepoSymbols(repo: string): Promise<Symbol[]> {
+  return loadChunk(`symbols/${repo}.jsonl`) as Promise<Symbol[]>;
+}
+export async function loadRepoRelationships(repo: string): Promise<Relationship[]> {
+  return loadChunk(`relationships/${repo}.jsonl`) as Promise<Relationship[]>;
+}
+
+/** Path of a symbol's file, from its file id `file:<repo>:<sha>:<path>`. */
+export function filePathOf(fileId: string): string {
+  return fileId.split(":").slice(3).join(":");
+}
+
+/** Short SHA from a commit id `commit:<repo>:<sha>`. */
+export function shaOf(commitId: string): string {
+  return commitId.split(":").pop()!;
+}
+
+/**
+ * Find a commit by SHA without a global index: scan the repo's year shards, starting at the
+ * hint year (parents are never newer than their children) and then going back in time.
+ */
+export async function findCommit(repo: string, sha: string, hintYear?: string): Promise<{ commit: Commit; year: string } | null> {
+  const idx = await loadHistoryIndex();
+  const years = Object.keys(idx[repo] ?? {}).sort().reverse();
+  const ordered = hintYear && years.includes(hintYear)
+    ? [hintYear, ...years.filter(y => y !== hintYear && y < hintYear), ...years.filter(y => y > hintYear)]
+    : years;
+  for (const year of ordered) {
+    const hit = (await loadCommits(repo, year)).find(c => c.sha === sha || c.sha.startsWith(sha));
+    if (hit) return { commit: hit, year };
+  }
+  return null;
+}
+
+export async function loadFileChanges(repo: string, year: string): Promise<FileChange[]> {
+  return loadChunk(`files/${repo}/${year}.jsonl`) as Promise<FileChange[]>;
+}
+
 /** Build a pinned GitHub blob link for a file at a given repo SHA. */
-export function githubBlob(repo: Repo, path: string): string {
-  return `${repo.url.replace(/\.git$/, "")}/blob/${repo.sha}/${path}`;
+export function githubBlob(repo: Repo, path: string, startLine?: number, endLine?: number): string {
+  const anchor = startLine ? `#L${startLine}${endLine && endLine !== startLine ? `-L${endLine}` : ""}` : "";
+  return `${repo.url.replace(/\.git$/, "")}/blob/${repo.sha}/${path}${anchor}`;
 }
 
 export function githubCommit(repo: Repo, sha: string): string {
   return `${repo.url.replace(/\.git$/, "")}/commit/${sha}`;
+}
+
+export interface SearchRecord { k: string; i: string; t: string; x?: string; u?: string | null; y?: string }
+export type SearchGroup = "ecosystem" | "symbols" | "commits";
+
+const searchCache = new Map<SearchGroup, Promise<SearchRecord[]>>();
+/** One search group (search/<group>.json); loaded on first use, never at startup. */
+export function loadSearchGroup(group: SearchGroup): Promise<SearchRecord[]> {
+  if (!searchCache.has(group)) {
+    searchCache.set(group, fetchText(`${DATA_DIR}/search/${group}.json`).then(t => JSON.parse(t)));
+  }
+  return searchCache.get(group)!;
 }

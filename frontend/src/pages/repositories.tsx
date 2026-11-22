@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { loadRepos, loadModules } from "../lib/data";
 import { Loading, ErrorBox } from "../components/ui";
 
@@ -42,7 +43,10 @@ export default function Repositories() {
               <ul className="divide-y divide-slate-100">
                 {mods.map(m => (
                   <li key={m.id} className="p-2">
-                    <div className="font-medium truncate">{m.name}</div>
+                    <div className="font-medium truncate">
+                      <Link className="text-indigo-600 hover:underline" to={`/module/${repo.name}/${m.path}`}>{m.name}</Link>
+                      {m.addon && <Link className="ml-2 text-xs text-slate-500 hover:underline" to={`/addon/${encodeURIComponent(`addon:${m.name}`)}`}>add-on</Link>}
+                    </div>
                     <div className="text-xs text-slate-500">{m.path}</div>
                   </li>
                 ))}
