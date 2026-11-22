@@ -53,7 +53,7 @@ export function Nav() {
           const active = location.pathname === n.to;
           return (
             <Link key={n.to} to={n.to} className={`flex items-center gap-3 px-3 py-2 rounded text-sm font-medium transition ${active ? "bg-indigo-500/20 text-indigo-400" : "text-slate-300 hover:text-white hover:bg-slate-800"}`} aria-current={active ? "page" : undefined}>
-              <Icon className="w-4 h-4" /> {n.label}
+              <Icon className="w-4 h-4 max-w-max max-h-4" /> {n.label}
             </Link>
           );
         })}
