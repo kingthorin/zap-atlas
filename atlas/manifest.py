@@ -13,6 +13,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from atlas.config import AtlasConfig
+from atlas.ecosystem import discover_ecosystem
 from atlas.git_history import extract as extract_history
 from atlas.java_parser import JavaParser
 from atlas.schema import (
@@ -54,6 +55,7 @@ class AtlasGenerator:
 
     def __init__(self, config: AtlasConfig) -> None:
         self.config = config
+        self.ecosystem_coverage: dict[str, dict] = {}
         self.java_parser = JavaParser()
         self.rows: dict[str, list[dict]] = {
             CHUNK_REPOS: [], CHUNK_COMMITS: [], CHUNK_MODULES: [],
@@ -91,6 +93,13 @@ class AtlasGenerator:
                               default_branch=repo.default_branch or "main",
                               sha=repo.sha or "")
         self.rows[CHUNK_REPOS].append(repo_obj.__dict__)
+
+        eco = discover_ecosystem(repo.name, repo_path, repo.sha or None)
+        self.rows[CHUNK_MODULES] += eco.modules
+        self.rows[CHUNK_ADDONS] += eco.addons
+        self.rows[CHUNK_DOCS] += eco.docs
+        self.rows[CHUNK_RELS] += eco.relationships
+        self.ecosystem_coverage[repo.name] = eco.coverage
 
         history = extract_history(repo_path, repo.name)
         for c in history.commits.values():
@@ -158,7 +167,9 @@ class AtlasGenerator:
             sources=[{"name": s.name, "url": s.url, "sha": s.sha,
                       "ref": s.branch or s.default_branch} for s in self.config.sources],
             inventory=inventory,
-            coverage={"note": "MVP vertical slice; coverage reported per-module"},
+            coverage={"note": "Modules, add-ons and help reflect current structure at the checked-out HEAD only; "
+                      "help is English only; older (Ant-era) layouts are not parsed.",
+                      "ecosystem": self.ecosystem_coverage},
             chunks=chunk_names,
         )
 

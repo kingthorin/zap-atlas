@@ -8,6 +8,7 @@ single = os.environ.get("REF", "").strip()
 repos = [
   ("zaproxy", "https://github.com/zaproxy/zaproxy.git"),
   ("zap-extensions", "https://github.com/zaproxy/zap-extensions.git"),
+  ("zap-core-help", "https://github.com/zaproxy/zap-core-help.git"),
 ]
 out = {}
 for name, url in repos:

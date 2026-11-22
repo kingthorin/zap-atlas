@@ -35,10 +35,10 @@ class _HelpHTMLParser(HTMLParser):
             self._in_heading = True
         if tag == "a" and attr.get("href"):
             self.topic.links.append(attr["href"])
-            if attr.get("name"):
-                self.topic.anchors.append(attr["name"])
-            if attr.get("id"):
-                self.topic.anchors.append(attr["id"])
+        if tag == "a" and attr.get("name"):
+            self.topic.anchors.append(attr["name"])
+        if attr.get("id"):
+            self.topic.anchors.append(attr["id"])
         if tag == "img" and attr.get("src"):
             self.topic.images.append(attr["src"])
 
@@ -54,7 +54,7 @@ class _HelpHTMLParser(HTMLParser):
             self._in_heading = False
 
 
-def parse_help_file(path: Path) -> HelpTopic | None:
+def parse_help_file(path: Path, rel_to: Path | None = None) -> HelpTopic | None:
     if not path.is_file():
         return None
     try:
@@ -62,20 +62,25 @@ def parse_help_file(path: Path) -> HelpTopic | None:
     except OSError:
         return None
     parser = _HelpHTMLParser()
-    parser.topic.path = str(path)
+    parser.topic.path = (path.relative_to(rel_to) if rel_to else path).as_posix()
     parser.feed(text)
     # title from first h1 or filename
-    if parser.topic.headings:
-        parser.topic.title = parser.topic.headings[0]
+    parser.topic.title = parser.topic.headings[0] if parser.topic.headings else path.stem
     return parser.topic
 
 
-def discover_help_topics(javahelp_dir: Path) -> list[HelpTopic]:
+_LOCALE_DIR = re.compile(r"^help_[a-z]{2,3}_[A-Z]{2}$")
+
+
+def discover_help_topics(javahelp_dir: Path, rel_to: Path | None = None) -> list[HelpTopic]:
+    """English help topics only: locale directories (help_xx_YY) are skipped."""
     topics = []
     if not javahelp_dir.is_dir():
         return topics
     for html in javahelp_dir.rglob("*.html"):
-        t = parse_help_file(html)
+        if any(_LOCALE_DIR.match(part) for part in html.relative_to(javahelp_dir).parts):
+            continue
+        t = parse_help_file(html, rel_to)
         if t:
             topics.append(t)
     return topics

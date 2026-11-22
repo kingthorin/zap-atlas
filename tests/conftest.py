@@ -53,3 +53,34 @@ def gitrepo(tmp_path_factory):
            "package org.zaproxy;\npublic class Hello {\n"
            "  public void run() { helper(); }\n  private void helper() {}\n}\n"))
     return r
+
+
+@pytest.fixture
+def ecosystem_repo(tmp_path):
+    """Gradle multi-project fixture: two add-ons (one depends on the other), help with a
+    locale dir, a non-add-on module, and a malformed build file."""
+    def w(rel, text):
+        f = tmp_path / rel
+        f.parent.mkdir(parents=True, exist_ok=True)
+        f.write_text(text)
+
+    w("addOns/alpha/alpha.gradle.kts", '''
+zapAddOn {
+    addOnName.set("Alpha add-on")
+    addOnStatus.set(AddOnStatus.RELEASE)
+    manifest {
+        author.set("Someone")
+        url.set("https://example.org/alpha")
+        dependencies { addOns { register("beta") { version.set(">= 1") }
+                                register("missing") } }
+        extensions { register("org.example.ExtensionAlpha") { classnames { allowed.set(listOf("x")) } } }
+    }
+}''')
+    w("addOns/alpha/src/main/javahelp/org/example/help/contents/alpha.html",
+      '<html><body><h1>Alpha</h1><a name="top"></a><h2 id="sec">Sec</h2><a href="x.html">x</a></body></html>')
+    w("addOns/alpha/src/main/javahelp/org/example/help_de_DE/contents/alpha.html", "<h1>Alpha DE</h1>")
+    w("addOns/beta/beta.gradle.kts", 'zapAddOn { addOnName.set("Beta") }')
+    w("addOns/broken/broken.gradle.kts", "zapAddOn { addOnName.set(\"unterminated")
+    w("addOns/plain/plain.gradle.kts", "// no add-on block")
+    w("zap/zap.gradle.kts", "plugins {}")
+    return tmp_path
