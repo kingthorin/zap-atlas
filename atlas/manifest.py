@@ -59,7 +59,7 @@ class AtlasGenerator:
             CHUNK_REPOS: [], CHUNK_COMMITS: [], CHUNK_MODULES: [],
             CHUNK_ADDONS: [], CHUNK_FILES: [], CHUNK_SYMBOLS: [],
             CHUNK_RELS: [], CHUNK_DOCS: [], CHUNK_STORIES: [],
-            "branches": [], "tags": [], "contributors": [],
+            "branches.jsonl": [], "tags.jsonl": [], "contributors.jsonl": [],
         }
 
     def run(self, sources_dir: Path, output_dir: Path) -> Manifest:
@@ -74,8 +74,6 @@ class AtlasGenerator:
 
         chunk_names = []
         for name, rows in self.rows.items():
-            if not rows:
-                continue
             chunk_path = output_dir / name
             count = _write_jsonl(chunk_path, rows)
             chunk_names.append(name)
@@ -107,7 +105,7 @@ class AtlasGenerator:
             row = Branch if ref.type == "branch" else Tag
             obj = row(id=(branch_id if ref.type == "branch" else tag_id)(repo.name, ref.name),
                       repository=repo.name, name=ref.name, sha=ref.sha)
-            self.rows["branches" if ref.type == "branch" else "tags"].append(obj.__dict__)
+            self.rows["branches.jsonl" if ref.type == "branch" else "tags.jsonl"].append(obj.__dict__)
         for fc in history.file_changes:
             self.rows[CHUNK_FILES].append({
                 "id": f"file:{repo.name}:{fc.sha}:{fc.path}",
@@ -123,7 +121,7 @@ class AtlasGenerator:
             if key in seen:
                 continue
             seen.add(key)
-            self.rows["contributors"].append(Contributor(
+            self.rows["contributors.jsonl"].append(Contributor(
                 id=contributor_id(repo.name, key), repository=repo.name,
                 name=c.author_name, email_norm=c.author_email_norm,
             ).__dict__)
