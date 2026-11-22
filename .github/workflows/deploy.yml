@@ -72,7 +72,7 @@ jobs:
               ref = "main"
               for line in sym.splitlines():
                 if line.startswith("ref:"):
-                  r = line.split()[0].split("ref: ", 1)[1]
+                  r = line.split()[1]
                   if r.startswith("refs/heads/"):
                     ref = r[len("refs/heads/"):]
             subprocess.run(["git", "-C", dest, "fetch", "--tags", "--prune"], check=True)
