@@ -64,14 +64,15 @@ def extract(repo_path: Path, repo_name: str) -> GitHistory:
     fmt = "%H%x00%P%x00%an%x00%ae%x00%ad%x00%cn%x00%cd%x00%s%x00%B%x00%x01"
     out = _git(repo_path, ["git", "log", "--all", f"--format={fmt}", "--reverse"])
     for record in out.split("\x01"):
-        record = record.strip("\x00 ").strip()
-        if not record:
+        record = record.lstrip("\n")
+        if not record.strip():
             continue
-        parts = record.split("\x00")
+        # Keep empty trailing fields (empty subject/body); drop only the format's final NUL.
+        parts = record.removesuffix("\x00").split("\x00")
         if len(parts) < 8:
             continue
         sha, parents, an, ae, ad, cn, cd, subject = parts[:8]
-        message = parts[8] if len(parts) > 8 else ""
+        message = parts[8].strip() if len(parts) > 8 else ""
         parent_list = [p for p in parents.split() if p]
         history.commits[sha] = Commit(
             sha=sha,

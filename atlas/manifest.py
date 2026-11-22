@@ -8,6 +8,7 @@ import os
 
 import hashlib
 import json
+from dataclasses import asdict
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -81,7 +82,7 @@ class AtlasGenerator:
 
         manifest = self._build_manifest(output_dir, chunk_names)
         (output_dir / CHUNK_MANIFEST).write_text(
-            json.dumps(manifest.__dict__, indent=2, ensure_ascii=False),
+            json.dumps(asdict(manifest), indent=2, ensure_ascii=False),
             encoding="utf-8",
         )
         print(f"[atlas] wrote {len(chunk_names)} chunks + manifest to {output_dir}")

@@ -33,11 +33,24 @@ def test_unknown_relationship_endpoint_fails():
             "repos.jsonl": [{"id": "repo:fix", "name": "fix"}],
             "relationships.jsonl": [
                 {"source": "repo:fix", "target": "commit:fix:missing", "type": "CALLS",
-                 "repository": "fix", "evidence_type": "syntactic"},
+                 "repository": "fix", "evidence_type": "resolved"},
             ],
         }
         _write_dataset(tmp, rows)
         assert validate_dataset(Path(tmp)) is False
+
+
+def test_unresolved_syntactic_relationship_endpoint_allowed():
+    with tempfile.TemporaryDirectory() as tmp:
+        rows = {
+            "repos.jsonl": [{"id": "repo:fix", "name": "fix"}],
+            "relationships.jsonl": [
+                {"source": "repo:fix", "target": "symbol:fix:external", "type": "CALLS",
+                 "repository": "fix", "evidence_type": "syntactic"},
+            ],
+        }
+        _write_dataset(tmp, rows)
+        assert validate_dataset(Path(tmp)) is True
 
 
 def test_raw_email_fails_privacy():

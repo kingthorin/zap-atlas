@@ -40,7 +40,11 @@ def validate_dataset(dataset: Path) -> bool:
 
     # Relationship endpoints must reference known ids
     known_ids = set(seen_ids)
+    # Syntactic (unresolved) edges may point at external types, bare method names,
+    # or entities not emitted yet, so only non-syntactic edges are checked.
     for row in all_rows.get("relationships.jsonl", []):
+        if row.get("evidence_type") == "syntactic":
+            continue
         for end in ("source", "target"):
             v = row.get(end)
             if v and v not in known_ids:
