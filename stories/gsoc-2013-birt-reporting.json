@@ -30,7 +30,7 @@
     },
     {
       "title": "2014 to 2019: maintenance and relocation",
-      "text": "A commit dated 2014-05-08 is titled \"Removed \\\"birtreports\\\" runtime dependencies from main \\\"lib\\\" directory.\" Later commits include \"birtreports: update ZAP logo\" (2018-06-11) and \"birtreports: stop using BrowserLauncher (#1685)\" (2018-06-26). \"birtreports: relocate to its own project\" is dated 2019-04-03.",
+      "text": "A commit dated 2014-05-08 is titled \"Removed \"birtreports\" runtime dependencies from main \"lib\" directory.\" Later commits include \"birtreports: update ZAP logo\" (2018-06-11) and \"birtreports: stop using BrowserLauncher (#1685)\" (2018-06-26). \"birtreports: relocate to its own project\" is dated 2019-04-03.",
       "entities": [
         "repo:zap-extensions"
       ],

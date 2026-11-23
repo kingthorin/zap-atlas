@@ -4,7 +4,7 @@
   "audience": "developers",
   "group": "history",
   "date": "2015-06",
-  "status": "draft",
+  "status": "reviewed",
   "chapters": [
     {
       "title": "Pull requests into three branches",

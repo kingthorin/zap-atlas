@@ -62,7 +62,7 @@
     },
     {
       "title": "More formats and the Automation Framework",
-      "text": "The CHANGELOG lists, for 0.5.0 (2021-08-05), \"Automation Framework 'theme' parameter.\" and \"Automation Framework GUI\"; for 0.4.0, \"Automation job: outputSummary, aimed at mimicking the output of the packaged scans.\"; for 0.16.0 (2022-10-27), \"\\\"XML Plus\\\" report format for XML with requests and responses\"; and for 0.17.0 (2022-11-22), \"SARIF reporting\". The dataset lists the add-on as a release and as depending on automation.",
+      "text": "The CHANGELOG lists, for 0.5.0 (2021-08-05), \"Automation Framework 'theme' parameter.\" and \"Automation Framework GUI\"; for 0.4.0, \"Automation job: outputSummary, aimed at mimicking the output of the packaged scans.\"; for 0.16.0 (2022-10-27), \"\"XML Plus\" report format for XML with requests and responses\"; and for 0.17.0 (2022-11-22), \"SARIF reporting\". The dataset lists the add-on as a release and as depending on automation.",
       "entities": [
         "addon:reports",
         "addon:automation"

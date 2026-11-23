@@ -1,10 +1,10 @@
 {
-  "title": "The Ajax Spider: from a 2012 GSoC project to the spiderAjax add-on",
+  "title": "The Ajax Spider (Guifre Ruiz, 2012 GSoC): from a student project to the spiderAjax add-on",
   "description": "The 2012 Ajax Spider project in the Student Hall of Fame next to the commits that brought it into zap-extensions and kept it maintained.",
   "audience": "community",
   "group": "projects",
   "date": "2012-06",
-  "status": "draft",
+  "status": "reviewed",
   "chapters": [
     {
       "title": "2012: first commits",
@@ -45,7 +45,7 @@
     },
     {
       "title": "2013 to 2014: library updates",
-      "text": "The log shows repeated library-update commits for the add-on: \"Issue 672 - Update Crawljax library and dependencies (\\\"Ajax Spider\\\" add-on)\" is dated 2013-06-02, \"Issue 834 - Update Crawljax library and dependencies (\\\"Ajax Spider\\\" add-on)\" 2013-12-14 and \"Issue 1336 - Update Crawljax library and dependencies (\\\"Ajax Spider\\\" add-on)\" 2014-09-15. A zaproxy commit dated 2014-03-23 is titled \"Issue 1098 - Move AJAX Spider help pages to \\\"Ajax Spider\\\" add-on (and update them)\".",
+      "text": "The log shows repeated library-update commits for the add-on: \"Issue 672 - Update Crawljax library and dependencies (\"Ajax Spider\" add-on)\" is dated 2013-06-02, \"Issue 834 - Update Crawljax library and dependencies (\"Ajax Spider\" add-on)\" 2013-12-14 and \"Issue 1336 - Update Crawljax library and dependencies (\"Ajax Spider\" add-on)\" 2014-09-15. A zaproxy commit dated 2014-03-23 is titled \"Issue 1098 - Move AJAX Spider help pages to \"Ajax Spider\" add-on (and update them)\".",
       "entities": [
         "addon:spiderAjax"
       ],

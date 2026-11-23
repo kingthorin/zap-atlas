@@ -1,14 +1,14 @@
 {
-  "title": "SOAP scanning (GSoC 2014): from WSDL import to the soap add-on",
+  "title": "SOAP scanning (Alberto Verza, 2014 GSoC): from WSDL import to the soap add-on",
   "description": "The 2014 SOAP scanning project in the Student Hall of Fame and the history of the soap add-on, which began as an importWSDL extension.",
   "audience": "community",
   "group": "projects",
   "date": "2014-06",
-  "status": "draft",
+  "status": "reviewed",
   "chapters": [
     {
       "title": "April to May 2014: WSDL import, renamed to soap",
-      "text": "The Student Hall of Fame lists SOAP scanning (Alberto Verza) as a 2014 Summer GSoC project. A zap-extensions commit dated 2014-04-30 is titled \"WSDL file import Add-On.\" On 2014-05-21 a commit is titled \"\\\"importWSDL\\\" extension renamed to \\\"soap\\\". SOAP Action scanner is no longer using ExtensionLoader to get data from ExtensionImportWSDL.\"",
+      "text": "The Student Hall of Fame lists SOAP scanning (Alberto Verza) as a 2014 Summer GSoC project. A zap-extensions commit dated 2014-04-30 is titled \"WSDL file import Add-On.\" On 2014-05-21 a commit is titled \"\"importWSDL\" extension renamed to \"soap\". SOAP Action scanner is no longer using ExtensionLoader to get data from ExtensionImportWSDL.\"",
       "entities": [
         "addon:soap"
       ],

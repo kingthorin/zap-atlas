@@ -1,10 +1,10 @@
 {
-  "title": "Advanced Access Control testing (GSoC 2014) and the accessControl add-on",
+  "title": "Advanced Access Control testing (Cosmin Stefan, 2014 GSoC) and the accessControl add-on",
   "description": "The 2014 access control project in the Student Hall of Fame and the history of the accessControl add-on in zap-extensions.",
   "audience": "community",
   "group": "projects",
   "date": "2014-06",
-  "status": "draft",
+  "status": "reviewed",
   "chapters": [
     {
       "title": "June 2014: first commits",

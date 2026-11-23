@@ -1,10 +1,10 @@
 {
-  "title": "SAML 2.0 support (GSoC 2013) and the saml add-on",
+  "title": "SAML 2.0 support (Pulasthi Mahawithana, 2013 GSoC) and the saml add-on",
   "description": "The 2013 SAML project in the Student Hall of Fame and the history of the saml add-on in zap-extensions.",
   "audience": "community",
   "group": "projects",
   "date": "2013-06",
-  "status": "draft",
+  "status": "reviewed",
   "chapters": [
     {
       "title": "September 2013: initial code",

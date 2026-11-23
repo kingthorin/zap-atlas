@@ -1,10 +1,10 @@
 {
-  "title": "Advanced fuzzing (GSoC 2014) and the fuzz add-on",
+  "title": "Advanced fuzzing (Sebastian Schulze, 2014 GSoC) and the fuzz add-on",
   "description": "The 2014 advanced fuzzing project in the Student Hall of Fame next to the multi-fuzz commits, the 2015 merge into the fuzz add-on, and where it stands now.",
   "audience": "community",
   "group": "projects",
   "date": "2014-06",
-  "status": "draft",
+  "status": "reviewed",
   "chapters": [
     {
       "title": "June 2014: multi-fuzzing in core and as an add-on",
@@ -69,13 +69,14 @@
     },
     {
       "title": "2019 to now",
-      "text": "\"fuzz: relocate to its own project\" is dated 2019-04-03. The fuzz add-on is still in zap-extensions; the latest commit touching addOns/fuzz is dated 2026-10-05 (\"Update localized resources\").",
+      "text": "\"fuzz: relocate to its own project\" is dated 2019-04-03. The fuzz add-on is still in zap-extensions; the latest commit touching addOns/fuzz is dated 2026-10-05 (\"Update localized resources\"). The commit \"fuzz: Fix breadth first handling\" is dated 2026-08-04. The CHANGELOG for 13.17.0 (2026-08-07) lists under Fixed \"Correct (breadth-first) Pitchfork payload replacement when fuzzing multiple locations.\" and under Changed \"Rename payload replacement strategies to Cluster Bomb and Pitchfork in the UI and help (previously Depth First and Breadth First).\"",
       "entities": [
         "addon:fuzz"
       ],
       "commits": [
         "commit:zap-extensions:0f57c117f9b4c7074fde5394fdab1f1fe2897afc",
-        "commit:zap-extensions:519f8b647edbb62d54e1eb9e11562e6ca7f21bb5"
+        "commit:zap-extensions:519f8b647edbb62d54e1eb9e11562e6ca7f21bb5",
+        "commit:zap-extensions:b200c8b78e056f230390af9ce9c3872f8e6e18f7"
       ],
       "documents": [
         "doc:zap-extensions:addOns/fuzz/src/main/javahelp/org/zaproxy/zap/extension/fuzz/resources/help/contents/concepts.html"
@@ -84,6 +85,10 @@
         {
           "label": "ZAP Student Hall of Fame",
           "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        },
+        {
+          "label": "fuzz CHANGELOG.md",
+          "url": "https://github.com/zaproxy/zap-extensions/blob/main/addOns/fuzz/CHANGELOG.md"
         }
       ]
     }

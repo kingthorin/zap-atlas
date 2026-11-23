@@ -1,10 +1,10 @@
 {
-  "title": "The 2012 crawler redesign and the spider add-on",
+  "title": "The crawler redesign (Cosmin Stefan, 2012 GSoC) and the spider add-on",
   "description": "A 2012 GSoC crawler redesign in zaproxy, and what later happened to the spider code: a zap-extensions add-on in 2022 and removal of the deprecated spider from core in 2026.",
   "audience": "community",
   "group": "projects",
   "date": "2012-06",
-  "status": "draft",
+  "status": "reviewed",
   "chapters": [
     {
       "title": "2012: a new spider package in core",
