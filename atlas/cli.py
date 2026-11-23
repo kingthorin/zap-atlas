@@ -57,6 +57,11 @@ def _build_parser() -> argparse.ArgumentParser:
 
     p_history = sub.add_parser("history", help="Show repository history summary")
     p_history.add_argument("--repository", required=True)
+    p_history.add_argument("--dataset", type=Path, default=DEFAULT_CONFIG.output_dir, help="generated dataset (default: data)")
+    p_history.add_argument("--year", default="", help="only commits of this year")
+    p_history.add_argument("--since", default="", help="only commits on or after this date (YYYY-MM-DD)")
+    p_history.add_argument("--path", default="", help="history of a file or directory, following renames of a file")
+    p_history.add_argument("--limit", type=int, default=10, help="rows per list")
 
     return parser
 
@@ -136,7 +141,12 @@ def cmd_inspect(args) -> int:
 
 
 def cmd_history(args) -> int:
-    print(f"[atlas] history {args.repository} (not yet implemented)")
+    from atlas.repo_history import history
+    report = history(args.dataset, args.repository, args.year, args.since, args.path, args.limit)
+    if report is None:
+        print(f"[atlas] nothing found for {args.repository}" + (f" and {args.path}" if args.path else "") + f" in {args.dataset}")
+        return 1
+    print(report)
     return 0
 
 

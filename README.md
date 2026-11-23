@@ -53,6 +53,7 @@ pip install tree-sitter tree-sitter-java pytest
 python -m atlas analyze --sources ./sources --output ./data   # clone/refresh, analyze, build search index
 python -m atlas validate ./data --contract                    # data and integrity checks (hashes, SHAs, shards, story text) + files the frontend fetches
 python -m atlas inspect --entity addon:oast                      # one entity with its edges and citing stories (a bare name means an add-on)
+python -m atlas history --repository zap-hud --year 2019           # commits by year, busiest months, authors, releases; --since, --path (follows renames)
 python -m atlas report ./data                                 # SHAs, sizes, coverage (Markdown)
 python -m atlas index ./data                                  # rebuild only the search index
 python -m pytest tests
