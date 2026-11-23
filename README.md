@@ -111,10 +111,19 @@ The workflow needs no secrets; the upstream repositories are public.
   Java symbols and relationships describe the checked-out revision only. Older
   layouts (for example the Ant era) are not reconstructed; their commits and file
   changes are in the history.
-- **Calls are mostly not resolved.** Only receiver-less calls that match a method
-  of the same type are recorded (a unique match is `resolved`, several same-arity
-  overloads are `inferred`). All other call expressions are counted in the
-  manifest and not emitted. No classpath-based semantic analysis is done.
+- **Calls are resolved by declared type and arity only.** A call is `resolved` when
+  its receiver's declared type (local, parameter, field, `new`, static type name,
+  `super`, or a statically imported member) is a type in the dataset with exactly
+  one method of that name and arity, searching supertypes in the dataset;
+  `inferred` when several match. There is no overload resolution beyond arity, no
+  generics, no `var`, and chained calls are not followed. Calls into libraries
+  outside the dataset (JDK, Swing, JUnit), methods inherited from them, and
+  unresolvable receivers are counted in the manifest, not emitted. A type name
+  declared twice is never resolved.
+- **Annotations** are recorded per symbol (qualified where an import shows it);
+  `@Deprecated` is shown, a Javadoc `@deprecated` tag is not read.
+- **`USES_API`** links an add-on module to the core types it imports; it comes from
+  resolved imports only, so it misses references that need no import.
 - **Imports and inheritance** are resolved by qualified name against the declared
   types in the dataset; types outside it stay `syntactic`.
 - **Search covers declared types**, not methods or fields.

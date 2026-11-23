@@ -20,7 +20,7 @@ differs, and what is planned next. Update it with each change that moves an item
 | M0 Reconnaissance | Done | Layout, history volume, Gradle and help locations are reflected in the generator and README. |
 | M1 Static foundation | Done | Schema, CLI, validator, frontend shell, Pages deployment, CI with tests and browser smoke tests. |
 | M2 Git history | Done | Full DAG, refs, tags, file changes, renames, year shards, timeline-ready data. |
-| M3 Code intelligence | Partial | Types, members, imports, inheritance, same-type call resolution. Open: annotations, `USES_API`, semantic resolution across types. |
+| M3 Code intelligence | Mostly done | Types, members, annotations, imports, inheritance, calls resolved by declared type and arity (including supertypes and static imports), `USES_API`. Open: overload resolution beyond arity, generics, `var` and chained calls (a compiler-backed pass), Javadoc `@deprecated`. |
 | M4 Ecosystem | Mostly done | Modules, add-ons, dependencies, help pages, help link graph, per-page history, languages. Open: JavaHelp navigation (`toc.xml`, `index.xml`, `map.jhm`), core API links. |
 | M5 Historical analysis | Not started | Symbol events, snapshots, `MODIFIED_BY`, `INTRODUCED_BY`, `PART_OF`, automated milestone suggestions. Current structure only today. |
 | M6 Polish | In progress | Search, stories, README, smoke tests done. Accessibility audit, performance work and licensing open. |
@@ -66,9 +66,18 @@ Built with D3 modules for scales, zoom, brush and hierarchy, rendered as SVG by 
   (Auth Helper, browser-based and client-script authentication, TOTP, OAuth, assisted auth).
 - Open ideas: an optional `zap-hud` source repository so HUD commits can be cited.
 
+- **Release and tag milestones.** Link releases and tags (zaproxy `v2.x`, weekly tags,
+  zap-extensions per-add-on release tags, zap-core-help) to the history explorer, the
+  stories and the timeline: a `Milestone` entity per release with its date, tag, commit
+  and release-notes page, shown as markers on the timeline and the history view, and
+  citable from story chapters (replacing hand-written release dates). Tags are already
+  in the dataset (`tags.jsonl`); milestones need the release-note pages and a rule for
+  which tags count as releases (skip weekly and RC tags by default).
+
 ## Next
 
-1. Review and commit the drafted stories.
-2. M3: annotations, per-type call resolution beyond the same type, `USES_API`.
-3. Timeline, then starburst.
-4. Per-module shards; accessibility audit; licence.
+1. Review the draft stories with the maintainers and mark them `reviewed`.
+2. M3 remainder: a compiler-backed pass for overloads, generics and chained calls (optional).
+3. Release and tag milestones (entity, history view, stories).
+4. Timeline (with milestone markers), then starburst.
+5. Per-module shards; accessibility audit; licence.
