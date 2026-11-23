@@ -111,3 +111,17 @@ test("releases list, a release page, and release markers in history", async ({ p
   await expect(page.getByLabel("Releases this year")).toBeVisible();
   await noError(page);
 });
+
+test("timeline draws three repositories with markers, zooms and has a table", async ({ page }) => {
+  await page.goto("timeline");
+  await noError(page);
+  await expect(page.getByRole("img", { name: /Commits per repository/ })).toBeVisible();
+  expect(await page.locator("svg a[href*='/release/']").count()).toBeGreaterThan(0);
+  expect(await page.locator("svg a[href*='/stories/']").count()).toBeGreaterThan(0);
+  const status = page.locator("span.text-slate-500", { hasText: " bars" });
+  await expect(status).toContainText("monthly bars");
+  await page.getByRole("combobox", { name: /Jump to/ }).selectOption("2024");
+  await expect(status).toContainText("weekly bars");
+  await page.getByText("Table: commits per year").click();
+  await expect(page.getByRole("table", { name: "Commits per year by repository" })).toBeVisible();
+});

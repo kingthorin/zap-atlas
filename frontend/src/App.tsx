@@ -4,6 +4,7 @@ import Home from "./pages/home";
 import Repositories from "./pages/repositories";
 import Architecture from "./pages/architecture";
 import History from "./pages/history";
+import Timeline from "./pages/timeline";
 import Source from "./pages/source";
 import Search from "./pages/search";
 import Stories, { StoryDetail } from "./pages/stories";
@@ -24,6 +25,7 @@ export default function App() {
           <Route path="/repositories" element={<Repositories />} />
           <Route path="/architecture" element={<Architecture />} />
           <Route path="/history" element={<History />} />
+          <Route path="/timeline" element={<Timeline />} />
           <Route path="/source" element={<Source />} />
           <Route path="/search" element={<Search />} />
           <Route path="/stories" element={<Stories />} />

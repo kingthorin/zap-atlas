@@ -40,7 +40,7 @@ differs, and what is planned next. Update it with each change that moves an item
 
 ## Planned: interactive resources
 
-1. **Zoomable timeline.** Three repositories stacked or overlaid. A small precomputed
+1. **Zoomable timeline** (first version done: `timeline.json` monthly commits and active authors per repo, weekly bars from the year shards when zoomed in, release and story markers, table alternative; open: line counts, sub-section selector, Hall of Fame and core-team overlays; the generator never records `additions`/`deletions`, they are 0 in every file change). Three repositories stacked or overlaid. A small precomputed
    monthly aggregate (commits, lines added and removed, active contributors) per repo
    and module or add-on; zooming below a month loads the per-year commit shards.
    Sub-section selector (repo, add-on, language, path prefix). Overlays: release tags,
@@ -94,5 +94,5 @@ Built with D3 modules for scales, zoom, brush and hierarchy, rendered as SVG by 
 1. Review the draft stories with the maintainers and mark them `reviewed`.
 2. M3 remainder: a compiler-backed pass for overloads, generics and chained calls (optional).
 3. ~~Release and tag milestones~~ (done: `milestones.jsonl`, Releases page, history markers, add-on release lists, story references).
-4. Timeline (with milestone markers), then the graph explorer.
+4. ~~Timeline~~ (first version done), then the graph explorer.
 5. Per-module shards; accessibility audit; licence.

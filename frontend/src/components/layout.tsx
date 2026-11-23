@@ -28,6 +28,9 @@ const TagIcon = () => (
 const CylinderIcon = () => (
   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><ellipse cx="12" cy="5" rx="8" ry="3" /><path d="M4 5v14c0 1.66 3.58 3 8 3s8-1.34 8-3V5" /><path d="M4 12c0 1.66 3.58 3 8 3s8-1.34 8-3" /></svg>
 );
+const TimelineIcon = () => (
+  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M3 6h10M3 12h18M3 18h14" /><circle cx="17" cy="6" r="2" /><circle cx="7" cy="18" r="0.5" /></svg>
+);
 const SearchIcon = () => (
   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
 );
@@ -37,6 +40,7 @@ export const NAV = [
   { to: "/repositories", label: "Repositories", icon: CylinderIcon },
   { to: "/architecture", label: "Architecture", icon: DatabaseIcon },
   { to: "/history", label: "History", icon: HistoryIcon },
+  { to: "/timeline", label: "Timeline", icon: TimelineIcon },
   { to: "/releases", label: "Releases", icon: TagIcon },
   { to: "/source", label: "Source", icon: FilesIcon },
   { to: "/stories", label: "Stories", icon: BookIcon },

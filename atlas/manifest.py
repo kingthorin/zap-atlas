@@ -19,6 +19,7 @@ from atlas.git_history import extract as extract_history
 from atlas.languages import count_languages
 from atlas.milestones import build_milestones
 from atlas.stories import load_stories
+from atlas.timeline import write_timeline
 from atlas.java_parser import JavaParser
 from atlas.schema import (
     SCHEMA_VERSION, GENERATOR_VERSION, Manifest, DatasetInventory,
@@ -126,6 +127,7 @@ class AtlasGenerator:
                 index.setdefault(repo, {}).setdefault(year, {})[kind] = len(rows)
         (output_dir / HISTORY_INDEX).write_text(json.dumps(index, indent=1), encoding="utf-8")
         names.append(HISTORY_INDEX)
+        names.append(write_timeline(output_dir, self.rows[CHUNK_COMMITS]))
         return names
 
     def _process_repo(self, repo, repo_path: Path) -> None:

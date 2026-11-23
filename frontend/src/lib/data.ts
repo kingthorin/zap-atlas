@@ -169,3 +169,11 @@ export async function loadMilestones(): Promise<Milestone[]> {
 export function githubTag(repo: Repo, tag: string): string {
   return `${repo.url.replace(/\.git$/, "")}/tree/${tag}`;
 }
+
+/** repo -> "YYYY-MM" -> [commits, distinct authors]; small, drives the zoomable timeline. */
+export type Timeline = Record<string, Record<string, [number, number]>>;
+let timelineCache: Promise<Timeline> | null = null;
+export function loadTimeline(): Promise<Timeline> {
+  if (!timelineCache) timelineCache = fetchText(`${DATA_DIR}/timeline.json`).then(t => JSON.parse(t));
+  return timelineCache;
+}

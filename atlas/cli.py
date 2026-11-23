@@ -32,6 +32,9 @@ def _build_parser() -> argparse.ArgumentParser:
     p_index = sub.add_parser("index", help="(Re)build the static search index for a generated dataset")
     p_index.add_argument("dataset", type=Path)
 
+    p_timeline = sub.add_parser("timeline", help="Rebuild timeline.json from the commit shards of a dataset")
+    p_timeline.add_argument("dataset", type=Path)
+
     p_validate = sub.add_parser("validate", help="Validate generated data")
     p_validate.add_argument("dataset", type=Path)
     p_validate.add_argument("--contract", action="store_true",
@@ -58,6 +61,10 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "index":
         from atlas.search_index import build_search_index
         print(f"[atlas] index {args.dataset}: {build_search_index(args.dataset)}")
+        return 0
+    if args.command == "timeline":
+        from atlas.timeline import rebuild_from_shards
+        print(f"[atlas] wrote {rebuild_from_shards(args.dataset)}")
         return 0
     if args.command == "report":
         from atlas.report import build_report
