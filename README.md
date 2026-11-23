@@ -1,13 +1,14 @@
 # ZAP Atlas
 
 A static website for exploring the history, architecture, code and ecosystem of
-ZAP. It is generated from three upstream repositories:
+ZAP. It is generated from four upstream repositories:
 
 | Repository | Role |
 |---|---|
 | [zaproxy/zaproxy](https://github.com/zaproxy/zaproxy) | ZAP core |
 | [zaproxy/zap-extensions](https://github.com/zaproxy/zap-extensions) | Add-ons |
 | [zaproxy/zap-core-help](https://github.com/zaproxy/zap-core-help) | Core help |
+| [zaproxy/zap-hud](https://github.com/zaproxy/zap-hud) | Heads Up Display add-on |
 
 There is no backend, database or external service. A Python generator analyses
 the repositories into chunked JSON/JSONL files; a React app loads them on demand.
@@ -56,7 +57,7 @@ python -m atlas index ./data                                  # rebuild only the
 python -m pytest tests
 ```
 
-A full run clones three repositories with complete history and takes about ten
+A full run clones four repositories with complete history and takes about ten
 minutes. `ATLAS_JAVA_MAX=100` limits Java files per repository for quick trials.
 
 To run the site against the generated data:

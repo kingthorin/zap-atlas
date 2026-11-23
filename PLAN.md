@@ -10,7 +10,7 @@ differs, and what is planned next. Update it with each change that moves an item
 |---|---|---|
 | Publish a generated site to a `gh-pages` branch | Deploy a GitHub Pages artifact | `files.jsonl` exceeded GitHub's 100 MB file limit; Pages artifacts have no per-file limit. Decided with the maintainer. |
 | Data chunked by repository, module and time | Commits and file changes by repo and year; symbols and relationships by module (modules over 3 MB split by directory); small chunks flat | Done: largest data file is about 3 MB. |
-| Three source repositories | Three, plus `zap-hud` as an optional fourth (not added) | The HUD lives in its own repository. |
+| Three source repositories | Four: `zap-hud` is added | The HUD lives in its own repository. It is a single-project Gradle repo, so its `src` directory is its one module. |
 | Stories are curated | Curated JSON, status `draft` or `reviewed`; drafts are labelled | Only maintainer-reviewed stories should read as authoritative. |
 
 ## Milestones
@@ -85,7 +85,6 @@ Built with D3 modules for scales, zoom, brush and hierarchy, rendered as SVG by 
 - Feature stories: Spider, Passive Scan, Params, Encoder, Network, Exim, Reports,
   dark mode and themes, Docker images, the Automation Framework, authentication
   (Auth Helper, browser-based and client-script authentication, TOTP, OAuth, assisted auth).
-- Open ideas: an optional `zap-hud` source repository so HUD commits can be cited.
 
 - **Release and tag milestones.** Link releases and tags (zaproxy `v2.x`, weekly tags,
   zap-extensions per-add-on release tags, zap-core-help) to the history explorer, the
