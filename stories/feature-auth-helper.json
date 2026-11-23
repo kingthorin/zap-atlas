@@ -1,37 +1,11 @@
 {
-  "title": "Authentication: from core methods to the Authentication Helper",
-  "description": "Authentication support as recorded in the zaproxy and zap-extensions histories: core authentication methods, 2018 authentication work in core, and the authhelper add-on from January 2023 with browser based, client script, OAuth2 and AI assisted authentication.",
+  "title": "The Authentication Helper add-on",
+  "description": "The authhelper add-on in zap-extensions from January 2023: browser based, client script, OAuth2 and AI assisted authentication. Earlier authentication work in core is in the Google Summer of Code 2018 story.",
   "audience": "developers",
   "group": "features",
-  "date": "2013-08-01",
+  "date": "2023-01-10",
   "status": "draft",
   "chapters": [
-    {
-      "title": "Authentication methods in core, 2013",
-      "text": "The zaproxy commit \"Changed core interfaces and model for Session Management methods, Authentication methods and Context.\" is dated 2013-08-01. In zap-extensions the authstats add-on, whose CHANGELOG lists \"1 - 2016-08-16\" as \"First version\", records authentication statistics; its relocation to its own project is \"authstats: relocate to its own project\" (2019-04-03).",
-      "entities": [
-        "repo:zaproxy",
-        "addon:authstats"
-      ],
-      "commits": [
-        "commit:zaproxy:e22131a1da762b0270d3c686976799456c989835",
-        "commit:zap-extensions:79a788ae1551fcd8a7a04b57c1b51aa1b5fbc0d3"
-      ]
-    },
-    {
-      "title": "2018: authentication work in core by a GSoC student",
-      "text": "The story on Google Summer of Code lists Kajan Mohanagandhirasa's Authentication helper project for 2018. In zaproxy, commits by the author kajan include \"support acsrf token in post-based authentication\" (2018-05-21), \"changes for authentication status scanning\" (2018-08-02), \"required changes for automated authentication configuration\" (2018-08-05) and \"Allow to specify the URI of the login page\" (2018-08-29). The merge \"Merge pull request #4898 from KajanM/changes-for-authentication-helper-add-on\" is dated 2018-08-06. These commits are in core; the authhelper add-on in zap-extensions begins later.",
-      "entities": [
-        "repo:zaproxy"
-      ],
-      "commits": [
-        "commit:zaproxy:7225261142930e7796c9d89fe5bddf48533abc33",
-        "commit:zaproxy:da867fb0010517d3307399bc10053a7d16b6bb9e",
-        "commit:zaproxy:e5933c39f33cf1a1d973c2ad073585fbc1a8ca1c",
-        "commit:zaproxy:c01cd81fe5f5ca690ab4d3a873dad730dd7f7384",
-        "commit:zaproxy:22aee6b470683c24edecd98623f36ce78dac6474"
-      ]
-    },
     {
       "title": "authhelper starts in January 2023",
       "text": "\"Authhelper - first version\" (2023-01-10) is the first commit under addOns/authhelper. The CHANGELOG lists 0.1.0 (2023-01-17) with \"Support of authentication request identification and configuration.\", 0.2.0 (2023-02-08) with \"Support for header based session management.\" and 0.3.0 (2023-03-13) with \"Support for browser based authentication.\" The related commit \"Authhelper: browser based authentication\" is dated 2023-03-01.",

@@ -10,20 +10,23 @@ const XIcon = () => (
 const MapIcon = () => (
   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" /></svg>
 );
-const FileIcon = () => (
-  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+const FilesIcon = () => (
+  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20 7h-3a2 2 0 01-2-2V2" /><path d="M9 18a2 2 0 01-2-2V4a2 2 0 012-2h7l4 4v10a2 2 0 01-2 2z" /><path d="M3 7.6v12.8A1.6 1.6 0 004.6 22h9.8" /></svg>
 );
 const DatabaseIcon = () => (
   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.022.547M6 5a2 2 0 012-2h8a2 2 0 012 2v2.586a1 1 0 00.293.707l2.143 2.143c.04.04.075.086.105.124l.508.508a1 1 0 00.293.293l.508.508c.038.038.084.065.124.105l2.143 2.143a1 1 0 00.707.293V19a2 2 0 01-2 2H6a2 2 0 01-2-2V5zM9 14a2 2 0 00-2-2H5a2 2 0 00-2 2v1a2 2 0 002 2h2a2 2 0 002-2zm0 0l2-2m-2 2l2 2m-2-2H7.2a2 2 0 00-1.134.894L4.226 16.8a2 2 0 00-.338.937V19a2 2 0 002 2h10a2 2 0 002-2v-1.2a2 2 0 00-.338-.937l-1.268-.634a2 2 0 00-1.134-.894H11a2 2 0 00-2-2z" /></svg>
 );
-const ActivityIcon = () => (
-  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" /></svg>
+const HistoryIcon = () => (
+  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 109-9 9.75 9.75 0 00-6.74 2.74L3 8" /><path d="M3 3v5h5" /><path d="M12 7v5l4 2" /></svg>
 );
 const BookIcon = () => (
-  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" /></svg>
+  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z" /><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z" /></svg>
 );
 const TagIcon = () => (
   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M3 12V5a2 2 0 012-2h7l9 9a2 2 0 010 2.83l-6.17 6.17a2 2 0 01-2.83 0L3 12z" /></svg>
+);
+const CylinderIcon = () => (
+  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><ellipse cx="12" cy="5" rx="8" ry="3" /><path d="M4 5v14c0 1.66 3.58 3 8 3s8-1.34 8-3V5" /><path d="M4 12c0 1.66 3.58 3 8 3s8-1.34 8-3" /></svg>
 );
 const SearchIcon = () => (
   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
@@ -31,11 +34,11 @@ const SearchIcon = () => (
 
 export const NAV = [
   { to: "/", label: "Overview", icon: MapIcon },
-  { to: "/repositories", label: "Repositories", icon: FileIcon },
+  { to: "/repositories", label: "Repositories", icon: CylinderIcon },
   { to: "/architecture", label: "Architecture", icon: DatabaseIcon },
-  { to: "/history", label: "History", icon: ActivityIcon },
+  { to: "/history", label: "History", icon: HistoryIcon },
   { to: "/releases", label: "Releases", icon: TagIcon },
-  { to: "/source", label: "Source", icon: FileIcon },
+  { to: "/source", label: "Source", icon: FilesIcon },
   { to: "/stories", label: "Stories", icon: BookIcon },
   { to: "/search", label: "Search", icon: SearchIcon },
 ];
