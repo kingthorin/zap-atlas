@@ -27,8 +27,6 @@ jobs:
   analyze:
     name: Analyze sources & validate data
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     outputs:
       sources_json: ${{ steps.sources.outputs.sources_json }}
     steps:
