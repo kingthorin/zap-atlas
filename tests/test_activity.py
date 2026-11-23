@@ -1,6 +1,6 @@
 import json
 
-from atlas.activity import build_activity, rebuild_from_shards
+from atlas.activity import build_activity, build_module_timeline, rebuild_from_shards
 
 MODULES = [{"id": "module:r:addOns/a", "repository": "r", "path": "addOns/a"},
            {"id": "module:r:addOns", "repository": "r", "path": "addOns"},
@@ -52,6 +52,16 @@ def test_rebuild_from_shards(tmp_path):
                        ("symbols", [{"repository": "r", "file": "file:r:sha:addOns/a/A.java"}])):
         (tmp_path / kind / "r").mkdir(parents=True)
         (tmp_path / kind / "r" / "2020.jsonl").write_text(json.dumps(rows[0]) + "\n")
-    assert rebuild_from_shards(tmp_path) == ["module_activity.json", "file_activity.json"]
+    assert rebuild_from_shards(tmp_path) == ["module_activity.json", "file_activity.json", "timeline_modules.json"]
     assert json.loads((tmp_path / "module_activity.json").read_text())["module:r:addOns/a"]["lines"] == 5
     assert json.loads((tmp_path / "file_activity.json").read_text())["r"]["addOns/a/A.java"] == ["2020-01-05", "2020-01-05", 1, 5]
+
+
+def test_module_timeline_counts_commits_authors_and_lines_per_month():
+    commits = [dict(c, author_name=a) for c, a in zip(COMMITS, ("ann", "bob", "ann", "bob"))]
+    files = [_fc("1", "addOns/a/A.java", 10, 1), _fc("1", "addOns/a/B.java", 5, 0),          # one commit, two files: counts once
+             _fc("3", "addOns/a/A.java", 0, 4), _fc("3", "addOns/other/C.java", 2, 0),        # 2023-03: a, and the parent module
+             _fc("4", "src/Old.java", 0, 0, kind="R", old="src/Gone.java"), _fc("2", "src/Gone.java", 3, 3)]
+    out = build_module_timeline(MODULES, commits, files)
+    assert out["module:r:addOns/a"] == {"2020-01": [1, 1, 15, 1], "2023-03": [1, 1, 0, 4]}
+    assert out["module:r:addOns"] == {"2023-03": [1, 1, 2, 0]}

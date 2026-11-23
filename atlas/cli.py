@@ -39,7 +39,7 @@ def _build_parser() -> argparse.ArgumentParser:
     p_reshard = sub.add_parser("reshard", help="Rewrite symbols and relationships of a dataset into per-module shards")
     p_reshard.add_argument("dataset", type=Path)
 
-    p_timeline = sub.add_parser("timeline", help="Rebuild timeline.json, module_activity.json and file_activity.json from the shards of a dataset")
+    p_timeline = sub.add_parser("timeline", help="Rebuild timeline.json and the activity files from the shards of a dataset")
     p_timeline.add_argument("dataset", type=Path)
 
     p_validate = sub.add_parser("validate", help="Validate generated data")

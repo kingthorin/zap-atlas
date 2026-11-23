@@ -17,7 +17,7 @@ def test_history_is_sharded_by_repo_and_year(tmp_path):
     ]
     names = gen._write_history_shards(tmp_path)
     assert set(names) == {"commits/r/2021.jsonl", "commits/r/2022.jsonl",
-                          "files/r/2021.jsonl", "files/r/2022.jsonl", "history_index.json", "timeline.json", "module_activity.json", "file_activity.json"}
+                          "files/r/2021.jsonl", "files/r/2022.jsonl", "history_index.json", "timeline.json", "module_activity.json", "file_activity.json", "timeline_modules.json"}
     assert len((tmp_path / "files/r/2022.jsonl").read_text().splitlines()) == 2
     assert json.loads((tmp_path / "history_index.json").read_text()) == {
         "r": {"2021": {"commits": 1, "files": 1}, "2022": {"commits": 1, "files": 2}}}

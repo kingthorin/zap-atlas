@@ -4,7 +4,7 @@ import { scaleUtc } from "d3-scale";
 import { select } from "d3-selection";
 import { zoom as d3zoom, zoomIdentity, ZoomBehavior, ZoomTransform } from "d3-zoom";
 import { utcMonday } from "d3-time";
-import { Milestone, Story, Timeline, loadCommits, loadMilestones, loadStories, loadTimeline } from "../lib/data";
+import { Milestone, ModuleTimeline, Story, Timeline, loadCommits, loadMilestones, loadModuleTimeline, loadStories, loadTimeline } from "../lib/data";
 import { Loading, ErrorBox } from "../components/ui";
 
 const W = 1000, ML = 124, MR = 12, LANE_H = 120, TOP = 18, STORY_H = 44, AXIS_H = 26;
@@ -29,6 +29,8 @@ const slugOf = (id: string) => id.split(":").pop()!;
 
 export default function TimelinePage() {
   const [tl, setTl] = useState<Timeline | null>(null);
+  const [modTl, setModTl] = useState<ModuleTimeline>({});
+  const [focus, setFocus] = useState("");                       // module id, or "" for all activity
   const [milestones, setMilestones] = useState<Milestone[]>([]);
   const [stories, setStories] = useState<Story[]>([]);
   const [error, setError] = useState("");
@@ -45,6 +47,7 @@ export default function TimelinePage() {
 
   useEffect(() => {
     loadTimeline().then(setTl).catch(e => setError(e.message));
+    loadModuleTimeline().then(setModTl).catch(() => {});
     loadMilestones().then(setMilestones).catch(() => {});
     loadStories().then(setStories).catch(() => {});
   }, []);
@@ -106,7 +109,11 @@ export default function TimelinePage() {
     }
   }, [weekly, tl, repos, visibleYears, detail]);
 
+  const focusRepo = focus.split(":")[1] ?? "", focusPath = focus.split(":").slice(2).join(":");
   const bars = (repo: string): { bars: Bar[]; mode: "weekly" | "monthly" } => {
+    // One module's activity is monthly only: weekly detail would need the file-change shards.
+    if (focus && repo === focusRepo && modTl[focus])
+      return { mode: "monthly", bars: Object.entries(modTl[focus]).map(([m, row]) => ({ x0: monthStart(m), x1: monthEnd(m), v: pick(metric, row) })) };
     const ready = weekly && visibleYears.every(y => detail[repo]?.[y] || !Object.keys(tl![repo]).some(m => m.startsWith(y)));
     if (ready) {
       const byWeek = new Map<number, { n: number; a: Set<string>; add: number; del: number }>();
@@ -128,6 +135,7 @@ export default function TimelinePage() {
     const mode = laneData[i].mode, out = new Map<number, RelBin>();
     for (const m of milestones) {
       if (m.repository !== repo || m.kind !== "addon-release") continue;
+      if (focus && repo === focusRepo && m.addon !== `addon:${focusPath.split("/").pop()}`) continue;      // the focused add-on's releases only
       const start = binStart(new Date(m.date), mode), key = start.getTime();
       (out.get(key) ?? out.set(key, { x0: start, x1: binEnd(start, mode), items: [] }).get(key)!).items.push(m);
     }
@@ -164,18 +172,19 @@ export default function TimelinePage() {
     const rel = releaseBins[lane].get(binStart(new Date(at), mode).getTime());
     const inStrip = pt.y >= TOP + STORY_H + lane * LANE_H + LANE_H - 26 + 5;
     const rect = box.getBoundingClientRect();
+    const laneName = (i: number) => (focus && repos[i] === focusRepo ? `${repos[i]} · ${focusPath}` : repos[i]);
     const label = (d: Date) => (mode === "weekly" ? `week of ${d.toISOString().slice(0, 10)}` : d.toISOString().slice(0, 7));
     const at2 = { x: e.clientX - rect.left, y: e.clientY - rect.top };
     const names = (r: RelBin) => `${r.items.length} add-on ${r.items.length === 1 ? "release" : "releases"}`;
     if (inStrip) {
       if (!rel) return setTip(null);
       const list = rel.items.slice(0, 6).map(m => m.title).join(", ") + (rel.items.length > 6 ? ` and ${rel.items.length - 6} more` : "");
-      return setTip({ ...at2, text: `${repos[lane]} · ${label(rel.x0)} · ${names(rel)}: ${list}` });
+      return setTip({ ...at2, text: `${laneName(lane)} · ${label(rel.x0)} · ${names(rel)}: ${list}` });
     }
     if (!hit) return setTip(null);
     const when = label(hit.x0);
     const what = `${hit.v.toLocaleString()} ${unit(metric, hit.v)}`;
-    setTip({ ...at2, text: `${repos[lane]} · ${when} · ${what}${rel ? ` · ${names(rel)}` : ""}` });
+    setTip({ ...at2, text: `${laneName(lane)} · ${when} · ${what}${rel ? ` · ${names(rel)}` : ""}` });
   };
   // A click on a release block opens the Releases page for that repository and period.
   const onClick = (e: React.MouseEvent<SVGRectElement>) => {
@@ -212,6 +221,15 @@ export default function TimelinePage() {
             <option value="deleted">Lines deleted</option>
           </select>
         </label>
+        {Object.keys(modTl).length > 0 && (
+          <label>Focus{" "}
+            <select className="border border-slate-300 rounded px-2 py-1 bg-white max-w-[13rem]" value={focus} onChange={e => setFocus(e.target.value)}>
+              <option value="">all activity</option>
+              {Object.keys(modTl).sort((a, b) => a.split(":").slice(1).join(":").localeCompare(b.split(":").slice(1).join(":"))).map(id => (
+                <option key={id} value={id}>{id.split(":")[1]} · {id.split(":").slice(2).join(":")}</option>))}
+            </select>
+          </label>
+        )}
         <label>Jump to{" "}
           <select className="border border-slate-300 rounded px-2 py-1 bg-white" value="" onChange={e => e.target.value && jumpToYear(+e.target.value)}>
             <option value="">year</option>
@@ -224,7 +242,7 @@ export default function TimelinePage() {
         <button className={btn} onClick={() => zoomBy(1 / 1.5)} aria-label="Zoom out">−</button>
         <button className={btn} onClick={reset}>Reset</button>
         <span className="text-slate-500">
-          {d0.toISOString().slice(0, 10)} to {d1.toISOString().slice(0, 10)} · {weekly ? "weekly" : "monthly"} bars
+          {d0.toISOString().slice(0, 10)} to {d1.toISOString().slice(0, 10)} · {weekly ? "weekly" : "monthly"} bars{focus && weekly ? " (the focused module is monthly only)" : ""}
         </span>
       </div>
       <div ref={wrap} className="relative rounded-xl border border-slate-200 bg-white p-2" tabIndex={0} role="group" onKeyDown={onKey}
@@ -248,7 +266,7 @@ export default function TimelinePage() {
               const vis = all.filter(b => inView(b.x0, b.x1));
               const max = Math.max(1, ...vis.map(b => b.v));
               return (
-                <g key={repo} pointerEvents="none">
+                <g key={repo} pointerEvents="none" opacity={focus && repo !== focusRepo ? 0.25 : 1}>
                   <line x1={ML} x2={W - MR} y1={top + h + 4} y2={top + h + 4} stroke="currentColor" strokeOpacity={0.3} className="text-slate-400" />
                   {vis.map(b => {
                     const bh = Math.max(1, (b.v / max) * h);
@@ -263,7 +281,7 @@ export default function TimelinePage() {
                       </g>
                     );
                   })()}
-                  <text x={W - MR - 4} y={top + 14} textAnchor="end" fontSize="10" fill="currentColor" className="text-slate-500">max {max} per {mode === "weekly" ? "week" : "month"}</text>
+                  <text x={W - MR - 4} y={top + 14} textAnchor="end" fontSize="10" fill="currentColor" className="text-slate-500">max {max} per {mode === "weekly" ? "week" : "month"}{focus && repo === focusRepo ? ` · ${focusPath}` : ""}</text>
                 </g>
               );
             })}

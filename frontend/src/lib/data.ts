@@ -229,3 +229,11 @@ export function loadFileActivity(): Promise<FileActivity> {
   if (!fileActivityCache) fileActivityCache = fetchText(`${DATA_DIR}/file_activity.json`).then(t => JSON.parse(t));
   return fileActivityCache;
 }
+
+/** Module id -> "YYYY-MM" -> [commits, distinct authors, lines added, lines deleted], on each file's current path. */
+export type ModuleTimeline = Record<string, Record<string, number[]>>;
+let moduleTimelineCache: Promise<ModuleTimeline> | null = null;
+export function loadModuleTimeline(): Promise<ModuleTimeline> {
+  if (!moduleTimelineCache) moduleTimelineCache = fetchText(`${DATA_DIR}/timeline_modules.json`).then(t => JSON.parse(t));
+  return moduleTimelineCache;
+}
