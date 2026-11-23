@@ -35,7 +35,7 @@ differs, and what is planned next. Update it with each change that moves an item
 - `atlas inspect` and `atlas history` commands (stubs today).
 - Accessibility audit: contrast in both themes, keyboard paths, reduced motion, text alternatives for charts.
 - Licence file and attribution notices for the Atlas repository.
-- Performance: the largest zap-extensions shards (relationships 59 MB, symbols 30 MB raw) exceed the "module graph under 1 MB" goal; shard per module.
+- Performance: the largest zap-extensions shards (relationships 83 MB, symbols 32 MB raw) exceed the "module graph under 1 MB" goal; shard per module.
 - Least privilege: the analyze job does not need `contents: write`.
 
 ## Planned: interactive resources
@@ -46,12 +46,27 @@ differs, and what is planned next. Update it with each change that moves an item
    Sub-section selector (repo, add-on, language, path prefix). Overlays: release tags,
    story milestones, Hall of Fame projects, core-team changes. Stories can link to a
    range or module.
-2. **Weighted starburst code explorer.** Sunburst with the three repositories as
-   first-level nodes, then module or add-on, directory, file and symbol. Weight by
-   lines, commits (churn) or recent activity; colour by language or recency. Per-repo
-   tree file with lines, commit count and last change per file (rename-following);
-   small slices collapse; deeper levels load on click; year slider replays activity.
-   Keyboard-navigable tree and table alternative.
+2. **Weighted graph explorer (GitNexus-style).** A force-directed knowledge graph of
+   all three repositories together, rendered with WebGL (Sigma.js and Graphology, both
+   MIT; GitNexus itself is PolyForm Noncommercial, so we take the idea, not its code).
+   - Nodes: repositories, modules and add-ons, directories, files, types, and
+     optionally methods. Size by lines, commits (churn) or relationship count; colour
+     by repository or language, with a recency mode.
+   - Edges: the relationships we already have (`CALLS`, `IMPORTS`, `EXTENDS`,
+     `IMPLEMENTS`, `USES_API`, `DEPENDS_ON`, `REFERENCES`, `DOCUMENTS`), styled by type
+     and by evidence level (resolved, inferred, syntactic), filterable.
+   - Scale: 511,000 entities will not fit on screen, so start at module level (about 130
+     modules, edges aggregated from calls, imports, `USES_API` and `DEPENDS_ON`) and
+     expand a module into its files and types on click; aggregate small clusters and
+     keep a level-of-detail cap per view.
+   - Interaction: click to inspect and open the symbol, module or help page; neighbour
+     highlight; search; filter by repo, language, relationship type and evidence; a
+     file tree beside it; a year slider that fades nodes by first and last activity.
+   - Accessibility: a keyboard-navigable list and a table of the selected node's
+     neighbours alongside the canvas.
+   - Data: a per-module aggregate edge file and per-module node files, so a view loads
+     only what it shows (this also motivates per-module shards).
+   A hierarchical sunburst stays an optional second view of the same data.
 3. **Add-on dependency network** and a **core-team swimlane** from the credits history.
 
 Built with D3 modules for scales, zoom, brush and hierarchy, rendered as SVG by React
