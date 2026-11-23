@@ -32,7 +32,7 @@ differs, and what is planned next. Update it with each change that moves an item
 - Source explorer file page with file history.
 - Architecture graph with drill-down: done as the Graph page (modules, expandable into types) and the Source page's module links. Open: files and directories as nodes.
 - Validation: done in `atlas/integrity.py` (manifest hashes and sizes, unlisted files, schema version and required fields, pinned 40-character SHAs and revision references, relative paths, shard indexes against shard files, story text artefacts). Open: stricter per-field types, and checking quoted text against CHANGELOGs and source files (only commit subjects can be checked from the dataset, and that is a warning).
-- `atlas inspect` and `atlas history` commands (stubs today). Planned: `inspect --entity <id> --dataset <dir>` prints a row with its edges by type and evidence, its shard and, for add-ons, dependencies and citing stories; `history --repository <name>` prints commits by year, releases, busiest months and top contributors, with `--year`, `--since` and `--path` (file history).
+- `atlas inspect` is done (`--entity <id>`, `--dataset`, `--limit`: the row, its edges by type and evidence, the shard it came from, add-on dependencies and releases, module languages and links, and citing stories; a bare name means an add-on). `atlas history` is still a stub. Planned: `history --repository <name>` prints commits by year, releases, busiest months and top contributors, with `--year`, `--since` and `--path` (file history).
 - Accessibility audit: first pass done. axe (WCAG 2.1 A and AA) passes on 15 pages in both themes, and no page scrolls sideways at 390 px (both run in `e2e/audit.spec.ts`). Not covered: a keyboard-only walkthrough, screen reader testing, and contrast of the graph canvas labels in dark mode.
 - Licence file and attribution notices for the Atlas repository: done. `LICENSE` is Apache 2.0, and the README says the logo artwork and the upstream-derived data keep their own licences. No copyright holder or per-file headers yet.
 - Performance: symbols and relationships are sharded per module (done); the module graph is `module_graph.json` (24 KB). Remaining: the shard index for zap-extensions is 5 MB raw (0.5 MB gzipped).
@@ -102,7 +102,7 @@ Built with D3 modules for scales, zoom, brush and hierarchy, rendered as SVG by 
 4. ~~Timeline~~ (first version done), ~~graph explorer~~ (module level and type expansion done).
 5. ~~Per-module shards~~, ~~workflow `ref` and `repo_refs` inputs~~ (now passed to `atlas analyze --ref/--repo-refs`; `checkout_sources.py` removed; CI passed with empty inputs, a run with `repo_refs` set is still untested),  ~~licence~~, ~~validator integrity checks~~, ~~zap-hud as a fourth repository~~, ~~accessibility first pass~~, ~~least-privilege CI~~ (all done).
 6. Open, roughly in order of value:
-   - `atlas inspect` and `atlas history`.
+   - `atlas history` (`inspect` is done).
    - Line counts: the generator needs `git log --numstat`, a full rerun and heavier file shards; this unlocks a lines metric on the timeline.
    - Graph extras: directories and files as nodes, a year slider, recency colouring, language and evidence filters, a file tree.
    - Timeline extras: sub-section selector (repo, add-on, language, path), Hall of Fame and core-team overlays.

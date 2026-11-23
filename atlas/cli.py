@@ -51,7 +51,9 @@ def _build_parser() -> argparse.ArgumentParser:
     p_report.add_argument("dataset", type=Path)
 
     p_inspect = sub.add_parser("inspect", help="Inspect a single entity")
-    p_inspect.add_argument("--entity", required=True, help="Entity ID, e.g. addon:ascanrules")
+    p_inspect.add_argument("--entity", required=True, help="Entity ID, e.g. addon:ascanrules; a bare name means an add-on")
+    p_inspect.add_argument("--dataset", type=Path, default=DEFAULT_CONFIG.output_dir, help="generated dataset (default: data)")
+    p_inspect.add_argument("--limit", type=int, default=10, help="neighbours listed per edge type")
 
     p_history = sub.add_parser("history", help="Show repository history summary")
     p_history.add_argument("--repository", required=True)
@@ -120,7 +122,16 @@ def cmd_validate(args) -> int:
 
 
 def cmd_inspect(args) -> int:
-    print(f"[atlas] inspect {args.entity} (not yet implemented)")
+    from atlas.inspect import inspect_entity, resolve, suggestions
+    entity = resolve(args.dataset, args.entity)
+    report = inspect_entity(args.dataset, entity, args.limit)
+    if report is None:
+        print(f"[atlas] {entity} is not in {args.dataset}")
+        near = suggestions(args.dataset, args.entity.split(":")[-1])
+        if near:
+            print("  did you mean: " + ", ".join(near))
+        return 1
+    print(report)
     return 0
 
 
