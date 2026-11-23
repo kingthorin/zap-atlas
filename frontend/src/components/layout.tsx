@@ -7,8 +7,8 @@ const MenuIcon = () => (
 const XIcon = () => (
   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
 );
-const GlobeIcon = () => (
-  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2 12h20M12 2v20" /></svg>
+const MapIcon = () => (
+  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" /></svg>
 );
 const FileIcon = () => (
   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
@@ -27,7 +27,7 @@ const SearchIcon = () => (
 );
 
 export const NAV = [
-  { to: "/", label: "Overview", icon: GlobeIcon },
+  { to: "/", label: "Overview", icon: MapIcon },
   { to: "/repositories", label: "Repositories", icon: FileIcon },
   { to: "/architecture", label: "Architecture", icon: DatabaseIcon },
   { to: "/history", label: "History", icon: ActivityIcon },
@@ -68,7 +68,7 @@ function useTheme(): [Theme, () => void] {
 function ThemeButton() {
   const [theme, cycle] = useTheme();
   return (
-    <button onClick={cycle} className="px-3 py-2 rounded text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800" aria-label={`Theme: ${THEME_LABEL[theme]} (click to change)`} title="Change theme">
+    <button onClick={cycle} className="site-nav-link" aria-label={`Theme: ${THEME_LABEL[theme]} (click to change)`} title="Change theme">
       Theme: {THEME_LABEL[theme]}
     </button>
   );
@@ -78,24 +78,29 @@ export function Nav() {
   const [open, setOpen] = useState(false);
   const location = useLocation();
   return (
-    <nav className="bg-slate-900 text-white" aria-label="Main navigation">
-      <div className="flex items-center justify-between p-4">
-        <Link to="/" className="font-bold text-xl tracking-tight">ZAP<span className="text-indigo-400">Atlas</span></Link>
-        <button className="md:hidden p-2 text-slate-400 hover:text-white" onClick={() => setOpen(!open)} aria-label="Toggle menu">
-          {open ? <XIcon /> : <MenuIcon />}
-        </button>
-        <div className="hidden md:flex md:flex-row md:space-x-2">
-          <NavLinks pathname={location.pathname} />
-          <ThemeButton />
+    <header className="site-header">
+      <nav aria-label="Main navigation">
+        <div className="flex items-center justify-between px-4 py-2">
+          <Link to="/" className="flex items-center gap-2 font-nav font-bold text-xl tracking-tight text-zap-dark" aria-label="ZAP Atlas home">
+            <img src={`${import.meta.env.BASE_URL}logo.svg`} alt="" width={38} height={38} />
+            <span>ZAP <span className="text-zap-orange-dark">Atlas</span></span>
+          </Link>
+          <button className="md:hidden p-2 text-zap-dark" onClick={() => setOpen(!open)} aria-label="Toggle menu" aria-expanded={open}>
+            {open ? <XIcon /> : <MenuIcon />}
+          </button>
+          <div className="hidden md:flex md:flex-row md:items-center">
+            <NavLinks pathname={location.pathname} />
+            <ThemeButton />
+          </div>
         </div>
-      </div>
-      {open && (
-        <div className="md:hidden flex flex-col p-4 pt-0 space-y-1" onClick={() => setOpen(false)}>
-          <NavLinks pathname={location.pathname} />
-          <ThemeButton />
-        </div>
-      )}
-    </nav>
+        {open && (
+          <div className="md:hidden flex flex-col px-4 pb-3" onClick={() => setOpen(false)}>
+            <NavLinks pathname={location.pathname} />
+            <ThemeButton />
+          </div>
+        )}
+      </nav>
+    </header>
   );
 }
 
@@ -106,7 +111,7 @@ function NavLinks({ pathname }: { pathname: string }) {
         const Icon: any = n.icon;
         const active = pathname === n.to;
         return (
-          <Link key={n.to} to={n.to} className={`flex items-center gap-2 px-3 py-2 rounded text-sm font-medium transition ${active ? "bg-indigo-500/20 text-indigo-400" : "text-slate-300 hover:text-white hover:bg-slate-800"}`} aria-current={active ? "page" : undefined}>
+          <Link key={n.to} to={n.to} className="site-nav-link" aria-current={active ? "page" : undefined}>
             <Icon /> {n.label}
           </Link>
         );
@@ -117,7 +122,7 @@ function NavLinks({ pathname }: { pathname: string }) {
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
+    <div className="min-h-screen bg-zap-lightest text-slate-900 font-sans">
       <Nav />
       <main className="p-4 md:p-6 max-w-6xl mx-auto">
         {children}

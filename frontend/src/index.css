@@ -2,6 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Header and headings follow zaproxy.org: white bar, bold blue-dark links, orange accent. */
+@layer components {
+  .site-header { position: sticky; top: 0; z-index: 50; background: #fff; border-bottom: 1px solid #dceaff; }
+  .site-nav-link { display: flex; align-items: center; gap: .5rem; padding: .5rem .75rem; font-family: theme("fontFamily.nav"); font-weight: 700;
+    font-size: .9rem; color: #00549e; border-bottom: 3px solid transparent; transition: border-color .1s ease; }
+  .site-nav-link:hover { border-bottom-color: #ffa400; }
+  .site-nav-link[aria-current="page"] { border-bottom-color: #ffa400; background: #f4faff; }
+}
+@layer base {
+  h1, h2, h3 { color: #00549e; }
+  :focus-visible { outline: 2px solid #4389ff; outline-offset: 2px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+}
+
 /* Dark theme: remaps the light slate/indigo utilities used by the components. */
 .dark { color-scheme: dark; }
 .dark .bg-white { background-color: #1e293b; }
@@ -16,10 +30,16 @@
 .dark .border-slate-300 { border-color: #334155; }
 .dark .divide-slate-100 > :not([hidden]) ~ :not([hidden]),
 .dark .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-color: #334155; }
-.dark .bg-indigo-100 { background-color: rgb(99 102 241 / 0.2); }
+.dark .bg-indigo-100 { background-color: rgb(67 137 255 / 0.2); }
 .dark .text-indigo-700,
-.dark .text-indigo-600 { color: #a5b4fc; }
+.dark .text-indigo-600 { color: #8fbdf5; }
+.dark h1, .dark h2, .dark h3 { color: #8fbdf5; }
+.dark .site-header { background: #0b2540; border-bottom-color: #123a5c; }
+.dark .site-nav-link { color: #bbdefb; }
+.dark .site-nav-link[aria-current="page"] { background: #123a5c; }
 .dark .bg-red-50 { background-color: rgb(127 29 29 / 0.3); }
 .dark .border-red-200 { border-color: #7f1d1d; }
 .dark .text-red-800 { color: #fecaca; }
-.dark nav { border-bottom: 1px solid #1e293b; }
+.dark .bg-zap-lightest { background-color: #0f172a; }
+.dark .text-zap-dark { color: #bbdefb; }
+.dark .text-zap-orange-dark { color: #ffa400; }

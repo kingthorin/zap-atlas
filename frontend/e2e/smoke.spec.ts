@@ -79,3 +79,12 @@ test("theme choice persists across reloads", async ({ page }) => {
   await page.reload();
   await expect(page.locator("html")).toHaveClass(/dark/);
 });
+
+test("header stays pinned to the top while scrolling", async ({ page }) => {
+  await page.setViewportSize({ width: 1200, height: 600 });
+  await page.goto("history");
+  await page.waitForSelector("a[href*='/commit/']");
+  await page.evaluate(() => window.scrollTo(0, 2000));
+  expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(500);
+  expect(await page.evaluate(() => Math.round(document.querySelector("header")!.getBoundingClientRect().top))).toBe(0);
+});

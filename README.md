@@ -96,6 +96,16 @@ The site's base path is taken from the repository name, so it works under
 Actions are pinned to commit SHAs (the version is in a comment next to each).
 The workflow needs no secrets; the upstream repositories are public.
 
+## Logo and artwork
+
+`frontend/public/logo.svg` (also the favicon) is a plain vector SVG with no embedded
+bitmap. The lightning bolt is the geometry of the official ZAP logo as published in
+[zaproxy.org/img/zap-by-checkmarx.svg](https://www.zaproxy.org/img/zap-by-checkmarx.svg)
+(artwork repository: [zaproxy/zap-swag](https://github.com/zaproxy/zap-swag/tree/master/logos),
+released under a Creative Commons licence). The globe is an orthographic projection of
+the [Natural Earth](https://www.naturalearthdata.com/) 110m land polygons (public domain)
+inside the logo's circle. The header colours come from zaproxy.org's stylesheet.
+
 ## Data and privacy
 
 - Email addresses are never published: author names, commit subjects and

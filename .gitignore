@@ -53,3 +53,7 @@ tests/fixture_sandbox/
 # Playwright output
 frontend/test-results/
 frontend/playwright-report/
+
+# Local copy of the generated dataset for the dev server
+frontend/public/data/
+frontend/dist/
