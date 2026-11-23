@@ -1,0 +1,60 @@
+{
+  "title": "Reporting: from core and BIRT to the reports add-on",
+  "description": "Report generation as recorded in the zaproxy and zap-extensions histories: core report classes in the first import, the 2013 BIRT add-on, the reports add-on from March 2021 and the removal of the older code.",
+  "audience": "developers",
+  "status": "draft",
+  "chapters": [
+    {
+      "title": "Report classes in the first core import",
+      "text": "The zaproxy commit \"Version 1.0.0\" (2010-09-04) includes org/parosproxy/paros/extension/report/ExtensionReport.java, ReportGenerator.java and ReportLastScan.java. Later core commits touch them, for example \"Support Markdown format Fixes #2886 ...\" (2016-09-22) and \"support JSON format for reports add API option to output report in JSON format fix #3559\" (2017-06-29).",
+      "entities": ["repo:zaproxy"],
+      "commits": [
+        "commit:zaproxy:ed87c458b4963c8151eac40cdb4393d4dc83b840",
+        "commit:zaproxy:4c5c3a1cd3dd233b7abb18d8039f44e334165054",
+        "commit:zaproxy:06851457ba0e88ba0a2bbe4272d579f6625f4ada"
+      ]
+    },
+    {
+      "title": "BIRT reporting add-on, October 2013",
+      "text": "The zap-extensions commit \"BIRT Reporting with XML data source and Scripting - GSoC 2013 by Rauf Butt\" is dated 2013-10-09. It adds a birtreports extension with classes such as AlertReport, BirtTopMenu and ReportLastScan. \"Added birtreports jars to top level lib directory\" follows on 2013-10-14.",
+      "entities": ["repo:zap-extensions"],
+      "commits": [
+        "commit:zap-extensions:3c61a4b9b0bab0c45f564f9452859899c796b517",
+        "commit:zap-extensions:1cb7d92f0bb1862008d89dd5b35b1225f98b9bf9"
+      ]
+    },
+    {
+      "title": "A new reports add-on, March 2021",
+      "text": "\"Report Generation - first version\" (2021-03-09) is the first commit under addOns/reports. The CHANGELOG lists 0.0.1 (2021-03-09) as \"First version.\" 0.2.0 (2021-04-12) adds \"Support for template sections\", 0.3.0 (2021-05-06) adds \"API Support.\" and \"Promote to beta\", and 0.4.0 (2021-06-28) adds \"Modern template - submitted via the ZAP Reporting Competition\" and \"Traditional JSON report\".",
+      "entities": ["addon:reports", "module:zap-extensions:addOns/reports"],
+      "commits": ["commit:zap-extensions:b4065d094d9d22e57e49aa5f7e5af5278b57d15b"],
+      "evidence": [
+        {"label": "reports CHANGELOG.md", "url": "https://github.com/zaproxy/zap-extensions/blob/main/addOns/reports/CHANGELOG.md"}
+      ]
+    },
+    {
+      "title": "Older report add-ons and core reports removed in 2021",
+      "text": "On 2021-04-06 the commit \"Remove superseded report add-ons\" says \"Remove `alertReport`, `birtreports`, `customreport`, and `exportreport`.\" In zaproxy, \"Redirect core API reports to report add-on\" is dated 2021-06-23 and \"Remove Paros Reports\" is dated 2021-07-22; the latter deletes ReportGeneratorUnitTest among 1064 removed lines.",
+      "entities": ["repo:zap-extensions", "repo:zaproxy", "addon:reports"],
+      "commits": [
+        "commit:zap-extensions:d9be8ac80996f159209faf2424974e37585b75a7",
+        "commit:zaproxy:9e0592adb7bee9ebcebf0c9a6b760b97e3b4b70e",
+        "commit:zaproxy:26423780e9e577d0fbc732629abb01405eb0c882"
+      ]
+    },
+    {
+      "title": "More formats and the Automation Framework",
+      "text": "The CHANGELOG lists, for 0.5.0 (2021-08-05), \"Automation Framework 'theme' parameter.\" and \"Automation Framework GUI\"; for 0.4.0, \"Automation job: outputSummary, aimed at mimicking the output of the packaged scans.\"; for 0.16.0 (2022-10-27), \"\\\"XML Plus\\\" report format for XML with requests and responses\"; and for 0.17.0 (2022-11-22), \"SARIF reporting\". The dataset lists the add-on as a release and as depending on automation.",
+      "entities": ["addon:reports", "addon:automation"],
+      "evidence": [
+        {"label": "reports CHANGELOG.md", "url": "https://github.com/zaproxy/zap-extensions/blob/main/addOns/reports/CHANGELOG.md"},
+        {"label": "Report Generation add-on page", "url": "https://www.zaproxy.org/docs/desktop/addons/report-generation/"}
+      ]
+    },
+    {
+      "title": "State at HEAD",
+      "text": "The newest release in the CHANGELOG is 0.46.0 (2026-07-06), which lists \"Added script diagnostics section to Traditional Reports.\" and, as a fix, exclusion of invalid alerts from generated reports (Issue 6880).",
+      "entities": ["addon:reports"]
+    }
+  ]
+}

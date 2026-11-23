@@ -1,0 +1,108 @@
+{
+  "title": "The passive scanner: core to add-ons",
+  "description": "How passive scanning is recorded in the zaproxy and zap-extensions histories: a core extension from 2011, scan rules in zap-extensions, per-add-on rule projects in 2019, and the pscan add-on from 2024.",
+  "audience": "developers",
+  "status": "draft",
+  "chapters": [
+    {
+      "title": "Passive scanning in core, 2011",
+      "text": "The commit \"Perform passive scanning in a background thread and introduce some passive vulnerability scanners\" is dated 2011-01-03 and adds org/zaproxy/zap/extension/pscan/PassiveScanThread.java, PassiveScanner.java and PassiveScannerList.java.",
+      "entities": [
+        "repo:zaproxy"
+      ],
+      "commits": [
+        "commit:zaproxy:15d08ef5ddbdd4d3980a5f1008a1695c8e6565a5"
+      ],
+      "documents": [],
+      "evidence": []
+    },
+    {
+      "title": "Scan rules move to zap-extensions, 2012",
+      "text": "On 2012-12-08 zaproxy has \"Issue 428: Added support for extension specific I18N bundles, and move active and passive scan rules to zap-extensions\", and zap-extensions has \"Issue 428: Added support for extension specific I18N bundles, and moved active and passive scan rules to zap-extensions\". On 2014-03-23 zaproxy has \"Issue 1086 - Allow to dynamically add/remove passive scanners\".",
+      "entities": [
+        "repo:zaproxy",
+        "repo:zap-extensions"
+      ],
+      "commits": [
+        "commit:zaproxy:981da5929e9da20547a1a36da163b719eccfd482",
+        "commit:zap-extensions:e4b63e66dc9b423959921395b7a19bf389c09ddd",
+        "commit:zaproxy:8691dc346203081b964311bda36981d7f948f49f"
+      ],
+      "documents": [],
+      "evidence": []
+    },
+    {
+      "title": "Rules relocated to their own projects, 2019-04-03",
+      "text": "On 2019-04-03 zap-extensions has three relocation commits: \"pscanrules: relocate to its own project\" (09:41), \"pscanrulesBeta: relocate to its own project\" (09:48) and \"pscanrulesAlpha: relocate to its own project\" (10:03).",
+      "entities": [
+        "addon:pscanrules",
+        "addon:pscanrulesBeta",
+        "addon:pscanrulesAlpha"
+      ],
+      "commits": [
+        "commit:zap-extensions:9bde67a8dc83dade0775d447f3138248ea26c941",
+        "commit:zap-extensions:fab42c18537c469d264f0ff816d643fa700b172f",
+        "commit:zap-extensions:fcbfa4fb524e624614a8fb2ba3b45087cd5f228a"
+      ],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "Passive scan rules add-on page",
+          "url": "https://www.zaproxy.org/docs/desktop/addons/passive-scan-rules/"
+        }
+      ]
+    },
+    {
+      "title": "2024: the pscan add-on begins",
+      "text": "On 2024-06-25 zaproxy has \"Deprecate and disable pscan API\", whose message says the API will be provided by the add-on and adds pscan to the weekly add-ons, as part of zaproxy issue 7959. The same day zap-extensions has \"pscan: migrate core API implementor\", the earliest commit touching addOns/pscan.",
+      "entities": [
+        "addon:pscan",
+        "module:zap-extensions:addOns/pscan",
+        "repo:zaproxy"
+      ],
+      "commits": [
+        "commit:zaproxy:fd760ab654caff6de8c86abb6c0eb3adf485b821",
+        "commit:zap-extensions:08274f780ca82d3083ce9c65558fe4efd0d4037c"
+      ],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "zaproxy issue 7959",
+          "url": "https://github.com/zaproxy/zaproxy/issues/7959"
+        },
+        {
+          "label": "Passive Scanner add-on page",
+          "url": "https://www.zaproxy.org/docs/desktop/addons/passive-scanner/"
+        }
+      ]
+    },
+    {
+      "title": "Core passive scanner deprecated and disabled",
+      "text": "On 2024-11-18 zaproxy has \"Deprecate unused passive scan methods\" and \"Deprecate/remove passive scan related options\"; the latter's message says the options and UI will be managed by the pscan add-on. On 2024-12-03 \"Deprecate/disable core passive scanner\" says the passive scanner is no longer added or used because the pscan add-on will do it, and that the extension itself is not yet deprecated because other core extensions still use it.",
+      "entities": [
+        "repo:zaproxy",
+        "addon:pscan"
+      ],
+      "commits": [
+        "commit:zaproxy:b995c9d55c4cba8ad3b28ef0d3673e2f9760c7fd",
+        "commit:zaproxy:3ff7cca570e3f98de30265d6679363e651d71491",
+        "commit:zaproxy:ff0fbe79813da48402795bd633d2806904fd084d"
+      ],
+      "documents": [],
+      "evidence": []
+    },
+    {
+      "title": "Statistics move, and the state at HEAD",
+      "text": "On 2025-12-04 zaproxy has \"Remove pscan alerts statistics (migrating to add-on)\". The pscan add-on's changelog lists 0.6.0 dated 2025-12-15 with \"Migrate handling of Alerts raised statistics from the core.\" At HEAD, zaproxy still contains zap/src/main/java/org/zaproxy/zap/extension/pscan/ExtensionPassiveScan.java, and zap-extensions contains addOns/pscan, addOns/pscanrules, addOns/pscanrulesBeta and addOns/pscanrulesAlpha.",
+      "entities": [
+        "addon:pscan",
+        "module:zaproxy:zap"
+      ],
+      "commits": [
+        "commit:zaproxy:d0e7ce2c66247936e7371efc3a7a22d683c769fd"
+      ],
+      "documents": [],
+      "evidence": []
+    }
+  ]
+}

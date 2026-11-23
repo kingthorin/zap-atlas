@@ -1,0 +1,69 @@
+{
+  "title": "SAML 2.0 support (GSoC 2013) and the saml add-on",
+  "description": "The 2013 SAML project in the Student Hall of Fame and the history of the saml add-on in zap-extensions.",
+  "audience": "community",
+  "status": "draft",
+  "chapters": [
+    {
+      "title": "September 2013: initial code",
+      "text": "The Student Hall of Fame lists SAML 2.0 support (Pulasthi Mahawithana) as a 2013 Summer GSoC project. The project page says the aim was to \"develop a component for ZAP that will detect and fuzz various elements and attributes of a SAML Assertion\" and lists pre-releases 0.1-alpha, 0.2-alpha and 1.0-alpha from July to September 2013. In zap-extensions, \"Added SAML extension's initial code for alpha release\" is dated 2013-09-05.",
+      "entities": [
+        "addon:saml"
+      ],
+      "commits": [
+        "commit:zap-extensions:121cb6db808c0a7d5697e4b2755e00dbaeae03a4"
+      ],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        },
+        {
+          "label": "SAML project page",
+          "url": "https://owasp.org/www-community/initiatives/gsoc/gsoc2013zapsaml"
+        }
+      ]
+    },
+    {
+      "title": "Follow-up commits",
+      "text": "Commits in the following weeks include \"Fixed some bugs, and cleaned up the code\" (2013-09-19), \"Did some UI fixes to saml extension and added missing documentation\" (2013-09-21) and \"I18N, Bug and UI fixes, added to ant build\" (2013-09-29).",
+      "entities": [
+        "addon:saml"
+      ],
+      "commits": [
+        "commit:zap-extensions:3cd61b3bc90ccb95961c6894ecc9d018cea84242",
+        "commit:zap-extensions:c0c352f420b754ae29b4add8000014f112da2834",
+        "commit:zap-extensions:4758a0280249c48675b6c3efe9b424b68d6596e6"
+      ],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        }
+      ]
+    },
+    {
+      "title": "2018 to now",
+      "text": "\"saml: remove unnecessary library (#1572)\" is dated 2018-05-01 and \"saml: relocate to its own project\" 2019-04-03. The add-on is still in zap-extensions; a commit touching it dated 2026-08-28 is titled \"saml: Update settings button title capitalization\".",
+      "entities": [
+        "addon:saml"
+      ],
+      "commits": [
+        "commit:zap-extensions:751827b162f62cf0bda76e2901c7582b069989e1",
+        "commit:zap-extensions:0ff7b98db7b7d01f3284f360ab8e8e87d5f58c8f",
+        "commit:zap-extensions:c9e1ce871df55a280a8a10c08a0b857c598fb124"
+      ],
+      "documents": [
+        "doc:zap-extensions:addOns/saml/src/main/javahelp/help/contents/saml.html"
+      ],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        }
+      ]
+    }
+  ]
+}

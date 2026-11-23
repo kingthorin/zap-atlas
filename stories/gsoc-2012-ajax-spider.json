@@ -1,0 +1,85 @@
+{
+  "title": "The Ajax Spider: from a 2012 GSoC project to the spiderAjax add-on",
+  "description": "The 2012 Ajax Spider project in the Student Hall of Fame next to the commits that brought it into zap-extensions and kept it maintained.",
+  "audience": "community",
+  "status": "draft",
+  "chapters": [
+    {
+      "title": "2012: first commits",
+      "text": "The Student Hall of Fame lists Ajax Spider (Guifre Ruiz) as a 2012 Summer GSoC project. A zaproxy commit by guifre dated 2012-06-22 is titled \"modifications needed to run the ajax spider\". On 2012-08-13 another commit by guifre in zaproxy is titled \"Created the AJAX Spider help documents, added it in penetest.html and also in the indexes. Included crawljax and me in the credits.\"",
+      "entities": [
+        "repo:zaproxy"
+      ],
+      "commits": [
+        "commit:zaproxy:719fb332f2c5d026274bf0b758d4a9d406707097",
+        "commit:zaproxy:6a660b5d6a0c4282530227adba657c47e124276a"
+      ],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        }
+      ]
+    },
+    {
+      "title": "August 2012: the add-on in zap-extensions",
+      "text": "A zap-extensions commit dated 2012-08-07 is titled \"merged spiderAjax branch into trunk\". Later commits dated 2012-08-07 to 2012-08-13 include \"Added a gear button in the spiderAjax panel and added a shown message feature\" and \"Added AJAX Spider status scan in the left-bottom of the window, cleaned up and commented code.\".",
+      "entities": [
+        "addon:spiderAjax"
+      ],
+      "commits": [
+        "commit:zap-extensions:eafa4a7e620a0f9ad6def860b9ae80c689e7e6f0",
+        "commit:zap-extensions:57735ba8dd622ffd32f68d0c7712f131c1f107b5",
+        "commit:zap-extensions:b7372e2a99efbb115346c3e1a7c78fa39f9701a3"
+      ],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        }
+      ]
+    },
+    {
+      "title": "2013 to 2014: library updates",
+      "text": "The log shows repeated library-update commits for the add-on: \"Issue 672 - Update Crawljax library and dependencies (\\\"Ajax Spider\\\" add-on)\" is dated 2013-06-02, \"Issue 834 - Update Crawljax library and dependencies (\\\"Ajax Spider\\\" add-on)\" 2013-12-14 and \"Issue 1336 - Update Crawljax library and dependencies (\\\"Ajax Spider\\\" add-on)\" 2014-09-15. A zaproxy commit dated 2014-03-23 is titled \"Issue 1098 - Move AJAX Spider help pages to \\\"Ajax Spider\\\" add-on (and update them)\".",
+      "entities": [
+        "addon:spiderAjax"
+      ],
+      "commits": [
+        "commit:zap-extensions:27d0b874ae3943593ee7c511f1e78f710aaf1373",
+        "commit:zap-extensions:a7b29f88938af6ba751f45e937485df801633949",
+        "commit:zap-extensions:16d05f16e3a2eaf5a3ea7fb2c88b0bbb783eb703",
+        "commit:zaproxy:d99efcb5a30b1e85faa41fe7eb22d28d77b0c1ce"
+      ],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        }
+      ]
+    },
+    {
+      "title": "2019 to now",
+      "text": "A commit titled \"spiderAjax: relocate to its own project\" is dated 2019-04-03. The add-on is still in zap-extensions: its latest commit is dated 2026-10-12 and its directory has 294 commits in history.",
+      "entities": [
+        "addon:spiderAjax"
+      ],
+      "commits": [
+        "commit:zap-extensions:c19d195c7205ca00385c2a1f00ccfc8860a26d48",
+        "commit:zap-extensions:a43e2d0840c2d8b3490b5937bf61e6738706f711"
+      ],
+      "documents": [
+        "doc:zap-extensions:addOns/spiderAjax/src/main/javahelp/org/zaproxy/zap/extension/spiderAjax/resources/help/contents/concepts.html"
+      ],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        }
+      ]
+    }
+  ]
+}

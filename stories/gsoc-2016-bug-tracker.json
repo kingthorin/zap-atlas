@@ -1,0 +1,63 @@
+{
+  "title": "Bug tracker support (Sanchit Kapoor, 2016 GSoC)",
+  "description": "The Hall of Fame project \"Bug tracker support\" and what the history shows: a first commit in 2016, a relocation into its own project in 2019, and maintenance since.",
+  "audience": "community",
+  "status": "draft",
+  "chapters": [
+    {
+      "title": "The Hall of Fame entry",
+      "text": "The Student Hall of Fame lists Sanchit Kapoor for \"Bug tracker support\", GSoC, 2016 Summer, with a link to the add-on. The add-on page is the Bug Tracker page in the ZAP user guide.",
+      "entities": ["addon:bugtracker"],
+      "commits": [],
+      "documents": ["doc:zap-extensions:addOns/bugtracker/src/main/javahelp/org/zaproxy/zap/extension/bugtracker/resources/help/contents/bugtracker.html"],
+      "evidence": [
+        {"label": "ZAP Student Hall of Fame", "url": "https://www.zaproxy.org/student-hall-of-fame/"},
+        {"label": "Bug Tracker add-on page", "url": "https://www.zaproxy.org/docs/desktop/addons/bug-tracker/"}
+      ]
+    },
+    {
+      "title": "2016: first code in zap-extensions and a helper in core",
+      "text": "In zap-extensions, a commit by Sanchit Kapoor dated 2016-05-26 is \"Added extension Bug Tracker Phase 1\". Its file list includes BugTracker.java, BugTrackerBugzilla.java and BugTrackerGithub.java with their option panels and dialogs, plus the library jars github-api-1.75.jar and j2bugzilla-2.2.1.jar. In zaproxy, a commit by the same name dated 2016-07-01 is \"Added abstract class PopupMenuItemAlert for PopupSemiAutoIssue to extend\"; it was merged by \"Merge pull request #2645 from DarkPrince304/gsocBugTracker\" (2016-08-04). A later zap-extensions commit by Sanchit Kapoor, dated 2016-08-27, is \"Added help for Bug Tracker add-on\".",
+      "entities": ["addon:bugtracker", "repo:zaproxy", "repo:zap-extensions"],
+      "commits": [
+        "commit:zap-extensions:3b334a5cd75d4813d6d39c0db389bb3d1b843c24",
+        "commit:zaproxy:c81bdec22deb8ca2ec93f9ae05b1ae4fdc0c7b9a",
+        "commit:zaproxy:ee221fb000ef83bcce7a61c9a7c1387436116c0b",
+        "commit:zap-extensions:380ec655cd93aa3c7731fbf8d3f8e3f6289a2983"
+      ],
+      "documents": [],
+      "evidence": [
+        {"label": "ZAP Student Hall of Fame", "url": "https://www.zaproxy.org/student-hall-of-fame/"}
+      ]
+    },
+    {
+      "title": "2017 to 2019: maintenance, then its own project",
+      "text": "\"BugTracker Fix Build Warnings\" is dated 2017-04-25 and \"bugtracker: add task to generate the wiki\" 2017-05-26. \"bugtracker: remove unused resource message (#1185)\" is dated 2017-12-06. On 2019-04-03 the commit \"bugtracker: relocate to its own project\" adds addOns/bugtracker/bugtracker.gradle.kts and a CHANGELOG.md; the Java file BugTracker.java appears in that commit's stat as a rename-style entry with 0 changed lines.",
+      "entities": ["addon:bugtracker"],
+      "commits": [
+        "commit:zap-extensions:94776c59d1f7dd42795bfd130bf323a6c45286c4",
+        "commit:zap-extensions:47a421890e9ba053002a5a7e944186400b2f02f0",
+        "commit:zap-extensions:bcf99852679f1e5bcd63158c3095105063f6474f",
+        "commit:zap-extensions:7c4fed552a6f19001b42cd37e0cd015f9f54f778"
+      ],
+      "documents": [],
+      "evidence": []
+    },
+    {
+      "title": "2020 to now: dependencies, logging and a PAT",
+      "text": "Later commits include \"bugtracker: Update Dependency\" (2020-04-05), \"bugtracker: remove options panels when uninstalled\" (2020-06-16), \"bugtracker: Use Log4j 2.x\" (2021-02-11), \"bugtracker: remove usage of custom repository\" (2021-05-31), \"chore: Bugtracker: Address github library deprecations\" (2022-04-09) and \"bugtracker: prevent UI init without view\" (2024-01-10). The add-on changelog for version 4 (2022-09-23) lists \"Updated to use PAT not password\". The add-on still exists at HEAD under addOns/bugtracker; its most recent commit touching the changelog is \"Help content typo fixes\" (2026-11-02).",
+      "entities": ["addon:bugtracker"],
+      "commits": [
+        "commit:zap-extensions:f26f9e45a2f84a881c0bf8223245e09ce6dfd79a",
+        "commit:zap-extensions:37bd1d2340fb023c253d796d8d1dcf3aee17b353",
+        "commit:zap-extensions:da6bf27c257987f997f8986ffd484ec3ae0e1ca6",
+        "commit:zap-extensions:19f33f816b07504b0585d12fce609a51b65010be",
+        "commit:zap-extensions:e12f8dee4f94105c580529a41664f0d02958d81e",
+        "commit:zap-extensions:98bc2299948e94bca326ee816338de65b7e0ca92",
+        "commit:zap-extensions:70485b9b20dc7891ac744255aeb232a0053c1ceb"
+      ],
+      "documents": [],
+      "evidence": []
+    }
+  ]
+}

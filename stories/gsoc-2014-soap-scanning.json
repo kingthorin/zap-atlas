@@ -1,0 +1,70 @@
+{
+  "title": "SOAP scanning (GSoC 2014): from WSDL import to the soap add-on",
+  "description": "The 2014 SOAP scanning project in the Student Hall of Fame and the history of the soap add-on, which began as an importWSDL extension.",
+  "audience": "community",
+  "status": "draft",
+  "chapters": [
+    {
+      "title": "April to May 2014: WSDL import, renamed to soap",
+      "text": "The Student Hall of Fame lists SOAP scanning (Alberto Verza) as a 2014 Summer GSoC project. A zap-extensions commit dated 2014-04-30 is titled \"WSDL file import Add-On.\" On 2014-05-21 a commit is titled \"\\\"importWSDL\\\" extension renamed to \\\"soap\\\". SOAP Action scanner is no longer using ExtensionLoader to get data from ExtensionImportWSDL.\"",
+      "entities": [
+        "addon:soap"
+      ],
+      "commits": [
+        "commit:zap-extensions:1eb86208be34b81441b9f1cfdaedb43bcb3953d8",
+        "commit:zap-extensions:9968d89e16817d96fd672043beaa7ead6f8e4cb1"
+      ],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        }
+      ]
+    },
+    {
+      "title": "Summer 2014: scanners",
+      "text": "Later commits include \"SOAPAction spoofing scanner now performs some real checks (instead of the test ones).\" (2014-05-27), \"New WSDL File passive scanner added.\" (2014-06-12) and \"New option to import a single WSDL file from a given URL.\" (2014-06-15; the log subject continues with a note on removing log4j). The project blog post dated 2014-09-03 says SOAP-specific scanners simulate attacks such as SOAP Action Spoofing and XML Injection and that the add-on passed GSoC final evaluations in alpha state.",
+      "entities": [
+        "addon:soap"
+      ],
+      "commits": [
+        "commit:zap-extensions:d44e53fe75c8129f6f37298e5699a70ad6455e29",
+        "commit:zap-extensions:6884736e03cb1ba54e3f071859356f523d628696",
+        "commit:zap-extensions:a2da03565b549b544290688f08df6682c2ac9155"
+      ],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        },
+        {
+          "label": "SOAP scanner blog post",
+          "url": "https://www.zaproxy.org/blog/2014-09-03-alberto-s-gsoc-2014-project-for-zap-soap-scanner-add-on/"
+        }
+      ]
+    },
+    {
+      "title": "2019 to now",
+      "text": "\"soap: relocate to its own project\" is dated 2019-04-03. The add-on is still in zap-extensions: commits include \"soap: Allow limiting the number of messages imported\" (2026-07-21) and \"soap: Max Messsages GUI & API\" (2026-08-02). The add-on's history contains 198 commits.",
+      "entities": [
+        "addon:soap"
+      ],
+      "commits": [
+        "commit:zap-extensions:82a1a85c08fd193b330991d39987949b8926af8d",
+        "commit:zap-extensions:c3da1eaaf770d4de573cc236ed5a2be559d08c1c",
+        "commit:zap-extensions:955d22e78680a71d4c572f055a55184c77b7c972"
+      ],
+      "documents": [
+        "doc:zap-extensions:addOns/soap/src/main/javahelp/org/zaproxy/zap/extension/soap/resources/help/contents/soap.html"
+      ],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        }
+      ]
+    }
+  ]
+}

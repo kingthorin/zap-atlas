@@ -1,0 +1,79 @@
+{
+  "title": "The Automation Framework add-on",
+  "description": "How the automation add-on began in January 2021, which jobs and add-ons joined it, its use in Docker scripts and the Retest add-on, and its 2026 state, according to commits and CHANGELOGs.",
+  "audience": "developers",
+  "status": "draft",
+  "chapters": [
+    {
+      "title": "First phase, January 2021",
+      "text": "The commit \"Automation add-on - first phase\" (2021-01-14) adds addOns/automation with AutomationEnvironment, AutomationJob, ExtensionAutomation and two jobs, AddOnJob and PassiveScanConfigJob. \"Automation: Support active scan\" follows on 2021-02-23. The CHANGELOG dates 0.0.1 (\"First version.\") to 2021-03-09, and \"Weekly - add automation and reports\" in zaproxy is dated the same day.",
+      "entities": ["addon:automation", "module:zap-extensions:addOns/automation"],
+      "commits": [
+        "commit:zap-extensions:be0128e3647ce602d94b908db77c420e84e563bf",
+        "commit:zap-extensions:7e3d8654617e3110d31a2e1461b63c59de4db828",
+        "commit:zaproxy:ef6d08b2b6749893afa0ebb072b7e8eadba9b4cf"
+      ],
+      "evidence": [
+        {"label": "automation CHANGELOG.md", "url": "https://github.com/zaproxy/zap-extensions/blob/main/addOns/automation/CHANGELOG.md"}
+      ]
+    },
+    {
+      "title": "Other add-ons gain jobs in 2021",
+      "text": "Commit subjects show add-ons adding Automation Framework support: \"Ajax Spider - add automation framework support\" (2021-02-19), \"OpenAPI: Automation Framework Support\" (2021-03-05), \"soap: Support Automation Framework\" (2021-03-16), \"graphql: Add Automation Framework Support\" (2021-03-22) and \"alertFilter: support automation framework\" (2021-09-13). The automation CHANGELOG lists 0.3.0 (2021-06-28) with \"A new Requestor job to make specific requests.\" and 0.8.0 (2021-11-02) with \"Delay job\". The scripts CHANGELOG lists \"Automation ScriptJob - Add or remove any script and run a standalone script\" under version 30 (2022-02-25).",
+      "entities": ["addon:automation", "addon:spiderAjax", "addon:openapi", "addon:soap", "addon:graphql", "addon:alertFilters", "addon:scripts"],
+      "commits": [
+        "commit:zap-extensions:805c39ca6998d5b93f53a947a36348ea074785c4",
+        "commit:zap-extensions:8e224577a0b2cdc8b20f8385b1f761405ddf3b2c",
+        "commit:zap-extensions:539fa43f3095454dea3b5376431da97e8f365db5",
+        "commit:zap-extensions:65bf9b470d4f58bd7805fa011d0cf64c1b3774e9",
+        "commit:zap-extensions:c14ee49998c57d4addab27702c2de6b1ab60c6b8"
+      ],
+      "evidence": [
+        {"label": "scripts CHANGELOG.md", "url": "https://github.com/zaproxy/zap-extensions/blob/main/addOns/scripts/CHANGELOG.md"}
+      ]
+    },
+    {
+      "title": "Docker packaged scans and the Retest add-on",
+      "text": "In zaproxy, \"Use the auto framework for simple baseline scans\" (2021-05-25) changes docker/zap-baseline.py and the Dockerfiles. \"Docker: change packaged scans to always update all add-on on start\" (2021-10-08) has the body \"This is to avoid a bug in the automation framework breaking plans\", and \"Docker: Automation Framework plan tests\" is dated 2021-11-02. In zap-extensions, the Retest add-on starts with \"Initial addon\" (2021-08-20), and the automation CHANGELOG for 0.5.0 (2021-08-23) lists \"Changes to support the Retest add-on.\"",
+      "entities": ["repo:zaproxy", "addon:automation", "addon:retest"],
+      "commits": [
+        "commit:zaproxy:2b103d0fd7127d0e89126ca2d041a8336700331c",
+        "commit:zaproxy:a354187e9df577d306d8eb4acb6312a7d0aebdf6",
+        "commit:zaproxy:99dd7f89c295605fb73f7d510b4a71566806683f",
+        "commit:zap-extensions:53d7cfd82d0add70db41ff1bb0d230a3dcfc31a2"
+      ]
+    },
+    {
+      "title": "GUI, authentication and beta status",
+      "text": "The CHANGELOG records \"First phase of GUI\" in 0.4.0 (2021-08-05), \"User and HTTP authentication support\" and \"Set ZAP exit code when \\\"-cmd\\\" and \\\"-autorun\\\" options used\" in 0.8.0 (2021-11-02), and, in 0.11.0 (2022-01-19), \"Form and JSON-based authentication support\" and \"Promoted to beta\". Script authentication support appears in 0.12.0 (2022-02-01).",
+      "entities": ["addon:automation"],
+      "evidence": [
+        {"label": "automation CHANGELOG.md", "url": "https://github.com/zaproxy/zap-extensions/blob/main/addOns/automation/CHANGELOG.md"}
+      ]
+    },
+    {
+      "title": "Jobs move into the add-ons that own them",
+      "text": "The CHANGELOG for 0.19.0 (2022-10-27) says \"The spider job was removed, it is provided by the Spider add-on (Issue 3113).\" 0.42.0 (2024-09-02) says \"Rely on Passive Scanner add-on for the passive scan related jobs (Issue 7959).\" and deprecates the classes of the passive scan related jobs, and 0.44.0 (2025-01-09) lists \"Remove job implementations that were previously migrated to the Passive Scanner add-on (Issue 7959).\" The same 0.44.0 entry adds \"Active scan policy job.\", \"Add job to configure the active scanner, `activeScan-config`.\" and \"Add exitStatus job (Issue #6928)\".",
+      "entities": ["addon:automation"],
+      "evidence": [
+        {"label": "automation CHANGELOG.md", "url": "https://github.com/zaproxy/zap-extensions/blob/main/addOns/automation/CHANGELOG.md"}
+      ]
+    },
+    {
+      "title": "Stopping, authentication jobs and AI assisted authentication",
+      "text": "The 0.52.0 entry (2025-09-02) lists \"Support for step delay in Browser Based Authentication.\", \"Support for min wait for in Client Script Authentication.\" and \"Support for stopping plans and jobs.\" 0.59.0 (2026-04-02) lists \"Allow to load a plan from the contents of the clipboard.\" and \"Move the Automation panel to the workspace window.\" 0.62.0 (2026-11-03) lists \"Support for AI assisted authentication.\"",
+      "entities": ["addon:automation", "addon:authhelper"],
+      "evidence": [
+        {"label": "automation CHANGELOG.md", "url": "https://github.com/zaproxy/zap-extensions/blob/main/addOns/automation/CHANGELOG.md"}
+      ]
+    },
+    {
+      "title": "State at HEAD",
+      "text": "The Unreleased section of the CHANGELOG lists \"A Batch tab, which runs all, or one, of the plans in a directory, stopping at the first failure, and optionally starting a new session for each plan.\" and \"The `-autorundir` command line option\". The dataset lists the add-on as beta, with addon:commonlib and addon:network as dependencies.",
+      "entities": ["addon:automation", "addon:network"],
+      "evidence": [
+        {"label": "Automation Framework add-on page", "url": "https://www.zaproxy.org/docs/desktop/addons/automation-framework/"}
+      ]
+    }
+  ]
+}

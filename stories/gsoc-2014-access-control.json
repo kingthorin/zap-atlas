@@ -1,0 +1,72 @@
+{
+  "title": "Advanced Access Control testing (GSoC 2014) and the accessControl add-on",
+  "description": "The 2014 access control project in the Student Hall of Fame and the history of the accessControl add-on in zap-extensions.",
+  "audience": "community",
+  "status": "draft",
+  "chapters": [
+    {
+      "title": "June 2014: first commits",
+      "text": "The Student Hall of Fame lists Advanced Access Control testing (Cosmin Stefan) as a 2014 Summer GSoC project, linking the 2013 HTTP sessions wiki, whose goals include \"allow users to test access control with a tool that tries to access the URLs\". In zap-extensions, a commit by Cosmin Stefan-Dobrin dated 2014-06-03 is titled \"Added initial structure for the AccessControlExtension\". On 2014-06-09 a commit by the same name is titled \"Temporary removed the AccessControl Extension to be moved to separate branch\".",
+      "entities": [
+        "addon:accessControl"
+      ],
+      "commits": [
+        "commit:zap-extensions:4c3638b731665b5e02ec53e1d1b04e2fbc6bc843",
+        "commit:zap-extensions:b1cf619b7e2be2a549a2a89772c13e3b40ee7907"
+      ],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        },
+        {
+          "label": "2013 sessions wiki (linked from the Hall of Fame row)",
+          "url": "https://github.com/zaproxy/zaproxy/wiki/Gsoc2013_Enhancing_HTTP_Sessions"
+        }
+      ]
+    },
+    {
+      "title": "2014 to 2016: alpha add-on",
+      "text": "A commit by cosminstefanxp dated 2014-11-11 is titled \"Merge branch '2.4alpha' into alpha\". \"Fixed Access Control add-on help for wiki\" is dated 2015-10-06. \"Do not allow to dynamically unload Access Control\" is dated 2016-04-07, and \"accessControl: dynamically unload the add-on (#1521)\" 2018-04-03.",
+      "entities": [
+        "addon:accessControl"
+      ],
+      "commits": [
+        "commit:zap-extensions:add009092f4740af484bdadb2839fadf0e45b4d0",
+        "commit:zap-extensions:ab2f48c5056c4e62d20744c72de92faa8d7064ff",
+        "commit:zap-extensions:69791b80b60b1e6115eb09e0ea330b845940cefd",
+        "commit:zap-extensions:037ad88c665c065b606516e37a8cab22e36039b8"
+      ],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        }
+      ]
+    },
+    {
+      "title": "2019 to now",
+      "text": "\"accessControl: relocate to its own project\" is dated 2019-04-03 and \"Implement Access Control API\" 2019-06-19, by mbonino. \"Prepare release v6 Access Control\" is dated 2020-10-06. The add-on is still in zap-extensions: the latest commit touching it is dated 2026-11-05 (\"Update localized resources\"), and its directory has 137 commits.",
+      "entities": [
+        "addon:accessControl"
+      ],
+      "commits": [
+        "commit:zap-extensions:8ed1cb5430e98788d1aef63f512fb6627f7c3734",
+        "commit:zap-extensions:66e5041308946ab1e443a0b9d59fa7a1db89aa66",
+        "commit:zap-extensions:f3b072555cee056351d1c4737cdd820a792841ef",
+        "commit:zap-extensions:0539ea069cd30371ff8b4c13049ba4b6f6d8655e"
+      ],
+      "documents": [
+        "doc:zap-extensions:addOns/accessControl/src/main/javahelp/org/zaproxy/zap/extension/accessControl/resources/help/contents/concepts.html"
+      ],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        }
+      ]
+    }
+  ]
+}

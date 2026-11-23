@@ -1,0 +1,89 @@
+{
+  "title": "Advanced fuzzing (GSoC 2014) and the fuzz add-on",
+  "description": "The 2014 advanced fuzzing project in the Student Hall of Fame next to the multi-fuzz commits, the 2015 merge into the fuzz add-on, and where it stands now.",
+  "audience": "community",
+  "status": "draft",
+  "chapters": [
+    {
+      "title": "June 2014: multi-fuzzing in core and as an add-on",
+      "text": "The Student Hall of Fame lists Advanced fuzzing (Sebastian Schulze) as a 2014 Summer GSoC project. The wiki goals include \"Development of a stable HTTP - multifuzzing add-on\" and \"Inclusion of scripts as payload resources\". A zaproxy commit by BastiSchulze dated 2014-06-04 is titled \"Core packages for multi-fuzzing.\" A zap-extensions commit dated the same day begins \"Updated multi-fuzz add-on.\"",
+      "entities": [
+        "repo:zaproxy",
+        "repo:zap-extensions"
+      ],
+      "commits": [
+        "commit:zaproxy:4a04c8dbd996bfd337e69ebc98d46ebab1c38f09",
+        "commit:zap-extensions:35baad44f6f2cfa84adb011ffaa9b5ee6aa238ae"
+      ],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        },
+        {
+          "label": "Advanced Fuzzing wiki",
+          "url": "https://github.com/zaproxy/zaproxy/wiki/GSoC_2014_Advanced_Fuzzing"
+        }
+      ]
+    },
+    {
+      "title": "Summer 2014: payloads and scripts",
+      "text": "Commits by BastiSchulze in zaproxy include \"Changed label for fuzzing entry in right-click popup-menu.\" (2014-06-06) and one dated 2014-06-23 that begins \"New dialog layout, script payloads, regEx payloads and permanent availability of the single-fuzzing package\". The matching zap-extensions commit of 2014-06-23 has the same beginning.",
+      "entities": [
+        "repo:zaproxy"
+      ],
+      "commits": [
+        "commit:zaproxy:0288fd576baf357923fa902c88214ca61c1bb91a",
+        "commit:zaproxy:998c6ecfe15dc753be9391ce4ad5416606917cd8",
+        "commit:zap-extensions:8b4baa7efd1b1403b5002cdfa0e10fede6856841"
+      ],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        }
+      ]
+    },
+    {
+      "title": "April 2015: merged into one add-on",
+      "text": "A zap-extensions commit dated 2015-04-12 is titled \"Remove multiFuzz add-on (Issue 1434)\". Commits dated 2015-04-13 include \"Issue 1434 - Merge Fuzzer with MultiFuzz and move the result to an add-on\" in zap-extensions and \"Remove fuzzers, pre-merge changes (Issue 1434)\" in zaproxy.",
+      "entities": [
+        "addon:fuzz"
+      ],
+      "commits": [
+        "commit:zap-extensions:1d187301379ccd7ae2db71bb7b4ee5971fa4095f",
+        "commit:zap-extensions:08b9245d97737b474afd971eba433d3ae7dc8e9f",
+        "commit:zaproxy:0aba4a8729e7a85f9a31f5fc19531b4407fe80aa"
+      ],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        }
+      ]
+    },
+    {
+      "title": "2019 to now",
+      "text": "\"fuzz: relocate to its own project\" is dated 2019-04-03. The fuzz add-on is still in zap-extensions; the latest commit touching addOns/fuzz is dated 2026-10-05 (\"Update localized resources\").",
+      "entities": [
+        "addon:fuzz"
+      ],
+      "commits": [
+        "commit:zap-extensions:0f57c117f9b4c7074fde5394fdab1f1fe2897afc",
+        "commit:zap-extensions:519f8b647edbb62d54e1eb9e11562e6ca7f21bb5"
+      ],
+      "documents": [
+        "doc:zap-extensions:addOns/fuzz/src/main/javahelp/org/zaproxy/zap/extension/fuzz/resources/help/contents/concepts.html"
+      ],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        }
+      ]
+    }
+  ]
+}

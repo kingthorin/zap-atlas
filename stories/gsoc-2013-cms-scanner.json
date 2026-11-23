@@ -1,0 +1,71 @@
+{
+  "title": "The CMS add-on (GSoC 2013): cmss in zap-extensions",
+  "description": "The 2013 CMS add-on in the Student Hall of Fame and the cmss add-on in zap-extensions, from September 2013 to its removal in 2020.",
+  "audience": "community",
+  "status": "draft",
+  "chapters": [
+    {
+      "title": "The project and the first commits",
+      "text": "The Student Hall of Fame lists a CMS add-on (Abdelhadi Azouni) as a 2013 Summer GSoC project. The linked idea page calls the project \"ZAP CMSS\". In zap-extensions the cmss directory (org/zaproxy/zap/extension/cmss) first appears in four commits dated 2013-09-14, whose subject lines are empty and whose author names are email addresses, so they are cited by SHA only. This story does not claim the commits' author from the Hall of Fame entry.",
+      "entities": [
+        "repo:zap-extensions"
+      ],
+      "commits": [
+        "commit:zap-extensions:2380710241636e83c90d1f7708064f67f6a943ed",
+        "commit:zap-extensions:c6ba8bd934d106ddb3f78483ae9d3a5ecbb1fb51",
+        "commit:zap-extensions:a3dc356292c6240b9bb21c28bb12e2f64bf3ce7d",
+        "commit:zap-extensions:ea9e7dc9ae2aecc6eb2edabb3b4cca7ff36ad37b"
+      ],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        },
+        {
+          "label": "CMS scanner idea page",
+          "url": "https://wiki.owasp.org/index.php/GSoC2013_Ideas/OWASP_ZAP_CMS_SCANNER"
+        }
+      ]
+    },
+    {
+      "title": "2013 to 2018: build files and maintenance",
+      "text": "\"Updated build file for birtreport, cmss, jruby and wappalyser add-ons.\" is dated 2013-10-30. \"Issue 1113 - Change add-on dir structure (help and resources)\" is dated 2014-03-26, \"added tests for CMSSUtils#checksum(byte[])\" 2014-05-02, and \"cmss: remove unnecessary call to finalize\" 2018-06-29.",
+      "entities": [
+        "repo:zap-extensions"
+      ],
+      "commits": [
+        "commit:zap-extensions:46064e55c1020aba9de43f51a0fe10107f7bc4fb",
+        "commit:zap-extensions:0c00920264d32f07b6fc167c40b6f7ddf0d0adff",
+        "commit:zap-extensions:82d887b5dbf13ff56032e58a68bfb8ae555c994c",
+        "commit:zap-extensions:050031aa3ddd2616fe80bbde18e1559a824c8cda"
+      ],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        }
+      ]
+    },
+    {
+      "title": "2019 to 2020: relocated, then removed",
+      "text": "\"cmss: remove unused extension\" is dated 2019-03-22 and \"cmss: relocate to its own project\" 2019-04-03. On 2020-12-16 a commit titled \"wafp: Remove\" is dated; its message body reads \"Remove the wafp (cmss) project.\" There is no cmss add-on in the current dataset or tree.",
+      "entities": [
+        "repo:zap-extensions"
+      ],
+      "commits": [
+        "commit:zap-extensions:126301062a143c306695adb7dc52a2112ee34800",
+        "commit:zap-extensions:7506f9b131db19620291e5fe88777cc22b5fad15",
+        "commit:zap-extensions:419936de220e559b76bda7df98d928573bc67837"
+      ],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        }
+      ]
+    }
+  ]
+}

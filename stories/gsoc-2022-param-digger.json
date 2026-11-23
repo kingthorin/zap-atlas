@@ -1,0 +1,77 @@
+{
+  "title": "Param Digger (Arkaprabha Chakraborty, 2022 GSoC)",
+  "description": "An add-on that began as \"param miner\" in June 2022, was renamed to Param Digger in August 2022, and has been maintained since.",
+  "audience": "community",
+  "status": "draft",
+  "chapters": [
+    {
+      "title": "The Hall of Fame entry and the launch post",
+      "text": "The Student Hall of Fame lists Arkaprabha Chakraborty for \"Param Digger\", GSoC, 2022 Summer, with blog and add-on links. The blog post, dated 2022-08-22, says Param Digger finds parameters that are not visible in the normal interface, currently supports only the \"URL Guess\" tab, which \"uses a list of URL parameters\", and that an earlier version was published on the Marketplace under the name \"Param Miner\" and renamed so it would not be confused with the Burp Suite extension.",
+      "entities": [
+        "addon:paramdigger"
+      ],
+      "commits": [],
+      "documents": [
+        "doc:zap-extensions:addOns/paramdigger/src/main/javahelp/org/zaproxy/addon/paramdigger/resources/help/contents/paramdigger.html"
+      ],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        },
+        {
+          "label": "The Param Digger add-on (2022-08-22)",
+          "url": "https://www.zaproxy.org/blog/2022-08-22-the-param-digger-addon/"
+        }
+      ]
+    },
+    {
+      "title": "June to August 2022: param miner",
+      "text": "\"Add initial param miner extension\" by ArkaprabhaChakraborty is dated 2022-06-02 and creates addOns/paramminer. Subjects that follow include \"Add right click menu options\" (2022-06-07), \"Add ParamGuesser options and functionality\" (2022-07-07), \"Add units tests for URL guesser\" (2022-07-27) and \"Add help docs\" (2022-08-13).",
+      "entities": [
+        "addon:paramdigger"
+      ],
+      "commits": [
+        "commit:zap-extensions:086bdb2499b6c6cbf59c1972e1d8554009ed46c1",
+        "commit:zap-extensions:fb10a913f703ea071d80db3c9e34ceb48d740925",
+        "commit:zap-extensions:1601543d3192fa12b23e65a79327680759253ced",
+        "commit:zap-extensions:930d411a577ea6a7d1a96f07eb46cf421665c159",
+        "commit:zap-extensions:ee93589b73f4b9e6d00d23574905a7b3366eecd9"
+      ],
+      "documents": [],
+      "evidence": []
+    },
+    {
+      "title": "21 August 2022: the rename",
+      "text": "\"Add refactorings to change paramminer to paramdigger\" is dated 2022-08-21; its file list shows addOns/paramminer moved to addOns/paramdigger. The changelog lists 0.0.1 on 2022-08-17 as \"First version\" with its release link under paramminer-v0.0.1, and 0.1.0 on 2022-08-22 as \"Rename multiple options in GUI and documentation.\"",
+      "entities": [
+        "addon:paramdigger"
+      ],
+      "commits": [
+        "commit:zap-extensions:39c5aa182d4a692ddd5819c4206b4ca67bb747fb"
+      ],
+      "documents": [],
+      "evidence": []
+    },
+    {
+      "title": "After the summer",
+      "text": "\"Add initial  Header guess implementation\" (2022-08-26) and \"Add forwarding header guess implementation\" (2022-09-23) follow, and \"paramdigger: Add output table by removing output textpane (#4363)\" is dated 2023-04-21. The changelog lists 0.2.0 (2023-06-06) and 0.3.0 (2024-07-15). The add-on still exists at HEAD; the dataset lists its author as \"ZAP Dev Team and Arkaprabha Chakraborty\".",
+      "entities": [
+        "addon:paramdigger"
+      ],
+      "commits": [
+        "commit:zap-extensions:9de5b21ee083c82c37e928f9d0449008d7da1181",
+        "commit:zap-extensions:a5b13852aea9db81227a63a5160bdb1c4525fc63",
+        "commit:zap-extensions:aa0441ae8cada9f844ab52939f363de211e1e3da",
+        "commit:zap-extensions:44f6b2e9fc1a3a09b57343166e2e3580ec6c8b03"
+      ],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "Parameter Digger add-on page",
+          "url": "https://www.zaproxy.org/docs/desktop/addons/parameter-digger/"
+        }
+      ]
+    }
+  ]
+}

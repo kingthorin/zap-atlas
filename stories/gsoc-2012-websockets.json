@@ -1,0 +1,104 @@
+{
+  "title": "WebSocket testing: a 2012 GSoC project and the websocket add-on",
+  "description": "The 2012 WebSocket testing project in the Student Hall of Fame, set beside the commits that moved the code out of core and into the websocket add-on.",
+  "audience": "community",
+  "status": "draft",
+  "chapters": [
+    {
+      "title": "2012: a branch for WebSockets in zaproxy",
+      "text": "The Student Hall of Fame lists WebSocket testing (Robert Koch) as a 2012 Summer GSoC project. The project wiki says it \"aims to adding support for WebSockets to ZAP\" and that \"one can see & even edit messages\". A zaproxy commit dated 2012-05-07 is titled \"create branch for my GSoC project: Enhancing ZAP with WebSockets support.\" A later commit dated 2012-05-22 is titled \"Merged trunk into WebSockets-Branch to keep up changes\".",
+      "entities": [
+        "repo:zaproxy"
+      ],
+      "commits": [
+        "commit:zaproxy:19c0591e3dd31d1a0ac70c25ee0b4ebedb99987b",
+        "commit:zaproxy:3c20dcc100e2e61d439b2afa6d10e9d49358f63d"
+      ],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        },
+        {
+          "label": "WebSockets project wiki",
+          "url": "https://github.com/zaproxy/zaproxy/wiki/GSoC2012_WebSockets"
+        }
+      ]
+    },
+    {
+      "title": "2012: a UI for WebSocket traffic",
+      "text": "A commit dated 2012-06-13 is titled \"further refactorings plus new informations in WebSockets-UI-Panel (#, opcode, payload-length)\". An earlier commit the same day (da93cc9) is the first of the two to mention user interface classes for displaying WebSockets communication in its subject. These commits are in the zaproxy repository, where the WebSocket code was then part of core.",
+      "entities": [
+        "repo:zaproxy"
+      ],
+      "commits": [
+        "commit:zaproxy:4a084a15f5e5ee68b01f7b354bb6c6db207bc6d2",
+        "commit:zaproxy:da93cc96e49d1283e641dc206039c44f382bd2e8"
+      ],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "WebSockets project wiki",
+          "url": "https://github.com/zaproxy/zaproxy/wiki/GSoC2012_WebSockets"
+        }
+      ]
+    },
+    {
+      "title": "January 2013: moved out of core",
+      "text": "A zaproxy commit dated 2013-01-24 is titled \"removed WebSockets add-on (prepared to move over to extensions project)\". A zap-extensions commit dated the same day, 2013-01-24, begins \"moved WebSockets extension out of core\". The current zaproxy tree has no file with websocket in its path.",
+      "entities": [
+        "repo:zaproxy",
+        "repo:zap-extensions"
+      ],
+      "commits": [
+        "commit:zaproxy:a186c647e513ac136faf87d376ff158311832347",
+        "commit:zap-extensions:7da1d1a15fea6cef6b9f6acdc294972f9f5db60e"
+      ],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        }
+      ]
+    },
+    {
+      "title": "2016 to 2019: unloading from core, then its own project",
+      "text": "A zap-extensions commit dated 2016-04-26 is titled \"websocket: unload components from core\". On 2019-04-03 a commit titled \"websocket: relocate to its own project\" is dated; it is the earliest commit in the history of the addOns/websocket directory.",
+      "entities": [
+        "addon:websocket"
+      ],
+      "commits": [
+        "commit:zap-extensions:6f134dd7c4cb5821e14e1bbbd8dd416c6d45974e",
+        "commit:zap-extensions:44104d6816ead7e85cbbfc19b6c70df0f3ad03c0"
+      ],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        }
+      ]
+    },
+    {
+      "title": "Where it stands now",
+      "text": "The websocket add-on is still in zap-extensions. The latest commit touching addOns/websocket is dated 2026-09-23 and is titled \"websocket: Support GSPM for passive scripts\". The add-on's history contains 231 commits.",
+      "entities": [
+        "addon:websocket"
+      ],
+      "commits": [
+        "commit:zap-extensions:36ced9753e1875dde0e4eb7c8bb0f0d00f2e05e2"
+      ],
+      "documents": [
+        "doc:zap-extensions:addOns/websocket/src/main/javahelp/org/zaproxy/zap/extension/websocket/resources/help/contents/about.html"
+      ],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        }
+      ]
+    }
+  ]
+}

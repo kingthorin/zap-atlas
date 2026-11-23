@@ -1,0 +1,88 @@
+{
+  "title": "Look and feel, FlatLaf and dark mode",
+  "description": "How look-and-feel selection and dark mode appear in the zaproxy history: selectable look and feel in 2018, the FlatLaf dependency in 2020, dynamic switching, and later fixes.",
+  "audience": "community",
+  "status": "draft",
+  "chapters": [
+    {
+      "title": "Selecting the look and feel, 2016 and 2018",
+      "text": "In zaproxy, \"Use L&F specified through JVM args\" is dated 2016-11-02 and \"Allow to select the look and feel\" is dated 2018-03-01; the latter changes OptionsParamView.java and OptionsViewPanel.java.",
+      "entities": [
+        "repo:zaproxy"
+      ],
+      "commits": [
+        "commit:zaproxy:aa7214f13d8f0060abf95b89831ebcca18760fc3",
+        "commit:zaproxy:2ac0176a28c71ad9e222620b3f6f367477d74071"
+      ],
+      "documents": [],
+      "evidence": []
+    },
+    {
+      "title": "FlatLaf is added, February 2020",
+      "text": "On 2020-02-24 zaproxy has \"Add FlatLaf L&F\". Its message says it adds the FlatLaf dependency, changes ExtensionUiUtils to install the look and feel provided by FlatLaf, and is \"Part of #5542 - Add a dark mode\". The first release tag containing it is the weekly tag w2020-03-02. ExtensionUiUtils at HEAD lists \"Flat Light\", \"Flat Dark\", \"Flat IntelliJ\" and \"Flat Darcula\".",
+      "entities": [
+        "repo:zaproxy",
+        "module:zaproxy:zap"
+      ],
+      "commits": [
+        "commit:zaproxy:fc3ac09dad86d5256a64dff905d6a4fd6fca29cb"
+      ],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "zaproxy issue 5542",
+          "url": "https://github.com/zaproxy/zaproxy/issues/5542"
+        }
+      ]
+    },
+    {
+      "title": "Dark mode in the weekly release",
+      "text": "A ZAP blog post dated 2020-03-04, \"Dark Mode in the Weekly Release\", says the week's release includes first steps towards a dark mode for the Desktop UI, to be enabled by selecting \"Flat Dark\" or \"Flat Darcula\" on the Display options screen and restarting. In zaproxy, \"Set RSyntaxTextArea dark mode is dark LookAndFeel used\" is dated 2020-02-27 and \"Handle dark mode in splash screen\" is dated 2020-03-23.",
+      "entities": [
+        "repo:zaproxy"
+      ],
+      "commits": [
+        "commit:zaproxy:56c0daffec5809b32937195b06a5e60fbd4afea8",
+        "commit:zaproxy:e070b8a78308299fb5357352f3473530c878cef2"
+      ],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "Dark Mode in the Weekly Release",
+          "url": "https://www.zaproxy.org/blog/2020-03-04-dark-mode-in-the-weekly-release/"
+        }
+      ]
+    },
+    {
+      "title": "Dynamic switching and ZAP 2.10.0",
+      "text": "On 2020-09-29 zaproxy has \"Add support for dynamic Look and Feel switching\"; its diff adds a default look and feel documented as \"Flat Light\" (FlatLightLaf). The release notes for 2.10.0 list \"Dynamic Look and Feel including Dark Mode\", say the UI includes a set of open source look and feels from FlatLaf including 2 dark mode options, and list Issue 5542, Issue 5873 and Issue 6201. The v2.10.0 tag is dated 2020-12-17.",
+      "entities": [
+        "repo:zaproxy"
+      ],
+      "commits": [
+        "commit:zaproxy:7a0e7cb2581d0ef791e3c46d6b42044165baa8d2"
+      ],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "ZAP 2.10.0 release notes",
+          "url": "https://www.zaproxy.org/docs/desktop/releases/2.10.0/"
+        }
+      ]
+    },
+    {
+      "title": "Later fixes and the state at HEAD",
+      "text": "Later commits in zaproxy include \"fix: HTTP Panels Font setting for dark LaFs (Theme)\" (2021-04-21), \"Use FlatLaf add-on for SwingX\" (2025-03-02, which adds one line to zap/zap.gradle.kts) and \"Address UI trees not updating fully on theme switch\" (2026-03-04). 58 commits in the zaproxy history have a subject beginning \"Update FlatLaf\". At HEAD zap/zap.gradle.kts declares implementation(libs.flatlaf) and implementation(libs.flatlaf.swingx). No add-on in the dataset has a look-and-feel or theme name.",
+      "entities": [
+        "module:zaproxy:zap"
+      ],
+      "commits": [
+        "commit:zaproxy:4243458621267c1c820f890637b5b1db19a1143e",
+        "commit:zaproxy:005b55d0580c1f2e1cd2c3ada880626e9e6a8f85",
+        "commit:zaproxy:5888d4acf46ddcaf34de499113a88deb1cd0916d"
+      ],
+      "documents": [],
+      "evidence": []
+    }
+  ]
+}

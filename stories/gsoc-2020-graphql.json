@@ -1,0 +1,65 @@
+{
+  "title": "GraphQL support (Akshath Kothari, 2020 GSoC)",
+  "description": "From an initial commit in May 2020 to the add-on's activity in 2026, following the GraphQL add-on's commits and changelog.",
+  "audience": "community",
+  "status": "draft",
+  "chapters": [
+    {
+      "title": "The Hall of Fame entry and the launch post",
+      "text": "The Student Hall of Fame lists Akshath Kothari for \"GraphQL Support\", GSoC, 2020 Summer, with a blog and add-on link. The blog post, dated 2020-08-28 and written by Akshath Kothari, introduces the GraphQL add-on, lists schema import from a file or URL, introspection, query generation and generator options, and says the add-on is early-stage with limited functionality.",
+      "entities": ["addon:graphql"],
+      "commits": [],
+      "documents": ["doc:zap-extensions:addOns/graphql/src/main/javahelp/org/zaproxy/addon/graphql/resources/help/contents/graphql.html"],
+      "evidence": [
+        {"label": "ZAP Student Hall of Fame", "url": "https://www.zaproxy.org/student-hall-of-fame/"},
+        {"label": "Introducing the GraphQL add-on for ZAP", "url": "https://www.zaproxy.org/blog/2020-08-28-introducing-the-graphql-add-on-for-zap/"}
+      ]
+    },
+    {
+      "title": "May to August 2020: first commit to first release",
+      "text": "The first commit under addOns/graphql is \"Initial commit\" by Akshath Kothari, dated 2020-05-21; it adds ExtensionGraphQl.java, GraphQlApi.java, a help page and a changelog. Commits by ricekot (the handle the blog post uses) follow: \"Add Import from File / URL Dialogs\" (2020-06-02), \"Add Import Functionality\" (2020-06-09), \"Add Query Generation Functionality\" (2020-07-07) and \"Update version and changelog of graphql\" (2020-08-28). The changelog dates version 0.1.0 on 2020-08-28 with the features \"Import a GraphQL Schema\" and \"Generate Queries from an imported Schema\".",
+      "entities": ["addon:graphql"],
+      "commits": [
+        "commit:zap-extensions:45e1859c7d987fd0ca04bc01a70bf4dd258772b2",
+        "commit:zap-extensions:5720e8cea19d470cd8ea6f0ac92506991ef69f62",
+        "commit:zap-extensions:4967a62ce0d70180eb60e42b12cc692f396144ca",
+        "commit:zap-extensions:404dac778e1893b313443f8e8955262e08c1c59d",
+        "commit:zap-extensions:a446f0ec76c5deeba0472f84827bd1dd900a795d"
+      ],
+      "documents": [],
+      "evidence": []
+    },
+    {
+      "title": "2020 to 2022: API options, automation, spider integration",
+      "text": "Later subjects include \"Expose Options through the API\" (2020-10-13), \"graphql: Add Automation Framework Support\" (2021-03-22), \"graphql: replace vars in schemaFile\" (2022-03-26), \"graphql: use Spider add-on\" and \"graphql: use Form Handler and add parse filter\" (both 2022-08-17), and \"graphql: remove core spider usage\" (2022-10-14).",
+      "entities": ["addon:graphql", "addon:automation", "addon:spider", "addon:formhandler"],
+      "commits": [
+        "commit:zap-extensions:ff97c68c5fc2f94e3a0014645484c45354ffe5cf",
+        "commit:zap-extensions:65bf9b470d4f58bd7805fa011d0cf64c1b3774e9",
+        "commit:zap-extensions:135f76e85ea4a61e138103c604509f87b04f0160",
+        "commit:zap-extensions:b3bac8db9c2ff2c37a594d20276cea00d4a41556",
+        "commit:zap-extensions:cbef90f5d6dab93c4245d506d4fdce5d2c499c2a",
+        "commit:zap-extensions:3fc4c1daf79fd150cac63483739aa9df97d8f592"
+      ],
+      "documents": ["doc:zap-extensions:addOns/graphql/src/main/javahelp/org/zaproxy/addon/graphql/resources/help/contents/automation.html"],
+      "evidence": []
+    },
+    {
+      "title": "2024 to 2026: fingerprinting, introspection imports, limits",
+      "text": "\"graphql: Add tech detection for GraphQL Engines\" is dated 2024-10-23 and \"graphql: Support importing introspection responses\" 2024-11-09. Further subjects: \"graphql: Add Circular Type Reference Detection\" (2025-05-04), \"graphql: Add statistics\" (2025-12-13), \"graphql: Support importing introspection response from URL\" (2026-02-18) and \"graphql: Allow limiting the number of messages imported\" (2026-07-21). The changelog lists 0.35.0 on 2026-10-08, so the add-on still exists at HEAD.",
+      "entities": ["addon:graphql"],
+      "commits": [
+        "commit:zap-extensions:03a0902d1a33515ec000ad57a7be03f509e9fe1a",
+        "commit:zap-extensions:65e7b6082ee87954c02112c6aef8903da44d8845",
+        "commit:zap-extensions:ee80f206de97af6617f07e2bf0d29a4d919a8deb",
+        "commit:zap-extensions:fe097f08ca543c11d678bfd95674e2691765d5f2",
+        "commit:zap-extensions:d34d4f79547a75c39da734679ec5709b70d583c5",
+        "commit:zap-extensions:e92a271aaa1e53c73fa9cd27ed335c705abcc35f"
+      ],
+      "documents": [],
+      "evidence": [
+        {"label": "GraphQL Support add-on page", "url": "https://www.zaproxy.org/docs/desktop/addons/graphql-support/"}
+      ]
+    }
+  ]
+}

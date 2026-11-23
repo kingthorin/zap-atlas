@@ -1,0 +1,68 @@
+{
+  "title": "The DOM XSS scanner (2015, directly mentored)",
+  "description": "The DOM XSS Scanner entry in the Student Hall of Fame and the history of the domxss add-on in zap-extensions.",
+  "audience": "community",
+  "status": "draft",
+  "chapters": [
+    {
+      "title": "August 2015: the first commit",
+      "text": "The Student Hall of Fame lists DOM XSS Scanner (Aabha Biyani) in 2015 with program \"Direct\" and links the add-on's documentation page. In zap-extensions the first commit under the domxss path is dated 2015-08-21, titled \"DOM XSS Active Scan rule\", and is by psiinon. \"Minor domxss tweeks\" follows on 2015-08-24.",
+      "entities": [
+        "addon:domxss"
+      ],
+      "commits": [
+        "commit:zap-extensions:5667b488b99997626f02b7f6be0e9ca87db3326e",
+        "commit:zap-extensions:5b74a9c7e6413770605b8f6a63ddcf401d21fd25"
+      ],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        },
+        {
+          "label": "DOM XSS add-on page",
+          "url": "https://www.zaproxy.org/docs/desktop/addons/dom-xss-active-scan-rule/"
+        }
+      ]
+    },
+    {
+      "title": "Selenium and browser use",
+      "text": "The add-on page says it launches \"browser windows and sends attack payloads to all of the relevant DOM elements.\" \"Added selenium add-on for DOM XSS add-on\" is dated 2015-08-31, and \"domxss: use Selenium extension and add skip reason\" 2017-08-14.",
+      "entities": [
+        "addon:domxss"
+      ],
+      "commits": [
+        "commit:zap-extensions:30882b898088c25ba8bf957c97d86d6236ffabbc",
+        "commit:zap-extensions:10326c6fdd4c71d34a424f4f5424c5b0e79b80a9"
+      ],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        }
+      ]
+    },
+    {
+      "title": "Maintenance to now",
+      "text": "\"Prepare release of scanner rules add-ons\" is dated 2019-06-07. The add-on is still in zap-extensions: 130 commits touch addOns/domxss, including \"Update Selenium library\" on 2024-12-06.",
+      "entities": [
+        "addon:domxss"
+      ],
+      "commits": [
+        "commit:zap-extensions:027a05e36f75ee4738c7fde35e3a0beae0381292",
+        "commit:zap-extensions:c9cb3e3b9f5addf57e617a564b92d886b3de7b68"
+      ],
+      "documents": [
+        "doc:zap-extensions:addOns/domxss/src/main/javahelp/org/zaproxy/zap/extension/domxss/resources/help/contents/domxss.html"
+      ],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        }
+      ]
+    }
+  ]
+}

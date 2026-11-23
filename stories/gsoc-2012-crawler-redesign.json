@@ -1,0 +1,88 @@
+{
+  "title": "The 2012 crawler redesign and the spider add-on",
+  "description": "A 2012 GSoC crawler redesign in zaproxy, and what later happened to the spider code: a zap-extensions add-on in 2022 and removal of the deprecated spider from core in 2026.",
+  "audience": "community",
+  "status": "draft",
+  "chapters": [
+    {
+      "title": "2012: a new spider package in core",
+      "text": "The Student Hall of Fame lists a crawler redesign with session support (Cosmin Stefan) as a 2012 Summer GSoC project. The wiki lists goals including a \"redesigned (or possibly replaced) site crawler\". A zaproxy commit by cosminstefanxp dated 2012-05-29 is titled \"New SpiderParam in org.zaproxy.zap.spider. Modified extensions to accommodate with change.\"",
+      "entities": [
+        "repo:zaproxy"
+      ],
+      "commits": [
+        "commit:zaproxy:3698ae0ed2babc9a5f9d0c52616ad5a0382bea53"
+      ],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        },
+        {
+          "label": "Crawler redesign wiki",
+          "url": "https://github.com/zaproxy/zaproxy/wiki/Gsoc2012_Redesign_of_site_crawler"
+        }
+      ]
+    },
+    {
+      "title": "Summer 2012: features added",
+      "text": "Commits by cosminstefanxp in the spider paths show the work step by step: \"Added support for depth of crawling.\" (2012-06-06), \"Added support for Frames and IFrames. Added tests for Frames and IFrames.\" (2012-06-13), \"Started work on Form handling. Added parser for HTML forms. Integration with rest of spider. Handling of simple text input fields. Added corresponding tests for Wavsep.\" (2012-07-03), \"Removed old and unused Spider-related Paros Proxy packages.\" (2012-07-12) and \"Add support in Spider for parsing of robots.txt files for finding more resources. On dev_spider branch.\" (2012-08-06).",
+      "entities": [
+        "repo:zaproxy"
+      ],
+      "commits": [
+        "commit:zaproxy:9fee1c1c10b7d24a52d14d588c967e782c2117da",
+        "commit:zaproxy:d5f3a46e03c77b6658a6da9a94b71b3cb06966ee",
+        "commit:zaproxy:91b1d2284589e42775270a130dff37ea9e3b9186",
+        "commit:zaproxy:baf2d4339612748edc6d904c55735b00f5c48c91",
+        "commit:zaproxy:dce22b434a318efe82c80c256390301031aa939e"
+      ],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        }
+      ]
+    },
+    {
+      "title": "2017: functionality moved to a Spider extension",
+      "text": "A zaproxy commit dated 2017-01-04 is titled \"Move Spider functionality to Spider extension\".",
+      "entities": [
+        "repo:zaproxy"
+      ],
+      "commits": [
+        "commit:zaproxy:2bb982c9b57964b9d412f30282af13b4039d3801"
+      ],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        }
+      ]
+    },
+    {
+      "title": "2022: a spider add-on; 2026: deprecated spider removed",
+      "text": "In zap-extensions, a commit dated 2022-01-20 is titled \"feat: spider: Add spider add-on with SVG href parsing\" and one dated 2022-04-27 is titled \"feat: Spider Migration\". In zaproxy, a commit dated 2026-01-23 is titled \"Remove deprecated spider\"; its file list includes org/zaproxy/zap/spider/Spider.java and SpiderParam.java. The spider add-on remains in zap-extensions.",
+      "entities": [
+        "addon:spider"
+      ],
+      "commits": [
+        "commit:zap-extensions:73640d236afccf0b719e854ea5c830aa78bd807a",
+        "commit:zap-extensions:752a61dbbe11dbf8f466b66f5a7af109f8e076b5",
+        "commit:zaproxy:c6a3832f8a467020ae1f3b26fcfdfb56b96cc7b0"
+      ],
+      "documents": [
+        "doc:zap-extensions:addOns/spider/src/main/javahelp/org/zaproxy/addon/spider/resources/help/contents/spider.html"
+      ],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        }
+      ]
+    }
+  ]
+}

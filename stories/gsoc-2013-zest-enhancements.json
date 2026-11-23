@@ -1,0 +1,71 @@
+{
+  "title": "Zest enhancements (GSoC 2013) in the zest add-on history",
+  "description": "The 2013 Zest enhancements project in the Student Hall of Fame, set beside the 2013 commits and the later history of the zest add-on.",
+  "audience": "community",
+  "status": "draft",
+  "chapters": [
+    {
+      "title": "2013: Zest in zap-extensions before and during the project",
+      "text": "The Student Hall of Fame lists Zest enhancements (Alessandro Secco) as a 2013 Summer GSoC project. Zest commits in zap-extensions predate the summer: \"Added zest and mitmConf\" is dated 2013-05-03, and \"Issue 751: Change Zest add-on to plug into script console\" 2013-08-02.",
+      "entities": [
+        "addon:zest"
+      ],
+      "commits": [
+        "commit:zap-extensions:3920dac240c0e31189cf8a92cab240cf2cef0d01",
+        "commit:zap-extensions:38fe0cd60dad0ad5909a18fa854d2f5374a053cd"
+      ],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        }
+      ]
+    },
+    {
+      "title": "August 2013: loops in the UI",
+      "text": "\"ZestLoopFile UI + SurroundWith + get/add to Fuzzer Files\" is dated 2013-08-12, followed by \"edited ZestLoop UI\" (2013-08-15) and \"changed ZestLoopIntegerDialog.validateFields plus other changes cause of new ZestLoopCode\" (2013-08-18). The email-style author names on the commits are not repeated here. The student's end-of-project post lists under \"Things Made\": \"Added Loop to Zest as a new Statement;\" and \"Added UI in ZAP for the changes above;\".",
+      "entities": [
+        "addon:zest"
+      ],
+      "commits": [
+        "commit:zap-extensions:3d4c9ef50321954e56e012a0d58db8cb5fd67c47",
+        "commit:zap-extensions:0b8c1cb2209e4c61ecdbef0da31cb080743bf24e",
+        "commit:zap-extensions:7d1de5555702eff089c9f90d2e024ff53fb8c198"
+      ],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        },
+        {
+          "label": "Project end-of-term post",
+          "url": "https://seccoalegsoc.blogspot.com/2013/09/gsoc-end-current-status.html"
+        }
+      ]
+    },
+    {
+      "title": "Afterwards: beta, help, relocation",
+      "text": "\"Zest moved to beta\" is dated 2013-09-02 and \"Added basic Zest help\" 2013-09-10. \"zest: relocate to its own project\" is dated 2019-04-03. The add-on is still in zap-extensions: the latest commit under addOns/zest is dated 2026-10-23 (\"zest: fix GUI hang when running script with params\") and the directory has 277 commits.",
+      "entities": [
+        "addon:zest"
+      ],
+      "commits": [
+        "commit:zap-extensions:245de9959739fd52b36587f03dac4e06bff293d0",
+        "commit:zap-extensions:7bca1d403b7b8bc11c3913501d62e4cd8352a888",
+        "commit:zap-extensions:60654f53f5da8df5c7643d89ad18a03a00c9a6e1",
+        "commit:zap-extensions:df8245fbd8f872591bd238d96f03e07abde160d8"
+      ],
+      "documents": [
+        "doc:zap-extensions:addOns/zest/src/main/javahelp/org/zaproxy/zap/extension/zest/resources/help/contents/zest.html"
+      ],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        }
+      ]
+    }
+  ]
+}
