@@ -248,7 +248,7 @@ function DepsTab() {
     : <span key={id} className="text-slate-400 mr-2" title="not in this dataset">{id.replace("addon:", "")}</span>;
   return (
     <div className="space-y-2">
-      <p className="text-sm text-slate-600">Add-on dependencies declared in each add-on's Gradle build. Names in grey are not add-ons of this dataset.</p>
+      <p className="text-sm text-slate-600">Add-on dependencies declared in each add-on's Gradle build. Names in grey are not add-ons of this dataset. <Link className="text-indigo-600" to="/graph?view=deps">Show them as a network</Link>.</p>
       <div className="flex flex-wrap gap-3 items-center text-sm">
         <input type="search" placeholder="Filter add-ons…" aria-label="Filter add-ons" value={q} onChange={e => setQ(e.target.value)}
           className="w-full md:w-72 rounded border border-slate-200 bg-white px-2 py-1 text-sm outline-none focus:ring-2 focus:ring-indigo-500" />

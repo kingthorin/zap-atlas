@@ -67,7 +67,7 @@ differs, and what is planned next. Update it with each change that moves an item
    - Data: a per-module aggregate edge file and per-module node files, so a view loads
      only what it shows (this also motivates per-module shards).
    A hierarchical sunburst stays an optional second view of the same data.
-3. **Add-on dependency network** (the Source page lists it as a table; a drawn network is open). The **core-team swimlane** is done, on the timeline.
+3. **Add-on dependency network**: done as the Graph page's "Add-on dependencies" view (only `DEPENDS_ON` edges, drawn as arrows from an add-on to what it depends on, modules with no dependency edge dropped, size by how many add-ons depend on a module); the Source page's dependency table links to it. The **core-team swimlane** is done, on the timeline.
 
 Built with D3 modules for scales, zoom, brush and hierarchy, rendered as SVG by React
 (canvas past about 5,000 shapes).
@@ -94,11 +94,11 @@ Built with D3 modules for scales, zoom, brush and hierarchy, rendered as SVG by 
   in the dataset (`tags.jsonl`); milestones need the release-note pages and a rule for
   which tags count as releases (skip weekly and RC tags by default).
 
-## TODO (from the maintainer; details to be filled in)
+## Stories added from the maintainer's list
 
-- **zapbot:** TODO.
-- **Updated logo:** TODO. The Atlas logo (`frontend/public/logo.svg`) uses the geometry of the ZAP logo as published at zaproxy.org; it needs updating to the new one.
-- **Website:** TODO. The Atlas header and colours follow zaproxy.org's stylesheet.
+Three draft history stories, written from the dataset and public records (GitHub API, the registry's RDAP record, the Internet Archive):
+`zapbot` (account created 2015-06-04; what it commits since 2015-11-10), `zap-logo` (the logo notes, the November 2017 icons, the 2024 ZAP by Checkmarx banner)
+and `zap-website` (domain registered 2015-11-04, the Hugo site, January 2020). They are `draft` until a maintainer reviews them.
 
 ## Incremental runs
 
@@ -113,7 +113,7 @@ against 84 for a full run, output identical for all 673 files; the saving in CI 
 2. M3 remainder: a compiler-backed pass for overloads, generics and chained calls (optional).
 3. ~~Release and tag milestones~~ (done: `milestones.jsonl`, Releases page, history markers, add-on release lists, story references).
 4. ~~Timeline~~ (first version done), ~~graph explorer~~ (module level and type expansion done).
-5. ~~Per-module shards~~, ~~workflow `ref` and `repo_refs` inputs~~ (now passed to `atlas analyze --ref/--repo-refs`; `checkout_sources.py` removed; CI passed with empty inputs, a run with `repo_refs` set is still untested),  ~~licence~~, ~~validator integrity checks~~, ~~zap-hud as a fourth repository~~, ~~accessibility first pass~~, ~~least-privilege CI~~ (all done).
+5. ~~Per-module shards~~, ~~workflow `ref` and `repo_refs` inputs~~ (now passed to `atlas analyze --ref/--repo-refs`; `checkout_sources.py` removed; CI passed with empty inputs and with `repo_refs` set to zap-hud v0.19.0),  ~~licence~~, ~~validator integrity checks~~, ~~zap-hud as a fourth repository~~, ~~accessibility first pass~~, ~~least-privilege CI~~ (all done).
 6. Open, roughly in order of value:
    - Graph: the plan is done apart from files for non-Java sources and the optional sunburst view.
    - Timeline extras: a path-prefix or language sub-section (the add-on focus, core team lane and project markers are done).

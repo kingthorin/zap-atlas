@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import Graph from "graphology";
 import forceAtlas2 from "graphology-layout-forceatlas2";
 import Sigma from "sigma";
+import { EdgeArrowProgram } from "sigma/rendering";
 import {
   FileActivity, LanguageRow, ModuleActivity, ModuleGraph, Relationship, ShardIndex, loadFileActivity, loadLanguages, loadModuleActivity, loadModuleGraph, loadModuleIncoming, loadModuleRelationships, loadModuleSymbols, loadShardIndex,
 } from "../lib/data";
@@ -34,7 +35,8 @@ function drawHover(ctx: CanvasRenderingContext2D, data: any, settings: any) {
   }
 }
 
-type SizeBy = "edges" | "commits" | "lines";
+type SizeBy = "edges" | "commits" | "lines" | "dependents";
+type View = "all" | "deps";
 type ColourBy = "repo" | "recency" | "language";
 const LANG_COLOR: Record<string, string> = {
   Java: "#4a7fb5", JavaScript: "#c9a400", HTML: "#e0603a", XML: "#8b5cf6", Properties: "#7e92a4", Markdown: "#475569",
@@ -174,7 +176,7 @@ function expandedPairs(g: ModuleGraph, types: Set<string>, evidence: Set<string>
   return { pairs: [...by.values()], childParent, kinds };
 }
 
-function buildGraph(nodes: string[], pairs: Pair[], typeParent: Map<string, string>, kinds: Map<string, Kind>, pos: Map<string, { x: number; y: number }>, first: boolean): Graph {
+function buildGraph(nodes: string[], pairs: Pair[], typeParent: Map<string, string>, kinds: Map<string, Kind>, pos: Map<string, { x: number; y: number }>, first: boolean, hideIsolated = false): Graph {
   const g = new Graph({ type: "undirected" });
   const total = new Map<string, number>();
   for (const p of pairs) { total.set(p.a, (total.get(p.a) ?? 0) + p.weight); total.set(p.b, (total.get(p.b) ?? 0) + p.weight); }
@@ -186,7 +188,7 @@ function buildGraph(nodes: string[], pairs: Pair[], typeParent: Map<string, stri
     const r = 10 + Math.sqrt(i) * 3, ang = i * 2.399963; // spiral start, so layouts are reproducible
     return { x: r * Math.cos(ang), y: r * Math.sin(ang) };
   };
-  [...nodes, ...typeParent.keys()].forEach((id, i) => {
+  [...nodes, ...typeParent.keys()].filter(id => !hideIsolated || total.has(id)).forEach((id, i) => {
     const isChild = typeParent.has(id), base = REPO_COLOR[repoOf(isChild ? typeParent.get(id)! : id)] ?? "#7e92a4";
     const isDir = kinds.get(id) === "dir";
     g.addNode(id, { ...place(id, i), size: isDir ? 3.5 : isChild ? Math.min(9, 2.5 + Math.sqrt(total.get(id) ?? 0) * 0.35) : Math.min(22, 4 + Math.sqrt(total.get(id) ?? 0) * 0.5),
@@ -194,7 +196,11 @@ function buildGraph(nodes: string[], pairs: Pair[], typeParent: Map<string, stri
   });
   for (const p of pairs) {
     if (!g.hasNode(p.a) || !g.hasNode(p.b)) continue;
-    g.addEdge(p.a, p.b, { size: Math.min(6, 0.6 + Math.log10(1 + p.weight)), w: 1 + Math.log10(1 + p.weight), color: p.types.CONTAINS ? "#d5dde6" : "#9fb3c8" });
+    // A pair joined only by add-on dependencies in one direction is drawn as an arrow from the dependent to its dependency.
+    const oneWayDeps = Object.keys(p.types).length === 1 && p.types.DEPENDS_ON && (p.ab === 0) !== (p.ba === 0);
+    const [from, to] = oneWayDeps && p.ba > 0 ? [p.b, p.a] : [p.a, p.b];
+    g.addEdge(from, to, { size: Math.min(6, 0.6 + Math.log10(1 + p.weight)), w: 1 + Math.log10(1 + p.weight), color: p.types.CONTAINS ? "#d5dde6" : "#9fb3c8",
+      ...(oneWayDeps ? { type: "arrow" } : {}) });
   }
   forceAtlas2.assign(g, { iterations: first ? 1500 : 300, settings: { ...forceAtlas2.inferSettings(g), linLogMode: true, gravity: 0.6, scalingRatio: 8, edgeWeightInfluence: 1 }, getEdgeWeight: "w" });
   g.forEachNode((id, a) => pos.set(id, { x: a.x, y: a.y }));
@@ -262,7 +268,7 @@ function TreePanel({ modules, expanded, modes, detail, sel, faded, onSelect, onT
 export default function GraphPage() {
   const [data, setData] = useState<ModuleGraph | null>(null);
   const [error, setError] = useState("");
-  const [types, setTypes] = useState<Set<string>>(new Set(TYPES));
+  const [types, setTypes] = useState<Set<string>>(new Set(useSearchParams()[0].get("view") === "deps" ? ["DEPENDS_ON"] : TYPES));
   const [sel, setSel] = useState("");
   const [expanded, setExpanded] = useState<string[]>([]);
   const [modes, setModes] = useState<Record<string, Mode>>({});
@@ -275,7 +281,9 @@ export default function GraphPage() {
   const [indexes, setIndexes] = useState<Record<string, ShardIndex>>({});
   const [loading, setLoading] = useState("");
   const [evidence, setEvidence] = useState<Set<string>>(new Set(EVIDENCE));
-  const [sizeBy, setSizeBy] = useState<SizeBy>("edges");
+  const [params] = useSearchParams();
+  const [view, setView] = useState<View>(params.get("view") === "deps" ? "deps" : "all");
+  const [sizeBy, setSizeBy] = useState<SizeBy>(params.get("view") === "deps" ? "dependents" : "edges");
   const [colourBy, setColourBy] = useState<ColourBy>("repo");
   const [year, setYear] = useState<number | null>(null);       // null: every year
   const [activity, setActivity] = useState<Record<string, ModuleActivity>>({});
@@ -289,6 +297,12 @@ export default function GraphPage() {
     const all = Object.values(activity).flatMap(a => [yearOf(a.first), yearOf(a.last)]);
     return all.length ? { min: Math.min(...all), max: Math.max(...all) } : null;
   }, [activity]);
+  /** module id -> how many modules declare a dependency on it (add-on dependencies, from the module graph). */
+  const dependents = useMemo(() => {
+    const by = new Map<string, number>();
+    for (const [, t, type] of data?.edges ?? []) if (type === "DEPENDS_ON") by.set(data!.nodes[t], (by.get(data!.nodes[t]) ?? 0) + 1);
+    return { by, max: Math.max(1, ...by.values()) };
+  }, [data]);
   const maxOf = useMemo(() => ({
     commits: Math.max(1, ...Object.values(activity).map(a => a.commits)), lines: Math.max(1, ...Object.values(activity).map(a => a.lines)),
   }), [activity]);
@@ -326,10 +340,10 @@ export default function GraphPage() {
       : { pairs: [] as Pair[], childParent: new Map<string, string>(), kinds: new Map<string, Kind>() }),
     [data, types, evidence, expanded, modes, detail, indexes]);
   const styleRef = useRef<any>({});
-  styleRef.current = { sizeBy, colourBy, year, activity, years, maxOf, typeParent, kinds, fileActivity, maxFile, lang, langs, hiddenRepos };
+  styleRef.current = { dependents, sizeBy, colourBy, year, activity, years, maxOf, typeParent, kinds, fileActivity, maxFile, lang, langs, hiddenRepos };
   const graph = useMemo(
-    () => (data ? buildGraph(data.nodes, pairs, typeParent, kinds, positions.current, positions.current.size === 0) : null),
-    [data, pairs, typeParent, kinds]);
+    () => (data ? buildGraph(data.nodes, pairs, typeParent, kinds, positions.current, positions.current.size === 0, view === "deps") : null),
+    [data, pairs, typeParent, kinds, view]);
 
   /** Activity of a node: a file's own, or that of the module a type or directory belongs to. */
   const actOf = (n: string): ModuleActivity | null => {
@@ -352,10 +366,12 @@ export default function GraphPage() {
   const styleNode = (n: string, d: any) => {
     const st = styleRef.current, kind = st.kinds.get(n), act = actOf(n);
     let out = d;
+    if (st.sizeBy === "dependents" && !kind) out = { ...out, size: 3 + 19 * Math.sqrt((st.dependents.by.get(n) ?? 0) / st.dependents.max) };
     if (!act) return isFaded(n) ? { ...out, color: isDark() ? "#2a3548" : "#e6ecf2", label: "", zIndex: -1 } : out;
     const by = st.sizeBy as "commits" | "lines";
-    if (st.sizeBy !== "edges" && !kind) out = { ...out, size: 3 + 19 * Math.sqrt(act[by] / st.maxOf[by]) };
-    if (st.sizeBy !== "edges" && kind === "file") out = { ...out, size: 2.5 + 7 * Math.sqrt(act[by] / st.maxFile[by]) };
+    const byActivity = st.sizeBy === "commits" || st.sizeBy === "lines";
+    if (byActivity && !kind) out = { ...out, size: 3 + 19 * Math.sqrt(act[by] / st.maxOf[by]) };
+    if (byActivity && kind === "file") out = { ...out, size: 2.5 + 7 * Math.sqrt(act[by] / st.maxFile[by]) };
     if (st.colourBy === "language" && (!kind || kind === "file")) {
       const dom = st.langs.dominant.get(st.typeParent.get(n) ?? n);
       out = { ...out, color: (dom && LANG_COLOR[dom] || LANG_OTHER) + (kind ? "dd" : "") };
@@ -369,7 +385,7 @@ export default function GraphPage() {
   useEffect(() => {
     if (!graph || !box.current) return;
     const s = new Sigma(graph, box.current, {
-      labelRenderedSizeThreshold: 7, defaultDrawNodeHover: drawHover, labelColor: { color: isDark() ? "#e2e8f0" : "#334155" }, renderEdgeLabels: false,
+      labelRenderedSizeThreshold: 7, defaultDrawNodeHover: drawHover, labelColor: { color: isDark() ? "#e2e8f0" : "#334155" }, renderEdgeLabels: false, edgeProgramClasses: { arrow: EdgeArrowProgram },
       nodeReducer: (n, raw) => {
         const cur = selRef.current, d = styleNode(n, raw);
         if (!cur) return d;
@@ -459,10 +475,16 @@ export default function GraphPage() {
         <h1 className="text-2xl font-bold">Module graph</h1>
         <p className="text-sm text-slate-600">
           Modules as nodes, sized by how many edges they have and placed by a force layout, so tightly coupled modules sit together.
-          Lines join modules with calls, imports, inheritance, API use or add-on dependencies between them. Click a module to see its neighbours, and expand it to see its types.
+          Lines join modules with calls, imports, inheritance, API use or add-on dependencies between them. "Add-on dependencies" keeps only those edges, as arrows from an add-on to what it depends on, and drops modules with none. Click a module to see its neighbours, and expand it to see its types.
         </p>
       </div>
       <div className="flex flex-wrap items-center gap-2 text-sm">
+        <div className="flex gap-1" role="group" aria-label="View">
+          <button aria-pressed={view === "all"} className={chip(view === "all")}
+            onClick={() => { setView("all"); setTypes(new Set(TYPES)); setSizeBy("edges"); }}>All links</button>
+          <button aria-pressed={view === "deps"} className={chip(view === "deps")}
+            onClick={() => { setView("deps"); setTypes(new Set(["DEPENDS_ON"])); setSizeBy("dependents"); }}>Add-on dependencies</button>
+        </div>
         <div className="flex flex-wrap gap-1" role="group" aria-label="Edge types">
           {TYPES.map(t => <button key={t} aria-pressed={types.has(t)} className={chip(types.has(t))} onClick={() => toggle(t)}>{t}</button>)}
         </div>
@@ -485,7 +507,7 @@ export default function GraphPage() {
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
         <label>Size by{" "}
           <select className="border border-slate-300 rounded px-2 py-1 bg-white" value={sizeBy} onChange={e => setSizeBy(e.target.value as SizeBy)}>
-            <option value="edges">links to other modules</option><option value="commits">commits</option><option value="lines">lines changed</option>
+            <option value="edges">links to other modules</option><option value="dependents">add-ons that depend on it</option><option value="commits">commits</option><option value="lines">lines changed</option>
           </select>
         </label>
         <label>Colour by{" "}

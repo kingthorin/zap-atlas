@@ -306,3 +306,20 @@ test("module graph: tree, find, language and repository filters", async ({ page 
   await page.getByLabel("Colour by").selectOption("language");
   await expect(page.getByLabel("Language colours")).toContainText("Java");
 });
+
+test("module graph: the add-on dependency view keeps only dependency edges and drops unlinked modules", async ({ page }) => {
+  await page.goto("source?tab=deps");
+  await page.getByRole("link", { name: "Show them as a network" }).click();       // the table links to the network
+  await expect(page).toHaveURL(/graph\?view=deps/);
+  const summary = page.getByText(/\d+ modules.*linked pairs/);
+  await expect(page.getByRole("button", { name: "Add-on dependencies", exact: true })).toHaveAttribute("aria-pressed", "true");
+  const deps = (await summary.textContent())!;
+  const count = (t: string) => Number(t.match(/(\d+) modules/)![1]);
+  expect(count(deps)).toBeGreaterThan(20); expect(count(deps)).toBeLessThan(90);   // modules without a dependency edge are dropped
+  await expect(page.getByRole("button", { name: "DEPENDS_ON", exact: true })).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByRole("button", { name: "CALLS", exact: true })).toHaveAttribute("aria-pressed", "false");
+  await expect(page.getByLabel("Size by")).toHaveValue("dependents");
+  await page.getByRole("button", { name: "All links", exact: true }).click();
+  await expect(summary).not.toHaveText(deps);
+  expect(count((await summary.textContent())!)).toBeGreaterThan(80);
+});
