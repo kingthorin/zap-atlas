@@ -131,7 +131,7 @@ class AtlasGenerator:
         (output_dir / HISTORY_INDEX).write_text(json.dumps(index, indent=1), encoding="utf-8")
         names.append(HISTORY_INDEX)
         names.append(write_timeline(output_dir, self.rows[CHUNK_COMMITS]))
-        names.append(write_activity(output_dir, self.rows[CHUNK_MODULES], self.rows[CHUNK_COMMITS], self.rows[CHUNK_FILES]))
+        names += write_activity(output_dir, self.rows[CHUNK_MODULES], self.rows[CHUNK_COMMITS], self.rows[CHUNK_FILES], self.rows[CHUNK_SYMBOLS])
         return names
 
     def _process_repo(self, repo, repo_path: Path) -> None:

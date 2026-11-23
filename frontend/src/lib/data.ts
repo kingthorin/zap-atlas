@@ -221,3 +221,11 @@ export function loadModuleActivity(): Promise<Record<string, ModuleActivity>> {
   if (!activityCache) activityCache = fetchText(`${DATA_DIR}/module_activity.json`).then(t => JSON.parse(t));
   return activityCache;
 }
+
+/** Repository -> path -> [first day, last day, commits, lines changed] for files that currently declare symbols. */
+export type FileActivity = Record<string, Record<string, [string, string, number, number]>>;
+let fileActivityCache: Promise<FileActivity> | null = null;
+export function loadFileActivity(): Promise<FileActivity> {
+  if (!fileActivityCache) fileActivityCache = fetchText(`${DATA_DIR}/file_activity.json`).then(t => JSON.parse(t));
+  return fileActivityCache;
+}

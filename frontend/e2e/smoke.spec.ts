@@ -255,3 +255,18 @@ test("module graph: evidence filter, size and colour modes, and the year slider"
   await page.getByLabel("Select a module").selectOption({ label: "automation" });
   await expect(page.getByText(/\d+ commits · [\d,]+ lines changed · first \d{4}-/)).toBeVisible();
 });
+
+test("module graph expands a module into directories and files, and a file opens in Source", async ({ page }) => {
+  await page.goto("graph");
+  const summary = page.getByText(/\d+ modules.*linked pairs/);
+  await page.getByLabel("Select a module").selectOption({ label: "automation" });
+  await page.getByRole("button", { name: "Expand into files" }).click();
+  await expect(summary).toContainText(/\+ 40 files, \d+ directories/);
+  await expect(page.getByText(/showing 40 of \d+ files/)).toBeVisible();
+  await page.getByRole("button", { name: "Expand into types" }).click();            // switching modes replaces the files
+  await expect(summary).toContainText("+ 40 types");
+  await expect(summary).not.toContainText("files");
+  await page.getByRole("button", { name: "Expand into files" }).click();
+  await page.getByRole("button", { name: "Collapse files" }).click();
+  await expect(summary).not.toContainText("+ ");
+});

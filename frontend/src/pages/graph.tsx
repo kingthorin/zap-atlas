@@ -4,9 +4,10 @@ import Graph from "graphology";
 import forceAtlas2 from "graphology-layout-forceatlas2";
 import Sigma from "sigma";
 import {
-  ModuleActivity, ModuleGraph, Relationship, ShardIndex, loadModuleActivity, loadModuleGraph, loadModuleIncoming, loadModuleRelationships, loadModuleSymbols, loadShardIndex,
+  FileActivity, ModuleActivity, ModuleGraph, Relationship, ShardIndex, loadFileActivity, loadModuleActivity, loadModuleGraph, loadModuleIncoming, loadModuleRelationships, loadModuleSymbols, loadShardIndex,
 } from "../lib/data";
 import { Loading, ErrorBox } from "../components/ui";
+import { filePathOf } from "../lib/data";
 
 const REPO_COLOR: Record<string, string> = { zaproxy: "#4389ff", "zap-extensions": "#e08e00", "zap-core-help": "#2f9e6f", "zap-hud": "#8e5bd0" };
 const EVIDENCE = ["resolved", "inferred", "syntactic"];
@@ -50,22 +51,73 @@ const TYPE_KINDS = new Set(["class", "interface", "enum", "record", "annotation_
 const CODE_EDGES = new Set(["CALLS", "IMPORTS", "EXTENDS", "IMPLEMENTS"]); // edges that expanding a module replaces with type-level ones
 const TOP_TYPES = 40; // most connected types shown per expanded module
 
-interface Detail { types: string[]; rels: Relationship[]; total: number }
+type Mode = "types" | "files";
+const TOP_FILES = 40; // most connected files shown per module expanded into files
+interface Detail { types: string[]; rels: Relationship[]; total: number; files: string[]; totalFiles: number; fileOf: Map<string, string> }
 const ownerType = (id: string) => id.split("#")[0];
-const labelOf = (id: string) => (id.startsWith("module:") ? short(id) : ownerType(id).split(":").slice(2).join(":").split(".").pop()!);
+const fnode = (m: string, path: string) => `fnode:${repoOf(m)}:${path}`;
+const dnode = (m: string, path: string) => `dnode:${repoOf(m)}:${path}`;
+const isFileNode = (id: string) => id.startsWith("fnode:");
+const isDirNode = (id: string) => id.startsWith("dnode:");
+const labelOf = (id: string) =>
+  id.startsWith("module:") ? short(id)
+  : isFileNode(id) ? pathOf(id).split("/").pop()!
+  : isDirNode(id) ? pathOf(id).split("/").slice(-2).join("/")
+  : ownerType(id).split(":").slice(2).join(":").split(".").pop()!;
 const lighten = (hex: string) => hex + "99";
+
+interface DirTrie { path: string; dirs: Map<string, DirTrie>; files: string[] }
+
+/** Structural edges for a module expanded into files: module -> directories -> files, single-child directory chains squashed. */
+function fileTree(module: string, files: string[]): [string, string][] {
+  const root: DirTrie = { path: pathOf(module), dirs: new Map(), files: [] };
+  for (const f of files) {
+    let node = root;
+    for (const seg of f.slice(root.path.length + 1).split("/").slice(0, -1)) {
+      const path = `${node.path}/${seg}`;
+      node = node.dirs.get(seg) ?? node.dirs.set(seg, { path, dirs: new Map(), files: [] }).get(seg)!;
+    }
+    node.files.push(f);
+  }
+  const edges: [string, string][] = [];
+  const emit = (node: DirTrie, parent: string) => {
+    for (let child of node.dirs.values()) {
+      while (child.dirs.size === 1 && child.files.length === 0) child = [...child.dirs.values()][0];
+      edges.push([parent, dnode(module, child.path)]);
+      emit(child, dnode(module, child.path));
+    }
+    for (const f of node.files) edges.push([parent, fnode(module, f)]);
+  };
+  emit(root, module);
+  return edges;
+}
 
 interface Pair { a: string; b: string; weight: number; types: Record<string, number>; ab: number; ba: number }
 
+type Kind = "type" | "file" | "dir";
+
 /**
- * Pairs for the graph with some modules expanded: their module-level code edges are replaced by edges
- * between their most connected types and the types or modules on the other side.
+ * Pairs for the graph with some modules expanded, into their most connected types or files: their module-level
+ * code edges are replaced by edges between those and the types, files or modules on the other side. A type or
+ * file outside the shown set stands for its whole module.
  */
-function expandedPairs(g: ModuleGraph, types: Set<string>, evidence: Set<string>, expanded: string[], detail: Map<string, Detail>,
-                       indexes: Record<string, ShardIndex>): { pairs: Pair[]; typeParent: Map<string, string> } {
+function expandedPairs(g: ModuleGraph, types: Set<string>, evidence: Set<string>, expanded: string[], modes: Record<string, Mode>,
+                       detail: Map<string, Detail>, indexes: Record<string, ShardIndex>): { pairs: Pair[]; childParent: Map<string, string>; kinds: Map<string, Kind> } {
   const open = new Set(expanded.filter(m => detail.has(m)));
-  const typeParent = new Map<string, string>();
-  for (const m of open) for (const t of detail.get(m)!.types) typeParent.set(t, m);
+  const childParent = new Map<string, string>(), kinds = new Map<string, Kind>(), shownFiles = new Set<string>();
+  const structure: [string, string][] = [];
+  for (const m of open) {
+    const d = detail.get(m)!;
+    if (modes[m] === "files") {
+      for (const f of d.files) { childParent.set(fnode(m, f), m); kinds.set(fnode(m, f), "file"); shownFiles.add(fnode(m, f)); }
+      for (const [from, to] of fileTree(m, d.files)) {
+        structure.push([from, to]);
+        if (isDirNode(to)) { childParent.set(to, m); kinds.set(to, "dir"); }
+      }
+    } else {
+      for (const t of d.types) { childParent.set(t, m); kinds.set(t, "type"); structure.push([m, t]); }
+    }
+  }
   const modulesOf = new Map<string, string[]>();
   for (const n of g.nodes) (modulesOf.get(repoOf(n)) ?? modulesOf.set(repoOf(n), []).get(repoOf(n))!).push(pathOf(n));
   const moduleOf = (symbol: string): string | null => {
@@ -76,7 +128,16 @@ function expandedPairs(g: ModuleGraph, types: Set<string>, evidence: Set<string>
     const best = (modulesOf.get(repo) ?? []).filter(p => key === p || key.startsWith(p + "/")).sort((a, b) => b.length - a.length)[0];
     return best ? `module:${repo}:${best}` : null;
   };
-  const nodeFor = (symbol: string) => { const t = ownerType(symbol); return typeParent.has(t) ? t : moduleOf(symbol); };
+  const nodeFor = (symbol: string): string | null => {
+    const t = ownerType(symbol);
+    if (childParent.has(t)) return t;
+    const m = moduleOf(symbol);
+    if (m && open.has(m) && modes[m] === "files") {
+      const path = detail.get(m)!.fileOf.get(t);
+      if (path && shownFiles.has(fnode(m, path))) return fnode(m, path);
+    }
+    return m;
+  };
 
   const by = new Map<string, Pair>();
   const add = (x: string, y: string, type: string, n: number) => {
@@ -92,23 +153,22 @@ function expandedPairs(g: ModuleGraph, types: Set<string>, evidence: Set<string>
     if (CODE_EDGES.has(type) && (open.has(a) || open.has(b))) continue;
     add(a, b, type, n);
   }
+  for (const [from, to] of structure) add(from, to, "CONTAINS", 1);
   const seen = new Set<string>();
   for (const m of open) {
-    for (const t of detail.get(m)!.types) add(m, t, "CONTAINS", 1);
     for (const r of detail.get(m)!.rels) {
       if (!CODE_EDGES.has(r.type) || !types.has(r.type) || !evidence.has(r.evidence_type)) continue;
       const key = `${r.source}|${r.target}|${r.type}|${r.source_line}`;
       if (seen.has(key)) continue;
       seen.add(key);
-      // A type outside the shown set stands for its whole module (nodeFor falls back to the module).
       const a = nodeFor(r.source), b = nodeFor(r.target);
       if (a && b) add(a, b, r.type, 1);
     }
   }
-  return { pairs: [...by.values()], typeParent };
+  return { pairs: [...by.values()], childParent, kinds };
 }
 
-function buildGraph(nodes: string[], pairs: Pair[], typeParent: Map<string, string>, pos: Map<string, { x: number; y: number }>, first: boolean): Graph {
+function buildGraph(nodes: string[], pairs: Pair[], typeParent: Map<string, string>, kinds: Map<string, Kind>, pos: Map<string, { x: number; y: number }>, first: boolean): Graph {
   const g = new Graph({ type: "undirected" });
   const total = new Map<string, number>();
   for (const p of pairs) { total.set(p.a, (total.get(p.a) ?? 0) + p.weight); total.set(p.b, (total.get(p.b) ?? 0) + p.weight); }
@@ -121,9 +181,10 @@ function buildGraph(nodes: string[], pairs: Pair[], typeParent: Map<string, stri
     return { x: r * Math.cos(ang), y: r * Math.sin(ang) };
   };
   [...nodes, ...typeParent.keys()].forEach((id, i) => {
-    const isType = typeParent.has(id), base = REPO_COLOR[repoOf(isType ? typeParent.get(id)! : id)] ?? "#7e92a4";
-    g.addNode(id, { ...place(id, i), size: isType ? Math.min(9, 2.5 + Math.sqrt(total.get(id) ?? 0) * 0.35) : Math.min(22, 4 + Math.sqrt(total.get(id) ?? 0) * 0.5),
-      label: labelOf(id), color: isType ? lighten(base) : base });
+    const isChild = typeParent.has(id), base = REPO_COLOR[repoOf(isChild ? typeParent.get(id)! : id)] ?? "#7e92a4";
+    const isDir = kinds.get(id) === "dir";
+    g.addNode(id, { ...place(id, i), size: isDir ? 3.5 : isChild ? Math.min(9, 2.5 + Math.sqrt(total.get(id) ?? 0) * 0.35) : Math.min(22, 4 + Math.sqrt(total.get(id) ?? 0) * 0.5),
+      label: labelOf(id), color: isDir ? "#94a3b8" : isChild ? lighten(base) : base });
   });
   for (const p of pairs) {
     if (!g.hasNode(p.a) || !g.hasNode(p.b)) continue;
@@ -143,6 +204,8 @@ export default function GraphPage() {
   const [types, setTypes] = useState<Set<string>>(new Set(TYPES));
   const [sel, setSel] = useState("");
   const [expanded, setExpanded] = useState<string[]>([]);
+  const [modes, setModes] = useState<Record<string, Mode>>({});
+  const [fileActivity, setFileActivity] = useState<FileActivity>({});
   const [detail, setDetail] = useState<Map<string, Detail>>(new Map());
   const [indexes, setIndexes] = useState<Record<string, ShardIndex>>({});
   const [loading, setLoading] = useState("");
@@ -165,32 +228,50 @@ export default function GraphPage() {
     commits: Math.max(1, ...Object.values(activity).map(a => a.commits)), lines: Math.max(1, ...Object.values(activity).map(a => a.lines)),
   }), [activity]);
 
+  const maxFile = useMemo(() => {
+    const all = Object.values(fileActivity).flatMap(r => Object.values(r));
+    return { commits: Math.max(1, ...all.map(a => a[2])), lines: Math.max(1, ...all.map(a => a[3])) };
+  }, [fileActivity]);
+
   useEffect(() => {
     loadModuleGraph().then(setData).catch(e => setError(e.message));
     loadModuleActivity().then(setActivity).catch(() => {});
   }, []);
 
-  const { pairs, typeParent } = useMemo(
-    () => (data ? expandedPairs(data, types, evidence, expanded, detail, indexes) : { pairs: [] as Pair[], typeParent: new Map<string, string>() }),
-    [data, types, evidence, expanded, detail, indexes]);
+  const { pairs, childParent: typeParent, kinds } = useMemo(
+    () => (data ? expandedPairs(data, types, evidence, expanded, modes, detail, indexes)
+      : { pairs: [] as Pair[], childParent: new Map<string, string>(), kinds: new Map<string, Kind>() }),
+    [data, types, evidence, expanded, modes, detail, indexes]);
   const styleRef = useRef<any>({});
-  styleRef.current = { sizeBy, colourBy, year, activity, years, maxOf, typeParent };
+  styleRef.current = { sizeBy, colourBy, year, activity, years, maxOf, typeParent, kinds, fileActivity, maxFile };
   const graph = useMemo(
-    () => (data ? buildGraph(data.nodes, pairs, typeParent, positions.current, positions.current.size === 0) : null),
-    [data, pairs, typeParent]);
+    () => (data ? buildGraph(data.nodes, pairs, typeParent, kinds, positions.current, positions.current.size === 0) : null),
+    [data, pairs, typeParent, kinds]);
 
-  /** Is a module (or the module a type belongs to) outside the chosen year, by its first and last commit? */
+  /** Activity of a node: a file's own, or that of the module a type or directory belongs to. */
+  const actOf = (n: string): ModuleActivity | null => {
+    const st = styleRef.current;
+    if (st.kinds.get(n) === "file") {
+      const a = st.fileActivity[repoOf(n)]?.[pathOf(n)];
+      if (a) return { first: a[0], last: a[1], commits: a[2], lines: a[3] };
+    }
+    return st.activity[st.typeParent.get(n) ?? n] ?? null;
+  };
+  /** Is a node outside the chosen year, by the first and last commit of its file or module? */
   const isFaded = (n: string): boolean => {
-    const st = styleRef.current, act = st.activity[st.typeParent.get(n) ?? n];
-    return st.year != null && !!act && (yearOf(act.first) > st.year || yearOf(act.last) < st.year);
+    const act = actOf(n);
+    return styleRef.current.year != null && !!act && (yearOf(act.first) > styleRef.current.year || yearOf(act.last) < styleRef.current.year);
   };
   /** Size by activity, colour by recency, and fade by year, applied on top of the graph's own attributes. */
   const styleNode = (n: string, d: any) => {
-    const st = styleRef.current, isTypeNode = st.typeParent.has(n), act = st.activity[st.typeParent.get(n) ?? n];
+    const st = styleRef.current, kind = st.kinds.get(n), act = actOf(n);
     if (!act) return d;
     let out = d;
-    if (!isTypeNode && st.sizeBy !== "edges") out = { ...out, size: 3 + 19 * Math.sqrt(act[st.sizeBy as "commits" | "lines"] / st.maxOf[st.sizeBy as "commits" | "lines"]) };
-    if (!isTypeNode && st.colourBy === "recency" && st.years) out = { ...out, color: ramp((yearOf(act.last) - st.years.min) / Math.max(1, st.years.max - st.years.min)) };
+    const by = st.sizeBy as "commits" | "lines";
+    if (st.sizeBy !== "edges" && !kind) out = { ...out, size: 3 + 19 * Math.sqrt(act[by] / st.maxOf[by]) };
+    if (st.sizeBy !== "edges" && kind === "file") out = { ...out, size: 2.5 + 7 * Math.sqrt(act[by] / st.maxFile[by]) };
+    if (st.colourBy === "recency" && st.years && (!kind || kind === "file"))
+      out = { ...out, color: ramp((yearOf(act.last) - st.years.min) / Math.max(1, st.years.max - st.years.min)) + (kind ? "dd" : "") };
     if (isFaded(n)) out = { ...out, color: isDark() ? "#2a3548" : "#e6ecf2", label: "", zIndex: -1 };
     return out;
   };
@@ -222,11 +303,13 @@ export default function GraphPage() {
     return () => { camera.current = s.getCamera().getState(); theme.disconnect(); s.kill(); sigma.current = null; };
   }, [graph]);
 
-  useEffect(() => { sigma.current?.refresh(); }, [sel, sizeBy, colourBy, year, activity]);
+  useEffect(() => { sigma.current?.refresh(); }, [sel, sizeBy, colourBy, year, activity, fileActivity]);
   useEffect(() => { if (sel && graph && !graph.hasNode(sel)) setSel(""); }, [graph, sel]);
 
-  const expand = async (id: string) => {
-    if (detail.has(id)) { setExpanded(e => (e.includes(id) ? e : [...e, id])); return; }
+  const expand = async (id: string, mode: Mode = "types") => {
+    const done = () => { setModes(m => ({ ...m, [id]: mode })); setExpanded(e => (e.includes(id) ? e : [...e, id])); };
+    if (mode === "files" && !Object.keys(fileActivity).length) loadFileActivity().then(setFileActivity).catch(() => {});
+    if (detail.has(id)) { done(); return; }
     setLoading(id);
     try {
       const repo = repoOf(id), path = pathOf(id);
@@ -237,11 +320,17 @@ export default function GraphPage() {
       setIndexes(Object.fromEntries(ix));
       const rels = [...out, ...inc];
       const typeIds = new Set(symbols.filter(s => TYPE_KINDS.has(s.kind)).map(s => s.id));
-      const degree = new Map<string, number>();
-      for (const r of rels) if (CODE_EDGES.has(r.type)) for (const e of [r.source, r.target]) { const t = ownerType(e); if (typeIds.has(t)) degree.set(t, (degree.get(t) ?? 0) + 1); }
+      const fileOf = new Map<string, string>(symbols.map(s => [s.id, filePathOf(s.file)] as const));
+      const degree = new Map<string, number>(), fileDegree = new Map<string, number>();
+      for (const r of rels) if (CODE_EDGES.has(r.type)) for (const e of [r.source, r.target]) {
+        const t = ownerType(e), f = fileOf.get(t);
+        if (typeIds.has(t)) degree.set(t, (degree.get(t) ?? 0) + 1);
+        if (f) fileDegree.set(f, (fileDegree.get(f) ?? 0) + 1);
+      }
       const top = [...typeIds].filter(t => degree.has(t)).sort((a, b) => degree.get(b)! - degree.get(a)!).slice(0, TOP_TYPES);
-      setDetail(d => new Map(d).set(id, { types: top, rels, total: typeIds.size }));
-      setExpanded(e => (e.includes(id) ? e : [...e, id]));
+      const files = [...fileDegree.keys()].sort((a, b) => fileDegree.get(b)! - fileDegree.get(a)!).slice(0, TOP_FILES);
+      setDetail(d => new Map(d).set(id, { types: top, rels, total: typeIds.size, files, totalFiles: new Set(fileOf.values()).size, fileOf }));
+      done();
     } catch (e: any) { setError(e.message); } finally { setLoading(""); }
   };
   const collapse = (id: string) => setExpanded(e => e.filter(m => m !== id));
@@ -263,8 +352,12 @@ export default function GraphPage() {
   if (error) return <ErrorBox message={error} />;
   if (!data || !graph) return <Loading />;
   const toggle = (t: string) => { const n = new Set(types); n.has(t) ? n.delete(t) : n.add(t); setTypes(n); };
-  const isType = typeParent.has(sel);
-  const kindLabel = isType ? (graph.hasNode(sel) ? "type" : "") : "";
+  const isChild = typeParent.has(sel), kind = kinds.get(sel) ?? "";
+  const kindLabel = kind === "file" ? "file" : kind === "dir" ? "directory" : "type";
+  const counts = [["types", "type"], ["files", "file"], ["directories", "dir"]]
+    .map(([label, k]) => [label, [...kinds.values()].filter(v => v === k).length] as const).filter(([, n]) => n > 0);
+  const childOf = (n: string) => typeParent.get(n) ?? "";
+  const sourceLink = (m: string, dir: string) => `/source?repo=${repoOf(m)}&mod=${encodeURIComponent(pathOf(m))}${dir ? `&dir=${encodeURIComponent(dir)}` : ""}&tab=symbols`;
   const modules = [...data.nodes].sort((a, b) => short(a).localeCompare(short(b)));
 
   return (
@@ -326,26 +419,33 @@ export default function GraphPage() {
           <div className="flex flex-wrap gap-3 px-3 py-1.5 text-xs text-slate-600 border-t border-slate-100">
             {Object.entries(REPO_COLOR).filter(([r]) => data.nodes.some(n => repoOf(n) === r)).map(([r, c]) =>
               <span key={r}><span className="inline-block w-2.5 h-2.5 rounded-full mr-1 align-middle" style={{ background: c }} />{r}</span>)}
-            <span>{graph.order - typeParent.size} modules{typeParent.size > 0 && <> + {typeParent.size} types</>} · {graph.size} linked pairs</span>
+            <span>{graph.order - typeParent.size} modules{counts.length > 0 && <> + {counts.map(([l, n]) => `${n} ${l}`).join(", ")}</>} · {graph.size} linked pairs</span>
           </div>
         </div>
         <aside aria-live="polite" className="rounded-xl border border-slate-200 bg-white p-3 text-sm lg:max-h-[calc(60vh+2.5rem)] overflow-y-auto">
-          {!sel ? <p className="text-slate-500 italic">Select a module in the graph or the list to see what it is linked to. Expand a module to see its most connected types.</p> : (<>
+          {!sel ? <p className="text-slate-500 italic">Select a module in the graph or the list to see what it is linked to. Expand a module to see its most connected types, or its files and directories.</p> : (<>
             <h2 className="font-semibold break-all">{labelOf(sel)}</h2>
-            {isType ? (
-              <div className="text-xs text-slate-500 mb-2">
-                {kindLabel} in <button className="text-indigo-600 hover:underline" onClick={() => setSel(typeParent.get(sel)!)}>{short(typeParent.get(sel)!)}</button> ·{" "}
-                <Link className="text-indigo-600 hover:underline" to={`/symbol/${encodeURIComponent(sel)}`}>open symbol</Link>
+            {isChild ? (
+              <div className="text-xs text-slate-500 mb-2 space-y-1">
+                <div>{kindLabel} in <button className="text-indigo-600 hover:underline" onClick={() => setSel(childOf(sel))}>{short(childOf(sel))}</button> ·{" "}
+                  {kind === "type"
+                    ? <Link className="text-indigo-600 hover:underline" to={`/symbol/${encodeURIComponent(sel)}`}>open symbol</Link>
+                    : <Link className="text-indigo-600 hover:underline" to={sourceLink(childOf(sel), pathOf(sel))}>open in Source</Link>}</div>
+                {kind !== "dir" && (() => { const a = actOf(sel); return a ? <div>{a.commits.toLocaleString()} commits · {a.lines.toLocaleString()} lines changed · first {a.first}, last {a.last}</div> : null; })()}
+                {kind !== "type" && <div className="break-all font-mono">{pathOf(sel)}</div>}
               </div>
             ) : (
               <div className="text-xs text-slate-500 mb-2 space-y-1">
                 <div>{repoOf(sel)} · {neighbours.length} linked ·{" "}
-                  <Link className="text-indigo-600 hover:underline" to={`/source?repo=${repoOf(sel)}&mod=${encodeURIComponent(pathOf(sel))}&tab=symbols`}>open in Source</Link></div>
+                  <Link className="text-indigo-600 hover:underline" to={sourceLink(sel, "")}>open in Source</Link></div>
                 {activity[sel] && <div>{activity[sel].commits.toLocaleString()} commits · {activity[sel].lines.toLocaleString()} lines changed · first {activity[sel].first}, last {activity[sel].last}</div>}
-                {expanded.includes(sel)
-                  ? <div><button className={chip(false)} onClick={() => collapse(sel)}>Collapse types</button>{" "}
-                      showing {detail.get(sel)!.types.length} of {detail.get(sel)!.total} types (the most connected)</div>
-                  : <button className={chip(false)} disabled={!!loading} onClick={() => expand(sel)}>{loading === sel ? "Loading…" : "Expand into types"}</button>}
+                {expanded.includes(sel) && (
+                  <div>showing {modes[sel] === "files" ? `${detail.get(sel)!.files.length} of ${detail.get(sel)!.totalFiles} files` : `${detail.get(sel)!.types.length} of ${detail.get(sel)!.total} types`} (the most connected)</div>)}
+                <div className="flex flex-wrap gap-1">
+                  {expanded.includes(sel) && <button className={chip(false)} onClick={() => collapse(sel)}>{modes[sel] === "files" ? "Collapse files" : "Collapse types"}</button>}
+                  {(!expanded.includes(sel) || modes[sel] === "files") && <button className={chip(false)} disabled={!!loading} onClick={() => expand(sel, "types")}>{loading === sel ? "Loading…" : "Expand into types"}</button>}
+                  {(!expanded.includes(sel) || modes[sel] !== "files") && <button className={chip(false)} disabled={!!loading} onClick={() => expand(sel, "files")}>{loading === sel ? "Loading…" : "Expand into files"}</button>}
+                </div>
               </div>
             )}
             <table className="w-full text-xs">
@@ -354,7 +454,7 @@ export default function GraphPage() {
                 {neighbours.map(n => (
                   <tr key={n.other} title={Object.entries(n.types).map(([t, c]) => `${t} ${c}`).join(", ")}>
                     <td className="py-0.5 break-all"><button className="text-indigo-600 hover:underline text-left" onClick={() => setSel(n.other)}>{labelOf(n.other)}</button>
-                      {typeParent.has(n.other) && <span className="text-slate-400"> · {short(typeParent.get(n.other)!)}</span>}</td>
+                      {typeParent.has(n.other) && <span className="text-slate-400"> · {short(childOf(n.other))}</span>}</td>
                     <td className="py-0.5 text-right tabular-nums">{n.out.toLocaleString()}</td>
                     <td className="py-0.5 text-right tabular-nums pl-2">{n.inc.toLocaleString()}</td>
                   </tr>
