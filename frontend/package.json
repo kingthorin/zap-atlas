@@ -25,6 +25,7 @@
     "sigma": "^3.0.3"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.10.2",
     "@playwright/test": "^1.49.1",
     "@types/d3-scale": "^4.0.9",
     "@types/d3-selection": "^3.0.12",

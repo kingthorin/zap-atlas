@@ -184,7 +184,7 @@ export default function TimelinePage() {
       </div>
       <div ref={wrap} className="relative rounded-xl border border-slate-200 bg-white p-2" tabIndex={0} role="group" onKeyDown={onKey}
         aria-label="Timeline chart. Arrow keys pan, plus and minus zoom, zero resets.">
-        <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto select-none" role="img" aria-label="Commits per repository over time with release and story markers; a table follows">
+        <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto select-none" role="group" aria-label="Commits per repository over time with release and story markers; a table follows">
           <defs><clipPath id="plot"><rect x={ML} y={0} width={W - ML - MR} height={H} /></clipPath></defs>
           <g className="text-slate-500" fill="currentColor" fontSize="11">
             {ticks.map(d => (

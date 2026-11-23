@@ -34,11 +34,11 @@ export default function AddOnPage() {
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold">{addon.name}</h1>
-      <dl className="grid grid-cols-[8rem_1fr] gap-y-1 text-sm">
-        <dt className="text-slate-500">Id</dt><dd className="font-mono text-xs">{addon.id}</dd>
+      <dl className="grid grid-cols-[6rem_minmax(0,1fr)] sm:grid-cols-[8rem_minmax(0,1fr)] gap-y-1 text-sm">
+        <dt className="text-slate-500">Id</dt><dd className="font-mono text-xs break-all">{addon.id}</dd>
         <dt className="text-slate-500">Status</dt><dd>{addon.status || "not declared"}</dd>
         <dt className="text-slate-500">Author</dt><dd>{addon.author || "—"}</dd>
-        <dt className="text-slate-500">Website</dt><dd>{url ? <a className="text-indigo-600 hover:underline" href={url}>{url}</a> : "—"}</dd>
+        <dt className="text-slate-500">Website</dt><dd>{url ? <a className="text-indigo-600 hover:underline break-all" href={url}>{url}</a> : "—"}</dd>
         <dt className="text-slate-500">Module</dt>
         <dd>{mod && <Link className="text-indigo-600 hover:underline" to={`/module/${mod.repository}/${mod.path}`}>{mod.path}</Link>}</dd>
       </dl>

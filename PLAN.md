@@ -33,7 +33,7 @@ differs, and what is planned next. Update it with each change that moves an item
 - Architecture graph with drill-down (the current explorer is tables).
 - Validation: manifest hashes, paths, source-revision references, schema compatibility, pinned GitHub URLs.
 - `atlas inspect` and `atlas history` commands (stubs today).
-- Accessibility audit: contrast in both themes, keyboard paths, reduced motion, text alternatives for charts.
+- Accessibility audit: first pass done. axe (WCAG 2.1 A and AA) passes on 15 pages in both themes, and no page scrolls sideways at 390 px (both run in `e2e/audit.spec.ts`). Not covered: a keyboard-only walkthrough, screen reader testing, and contrast of the graph canvas labels in dark mode.
 - Licence file and attribution notices for the Atlas repository.
 - Performance: symbols and relationships are sharded per module (done); the module graph is `module_graph.json` (24 KB). Remaining: the shard index for zap-extensions is 5 MB raw (0.5 MB gzipped).
 - Least privilege: the analyze job does not need `contents: write`.

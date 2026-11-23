@@ -32,7 +32,7 @@ export default function DocPage() {
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold">{doc.title}</h1>
-      <dl className="grid grid-cols-[8rem_1fr] gap-y-1 text-sm">
+      <dl className="grid grid-cols-[6rem_minmax(0,1fr)] sm:grid-cols-[8rem_minmax(0,1fr)] gap-y-1 text-sm">
         <dt className="text-slate-500">Path</dt>
         <dd className="font-mono text-xs break-all">{data.repo ? <a className="text-indigo-600 hover:underline" href={githubBlob(data.repo, doc.path)}>{doc.path}</a> : doc.path}</dd>
         <dt className="text-slate-500">Module</dt>

@@ -91,7 +91,7 @@ function SymbolsTab({ symbols, dir, base }: { symbols: Symbol[]; dir: string; ba
         <label className="text-slate-600"><input type="checkbox" checked={typesOnly} onChange={e => setTypesOnly(e.target.checked)} /> Types only</label>
         <span className="text-slate-500" aria-live="polite">{rows.length.toLocaleString()} symbols</span>
       </div>
-      <table className="w-full text-sm border-collapse">
+      <div className="overflow-x-auto"><table className="w-full text-sm border-collapse">
         <thead><tr className="text-left text-slate-500 border-b border-slate-200">
           <th className="pb-1 w-24">Kind</th><th className="pb-1">Symbol</th><th className="pb-1 pl-3">File</th><th className="pb-1 pl-3 text-right">Lines</th>
         </tr></thead>
@@ -111,7 +111,7 @@ function SymbolsTab({ symbols, dir, base }: { symbols: Symbol[]; dir: string; ba
             );
           })}
         </tbody>
-      </table>
+      </table></div>
       {rows.length > shown && <button className={chip(false)} onClick={() => setShown(shown + PAGE)}>Show more ({(rows.length - shown).toLocaleString()} remaining)</button>}
     </div>
   );
@@ -207,7 +207,7 @@ function LinksTab({ graph, selected, pick }: { graph: ModuleGraph; selected: str
           className="w-full md:w-72 rounded border border-slate-200 bg-white px-2 py-1 text-sm outline-none focus:ring-2 focus:ring-indigo-500" />
         <span className="text-slate-500" aria-live="polite">{shown.length} modules</span>
       </div>
-      <table className="w-full text-sm border-collapse">
+      <div className="overflow-x-auto"><table className="w-full text-sm border-collapse">
         <thead><tr className="text-left text-slate-500 border-b border-slate-200">
           <th className="pb-1">Module</th><th className="pb-1 text-right">Out</th><th className="pb-1 text-right pl-3">In</th><th className="pb-1 pl-4">Edge types</th>
         </tr></thead>
@@ -221,7 +221,7 @@ function LinksTab({ graph, selected, pick }: { graph: ModuleGraph; selected: str
             </tr>
           ))}
         </tbody>
-      </table>
+      </table></div>
     </div>
   );
 }
@@ -259,7 +259,7 @@ function DepsTab() {
         </label>
         <span aria-live="polite" className="text-slate-500">{shown.length} add-ons</span>
       </div>
-      <table className="w-full text-sm border-collapse">
+      <div className="overflow-x-auto"><table className="w-full text-sm border-collapse">
         <thead><tr className="text-left text-slate-500 border-b border-slate-200"><th className="pb-1">Add-on</th><th className="pb-1 pl-4">Depends on</th><th className="pb-1 pl-4">Required by</th></tr></thead>
         <tbody className="divide-y divide-slate-100">
           {shown.map(({ a, deps, usedBy, known }) => (
@@ -270,7 +270,7 @@ function DepsTab() {
             </tr>
           ))}
         </tbody>
-      </table>
+      </table></div>
     </div>
   );
 }

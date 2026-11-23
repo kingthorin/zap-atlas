@@ -30,14 +30,14 @@ export default function CommitPage() {
     <div className="space-y-6">
       <div className="text-sm"><Link to="/history" className="text-indigo-600 hover:underline">← History</Link></div>
       <h1 className="text-2xl font-bold">{c.subject || <em>(no subject)</em>}</h1>
-      <dl className="grid grid-cols-[8rem_1fr] gap-y-1 text-sm">
+      <dl className="grid grid-cols-[6rem_minmax(0,1fr)] sm:grid-cols-[8rem_minmax(0,1fr)] gap-y-1 text-sm">
         <dt className="text-slate-500">Repository</dt><dd>{repo}</dd>
         <dt className="text-slate-500">SHA</dt>
         <dd className="font-mono text-xs break-all">{c.sha}{base && <> · <a className="text-indigo-600 hover:underline" href={`${base}/commit/${c.sha}`}>view on GitHub</a></>}</dd>
         <dt className="text-slate-500">Author</dt><dd>{c.author_name}</dd>
         <dt className="text-slate-500">Date</dt><dd>{new Date(c.author_date).toUTCString()}</dd>
         <dt className="text-slate-500">Parents</dt>
-        <dd className="font-mono text-xs">
+        <dd className="font-mono text-xs break-all">
           {c.parents.length === 0 ? "root commit" : c.parents.map(p => (
             <Link key={p} className="mr-3 text-indigo-600 hover:underline" to={`/commit/${repo}/${shaOf(p)}?y=${year}`}>{shaOf(p).slice(0, 10)}</Link>
           ))}

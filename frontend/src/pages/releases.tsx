@@ -106,10 +106,10 @@ export function ReleasePage() {
     <div className="space-y-4">
       <div className="text-sm"><Link to="/releases" className="text-indigo-600 hover:underline">← Releases</Link></div>
       <h1 className="text-2xl font-bold">{m.title}</h1>
-      <dl className="grid grid-cols-[8rem_1fr] gap-y-1 text-sm">
+      <dl className="grid grid-cols-[6rem_minmax(0,1fr)] sm:grid-cols-[8rem_minmax(0,1fr)] gap-y-1 text-sm">
         <dt className="text-slate-500">Date</dt><dd>{new Date(m.date).toUTCString()}</dd>
         <dt className="text-slate-500">Repository</dt><dd>{m.repository}</dd>
-        <dt className="text-slate-500">Tag</dt><dd className="font-mono text-xs">{m.tag}</dd>
+        <dt className="text-slate-500">Tag</dt><dd className="font-mono text-xs break-all">{m.tag}</dd>
         {m.addon && (<><dt className="text-slate-500">Add-on</dt><dd><Link className="text-indigo-600 hover:underline" to={`/addon/${encodeURIComponent(m.addon)}`}>{m.addon.replace("addon:", "")}</Link></dd></>)}
         <dt className="text-slate-500">Links</dt><dd>{releaseLinks(m, data.repos.find(r => r.name === m.repository))}</dd>
       </dl>

@@ -32,7 +32,7 @@ export default function SymbolPage() {
   const inc = data.rels.filter(r => r.target === id);
   const path = filePathOf(sym.file);
   const row = (r: Relationship, other: string) => (
-    <li key={`${r.type}-${r.source}-${r.target}-${r.source_line}`} className="py-1">
+    <li key={`${r.type}-${r.source}-${r.target}-${r.source_line}`} className="py-1 break-all">
       <span className="text-xs text-slate-400 mr-2 inline-block w-20">{r.type}</span>{node(other)}
       <span className="ml-2 text-xs text-slate-400">{r.evidence_type}</span>
     </li>
@@ -41,7 +41,7 @@ export default function SymbolPage() {
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold break-all">{sym.signature}</h1>
-      <dl className="grid grid-cols-[8rem_1fr] gap-y-1 text-sm">
+      <dl className="grid grid-cols-[6rem_minmax(0,1fr)] sm:grid-cols-[8rem_minmax(0,1fr)] gap-y-1 text-sm">
         <dt className="text-slate-500">Kind</dt><dd>{sym.kind}</dd>
         <dt className="text-slate-500">Qualified name</dt><dd className="font-mono text-xs break-all">{sym.qualified_name}</dd>
         <dt className="text-slate-500">Resolution</dt><dd>{sym.resolution}</dd>

@@ -138,14 +138,14 @@ test("releases list, a release page, and release markers in history", async ({ p
 test("timeline draws the repositories with markers, zooms and has a table", async ({ page }) => {
   await page.goto("timeline");
   await noError(page);
-  await expect(page.getByRole("img", { name: /Commits per repository/ })).toBeVisible();
+  await expect(page.getByRole("group", { name: /Commits per repository/ })).toBeVisible();
   expect(await page.locator("svg a[href*='/release/']").count()).toBeGreaterThan(0);
   expect(await page.locator("svg a[href*='/stories/']").count()).toBeGreaterThan(0);
   const status = page.locator("span.text-slate-500", { hasText: " bars" });
   await expect(status).toContainText("monthly bars");
   await page.getByRole("combobox", { name: /Jump to/ }).selectOption("2024");
   await expect(status).toContainText("weekly bars");
-  const plot = page.locator("svg[role=img] rect[style*='grab']");
+  const plot = page.locator("svg[role=group] rect[style*='grab']");
   const box = (await plot.boundingBox())!;
   await page.mouse.move(box.x + box.width * 0.7, box.y + box.height * 0.45);
   await expect(page.getByRole("tooltip")).toContainText(/ · \d+ commits?/);
