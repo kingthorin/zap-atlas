@@ -37,13 +37,13 @@ const SearchIcon = () => (
 
 export const NAV = [
   { to: "/", label: "Overview", icon: MapIcon },
-  { to: "/repositories", label: "Repositories", icon: CylinderIcon },
-  { to: "/history", label: "History", icon: HistoryIcon },
   { to: "/timeline", label: "Timeline", icon: TimelineIcon },
   { to: "/graph", label: "Graph", icon: GraphIcon },
   { to: "/releases", label: "Releases", icon: TagIcon },
-  { to: "/source", label: "Source", icon: FilesIcon },
   { to: "/stories", label: "Stories", icon: BookIcon },
+  { to: "/repositories", label: "Repositories", icon: CylinderIcon },
+  { to: "/history", label: "History", icon: HistoryIcon },
+  { to: "/source", label: "Source", icon: FilesIcon },
   { to: "/search", label: "Search", icon: SearchIcon },
 ];
 
