@@ -169,3 +169,17 @@ test("repositories fold long module lists", async ({ page }) => {
   await expect(fold.locator("li").first()).toBeVisible();
   await expect(ext.getByRole("table", { name: "Lines of code by language" })).toBeVisible(); // stats stay visible
 });
+
+test("module graph draws, selects a module and filters edge types", async ({ page }) => {
+  await page.goto("graph");
+  await expect(page.locator("canvas").first()).toBeVisible();
+  const summary = page.getByText(/\d+ modules · \d+ linked pairs/);
+  const before = await summary.textContent();
+  await page.getByLabel("Select a module").selectOption({ label: "automation" });
+  await expect(page.getByRole("heading", { name: "automation", level: 2 })).toBeVisible();
+  await expect(page.getByText(/\d+ linked modules/)).toBeVisible();
+  await expect(page.locator("aside tbody tr").first()).toBeVisible();
+  for (const t of ["CALLS", "IMPORTS", "EXTENDS", "IMPLEMENTS", "USES_API"]) await page.getByRole("button", { name: t, exact: true }).click();
+  await expect(page.getByRole("button", { name: "DEPENDS_ON", exact: true })).toHaveAttribute("aria-pressed", "true");
+  await expect(summary).not.toHaveText(before!); // only add-on dependency pairs remain
+});

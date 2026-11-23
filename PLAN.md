@@ -46,7 +46,7 @@ differs, and what is planned next. Update it with each change that moves an item
    Sub-section selector (repo, add-on, language, path prefix). Overlays: release tags,
    story milestones, Hall of Fame projects, core-team changes. Stories can link to a
    range or module.
-2. **Weighted graph explorer (GitNexus-style).** A force-directed knowledge graph of
+2. **Weighted graph explorer (GitNexus-style)** (first version done: module-level graph from `module_graph.json` with Sigma.js, Graphology and ForceAtlas2, edge-type filters, neighbour table and module picker; open: expand a module into files and types, year slider, recency colouring, file tree, language and evidence filters). A force-directed knowledge graph of
    all three repositories together, rendered with WebGL (Sigma.js and Graphology, both
    MIT; GitNexus itself is PolyForm Noncommercial, so we take the idea, not its code).
    - Nodes: repositories, modules and add-ons, directories, files, types, and
@@ -100,5 +100,5 @@ Built with D3 modules for scales, zoom, brush and hierarchy, rendered as SVG by 
 1. Review the draft stories with the maintainers and mark them `reviewed`.
 2. M3 remainder: a compiler-backed pass for overloads, generics and chained calls (optional).
 3. ~~Release and tag milestones~~ (done: `milestones.jsonl`, Releases page, history markers, add-on release lists, story references).
-4. ~~Timeline~~ (first version done), then the graph explorer.
+4. ~~Timeline~~ (first version done), ~~graph explorer~~ (module level done; expansion next).
 5. ~~Per-module shards~~ (done). The graph explorer; accessibility audit; licence.

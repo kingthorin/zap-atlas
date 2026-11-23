@@ -3,6 +3,9 @@ import { Layout } from "./components/layout";
 import Home from "./pages/home";
 import Repositories from "./pages/repositories";
 import History from "./pages/history";
+import { Suspense, lazy } from "react";
+import { Loading } from "./components/ui";
+const GraphPage = lazy(() => import("./pages/graph"));
 import Timeline from "./pages/timeline";
 import Code from "./pages/code";
 import Search from "./pages/search";
@@ -24,6 +27,7 @@ export default function App() {
           <Route path="/repositories" element={<Repositories />} />
           <Route path="/history" element={<History />} />
           <Route path="/timeline" element={<Timeline />} />
+          <Route path="/graph" element={<Suspense fallback={<Loading />}><GraphPage /></Suspense>} />
           <Route path="/source" element={<Code />} />
           <Route path="/search" element={<Search />} />
           <Route path="/stories" element={<Stories />} />
