@@ -19,6 +19,7 @@ from atlas.git_history import extract as extract_history
 from atlas.languages import count_languages
 from atlas.milestones import build_milestones
 from atlas.stories import load_stories
+from atlas.sharding import write_module_shards
 from atlas.timeline import write_timeline
 from atlas.java_parser import JavaParser
 from atlas.schema import (
@@ -92,8 +93,9 @@ class AtlasGenerator:
         self._resolve_calls_and_api()
         self._link_milestones()
         chunk_names = self._write_history_shards(output_dir)
-        chunk_names += self._write_repo_shards(output_dir, CHUNK_SYMBOLS, "symbols")
-        chunk_names += self._write_repo_shards(output_dir, CHUNK_RELS, "relationships")
+        chunk_names += write_module_shards(
+            output_dir, [r["name"] for r in self.rows[CHUNK_REPOS]], self.rows[CHUNK_MODULES], self.rows[CHUNK_ADDONS],
+            self.rows[CHUNK_SYMBOLS], self.rows[CHUNK_RELS])
         for name, rows in self.rows.items():
             if name in (CHUNK_COMMITS, CHUNK_FILES, CHUNK_SYMBOLS, CHUNK_RELS):
                 continue
@@ -295,18 +297,6 @@ class AtlasGenerator:
                     r["target"], r["evidence_type"] = target, "resolved"
                     resolved += 1
         self.java_coverage["resolved_type_references"] = resolved
-
-    def _write_repo_shards(self, output_dir: Path, chunk: str, kind: str) -> list[str]:
-        # One shard per repo, even when empty (e.g. a docs-only repo), so lookups never 404.
-        buckets: dict[str, list[dict]] = {r["name"]: [] for r in self.rows[CHUNK_REPOS]}
-        for row in self.rows[chunk]:
-            buckets.setdefault(row["repository"], []).append(row)
-        names = []
-        for repo, rows in sorted(buckets.items()):
-            name = f"{kind}/{repo}.jsonl"
-            _write_jsonl(output_dir / name, rows)
-            names.append(name)
-        return names
 
     def _build_manifest(self, output_dir: Path, chunk_names: list[str]) -> Manifest:
         inventory = []

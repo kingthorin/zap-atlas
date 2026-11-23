@@ -92,8 +92,13 @@ def test_doc_with_unknown_commit_fails(tmp_path):
     assert validate_dataset(tmp_path) is False
 
 
-def test_contract_detects_missing_per_repo_shard(tmp_path):
+def test_contract_detects_missing_shard_index_and_listed_shard(tmp_path):
     from atlas.validate import check_contract
     _write_dataset(tmp_path, {"repos.jsonl": [{"id": "repo:r", "name": "r"}]})
     problems = check_contract(tmp_path)
-    assert "missing symbols/r.jsonl" in problems and "missing search/commits.json" in problems
+    assert "missing shards/r.json" in problems and "missing search/commits.json" in problems
+    (tmp_path / "shards").mkdir()
+    (tmp_path / "shards/r.json").write_text(json.dumps({"keys": ["addOns/a"], "n": [[1, 0, 2]], "s": {}}))
+    problems = check_contract(tmp_path)
+    assert "missing symbols/r/addOns__a.jsonl" in problems and "missing incoming/r/addOns__a.jsonl" in problems
+    assert not any(p.startswith("missing relationships/r/") for p in problems)

@@ -142,9 +142,12 @@ inside the logo's circle. The header colours come from zaproxy.org's stylesheet.
 - **zap-extensions history before 2016-03-23** has different commit SHAs than the
   ones GitHub recorded in older pull requests, which is consistent with a past
   history rewrite. Atlas links use the SHAs in the repository today.
-- **Size.** The dataset is about 300 MB raw and 14 MB gzipped. Pages serves it
-  gzipped, but the largest single files (`relationships/zap-extensions.jsonl`,
-  59 MB raw) are slow to parse on first use.
+- **Size.** The dataset is about 370 MB raw. Symbols and relationships are sharded per
+  module (`symbols/<repo>/<shard>.jsonl`, with `shards/<repo>.json` as the index; modules over
+  about 3 MB split by directory), so the largest data file is about 3 MB. A symbol page loads
+  its index (0.5 MB gzipped for zap-extensions) and one shard. Edges that reach a symbol from
+  another shard are also written to `incoming/`. `atlas reshard <dataset>` rebuilds the shards
+  from an existing dataset.
 
 Exact upstream SHAs, row counts, sizes and coverage for each build are in the
 dataset report (`python -m atlas report`), which the workflow also writes to the

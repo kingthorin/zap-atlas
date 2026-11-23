@@ -9,7 +9,7 @@ differs, and what is planned next. Update it with each change that moves an item
 | Handoff | What we did | Why |
 |---|---|---|
 | Publish a generated site to a `gh-pages` branch | Deploy a GitHub Pages artifact | `files.jsonl` exceeded GitHub's 100 MB file limit; Pages artifacts have no per-file limit. Decided with the maintainer. |
-| Data chunked by repository, module and time | Commits and file changes by repo and year; symbols and relationships by repo; small chunks flat | Enough for lazy loading so far. Per-module shards are still open (see backlog). |
+| Data chunked by repository, module and time | Commits and file changes by repo and year; symbols and relationships by module (modules over 3 MB split by directory); small chunks flat | Done: largest data file is about 3 MB. |
 | Three source repositories | Three, plus `zap-hud` as an optional fourth (not added) | The HUD lives in its own repository. |
 | Stories are curated | Curated JSON, status `draft` or `reviewed`; drafts are labelled | Only maintainer-reviewed stories should read as authoritative. |
 
@@ -35,7 +35,7 @@ differs, and what is planned next. Update it with each change that moves an item
 - `atlas inspect` and `atlas history` commands (stubs today).
 - Accessibility audit: contrast in both themes, keyboard paths, reduced motion, text alternatives for charts.
 - Licence file and attribution notices for the Atlas repository.
-- Performance: the largest zap-extensions shards (relationships 83 MB, symbols 32 MB raw) exceed the "module graph under 1 MB" goal; shard per module.
+- Performance: symbols and relationships are sharded per module (done); the module graph is `module_graph.json` (24 KB). Remaining: the shard index for zap-extensions is 5 MB raw (0.5 MB gzipped).
 - Least privilege: the analyze job does not need `contents: write`.
 
 ## Planned: interactive resources
@@ -72,6 +72,12 @@ differs, and what is planned next. Update it with each change that moves an item
 Built with D3 modules for scales, zoom, brush and hierarchy, rendered as SVG by React
 (canvas past about 5,000 shapes).
 
+## Planned: page improvements (from review)
+
+- **Repositories:** make the module cards expandable. When a repository has more than 5 modules, collapse everything below the summary stats and bar chart behind an expand/collapse control.
+- **Stories:** sort control for A to Z, Z to A, date ascending and date descending.
+- **Source and Architecture:** both are flat. Source shows little beyond one add-on with no real tree or layers; Architecture is fuller but also flat. Open question: merge them into one explorer (repo, module, package, file tree with the architecture view as a lens on it) or improve them separately. Leaning to merge, since both need the same per-module shards and hierarchy, and the graph explorer will replace the flat architecture view.
+
 ## Planned: stories
 
 - Per-project stories for every Student Hall of Fame entry (2012 to 2023), each with
@@ -95,4 +101,4 @@ Built with D3 modules for scales, zoom, brush and hierarchy, rendered as SVG by 
 2. M3 remainder: a compiler-backed pass for overloads, generics and chained calls (optional).
 3. ~~Release and tag milestones~~ (done: `milestones.jsonl`, Releases page, history markers, add-on release lists, story references).
 4. ~~Timeline~~ (first version done), then the graph explorer.
-5. Per-module shards; accessibility audit; licence.
+5. ~~Per-module shards~~ (done). Source and Architecture merge, then the graph explorer; accessibility audit; licence.

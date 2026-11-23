@@ -32,6 +32,9 @@ def _build_parser() -> argparse.ArgumentParser:
     p_index = sub.add_parser("index", help="(Re)build the static search index for a generated dataset")
     p_index.add_argument("dataset", type=Path)
 
+    p_reshard = sub.add_parser("reshard", help="Rewrite symbols and relationships of a dataset into per-module shards")
+    p_reshard.add_argument("dataset", type=Path)
+
     p_timeline = sub.add_parser("timeline", help="Rebuild timeline.json from the commit shards of a dataset")
     p_timeline.add_argument("dataset", type=Path)
 
@@ -61,6 +64,10 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "index":
         from atlas.search_index import build_search_index
         print(f"[atlas] index {args.dataset}: {build_search_index(args.dataset)}")
+        return 0
+    if args.command == "reshard":
+        from atlas.sharding import reshard
+        print(f"[atlas] wrote {len(reshard(args.dataset))} shard files")
         return 0
     if args.command == "timeline":
         from atlas.timeline import rebuild_from_shards

@@ -46,7 +46,7 @@ def build_search_index(dataset: Path) -> list[str]:
         eco.append({"k": "story", "i": s["id"], "t": s["title"], "x": s.get("description", "")})
 
     symbols = [{"k": s["kind"], "i": s["id"], "t": s["qualified_name"]}
-               for s in _rows(dataset, "symbols/*.jsonl") if s["kind"] in _TYPE_KINDS]
+               for s in _rows(dataset, "symbols/*/*.jsonl") if s["kind"] in _TYPE_KINDS]
 
     commits = []
     for p in sorted(dataset.glob("commits/*/*.jsonl")):

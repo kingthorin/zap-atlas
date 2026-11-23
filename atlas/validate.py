@@ -110,10 +110,17 @@ def check_contract(dataset: Path) -> list[str]:
     """Files the frontend fetches by name; a missing one only shows up as a broken page."""
     problems = []
     need = ["repos.jsonl", "modules.jsonl", "addons.jsonl", "docs.jsonl", "stories.jsonl", "languages.jsonl", "milestones.jsonl",
-            "history_index.json", "timeline.json", "search/ecosystem.json", "search/symbols.json", "search/commits.json"]
+            "history_index.json", "timeline.json", "module_graph.json", "search/ecosystem.json", "search/symbols.json", "search/commits.json"]
     repos = [json.loads(l)["name"] for l in (dataset / "repos.jsonl").read_text(encoding="utf-8").splitlines() if l.strip()] \
         if (dataset / "repos.jsonl").is_file() else []
-    need += [f"{k}/{r}.jsonl" for r in repos for k in ("symbols", "relationships")]
+    for r in repos:
+        index = dataset / "shards" / f"{r}.json"
+        need.append(f"shards/{r}.json")
+        if index.is_file():
+            ix = json.loads(index.read_text(encoding="utf-8"))
+            from atlas.sharding import KINDS, shard_name
+            need += [f"{k}/{r}/{shard_name(key)}.jsonl" for key, counts in zip(ix["keys"], ix["n"])
+                     for k, n in zip(KINDS, counts) if n]
     if (dataset / "history_index.json").is_file():
         idx = json.loads((dataset / "history_index.json").read_text(encoding="utf-8"))
         need += [f"{k}/{r}/{y}.jsonl" for r, years in idx.items() for y, counts in years.items() for k in counts]

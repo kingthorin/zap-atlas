@@ -16,7 +16,7 @@ def test_index_groups_and_manifest_registration(tmp_path):
     _w(tmp_path, "addons.jsonl", [{"id": "addon:x", "name": "X add-on", "status": "release", "author": "A"}])
     _w(tmp_path, "docs.jsonl", [{"id": "doc:r:h.html", "repository": "r", "path": "h.html", "title": "Help", "headings": ["Help", "Sub"]}])
     _w(tmp_path, "stories.jsonl", [])
-    _w(tmp_path, "symbols/r.jsonl", [
+    _w(tmp_path, "symbols/r/addOns__x.jsonl", [
         {"id": "symbol:r:p.A", "kind": "class", "qualified_name": "p.A"},
         {"id": "symbol:r:p.A#m()", "kind": "method", "qualified_name": "p.A#m()"}])
     _w(tmp_path, "commits/r/2024.jsonl", [{"id": "commit:r:abcdef0123456", "sha": "abcdef0123456", "repository": "r", "subject": "Fix bug"}])

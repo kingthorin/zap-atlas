@@ -26,9 +26,10 @@ test("repositories list modules and languages, and a module page opens", async (
 });
 
 test("every repository's symbol data loads", async ({ page }) => {
-  for (const repo of ["zaproxy", "zap-extensions", "zap-core-help"]) {
-    await page.goto(`module/${repo}/x`); // loads symbols/<repo>.jsonl even for an unknown path
+  for (const [repo, mod, listed] of [["zaproxy", "zap", true], ["zap-extensions", "addOns/accessControl", true], ["zap-core-help", "addOns/help", false]] as const) {
+    await page.goto(`module/${repo}/${mod}`);
     await noError(page);
+    if (listed) await expect(page.locator("details").first()).toBeVisible(); // symbols loaded from the module's shards
   }
 });
 
@@ -124,4 +125,17 @@ test("timeline draws three repositories with markers, zooms and has a table", as
   await expect(status).toContainText("weekly bars");
   await page.getByText("Table: commits per year").click();
   await expect(page.getByRole("table", { name: "Commits per year by repository" })).toBeVisible();
+});
+
+// Expected counts were taken from the old whole-repository relationship files, before sharding.
+test("symbol pages count edges the same across shards, including cross-shard incoming", async ({ page }) => {
+  for (const [id, out, inc] of [
+    ["symbol:zap-extensions:org.zaproxy.addon.automation.AutomationJob", 112, 108],
+    ["symbol:zaproxy:org.parosproxy.paros.Constant", 229, 474],
+    ["symbol:zap-extensions:org.zaproxy.zap.testutils.TestUtils", 82, 439],
+  ] as const) {
+    await page.goto(`symbol/${encodeURIComponent(id)}`);
+    await expect(page.getByRole("heading", { name: `Outgoing (${out})` })).toBeVisible();
+    await expect(page.getByRole("heading", { name: `Incoming (${inc})` })).toBeVisible();
+  }
 });

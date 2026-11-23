@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { Repo, Symbol, filePathOf, githubBlob, isDeprecated, loadRepoSymbols, loadRepos } from "../lib/data";
+import { Repo, Symbol, filePathOf, githubBlob, isDeprecated, loadModuleSymbols, loadRepos } from "../lib/data";
 import { Loading, ErrorBox } from "../components/ui";
 
 const INDENT: Record<string, string> = { method: "pl-6", constructor: "pl-6", field: "pl-6" };
@@ -35,10 +35,10 @@ export default function ModulePage() {
 
   useEffect(() => {
     setSymbols(null);
-    Promise.all([loadRepoSymbols(repo), loadRepos()])
+    Promise.all([loadModuleSymbols(repo, modPath), loadRepos()])
       .then(([s, r]) => { setSymbols(s); setRepoRow(r.find(x => x.name === repo)); })
       .catch(e => setError(e.message));
-  }, [repo]);
+  }, [repo, modPath]);
 
   const files = useMemo(() => {
     const byFile = new Map<string, Symbol[]>();

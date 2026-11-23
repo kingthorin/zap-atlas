@@ -23,15 +23,6 @@ def test_history_is_sharded_by_repo_and_year(tmp_path):
         "r": {"2021": {"commits": 1, "files": 1}, "2022": {"commits": 1, "files": 2}}}
 
 
-def test_every_repo_gets_symbol_and_relationship_shards_even_when_empty(tmp_path):
-    gen = AtlasGenerator(AtlasConfig())
-    gen.rows["repos.jsonl"] = [{"id": "repo:code", "name": "code"}, {"id": "repo:docs", "name": "docs"}]
-    gen.rows["symbols.jsonl"] = [{"id": "s", "repository": "code"}]
-    names = gen._write_repo_shards(tmp_path, "symbols.jsonl", "symbols")
-    assert names == ["symbols/code.jsonl", "symbols/docs.jsonl"]
-    assert (tmp_path / "symbols/docs.jsonl").read_text() == ""
-
-
 def test_doc_history_follows_renames(tmp_path):
     from types import SimpleNamespace as NS
     gen = AtlasGenerator(AtlasConfig())
@@ -45,3 +36,39 @@ def test_doc_history_follows_renames(tmp_path):
     d = gen.rows["docs.jsonl"][0]
     assert d["commits"] == ["commit:r:c3", "commit:r:c2", "commit:r:c1"] and d["commit_count"] == 3
     assert d["last_changed"] == "2024-03-01T00:00:00Z"
+
+
+def _sym(repo, name, path, size=10):
+    return {"id": f"symbol:{repo}:{name}", "repository": repo, "file": f"file:{repo}:sha:{path}", "pad": "x" * size}
+
+
+def _rel(repo, src, dst, path, kind="CALLS"):
+    return {"source": src, "target": dst, "type": kind, "repository": repo, "source_file": path}
+
+
+def test_module_shards_index_incoming_edges_and_module_graph(tmp_path):
+    from atlas.sharding import write_module_shards
+    mods = [{"id": f"module:r:{p}", "repository": "r", "path": p} for p in ("addOns", "addOns/a", "addOns/b")]
+    syms = [_sym("r", "A", "addOns/a/src/A.java"), _sym("r", "B", "addOns/b/src/B.java"), _sym("r", "Z", "other/Z.java")]
+    rels = [_rel("r", "symbol:r:A", "symbol:r:B", "addOns/a/src/A.java"),
+            _rel("r", "symbol:r:B", "symbol:r:B", "addOns/b/src/B.java"),
+            {"source": "milestone:r:1", "target": "symbol:r:A", "type": "PART_OF", "repository": "r"}]
+    names = write_module_shards(tmp_path, ["r"], mods, [], syms, rels)
+    index = json.loads((tmp_path / "shards/r.json").read_text())
+    assert index["keys"] == ["_meta", "_root", "addOns/a", "addOns/b"]
+    assert [index["keys"][i] for i in (index["s"]["A"], index["s"]["B"], index["s"]["Z"])] == ["addOns/a", "addOns/b", "_root"]
+    assert "symbols/r/addOns__a.jsonl" in names and "relationships/r/_meta.jsonl" in names
+    incoming = [json.loads(l) for l in (tmp_path / "incoming/r/addOns__b.jsonl").read_text().splitlines()]
+    assert [(r["source"], r["target"]) for r in incoming] == [("symbol:r:A", "symbol:r:B")]  # cross-shard only
+    graph = json.loads((tmp_path / "module_graph.json").read_text())
+    assert graph["nodes"] == ["module:r:addOns/a", "module:r:addOns/b"] and graph["edges"] == [[0, 1, "CALLS", 1]]
+
+
+def test_oversized_module_splits_by_directory_and_small_dirs_stay_in_parent():
+    from atlas.sharding import LIMIT, MIN, RepoShards
+    weights = {"m/src/big1/A.java": LIMIT, "m/src/big2/B.java": MIN, "m/src/tiny/C.java": 10, "m/top.java": 5}
+    plan = RepoShards(["m"], weights)
+    assert plan.key_of("m/src/big1/A.java") == "m/src/big1"
+    assert plan.key_of("m/src/big2/B.java") == "m/src/big2"
+    assert plan.key_of("m/src/tiny/C.java") == "m/src"   # below MIN, falls back to the nearest key
+    assert plan.key_of("m/top.java") == "m" and plan.key_of("elsewhere/x") == "_root"

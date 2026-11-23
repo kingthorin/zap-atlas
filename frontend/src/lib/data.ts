@@ -73,17 +73,45 @@ export async function loadModules(): Promise<Module[]> {
 export async function loadAddons(): Promise<AddOn[]> {
   return loadChunk("addons.jsonl") as Promise<AddOn[]>;
 }
-/** Load every per-repository shard of a kind (e.g. symbols/<repo>.jsonl), as listed in the manifest. */
-async function loadShards(kind: string): Promise<any[]> {
-  const m = await loadManifest();
-  const parts = await Promise.all(m.chunks.filter(c => c.startsWith(`${kind}/`)).map(loadChunk));
+/**
+ * Symbols and relationships are sharded per module (see atlas/sharding.py): shards/<repo>.json lists
+ * the shards, their row counts and which shard declares each symbol, so a page loads only what it shows.
+ */
+export interface ShardIndex { keys: string[]; n: number[][]; s: Record<string, number> }
+export type ShardKind = "symbols" | "relationships" | "incoming";
+const KIND_AT: Record<ShardKind, number> = { symbols: 0, relationships: 1, incoming: 2 };
+
+const shardIndexCache = new Map<string, Promise<ShardIndex>>();
+export function loadShardIndex(repo: string): Promise<ShardIndex> {
+  if (!shardIndexCache.has(repo)) shardIndexCache.set(repo, fetchText(`${DATA_DIR}/shards/${repo}.json`).then(t => JSON.parse(t)));
+  return shardIndexCache.get(repo)!;
+}
+const shardFile = (kind: ShardKind, repo: string, key: string) => `${kind}/${repo}/${key.replace(/\//g, "__")}.jsonl`;
+async function loadShards(repo: string, kind: ShardKind, keep: (key: string) => boolean = () => true): Promise<any[]> {
+  const ix = await loadShardIndex(repo);
+  const parts = await Promise.all(ix.keys.filter((k, i) => ix.n[i][KIND_AT[kind]] && keep(k)).map(k => loadChunk(shardFile(kind, repo, k))));
   return parts.flat();
 }
+/** Every symbol of a repository (all shards); prefer the narrower loaders below. */
+export const loadRepoSymbols = (repo: string) => loadShards(repo, "symbols") as Promise<Symbol[]>;
+export const loadRepoRelationships = (repo: string) => loadShards(repo, "relationships") as Promise<Relationship[]>;
 export async function loadSymbols(): Promise<Symbol[]> {
-  return loadShards("symbols") as Promise<Symbol[]>;
+  return (await Promise.all((await loadRepos()).map(r => loadRepoSymbols(r.name)))).flat();
 }
-export async function loadRelationships(): Promise<Relationship[]> {
-  return loadShards("relationships") as Promise<Relationship[]>;
+/** Symbols under a module path: its own shards and any finer shards below it. */
+export async function loadModuleSymbols(repo: string, modPath: string): Promise<Symbol[]> {
+  const all = await loadShards(repo, "symbols", k => k === modPath || k.startsWith(modPath + "/")) as Symbol[];
+  return all.filter(s => { const p = filePathOf(s.file); return p === modPath || p.startsWith(modPath + "/"); });
+}
+/** A symbol with its shard's symbols and edges, plus the edges that reach it from other shards. */
+export async function loadSymbolShard(repo: string, symbolId: string) {
+  const ix = await loadShardIndex(repo);
+  const at = ix.s[symbolId.split(":").slice(2).join(":")];
+  if (at === undefined) return null;
+  const key = ix.keys[at];
+  const [symbols, rels, incoming] = await Promise.all((["symbols", "relationships", "incoming"] as ShardKind[]).map(
+    kind => ix.n[at][KIND_AT[kind]] ? loadChunk(shardFile(kind, repo, key)) : Promise.resolve([])));
+  return { index: ix, symbols: symbols as Symbol[], rels: [...rels, ...incoming] as Relationship[] };
 }
 export async function loadDocs(): Promise<Doc[]> {
   return loadChunk("docs.jsonl") as Promise<Doc[]>;
@@ -93,13 +121,6 @@ export async function loadStories(): Promise<Story[]> {
 }
 
 export interface FileChange { id: string; commit: string; repository: string; path: string; change_type: string; old_path: string | null; additions: number; deletions: number }
-
-export async function loadRepoSymbols(repo: string): Promise<Symbol[]> {
-  return loadChunk(`symbols/${repo}.jsonl`) as Promise<Symbol[]>;
-}
-export async function loadRepoRelationships(repo: string): Promise<Relationship[]> {
-  return loadChunk(`relationships/${repo}.jsonl`) as Promise<Relationship[]>;
-}
 
 /** Path of a symbol's file, from its file id `file:<repo>:<sha>:<path>`. */
 export function filePathOf(fileId: string): string {

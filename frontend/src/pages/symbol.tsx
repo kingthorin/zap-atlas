@@ -1,18 +1,22 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { Relationship, Repo, Symbol, filePathOf, githubBlob, isDeprecated, loadRepoRelationships, loadRepoSymbols, loadRepos } from "../lib/data";
+import { Relationship, Repo, Symbol, filePathOf, githubBlob, isDeprecated, loadRepos, loadShardIndex, loadSymbolShard } from "../lib/data";
 import { Loading, ErrorBox } from "../components/ui";
 
 export default function SymbolPage() {
   const { id = "" } = useParams();
   const repoName = id.split(":")[1] ?? "";
-  const [data, setData] = useState<{ symbols: Symbol[]; rels: Relationship[]; repo?: Repo } | null>(null);
+  const [data, setData] = useState<{ symbols: Symbol[]; rels: Relationship[]; known: (id: string) => boolean; repo?: Repo } | null>(null);
   const [error, setError] = useState("");
 
   useEffect(() => {
     setData(null);
-    Promise.all([loadRepoSymbols(repoName), loadRepoRelationships(repoName), loadRepos()])
-      .then(([symbols, rels, repos]) => setData({ symbols, rels, repo: repos.find(r => r.name === repoName) }))
+    Promise.all([loadSymbolShard(repoName, id), loadShardIndex(repoName), loadRepos()])
+      .then(([shard, index, repos]) => setData({
+        symbols: shard?.symbols ?? [], rels: shard?.rels ?? [],
+        known: x => x.split(":")[1] === repoName && x.split(":").slice(2).join(":") in index.s,
+        repo: repos.find(r => r.name === repoName),
+      }))
       .catch(e => setError(e.message));
   }, [id]);
 
@@ -21,8 +25,7 @@ export default function SymbolPage() {
   const sym = data.symbols.find(s => s.id === id);
   if (!sym) return <ErrorBox message={`Unknown symbol ${id}.`} />;
 
-  const known = new Set(data.symbols.map(s => s.id));
-  const node = (x: string) => known.has(x)
+  const node = (x: string) => data.known(x)
     ? <Link className="text-indigo-600 hover:underline" to={`/symbol/${encodeURIComponent(x)}`}>{x.split(":").slice(2).join(":")}</Link>
     : <span className="text-slate-500" title="not resolved to a declaration in this dataset">{x.split(":").slice(2).join(":") || x}</span>;
   const out = data.rels.filter(r => r.source === id);
