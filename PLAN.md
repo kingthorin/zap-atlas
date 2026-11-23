@@ -46,7 +46,7 @@ differs, and what is planned next. Update it with each change that moves an item
    Sub-section selector (repo, add-on, language, path prefix). Overlays: release tags,
    story milestones, Hall of Fame projects, core-team changes. Stories can link to a
    range or module.
-2. **Weighted graph explorer (GitNexus-style)** (first version done: module-level graph from `module_graph.json` with Sigma.js, Graphology and ForceAtlas2, edge-type filters, neighbour table and module picker; module expansion into its 40 most connected types, a year slider, recency colouring, size by commits or lines changed, and an evidence filter are done; a module can also be expanded into its 40 most connected files with their directories; activity follows renames, so moved files and modules keep their earlier history; open: a file tree beside the graph, a language filter, files for non-Java sources). A force-directed knowledge graph of
+2. **Weighted graph explorer (GitNexus-style)** (first version done: module-level graph from `module_graph.json` with Sigma.js, Graphology and ForceAtlas2, edge-type filters, neighbour table and module picker; module expansion into its 40 most connected types, a year slider, recency colouring, size by commits or lines changed, and an evidence filter are done; a module can also be expanded into its 40 most connected files with their directories; activity follows renames, so moved files and modules keep their earlier history; a tree beside the graph lists the modules and the files, directories or types of expanded ones and works by keyboard; a language filter (modules where the language is at least 20% of their lines), colour by main language, a repository filter and a find box are done; open: files for non-Java sources, a sunburst view). A force-directed knowledge graph of
    all four repositories together, rendered with WebGL (Sigma.js and Graphology, both
    MIT; GitNexus itself is PolyForm Noncommercial, so we take the idea, not its code).
    - Nodes: repositories, modules and add-ons, directories, files, types, and
@@ -108,7 +108,7 @@ Built with D3 modules for scales, zoom, brush and hierarchy, rendered as SVG by 
 4. ~~Timeline~~ (first version done), ~~graph explorer~~ (module level and type expansion done).
 5. ~~Per-module shards~~, ~~workflow `ref` and `repo_refs` inputs~~ (now passed to `atlas analyze --ref/--repo-refs`; `checkout_sources.py` removed; CI passed with empty inputs, a run with `repo_refs` set is still untested),  ~~licence~~, ~~validator integrity checks~~, ~~zap-hud as a fourth repository~~, ~~accessibility first pass~~, ~~least-privilege CI~~ (all done).
 6. Open, roughly in order of value:
-   - Graph extras: a file tree beside the graph, a language filter. (Year slider, recency, size modes, evidence filter, and directories and files as nodes are done.)
+   - Graph: the plan is done apart from files for non-Java sources and the optional sunburst view.
    - Timeline extras: sub-section selector (repo, add-on, language, path), Hall of Fame and core-team overlays.
    - Keyboard-only and screen reader accessibility testing, including the graph canvas.
    - M5 historical analysis and the optional M3 compiler-backed pass.

@@ -260,13 +260,41 @@ test("module graph expands a module into directories and files, and a file opens
   await page.goto("graph");
   const summary = page.getByText(/\d+ modules.*linked pairs/);
   await page.getByLabel("Select a module").selectOption({ label: "automation" });
-  await page.getByRole("button", { name: "Expand into files" }).click();
+  await page.getByRole("button", { name: "Expand into files", exact: true }).click();
   await expect(summary).toContainText(/\+ 40 files, \d+ directories/);
   await expect(page.getByText(/showing 40 of \d+ files/)).toBeVisible();
   await page.getByRole("button", { name: "Expand into types" }).click();            // switching modes replaces the files
   await expect(summary).toContainText("+ 40 types");
   await expect(summary).not.toContainText("files");
-  await page.getByRole("button", { name: "Expand into files" }).click();
+  await page.getByRole("button", { name: "Expand into files", exact: true }).click();
   await page.getByRole("button", { name: "Collapse files" }).click();
   await expect(summary).not.toContainText("+ ");
+});
+
+test("module graph: tree, find, language and repository filters", async ({ page }) => {
+  await page.goto("graph");
+  const tree = page.getByRole("navigation", { name: "Modules, files and types" });
+  const automation = tree.getByRole("button", { name: "automation", exact: true });
+  await tree.locator("summary", { hasText: "zap-extensions" }).click();           // large repositories start folded
+  await expect(automation).toBeVisible();
+  await automation.click();                                                       // selecting in the tree selects in the graph
+  await expect(page.getByRole("heading", { name: "automation", level: 2 })).toBeVisible();
+  await tree.getByRole("button", { name: "Expand into files: automation" }).click(); // the arrow expands it, and the files are listed
+  await expect(tree.getByRole("button", { name: "Collapse automation" })).toBeVisible();
+  expect(await tree.getByRole("button").count()).toBeGreaterThan(40);
+  await tree.getByRole("button", { name: "Collapse automation" }).click();
+
+  await page.getByLabel("Select a module").selectOption("");
+  await page.getByLabel("Find").fill("spider");                                  // an exact label selects it
+  await expect(page.getByRole("heading", { name: "spider", level: 2 })).toBeVisible();
+
+  await page.locator("label", { hasText: /^Language/ }).locator("select").selectOption("JavaScript");                  // Java-only modules fade
+  await expect(automation).toHaveClass(/text-slate-400/);
+  await page.locator("label", { hasText: /^Language/ }).locator("select").selectOption("");
+  await expect(automation).not.toHaveClass(/text-slate-400/);
+
+  await page.getByRole("group", { name: "Repositories" }).getByRole("button", { name: "zap-extensions" }).click();
+  await expect(automation).toHaveClass(/text-slate-400/);
+  await page.getByLabel("Colour by").selectOption("language");
+  await expect(page.getByLabel("Language colours")).toContainText("Java");
 });

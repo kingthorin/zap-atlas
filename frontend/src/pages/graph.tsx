@@ -4,7 +4,7 @@ import Graph from "graphology";
 import forceAtlas2 from "graphology-layout-forceatlas2";
 import Sigma from "sigma";
 import {
-  FileActivity, ModuleActivity, ModuleGraph, Relationship, ShardIndex, loadFileActivity, loadModuleActivity, loadModuleGraph, loadModuleIncoming, loadModuleRelationships, loadModuleSymbols, loadShardIndex,
+  FileActivity, LanguageRow, ModuleActivity, ModuleGraph, Relationship, ShardIndex, loadFileActivity, loadLanguages, loadModuleActivity, loadModuleGraph, loadModuleIncoming, loadModuleRelationships, loadModuleSymbols, loadShardIndex,
 } from "../lib/data";
 import { Loading, ErrorBox } from "../components/ui";
 import { filePathOf } from "../lib/data";
@@ -35,7 +35,13 @@ function drawHover(ctx: CanvasRenderingContext2D, data: any, settings: any) {
 }
 
 type SizeBy = "edges" | "commits" | "lines";
-type ColourBy = "repo" | "recency";
+type ColourBy = "repo" | "recency" | "language";
+const LANG_COLOR: Record<string, string> = {
+  Java: "#4a7fb5", JavaScript: "#c9a400", HTML: "#e0603a", XML: "#8b5cf6", Properties: "#7e92a4", Markdown: "#475569",
+  Gradle: "#2f9e6f", YAML: "#d9468f", JSON: "#0ea5a5", CSS: "#a855f7", Text: "#94a3b8",
+};
+const LANG_OTHER = "#b6c2cf";
+const LANG_SHARE = 0.2;      // the language filter keeps modules where the language is at least this share of their lines
 const yearOf = (day: string) => +day.slice(0, 4);
 /** Old to new: slate to ZAP orange, both readable on the light and dark canvases. */
 function ramp(t: number): string {
@@ -198,6 +204,61 @@ function buildGraph(nodes: string[], pairs: Pair[], typeParent: Map<string, stri
 const chip = (on: boolean) =>
   `px-2 py-0.5 rounded text-xs border ${on ? "bg-indigo-600 text-white border-indigo-600" : "bg-white text-slate-700 border-slate-300"}`;
 
+interface TreeProps {
+  modules: string[]; expanded: string[]; modes: Record<string, Mode>; detail: Map<string, Detail>;
+  sel: string; faded: (id: string) => boolean; onSelect: (id: string) => void; onToggle: (id: string) => void; loading: string;
+}
+
+/** The modules, and the files, directories or types of expanded ones, as a nested list that mirrors the graph and works by keyboard. */
+function TreePanel({ modules, expanded, modes, detail, sel, faded, onSelect, onToggle, loading }: TreeProps) {
+  const [filter, setFilter] = useState("");
+  const term = filter.trim().toLowerCase();
+  const byRepo = new Map<string, string[]>();
+  for (const m of modules) if (!term || short(m).toLowerCase().includes(term) || m === sel || expanded.includes(m)) (byRepo.get(repoOf(m)) ?? byRepo.set(repoOf(m), []).get(repoOf(m))!).push(m);
+  const row = (id: string, depth: number, extra?: React.ReactNode) => (
+    <li key={id}>
+      <div className="flex items-center gap-1" style={{ paddingLeft: depth * 12 }}>
+        {extra}
+        <button className={`truncate text-left py-0.5 ${id === sel ? "font-semibold text-indigo-700" : faded(id) ? "text-slate-400" : "text-slate-700 hover:underline"}`}
+          title={id.startsWith("module:") ? short(id) : pathOf(id)} aria-current={id === sel ? "true" : undefined} onClick={() => onSelect(id)}>{labelOf(id)}</button>
+      </div>
+    </li>
+  );
+  const children = (m: string): React.ReactNode => {
+    const d = detail.get(m);
+    if (!d || !expanded.includes(m)) return null;
+    if (modes[m] !== "files") return <ul>{d.types.map(t => row(t, 2))}</ul>;
+    const kids = new Map<string, string[]>();
+    for (const [from, to] of fileTree(m, d.files)) (kids.get(from) ?? kids.set(from, []).get(from)!).push(to);
+    const walk = (parent: string, depth: number): React.ReactNode[] => (kids.get(parent) ?? []).flatMap(c => [row(c, depth), ...walk(c, depth + 1)]);
+    return <ul>{walk(m, 2)}</ul>;
+  };
+  return (
+    <nav aria-label="Modules, files and types" className="rounded-xl border border-slate-200 bg-white p-2 text-sm max-h-48 xl:max-h-[calc(60vh+2.5rem)] overflow-y-auto">
+      <input type="search" placeholder="Filter modules…" aria-label="Filter the tree" value={filter} onChange={e => setFilter(e.target.value)}
+        className="w-full mb-2 rounded border border-slate-200 bg-white px-2 py-1 text-sm outline-none focus:ring-2 focus:ring-indigo-500" />
+      {[...byRepo.entries()].map(([repo, mods]) => (
+        <details key={repo} open={!!term || mods.some(m => expanded.includes(m) || m === sel) || mods.length <= 5}>
+          <summary className="cursor-pointer font-semibold py-0.5">{repo} <span className="font-normal text-slate-400">({mods.length})</span></summary>
+          <ul className="ml-1">
+            {mods.map(m => (
+              <li key={m}>
+                <div className="flex items-center gap-1">
+                  <button className="w-4 text-slate-500" aria-label={`${expanded.includes(m) ? "Collapse" : "Expand into files:"} ${short(m)}`} aria-expanded={expanded.includes(m)}
+                    disabled={!!loading} onClick={() => onToggle(m)}>{loading === m ? "…" : expanded.includes(m) ? "▾" : "▸"}</button>
+                  <button className={`truncate text-left py-0.5 ${m === sel ? "font-semibold text-indigo-700" : faded(m) ? "text-slate-400" : "text-slate-700 hover:underline"}`}
+                    title={short(m)} aria-current={m === sel ? "true" : undefined} onClick={() => onSelect(m)}>{short(m)}</button>
+                </div>
+                {children(m)}
+              </li>
+            ))}
+          </ul>
+        </details>
+      ))}
+    </nav>
+  );
+}
+
 export default function GraphPage() {
   const [data, setData] = useState<ModuleGraph | null>(null);
   const [error, setError] = useState("");
@@ -205,6 +266,10 @@ export default function GraphPage() {
   const [sel, setSel] = useState("");
   const [expanded, setExpanded] = useState<string[]>([]);
   const [modes, setModes] = useState<Record<string, Mode>>({});
+  const [langRows, setLangRows] = useState<LanguageRow[]>([]);
+  const [lang, setLang] = useState("");                         // "": any language
+  const [hiddenRepos, setHiddenRepos] = useState<Set<string>>(new Set());
+  const [find, setFind] = useState("");
   const [fileActivity, setFileActivity] = useState<FileActivity>({});
   const [detail, setDetail] = useState<Map<string, Detail>>(new Map());
   const [indexes, setIndexes] = useState<Record<string, ShardIndex>>({});
@@ -233,9 +298,27 @@ export default function GraphPage() {
     return { commits: Math.max(1, ...all.map(a => a[2])), lines: Math.max(1, ...all.map(a => a[3])) };
   }, [fileActivity]);
 
+  /** module id -> language -> share of the module's lines; the dominant language of each module. */
+  const langs = useMemo(() => {
+    const lines = new Map<string, Map<string, number>>();
+    for (const r of langRows) if (r.module) {
+      const id = `module:${r.repository}:${r.module}`, m = lines.get(id) ?? lines.set(id, new Map()).get(id)!;
+      m.set(r.language, (m.get(r.language) ?? 0) + r.lines);
+    }
+    const share = new Map<string, Map<string, number>>(), dominant = new Map<string, string>(), all = new Map<string, number>();
+    for (const [id, m] of lines) {
+      const total = [...m.values()].reduce((a, b) => a + b, 0) || 1;
+      share.set(id, new Map([...m].map(([l, n]) => [l, n / total] as const)));
+      dominant.set(id, [...m].sort((a, b) => b[1] - a[1])[0][0]);
+      for (const [l, n] of m) all.set(l, (all.get(l) ?? 0) + n);
+    }
+    return { share, dominant, options: [...all].filter(([, n]) => n > 0).sort((a, b) => b[1] - a[1]).map(([l]) => l) };
+  }, [langRows]);
+
   useEffect(() => {
     loadModuleGraph().then(setData).catch(e => setError(e.message));
     loadModuleActivity().then(setActivity).catch(() => {});
+    loadLanguages().then(setLangRows).catch(() => {});
   }, []);
 
   const { pairs, childParent: typeParent, kinds } = useMemo(
@@ -243,7 +326,7 @@ export default function GraphPage() {
       : { pairs: [] as Pair[], childParent: new Map<string, string>(), kinds: new Map<string, Kind>() }),
     [data, types, evidence, expanded, modes, detail, indexes]);
   const styleRef = useRef<any>({});
-  styleRef.current = { sizeBy, colourBy, year, activity, years, maxOf, typeParent, kinds, fileActivity, maxFile };
+  styleRef.current = { sizeBy, colourBy, year, activity, years, maxOf, typeParent, kinds, fileActivity, maxFile, lang, langs, hiddenRepos };
   const graph = useMemo(
     () => (data ? buildGraph(data.nodes, pairs, typeParent, kinds, positions.current, positions.current.size === 0) : null),
     [data, pairs, typeParent, kinds]);
@@ -257,19 +340,26 @@ export default function GraphPage() {
     }
     return st.activity[st.typeParent.get(n) ?? n] ?? null;
   };
-  /** Is a node outside the chosen year, by the first and last commit of its file or module? */
+  /** Is a node filtered out: its repository hidden, its module short of the chosen language, or outside the chosen year? */
   const isFaded = (n: string): boolean => {
+    const st = styleRef.current, owner = st.typeParent.get(n) ?? n;
+    if (st.hiddenRepos.has(repoOf(owner))) return true;
+    if (st.lang && owner.startsWith("module:") && (st.langs.share.get(owner)?.get(st.lang) ?? 0) < LANG_SHARE) return true;
     const act = actOf(n);
-    return styleRef.current.year != null && !!act && (yearOf(act.first) > styleRef.current.year || yearOf(act.last) < styleRef.current.year);
+    return st.year != null && !!act && (yearOf(act.first) > st.year || yearOf(act.last) < st.year);
   };
   /** Size by activity, colour by recency, and fade by year, applied on top of the graph's own attributes. */
   const styleNode = (n: string, d: any) => {
     const st = styleRef.current, kind = st.kinds.get(n), act = actOf(n);
-    if (!act) return d;
     let out = d;
+    if (!act) return isFaded(n) ? { ...out, color: isDark() ? "#2a3548" : "#e6ecf2", label: "", zIndex: -1 } : out;
     const by = st.sizeBy as "commits" | "lines";
     if (st.sizeBy !== "edges" && !kind) out = { ...out, size: 3 + 19 * Math.sqrt(act[by] / st.maxOf[by]) };
     if (st.sizeBy !== "edges" && kind === "file") out = { ...out, size: 2.5 + 7 * Math.sqrt(act[by] / st.maxFile[by]) };
+    if (st.colourBy === "language" && (!kind || kind === "file")) {
+      const dom = st.langs.dominant.get(st.typeParent.get(n) ?? n);
+      out = { ...out, color: (dom && LANG_COLOR[dom] || LANG_OTHER) + (kind ? "dd" : "") };
+    }
     if (st.colourBy === "recency" && st.years && (!kind || kind === "file"))
       out = { ...out, color: ramp((yearOf(act.last) - st.years.min) / Math.max(1, st.years.max - st.years.min)) + (kind ? "dd" : "") };
     if (isFaded(n)) out = { ...out, color: isDark() ? "#2a3548" : "#e6ecf2", label: "", zIndex: -1 };
@@ -288,7 +378,7 @@ export default function GraphPage() {
       },
       edgeReducer: (e, d) => {
         const cur = selRef.current;
-        if (styleRef.current.year != null && graph.extremities(e).some(n => isFaded(n))) return { ...d, hidden: true };
+        if (graph.extremities(e).some(n => isFaded(n))) return { ...d, hidden: true };
         return !cur ? d : graph.hasExtremity(e, cur) ? { ...d, color: "#00549e", size: d.size + 1 } : { ...d, hidden: true };
       },
     });
@@ -303,7 +393,7 @@ export default function GraphPage() {
     return () => { camera.current = s.getCamera().getState(); theme.disconnect(); s.kill(); sigma.current = null; };
   }, [graph]);
 
-  useEffect(() => { sigma.current?.refresh(); }, [sel, sizeBy, colourBy, year, activity, fileActivity]);
+  useEffect(() => { sigma.current?.refresh(); }, [sel, sizeBy, colourBy, year, activity, fileActivity, lang, hiddenRepos, langs]);
   useEffect(() => { if (sel && graph && !graph.hasNode(sel)) setSel(""); }, [graph, sel]);
 
   const expand = async (id: string, mode: Mode = "types") => {
@@ -359,6 +449,9 @@ export default function GraphPage() {
   const childOf = (n: string) => typeParent.get(n) ?? "";
   const sourceLink = (m: string, dir: string) => `/source?repo=${repoOf(m)}&mod=${encodeURIComponent(pathOf(m))}${dir ? `&dir=${encodeURIComponent(dir)}` : ""}&tab=symbols`;
   const modules = [...data.nodes].sort((a, b) => short(a).localeCompare(short(b)));
+  const repoNames = [...new Set(data.nodes.map(repoOf))];
+  const findMap = new Map<string, string>();
+  graph.forEachNode(id => findMap.set(typeParent.has(id) ? `${labelOf(id)} (${short(typeParent.get(id)!)})` : labelOf(id), id));
 
   return (
     <div className="space-y-3">
@@ -397,8 +490,27 @@ export default function GraphPage() {
         </label>
         <label>Colour by{" "}
           <select className="border border-slate-300 rounded px-2 py-1 bg-white" value={colourBy} onChange={e => setColourBy(e.target.value as ColourBy)}>
-            <option value="repo">repository</option><option value="recency">last activity</option>
+            <option value="repo">repository</option><option value="recency">last activity</option><option value="language">main language</option>
           </select>
+        </label>
+        {langs.options.length > 0 && (
+          <label title={`Keeps modules where the language is at least ${LANG_SHARE * 100}% of their lines`}>Language{" "}
+            <select className="border border-slate-300 rounded px-2 py-1 bg-white" value={lang} onChange={e => setLang(e.target.value)}>
+              <option value="">any</option>{langs.options.map(l => <option key={l}>{l}</option>)}
+            </select>
+          </label>
+        )}
+        <div className="flex flex-wrap items-center gap-1" role="group" aria-label="Repositories">
+          {repoNames.map(r => (
+            <button key={r} aria-pressed={!hiddenRepos.has(r)} className={chip(!hiddenRepos.has(r))}
+              onClick={() => { const n = new Set(hiddenRepos); n.has(r) ? n.delete(r) : n.add(r); setHiddenRepos(n); }}>
+              <span className="inline-block w-2 h-2 rounded-full mr-1" style={{ background: REPO_COLOR[r] ?? "#7e92a4" }} aria-hidden="true" />{r}</button>
+          ))}
+        </div>
+        <label>Find{" "}
+          <input list="graph-find" value={find} placeholder="module, type or file" onChange={e => { setFind(e.target.value); const id = findMap.get(e.target.value); if (id) setSel(id); }}
+            className="border border-slate-300 rounded px-2 py-1 bg-white w-44" />
+          <datalist id="graph-find">{[...findMap.keys()].map(k => <option key={k} value={k} />)}</datalist>
         </label>
         {years && (
           <label className="flex items-center gap-2">Year
@@ -407,12 +519,23 @@ export default function GraphPage() {
             <span className="w-28 text-slate-600">{year == null ? "any year" : `active in ${year}`}</span>
           </label>
         )}
+        {colourBy === "language" && (
+          <span className="flex flex-wrap items-center gap-x-2 text-xs text-slate-600" aria-label="Language colours">
+            {[...new Set(data.nodes.map(n => langs.dominant.get(n)).filter(Boolean) as string[])].map(l => (
+              <span key={l}><span className="inline-block w-2 h-2 rounded-full mr-1" style={{ background: LANG_COLOR[l] ?? LANG_OTHER }} aria-hidden="true" />{l}</span>))}
+          </span>
+        )}
         {colourBy === "recency" && years && (
           <span className="flex items-center gap-1 text-xs text-slate-600">last commit {years.min}
             <span className="inline-block w-24 h-2 rounded" style={{ background: `linear-gradient(to right, ${ramp(0)}, ${ramp(1)})` }} aria-hidden="true" />{years.max}</span>
         )}
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_22rem] gap-3 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_22rem] xl:grid-cols-[15rem_minmax(0,1fr)_21rem] gap-3 items-start">
+        <div className="lg:col-span-2 xl:col-span-1">
+          <TreePanel modules={modules} expanded={expanded} modes={modes} detail={detail} sel={sel} loading={loading}
+            faded={id => styleRef.current.hiddenRepos.has(repoOf(id)) || (!!lang && id.startsWith("module:") && (langs.share.get(id)?.get(lang) ?? 0) < LANG_SHARE)}
+            onSelect={setSel} onToggle={id => (expanded.includes(id) ? collapse(id) : expand(id, "files"))} />
+        </div>
         <div className="rounded-xl border border-slate-200 bg-white overflow-hidden">
           <div ref={box} className="h-[60vh] min-h-[360px] w-full" role="img"
             aria-label={`Graph of ${graph.order} nodes and ${graph.size} linked pairs. The table beside it lists a selected node's neighbours.`} />
