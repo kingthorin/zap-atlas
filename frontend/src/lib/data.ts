@@ -237,3 +237,11 @@ export function loadModuleTimeline(): Promise<ModuleTimeline> {
   if (!moduleTimelineCache) moduleTimelineCache = fetchText(`${DATA_DIR}/timeline_modules.json`).then(t => JSON.parse(t));
   return moduleTimelineCache;
 }
+
+/** The core team over time, from the history of the help credits page: each person's listed intervals [from, to or null]. */
+export interface CoreTeam { source: string; snapshots: number; first: string; people: { name: string; intervals: [string, string | null][] }[] }
+let coreTeamCache: Promise<CoreTeam> | null = null;
+export function loadCoreTeam(): Promise<CoreTeam> {
+  if (!coreTeamCache) coreTeamCache = fetchText(`${DATA_DIR}/core_team.json`).then(t => JSON.parse(t));
+  return coreTeamCache;
+}

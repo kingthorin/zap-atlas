@@ -166,6 +166,22 @@ def story_warnings(all_rows: dict[str, list[dict]]) -> list[str]:
     return out
 
 
+def check_core_team(dataset: Path) -> list[str]:
+    """core_team.json holds only names and dates: no email addresses, and well-formed intervals."""
+    path = dataset / "core_team.json"
+    if not path.is_file():
+        return []
+    from atlas.git_history import EMAIL_RE
+    errors = []
+    for person in json.loads(path.read_text(encoding="utf-8")).get("people", []):
+        if EMAIL_RE.search(person["name"]):
+            errors.append(f"core team member {person['name']!r} looks like an email address")
+        for start, end in person["intervals"]:
+            if end and end < start:
+                errors.append(f"core team member {person['name']!r} has an interval that ends before it starts")
+    return errors
+
+
 def check_integrity(dataset: Path, manifest: dict, all_rows: dict[str, list[dict]]) -> list[str]:
     return (check_manifest_files(dataset, manifest) + check_schema(manifest, all_rows) + check_revisions(manifest, all_rows)
-            + check_paths(all_rows) + check_shards(dataset) + check_stories(all_rows))
+            + check_paths(all_rows) + check_shards(dataset) + check_stories(all_rows) + check_core_team(dataset))

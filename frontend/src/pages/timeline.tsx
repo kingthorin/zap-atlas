@@ -4,9 +4,12 @@ import { scaleUtc } from "d3-scale";
 import { select } from "d3-selection";
 import { zoom as d3zoom, zoomIdentity, ZoomBehavior, ZoomTransform } from "d3-zoom";
 import { utcMonday } from "d3-time";
-import { Milestone, ModuleTimeline, Story, Timeline, loadCommits, loadMilestones, loadModuleTimeline, loadStories, loadTimeline } from "../lib/data";
+import { CoreTeam, Milestone, ModuleTimeline, Story, Timeline, loadCommits, loadCoreTeam, loadMilestones, loadModuleTimeline, loadStories, loadTimeline } from "../lib/data";
 import { Loading, ErrorBox } from "../components/ui";
 
+const TEAM_ROW = 12, TEAM_HEAD = 24;      // the core team lane: one row per concurrent member
+const GROUP_COLOR: Record<string, [string, string]> = { projects: ["#e08e00", "#7a4f00"], features: ["#4389ff", "#00457f"], history: ["#94a3b8", "#475569"] };
+const GROUP_NAME: Record<string, string> = { projects: "student project", features: "feature", history: "project history" };
 const W = 1000, ML = 124, MR = 12, LANE_H = 120, TOP = 18, STORY_H = 44, AXIS_H = 26;
 const REPO_COLOR: Record<string, string> = { zaproxy: "#4389ff", "zap-extensions": "#e08e00", "zap-core-help": "#2f9e6f", "zap-hud": "#8e5bd0" };
 // Cursor over the chart; "grabbing" shows while dragging. Try "crosshair", "grab" or "pointer".
@@ -30,6 +33,8 @@ const slugOf = (id: string) => id.split(":").pop()!;
 export default function TimelinePage() {
   const [tl, setTl] = useState<Timeline | null>(null);
   const [modTl, setModTl] = useState<ModuleTimeline>({});
+  const [team, setTeam] = useState<CoreTeam | null>(null);
+  const [showTeam, setShowTeam] = useState(true);
   const [focus, setFocus] = useState("");                       // module id, or "" for all activity
   const [milestones, setMilestones] = useState<Milestone[]>([]);
   const [stories, setStories] = useState<Story[]>([]);
@@ -48,10 +53,25 @@ export default function TimelinePage() {
   useEffect(() => {
     loadTimeline().then(setTl).catch(e => setError(e.message));
     loadModuleTimeline().then(setModTl).catch(() => {});
+    loadCoreTeam().then(setTeam).catch(() => {});
     loadMilestones().then(setMilestones).catch(() => {});
     loadStories().then(setStories).catch(() => {});
   }, []);
 
+  /** Members packed into rows so that people who were not listed together share a row. */
+  const teamRows = useMemo(() => {
+    const ends: number[] = [], rows = new Map<string, number>();
+    const people = [...(team?.people ?? [])].sort((a, b) => a.intervals[0][0].localeCompare(b.intervals[0][0]));
+    for (const p of people) {
+      const start = Date.parse(p.intervals[0][0]);
+      let row = ends.findIndex(e => e <= start);
+      if (row < 0) row = ends.length;
+      const last = p.intervals[p.intervals.length - 1][1];
+      ends[row] = last ? Date.parse(last) : Infinity;
+      rows.set(p.name, row);
+    }
+    return { rows, count: ends.length };
+  }, [team]);
   const repos = useMemo(() => Object.keys(tl ?? {}), [tl]);
   const base = useMemo(() => {
     const months = Object.values(tl ?? {}).flatMap(m => Object.keys(m)).sort();
@@ -141,7 +161,9 @@ export default function TimelinePage() {
     }
     return out;
   });
-  const plotBottom = TOP + STORY_H + repos.length * LANE_H;
+  const lanesBottom = TOP + STORY_H + repos.length * LANE_H;
+  const teamH = showTeam && team ? TEAM_HEAD + teamRows.count * TEAM_ROW + 8 : 0;
+  const plotBottom = lanesBottom + teamH;
   const H = plotBottom + AXIS_H;
   const inView = (a: Date, b: Date = a) => x(b) >= ML && x(a) <= W - MR;
   const releases = milestones.filter(m => m.kind !== "addon-release" && inView(new Date(m.date)));
@@ -165,8 +187,16 @@ export default function TimelinePage() {
     if (!svg || !box || !ctm) return;
     const pt = new DOMPoint(e.clientX, e.clientY).matrixTransform(ctm.inverse());
     const lane = Math.floor((pt.y - TOP - STORY_H) / LANE_H);
-    if (lane < 0 || lane >= repos.length) return setTip(null);
     const at = x.invert(pt.x).getTime();
+    if (showTeam && team && pt.y >= lanesBottom + TEAM_HEAD) {                      // the core team lane
+      const row = Math.floor((pt.y - lanesBottom - TEAM_HEAD) / TEAM_ROW), box0 = wrap.current;
+      const who = team.people.find(p => teamRows.rows.get(p.name) === row && p.intervals.some(([a, b]) => Date.parse(a) <= at && at < (b ? Date.parse(b) : Infinity)));
+      if (!who || !box0) return setTip(null);
+      const iv = who.intervals.find(([a, b]) => Date.parse(a) <= at && at < (b ? Date.parse(b) : Infinity))!;
+      const r0 = box0.getBoundingClientRect();
+      return setTip({ x: e.clientX - r0.left, y: e.clientY - r0.top, text: `${who.name} · in the credits' core team from ${iv[0]} ${iv[1] ? `to ${iv[1]}` : "to now"}` });
+    }
+    if (lane < 0 || lane >= repos.length) return setTip(null);
     const { bars: lb, mode } = laneData[lane];
     const hit = lb.find(b => b.x0.getTime() <= at && at < b.x1.getTime());
     const rel = releaseBins[lane].get(binStart(new Date(at), mode).getTime());
@@ -210,7 +240,7 @@ export default function TimelinePage() {
     <div className="space-y-4">
       <h1 className="text-2xl font-bold">Timeline</h1>
       <p className="text-slate-600">
-        Activity in each repository, stacked on one time axis. Orange diamonds are stories, vertical lines are core and HUD release tags, and the small blocks under a lane count its add-on releases. Click a release block to list those releases. Zoom in to see weekly bars; zoom out for monthly totals.
+        Activity in each repository, stacked on one time axis. Diamonds are stories (orange: student projects, blue: features, grey: project history), vertical lines are core and HUD release tags, and the small blocks under a lane count its add-on releases. Click a release block to list those releases. Zoom in to see weekly bars; zoom out for monthly totals.
       </p>
       <div className="flex flex-wrap gap-2 items-center text-sm">
         <label>Show{" "}
@@ -230,6 +260,7 @@ export default function TimelinePage() {
             </select>
           </label>
         )}
+        {team && <label className="text-slate-600"><input type="checkbox" checked={showTeam} onChange={e => setShowTeam(e.target.checked)} /> Core team</label>}
         <label>Jump to{" "}
           <select className="border border-slate-300 rounded px-2 py-1 bg-white" value="" onChange={e => e.target.value && jumpToYear(+e.target.value)}>
             <option value="">year</option>
@@ -305,12 +336,30 @@ export default function TimelinePage() {
               const cx = x(d), cy = TOP + 8 + levelOf(s) * 12;
               return (
                 <Link key={s.id} to={`/stories/${slugOf(s.id)}`}>
-                  <title>{`${s.title} · ${s.date}`}</title>
-                  <path d={`M${cx} ${cy - 5}L${cx + 5} ${cy}L${cx} ${cy + 5}L${cx - 5} ${cy}Z`} fill="#e08e00" stroke="#7a4f00" strokeWidth={0.8} />
+                  <title>{`${s.title} · ${s.date} · ${GROUP_NAME[s.group ?? ""] ?? "story"}`}</title>
+                  <path d={`M${cx} ${cy - 5}L${cx + 5} ${cy}L${cx} ${cy + 5}L${cx - 5} ${cy}Z`} fill={(GROUP_COLOR[s.group ?? ""] ?? GROUP_COLOR.projects)[0]} stroke={(GROUP_COLOR[s.group ?? ""] ?? GROUP_COLOR.projects)[1]} strokeWidth={0.8} />
                 </Link>
               );
             })}
           </g>
+          {showTeam && team && (
+            <g>
+              <text x={8} y={lanesBottom + 16} fontSize="12" fontWeight="bold" fill="currentColor" className="text-slate-700">Core team</text>
+              <text x={8} y={lanesBottom + 30} fontSize="9" fill="currentColor" className="text-slate-500">from the credits page</text>
+              <g clipPath="url(#plot)">
+                {team.people.flatMap(p => p.intervals.map(([a, b], k) => {
+                  const x0 = x(new Date(a)), x1 = b ? x(new Date(b)) : x(d1), row = teamRows.rows.get(p.name) ?? 0, y0 = lanesBottom + TEAM_HEAD + row * TEAM_ROW;
+                  if (x1 < ML || x0 > W - MR) return null;
+                  return (
+                    <g key={`${p.name}-${k}`} pointerEvents="none">
+                      <rect x={x0} y={y0 + 1} width={Math.max(2, x1 - x0 - 1)} height={TEAM_ROW - 3} rx={2} fill="#6d5bd0" opacity={0.85} />
+                      {x1 - x0 > 70 && <text x={Math.max(x0, ML) + 3} y={y0 + TEAM_ROW - 4} fontSize="8.5" fill="#fff">{p.name}</text>}
+                    </g>
+                  );
+                }))}
+              </g>
+            </g>
+          )}
         </svg>
         {tip && (
           <div role="tooltip" className="pointer-events-none absolute z-10 rounded bg-slate-800 text-white text-xs px-2 py-1 shadow max-w-xs"
@@ -335,6 +384,21 @@ export default function TimelinePage() {
           </table>
         </div>
       </details>
+      {team && (
+        <details className="text-sm">
+          <summary className="cursor-pointer text-indigo-600">Table: core team from the credits page</summary>
+          <p className="text-xs text-slate-500 mt-2">The first section of the help credits page ("ZAP", "ZAP development", then "ZAP Core Team"), from {team.first}.
+            A person is listed from the first version of the page that names them until the first later version that does not.</p>
+          <div className="overflow-x-auto mt-2">
+            <table className="text-sm border-collapse" aria-label="Core team members and the periods they were listed">
+              <thead><tr className="text-left text-slate-500 border-b border-slate-200"><th className="pr-4 pb-1">Member</th><th className="pb-1">Listed</th></tr></thead>
+              <tbody className="divide-y divide-slate-100">
+                {team.people.map(p => <tr key={p.name}><td className="pr-4">{p.name}</td><td>{p.intervals.map(([a, b]) => `${a} to ${b ?? "now"}`).join("; ")}</td></tr>)}
+              </tbody>
+            </table>
+          </div>
+        </details>
+      )}
     </div>
   );
 }

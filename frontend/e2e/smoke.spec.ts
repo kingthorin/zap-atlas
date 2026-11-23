@@ -139,6 +139,7 @@ test("releases list, a release page, and release markers in history", async ({ p
 });
 
 test("timeline draws the repositories with markers, zooms and has a table", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 1100 });      // tall enough to hover the core team lane at the bottom of the chart
   await page.goto("timeline");
   await noError(page);
   await expect(page.getByRole("group", { name: /Commits per repository/ })).toBeVisible();
@@ -150,24 +151,27 @@ test("timeline draws the repositories with markers, zooms and has a table", asyn
   await expect(status).toContainText("weekly bars");
   const plot = page.locator("svg[role=group] rect[style*='touch-action']");
   const box = (await plot.boundingBox())!;
-  await page.mouse.move(box.x + box.width * 0.7, box.y + box.height * 0.45);
+  const scale = box.width / 864;                      // svg units to pixels; lane geometry is fixed in svg units (extensions lane: bars near y=244, release strip near y=290)
+  await page.mouse.move(box.x + box.width * 0.7, box.y + 244 * scale);
   await expect(page.getByRole("tooltip")).toContainText(/ · \d+ commits?/);
   await page.getByLabel("Show").selectOption("added");
-  await page.mouse.move(box.x + box.width * 0.7, box.y + box.height * 0.45);
+  await page.mouse.move(box.x + box.width * 0.7, box.y + 244 * scale);
   await expect(page.getByRole("tooltip")).toContainText(/ · [\d,]+ lines? added/);
   await page.getByLabel("Show").selectOption("commits");
   await page.getByLabel("Focus").selectOption({ label: "zap-extensions · addOns/automation" });   // one add-on's own activity
-  await page.mouse.move(box.x + box.width * 0.7, box.y + box.height * 0.45);
+  await page.mouse.move(box.x + box.width * 0.7, box.y + 244 * scale);
   await expect(page.getByRole("tooltip")).toContainText(/^zap-extensions · addOns\/automation · 20\d\d-\d\d · \d+ commits?/);
   await page.getByLabel("Focus").selectOption("");
-  await page.mouse.move(box.x + box.width * 0.9, box.y + box.height * 0.535); // release strip under the zap-extensions lane
+  await page.mouse.move(box.x + box.width * 0.9, box.y + 290 * scale); // release strip under the zap-extensions lane
   await expect(page.getByRole("tooltip")).toContainText(/\d+ add-on releases?: /);
-  await page.mouse.click(box.x + box.width * 0.9, box.y + box.height * 0.535);
+  await page.mouse.click(box.x + box.width * 0.9, box.y + 290 * scale);
   await expect(page).toHaveURL(/releases\?kind=addon-release&repo=zap-extensions&from=\d{4}-\d\d-\d\d&to=/);
   await expect(page.getByText(/\d+ releases, newest first · zap-extensions from/)).toBeVisible();
   await page.goBack();
   await page.mouse.move(0, 0);
   await expect(page.getByRole("tooltip")).toHaveCount(0);
+  await page.mouse.move(box.x + box.width * 0.55, box.y + 584 * scale);          // the second row of the core team lane under the four repository lanes, where Simon Bennetts (listed throughout) sits
+  await expect(page.getByRole("tooltip")).toContainText(/^Simon Bennetts · in the credits' core team from 2010-12-04 to now/);
   await page.getByText("Table: commits per year").click();
   await expect(page.getByRole("table", { name: "Commits per year by repository" })).toBeVisible();
 });

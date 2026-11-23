@@ -40,7 +40,7 @@ differs, and what is planned next. Update it with each change that moves an item
 
 ## Planned: interactive resources
 
-1. **Zoomable timeline** (first version done: `timeline.json` monthly commits and active authors per repo, weekly bars from the year shards when zoomed in, hover tooltips, core and HUD release lines, story markers, a strip of add-on releases under each lane that opens the Releases page for that repository and period, table alternative; line counts are in: Lines added and Lines deleted per month or week, from each commit's totals; a Focus selector shows one module's own monthly activity (commits, authors, lines) with only that add-on's releases, on current paths so moved files keep their history, with no weekly detail. Open: a path-prefix or language sub-section, Hall of Fame and core-team overlays). Four repositories stacked. A small precomputed
+1. **Zoomable timeline** (first version done: `timeline.json` monthly commits and active authors per repo, weekly bars from the year shards when zoomed in, hover tooltips, core and HUD release lines, story markers, a strip of add-on releases under each lane that opens the Releases page for that repository and period, table alternative; line counts are in: Lines added and Lines deleted per month or week, from each commit's totals; a Focus selector shows one module's own monthly activity (commits, authors, lines) with only that add-on's releases, on current paths so moved files keep their history, with no weekly detail. a Core team lane built from the history of the help credits page (each person is listed from the first version of the page that names them until the first later one that does not; names only, rows with email addresses are skipped, aliases are merged), and story diamonds coloured by group, which marks the student projects. Open: a path-prefix or language sub-section; the Hall of Fame list itself is not in the data, only the projects that have stories). Four repositories stacked. A small precomputed
    monthly aggregate (commits, lines added and removed, active contributors) per repo
    and module or add-on; zooming below a month loads the per-year commit shards.
    Sub-section selector (repo, add-on, language, path prefix). Overlays: release tags,
@@ -67,7 +67,7 @@ differs, and what is planned next. Update it with each change that moves an item
    - Data: a per-module aggregate edge file and per-module node files, so a view loads
      only what it shows (this also motivates per-module shards).
    A hierarchical sunburst stays an optional second view of the same data.
-3. **Add-on dependency network** and a **core-team swimlane** from the credits history.
+3. **Add-on dependency network** (the Source page lists it as a table; a drawn network is open). The **core-team swimlane** is done, on the timeline.
 
 Built with D3 modules for scales, zoom, brush and hierarchy, rendered as SVG by React
 (canvas past about 5,000 shapes).
@@ -109,6 +109,6 @@ Built with D3 modules for scales, zoom, brush and hierarchy, rendered as SVG by 
 5. ~~Per-module shards~~, ~~workflow `ref` and `repo_refs` inputs~~ (now passed to `atlas analyze --ref/--repo-refs`; `checkout_sources.py` removed; CI passed with empty inputs, a run with `repo_refs` set is still untested),  ~~licence~~, ~~validator integrity checks~~, ~~zap-hud as a fourth repository~~, ~~accessibility first pass~~, ~~least-privilege CI~~ (all done).
 6. Open, roughly in order of value:
    - Graph: the plan is done apart from files for non-Java sources and the optional sunburst view.
-   - Timeline extras: Hall of Fame and core-team overlays; a path-prefix or language sub-section (the add-on focus is done).
+   - Timeline extras: a path-prefix or language sub-section (the add-on focus, core team lane and project markers are done).
    - Keyboard-only and screen reader accessibility testing, including the graph canvas.
    - M5 historical analysis and the optional M3 compiler-backed pass.

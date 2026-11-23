@@ -21,6 +21,7 @@ from atlas.milestones import build_milestones
 from atlas.stories import load_stories
 from atlas.sharding import write_module_shards
 from atlas.activity import write_activity
+from atlas.credits import CORE_TEAM, core_team
 from atlas.timeline import write_timeline
 from atlas.java_parser import JavaParser
 from atlas.schema import (
@@ -71,6 +72,7 @@ class AtlasGenerator:
         self.milestone_coverage: dict[str, dict] = {}
         self.java_types: dict = {}       # qualified type name -> info, across all repos
         self.call_sites: list = []
+        self.core_team: dict | None = None   # from the help credits page history
         self.java_parser = JavaParser()
         self.rows: dict[str, list[dict]] = {
             CHUNK_REPOS: [], CHUNK_COMMITS: [], CHUNK_MODULES: [],
@@ -131,6 +133,9 @@ class AtlasGenerator:
         (output_dir / HISTORY_INDEX).write_text(json.dumps(index, indent=1), encoding="utf-8")
         names.append(HISTORY_INDEX)
         names.append(write_timeline(output_dir, self.rows[CHUNK_COMMITS]))
+        if self.core_team:
+            (output_dir / CORE_TEAM).write_text(json.dumps(self.core_team, separators=(",", ":"), ensure_ascii=False), encoding="utf-8")
+            names.append(CORE_TEAM)
         names += write_activity(output_dir, self.rows[CHUNK_MODULES], self.rows[CHUNK_COMMITS], self.rows[CHUNK_FILES], self.rows[CHUNK_SYMBOLS])
         return names
 
@@ -149,6 +154,9 @@ class AtlasGenerator:
         self.rows[CHUNK_LANGS] += count_languages(repo.name, repo_path, [m["path"] for m in eco.modules])
 
         history = extract_history(repo_path, repo.name)
+        team = core_team(repo_path)
+        if team:
+            self.core_team = team
         self._attach_doc_history(repo.name, history)
         names = {a["id"].removeprefix("addon:"): a["name"] for a in eco.addons}
         ms, ms_cov = build_milestones(repo.name, repo_path, set(history.commits), names)
