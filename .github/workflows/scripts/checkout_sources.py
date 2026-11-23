@@ -3,12 +3,13 @@
 Env: REF (single ref for all repos), REPO_REFS (JSON map of repo name -> ref).
 """
 import json, os, subprocess
-refs = json.loads(os.environ.get("REPO_REFS", "{}"))
+refs = json.loads(os.environ.get("REPO_REFS") or "{}")  # empty on scheduled runs, which have no inputs
 single = os.environ.get("REF", "").strip()
 repos = [
   ("zaproxy", "https://github.com/zaproxy/zaproxy.git"),
   ("zap-extensions", "https://github.com/zaproxy/zap-extensions.git"),
   ("zap-core-help", "https://github.com/zaproxy/zap-core-help.git"),
+  ("zap-hud", "https://github.com/zaproxy/zap-hud.git"),
 ]
 out = {}
 for name, url in repos:
