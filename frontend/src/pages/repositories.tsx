@@ -3,6 +3,24 @@ import { Link } from "react-router-dom";
 import { LanguageRow, loadRepos, loadModules, loadLanguages } from "../lib/data";
 import { Loading, ErrorBox } from "../components/ui";
 
+const FOLD_ABOVE = 5; // repositories with more modules than this fold the list away
+
+function ModuleList({ repo, mods }: { repo: string; mods: any[] }) {
+  return (
+    <ul className="divide-y divide-slate-100">
+      {mods.map(m => (
+        <li key={m.id} className="p-2">
+          <div className="font-medium truncate">
+            <Link className="text-indigo-600 hover:underline" to={`/module/${repo}/${m.path}`}>{m.name}</Link>
+            {m.addon && <Link className="ml-2 text-xs text-slate-500 hover:underline" to={`/addon/${encodeURIComponent(`addon:${m.name}`)}`}>add-on</Link>}
+          </div>
+          <div className="text-xs text-slate-500">{m.path}</div>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 export default function Repositories() {
   const [repos, setRepos] = useState<any[]>([]);
   const [modules, setModules] = useState<any[]>([]);
@@ -42,18 +60,11 @@ export default function Repositories() {
               <div className="text-xs text-slate-500 mb-3">{repo.url}</div>
               <div className="text-sm font-mono text-slate-400 mb-3">SHA {repo.sha?.slice(0,10)}…</div>
               <LanguageBars rows={langs.filter(l => l.repository === repo.name)} />
-              <ul className="divide-y divide-slate-100">
-                {mods.map(m => (
-                  <li key={m.id} className="p-2">
-                    <div className="font-medium truncate">
-                      <Link className="text-indigo-600 hover:underline" to={`/module/${repo.name}/${m.path}`}>{m.name}</Link>
-                      {m.addon && <Link className="ml-2 text-xs text-slate-500 hover:underline" to={`/addon/${encodeURIComponent(`addon:${m.name}`)}`}>add-on</Link>}
-                    </div>
-                    <div className="text-xs text-slate-500">{m.path}</div>
-                  </li>
-                ))}
-                {mods.length === 0 && <div className="text-xs text-slate-400 p-2 italic">no modules discovered</div>}
-              </ul>
+              {mods.length === 0
+                ? <div className="text-xs text-slate-400 p-2 italic">no modules discovered</div>
+                : mods.length > FOLD_ABOVE
+                  ? <details><summary className="cursor-pointer text-sm text-indigo-600 mb-1">Modules ({mods.length})</summary><ModuleList repo={repo.name} mods={mods} /></details>
+                  : <ModuleList repo={repo.name} mods={mods} />}
             </div>
           );
         })}

@@ -21,6 +21,7 @@ test("overview shows non-zero totals", async ({ page }) => {
 test("repositories list modules and languages, and a module page opens", async ({ page }) => {
   await page.goto("repositories");
   await expect(page.getByRole("table", { name: "Lines of code by language" }).first()).toBeVisible();
+  await page.locator("summary", { hasText: "Modules (" }).first().click();
   await page.locator("a[href*='/module/zap-extensions/']").first().click();
   await noError(page);
 });
@@ -66,6 +67,16 @@ test("stories are grouped, oldest first, and can be filtered", async ({ page }) 
   const keys = dates.map(d => d.split(" · ")[0]);
   expect(keys.length).toBeGreaterThan(10);
   expect([...keys].sort()).toEqual(keys);
+  const sel = page.getByLabel("Sort");
+  const titles = () => page.locator("section[aria-labelledby='grp-projects'] h3").allTextContents();
+  await sel.selectOption("date-desc");
+  expect((await page.locator("section[aria-labelledby='grp-projects'] a >> text=/^\\d{4}/").allTextContents()).map(d => d.split(" · ")[0])).toEqual([...keys].reverse());
+  await sel.selectOption("az");
+  const az = (await titles()).map(t => t.replace(/draft$/i, ""));
+  expect(az).toEqual([...az].sort((a, b) => a.localeCompare(b)));
+  await sel.selectOption("za");
+  const za = (await titles()).map(t => t.replace(/draft$/i, ""));
+  expect(za).toEqual([...za].sort((a, b) => b.localeCompare(a)));
   await page.getByRole("button", { name: /^Features and add-ons/ }).click();
   await expect(page.getByRole("heading", { name: "Student projects", level: 2 })).toHaveCount(0);
 });
@@ -138,4 +149,15 @@ test("symbol pages count edges the same across shards, including cross-shard inc
     await expect(page.getByRole("heading", { name: `Outgoing (${out})` })).toBeVisible();
     await expect(page.getByRole("heading", { name: `Incoming (${inc})` })).toBeVisible();
   }
+});
+
+test("repositories fold long module lists", async ({ page }) => {
+  await page.goto("repositories");
+  const ext = page.locator("div.rounded-xl", { hasText: "zap-extensions" }).first();
+  const fold = ext.locator("details", { hasText: "Modules (" });
+  await expect(fold).toHaveCount(1);
+  await expect(fold.locator("li").first()).toBeHidden();
+  await fold.locator("summary").click();
+  await expect(fold.locator("li").first()).toBeVisible();
+  await expect(ext.getByRole("table", { name: "Lines of code by language" })).toBeVisible(); // stats stay visible
 });

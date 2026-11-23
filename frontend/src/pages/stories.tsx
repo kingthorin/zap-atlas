@@ -77,26 +77,45 @@ export default function Stories() {
   const group = params.get("group") ?? "";
   if (error) return <ErrorBox message={error} />;
   if (!stories) return <Loading />;
-  const byDate = (a: Story, b: Story) => (a.date ?? "").localeCompare(b.date ?? "") || a.title.localeCompare(b.title);
+  const sort = params.get("sort") ?? "date-asc";
+  const compare: Record<string, (a: Story, b: Story) => number> = {
+    "date-asc": (a, b) => (a.date ?? "").localeCompare(b.date ?? "") || a.title.localeCompare(b.title),
+    "date-desc": (a, b) => (b.date ?? "").localeCompare(a.date ?? "") || a.title.localeCompare(b.title),
+    "az": (a, b) => a.title.localeCompare(b.title),
+    "za": (a, b) => b.title.localeCompare(a.title),
+  };
+  const setParam = (k: string, v: string) => {
+    const next = new URLSearchParams(params);
+    v ? next.set(k, v) : next.delete(k);
+    setParams(next, { replace: true });
+  };
   const shown = GROUPS.filter(g => !group || g.id === group);
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold">Curated stories</h1>
       <p className="text-slate-600">
         Evidence-backed narratives that cite commits, add-ons, releases and ZAP project pages. Stories marked
-        <Badge status="draft" /> have not yet been reviewed by a maintainer. Cards in each group run oldest first.
+        <Badge status="draft" /> have not yet been reviewed by a maintainer. Cards are sorted within each group.
       </p>
       <div className="flex flex-wrap gap-2" role="group" aria-label="Story group">
-        <button aria-pressed={!group} className={chip(!group)} onClick={() => setParams({}, { replace: true })}>All ({stories.length})</button>
+        <button aria-pressed={!group} className={chip(!group)} onClick={() => setParam("group", "")}>All ({stories.length})</button>
         {GROUPS.map(g => (
-          <button key={g.id} aria-pressed={group === g.id} className={chip(group === g.id)} onClick={() => setParams({ group: g.id }, { replace: true })}>
+          <button key={g.id} aria-pressed={group === g.id} className={chip(group === g.id)} onClick={() => setParam("group", g.id)}>
             {g.label} ({stories.filter(s => s.group === g.id).length})
           </button>
         ))}
+        <label className="ml-auto text-sm text-slate-600">Sort{" "}
+          <select className="border border-slate-300 rounded px-2 py-1 bg-white" value={sort} onChange={e => setParam("sort", e.target.value === "date-asc" ? "" : e.target.value)}>
+            <option value="date-asc">Date, oldest first</option>
+            <option value="date-desc">Date, newest first</option>
+            <option value="az">Title A to Z</option>
+            <option value="za">Title Z to A</option>
+          </select>
+        </label>
       </div>
       {stories.length === 0 && <p className="text-sm italic text-slate-500">No stories yet.</p>}
       {shown.map(g => {
-        const items = stories.filter(s => s.group === g.id).sort(byDate);
+        const items = stories.filter(s => s.group === g.id).sort(compare[sort] ?? compare["date-asc"]);
         return items.length > 0 && (
           <section key={g.id} aria-labelledby={`grp-${g.id}`}>
             <h2 id={`grp-${g.id}`} className="text-xl font-semibold">{g.label}</h2>
