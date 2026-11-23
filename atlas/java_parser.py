@@ -1,18 +1,22 @@
 """Tree-sitter Java syntax extraction.
 
 Emits types (including nested), methods, constructors and fields as symbols with
-overload-safe ids, plus CONTAINS / EXTENDS / IMPLEMENTS / IMPORTS / CALLS edges.
+overload-safe ids and annotations, plus CONTAINS / EXTENDS / IMPLEMENTS / IMPORTS
+and CALLS edges.
 
 Evidence levels:
 * ``syntactic``: read from source, target not resolved (bare or imported names).
-* ``resolved``: only for facts that follow from Java scoping within the file
-  (a receiver-less call matching exactly one method of the same name and arity
-  declared in the enclosing type). Cross-file resolution happens later, against
-  the whole symbol table.
-* ``inferred``: an unqualified call that matches several same-arity overloads.
+* ``resolved``: facts that follow from Java scoping or declared types: a
+  receiver-less call matching exactly one method of the same name and arity in the
+  enclosing type, or (in ``atlas.call_resolution``) a call on a receiver whose
+  *declared* type is a type in the dataset with exactly one such method.
+* ``inferred``: several same-arity overloads match.
 
-Calls that cannot be tied to a declaration in the same type are not emitted as
-edges; they are only counted in ``JavaFileResult.unresolved_calls``.
+Not resolved (counted, never emitted as edges): chained calls, ``var`` and
+lambda-typed receivers, generics, receivers of types outside the dataset, and
+anything needing overload resolution beyond name and arity. Call sites whose
+receiver type is known are returned in ``JavaFileResult.call_sites`` for the
+cross-file pass.
 """
 
 from __future__ import annotations
@@ -49,6 +53,28 @@ class _Call:
     name: str
     arity: int
     line: int
+    recv_kind: str = "self"      # self | super | name | field | qualified | type | other
+    recv_text: str = ""
+    locals: dict | None = None   # variable name -> set of erased declared types in the enclosing method
+
+
+@dataclass
+class CallSite:
+    """A call whose receiver type is known; resolved against all parsed files later."""
+    repo: str
+    path: str
+    caller: str
+    receiver_fqn: str
+    name: str
+    arity: int
+    line: int
+    start_at_supers: bool = False
+    fallbacks: tuple = ()   # classes from `import static` to try when the receiver type has no such method
+
+
+_JAVA_LANG = {"Override", "Deprecated", "SuppressWarnings", "FunctionalInterface", "SafeVarargs"}
+_LOCAL_DECLS = ("local_variable_declaration", "enhanced_for_statement", "resource",
+                "catch_formal_parameter", "formal_parameter", "spread_parameter")
 
 
 @dataclass
@@ -58,7 +84,13 @@ class JavaFileResult:
     imports: list[str] = field(default_factory=list)
     symbols: list[Symbol] = field(default_factory=list)
     relationships: list[Relationship] = field(default_factory=list)
-    unresolved_calls: int = 0
+    unresolved_calls: int = 0           # chained, untyped or otherwise unresolvable receivers
+    calls_total: int = 0
+    calls_resolved_same_type: int = 0
+    calls_inferred_same_type: int = 0
+    call_sites: list[CallSite] = field(default_factory=list)
+    # qualified type name -> {"id", "supers": [qualified names], "methods": {name: [(arity, id)]}}
+    types: dict = field(default_factory=dict)
 
 
 class JavaParser:
@@ -89,7 +121,17 @@ class JavaParser:
                         source=primary, target=symbol_id(repo, imp), type="IMPORTS", repository=repo,
                         evidence_type="syntactic", source_file=path))
         self._resolve_calls(ctx)
+        for qual, raw in ctx.type_supers.items():
+            r.types[qual] = {"id": ctx.type_ids[qual], "supers": [self._fqn(t, ctx) for t in raw],
+                             "methods": {n: v for (tq, n), v in ctx.methods.items() if tq == qual}}
         return r
+
+    def _fqn(self, name: str, ctx: "_Ctx") -> str:
+        """Qualified name for a type used in this file: nested/same-file types first."""
+        name = _erase(name)
+        if "." not in name and name in ctx.declared:
+            return ctx.declared[name]
+        return self._resolve_name(name, ctx)
 
     # -- file level -------------------------------------------------------
 
@@ -132,6 +174,9 @@ class JavaParser:
         base = outer or ctx.result.package
         qual = f"{base}.{name}" if base else name
         sid = symbol_id(ctx.repo, qual)
+        ctx.declared.setdefault(name, qual)
+        ctx.type_ids[qual] = sid
+        ctx.type_supers[qual] = []
         sym = self._symbol(ctx, sid, qual, node.type.replace("_declaration", ""), name, node)
         if not outer:
             ctx.top_level.append((sid, name))
@@ -145,6 +190,7 @@ class JavaParser:
                 if c.type == "permits":
                     continue
                 for t in self._type_names(c):
+                    ctx.type_supers[qual].append(t)
                     self._rel(ctx, sid, symbol_id(ctx.repo, self._resolve_name(t, ctx)),
                               kind, "syntactic", sym.start_line)
 
@@ -163,9 +209,12 @@ class JavaParser:
             elif m.type in ("method_declaration", "constructor_declaration"):
                 self._method(m, qual, name, sid, ctx)
             elif m.type == "field_declaration":
+                ftype = m.child_by_field_name("type")
                 for d in m.children:
                     if d.type == "variable_declarator":
                         fname = _text(d.child_by_field_name("name"))
+                        if ftype is not None:
+                            ctx.fields.setdefault(qual, {})[fname] = _erase(_text(ftype))
                         fsid = symbol_id(ctx.repo, qual, fname)
                         s = self._symbol(ctx, fsid, f"{qual}#{fname}", "field", fname, m)
                         self._rel(ctx, sid, fsid, "CONTAINS", "resolved", s.start_line)
@@ -201,12 +250,20 @@ class JavaParser:
         ctx.methods.setdefault((type_qual, name), []).append((len(ptypes), sid))
         body = node.child_by_field_name("body")
         if body is not None:
-            self._collect_calls(body, sid, type_qual, ctx)
+            self._collect_calls(body, sid, type_qual, ctx, self._locals(node))
 
     def _symbol(self, ctx, sid, qual, kind, signature, node) -> Symbol:
         s = Symbol(id=sid, repository=ctx.repo, file=ctx.fid, qualified_name=qual, kind=kind,
                    signature=signature, start_line=node.start_point[0] + 1,
                    end_line=node.end_point[0] + 1, resolution="syntactic")
+        mods = next((c for c in node.children if c.type == "modifiers"), None)
+        if mods is not None:
+            for a in mods.children:
+                if a.type in ("marker_annotation", "annotation"):
+                    n = a.child_by_field_name("name")
+                    if n is not None:
+                        nm = _text(n)
+                        s.annotations.append(f"java.lang.{nm}" if nm in _JAVA_LANG else self._fqn(nm, ctx))
         ctx.result.symbols.append(s)
         return s
 
@@ -217,33 +274,119 @@ class JavaParser:
 
     # -- calls ---------------------------------------------------------------
 
-    def _collect_calls(self, node, caller: str, type_qual: str, ctx: "_Ctx") -> None:
+    def _locals(self, method_node) -> dict:
+        """Declared types of parameters and local variables; a name with two types is ambiguous."""
+        out: dict[str, set] = {}
+        stack = [method_node]
+        while stack:
+            n = stack.pop()
+            if n.type in _TYPE_NODES and n is not method_node:
+                continue
+            if n.type in _LOCAL_DECLS:
+                t = n.child_by_field_name("type")
+                if t is None:
+                    t = next((c for c in n.named_children if c.type in ("type_identifier", "generic_type",
+                             "scoped_type_identifier", "catch_type", "integral_type", "array_type")), None)
+                if t is not None and t.type == "catch_type":
+                    t = t.named_children[0] if t.named_children else None
+                if t is not None and _text(t) != "var":
+                    names = [d.child_by_field_name("name") for d in n.named_children if d.type == "variable_declarator"]
+                    nm = n.child_by_field_name("name")
+                    names = [x for x in names + ([nm] if nm is not None else []) if x is not None]
+                    for x in names:
+                        out.setdefault(_text(x), set()).add(_erase(_text(t)))
+                elif t is not None:  # var: unknown type, make the name unusable
+                    for d in n.named_children:
+                        nm = d.child_by_field_name("name") if d.type == "variable_declarator" else None
+                        if nm is not None:
+                            out.setdefault(_text(nm), set()).update({"?1", "?2"})
+            stack.extend(n.children)
+        return out
+
+    def _receiver(self, obj) -> tuple[str, str]:
+        if obj is None or obj.type == "this":
+            return "self", ""
+        if obj.type == "super":
+            return "super", ""
+        if obj.type == "identifier":
+            return "name", _text(obj)
+        if obj.type == "field_access":
+            o, f = obj.child_by_field_name("object"), obj.child_by_field_name("field")
+            if o is not None and o.type == "this" and f is not None:
+                return "field", _text(f)
+            return "qualified", _text(obj)
+        if obj.type == "scoped_identifier":
+            return "qualified", _text(obj)
+        if obj.type == "object_creation_expression":
+            t = obj.child_by_field_name("type")
+            return ("type", _text(t)) if t is not None else ("other", "")
+        return "other", ""
+
+    def _collect_calls(self, node, caller: str, type_qual: str, ctx: "_Ctx", locals_: dict) -> None:
         stack = [node]
         while stack:
             n = stack.pop()
             if n.type in _TYPE_NODES:
                 continue  # nested/local types are visited as members, not as part of this method
             if n.type == "method_invocation":
-                obj = n.child_by_field_name("object")
-                if obj is None or obj.type == "this":
-                    args = n.child_by_field_name("arguments")
-                    ctx.calls.append(_Call(caller, type_qual, _text(n.child_by_field_name("name")),
-                                           len(args.named_children) if args is not None else 0,
-                                           n.start_point[0] + 1))
-                else:
-                    ctx.result.unresolved_calls += 1
+                args = n.child_by_field_name("arguments")
+                kind, text = self._receiver(n.child_by_field_name("object"))
+                ctx.calls.append(_Call(caller, type_qual, _text(n.child_by_field_name("name")),
+                                       len(args.named_children) if args is not None else 0,
+                                       n.start_point[0] + 1, kind, text, locals_))
             stack.extend(n.children)
 
+    def _field_type(self, type_qual: str, name: str, ctx: "_Ctx") -> str | None:
+        q = type_qual
+        while q:
+            t = ctx.fields.get(q, {}).get(name)
+            if t:
+                return t
+            q = q.rpartition(".")[0] if q in ctx.type_ids and "." in q else ""
+        return None
+
     def _resolve_calls(self, ctx: "_Ctx") -> None:
+        r, seen = ctx.result, set()
+
+        def edge(caller, target, evidence, line, conf=1.0):
+            if (caller, target) not in seen:
+                seen.add((caller, target))
+                self._rel(ctx, caller, target, "CALLS", evidence, line, conf)
+
         for c in ctx.calls:
-            cands = [sid for arity, sid in ctx.methods.get((c.type_qual, c.name), []) if arity == c.arity]
-            if not cands:
-                ctx.result.unresolved_calls += 1
-            elif len(cands) == 1:
-                self._rel(ctx, c.caller, cands[0], "CALLS", "resolved", c.line)
+            r.calls_total += 1
+            if c.recv_kind in ("self", "super"):
+                cands = [] if c.recv_kind == "super" else \
+                    [sid for arity, sid in ctx.methods.get((c.type_qual, c.name), []) if arity == c.arity]
+                if len(cands) == 1:
+                    r.calls_resolved_same_type += 1
+                    edge(c.caller, cands[0], "resolved", c.line)
+                elif cands:
+                    r.calls_inferred_same_type += 1
+                    for sid in cands:
+                        edge(c.caller, sid, "inferred", c.line, 1 / len(cands))
+                else:  # maybe inherited or statically imported: finish in the cross-file pass
+                    static = tuple(ctx.static_explicit.get(c.name, [])) or tuple(ctx.static_wild)
+                    r.call_sites.append(CallSite(ctx.repo, ctx.path, c.caller, c.type_qual, c.name, c.arity,
+                                                 c.line, start_at_supers=True, fallbacks=static))
+                continue
+            recv_type = None
+            if c.recv_kind == "name":
+                declared = (c.locals or {}).get(c.recv_text)
+                if declared is not None:
+                    recv_type = next(iter(declared)) if len(declared) == 1 and not next(iter(declared)).startswith("?") else None
+                else:
+                    recv_type = self._field_type(c.type_qual, c.recv_text, ctx) or \
+                        (c.recv_text if c.recv_text[:1].isupper() else None)   # static call on a type name
+            elif c.recv_kind == "field":
+                recv_type = self._field_type(c.type_qual, c.recv_text, ctx)
+            elif c.recv_kind in ("type", "qualified"):
+                recv_type = c.recv_text
+            if recv_type is None:
+                r.unresolved_calls += 1
             else:
-                for sid in cands:
-                    self._rel(ctx, c.caller, sid, "CALLS", "inferred", c.line, 1 / len(cands))
+                r.call_sites.append(CallSite(ctx.repo, ctx.path, c.caller, self._fqn(recv_type, ctx), c.name,
+                                             c.arity, c.line))
 
 
 class _Ctx:
@@ -252,3 +395,17 @@ class _Ctx:
         self.methods: dict[tuple[str, str], list[tuple[int, str]]] = {}
         self.calls: list[_Call] = []
         self.top_level: list[tuple[str, str]] = []
+        self.declared: dict[str, str] = {}      # simple name -> qualified name, types declared in this file
+        self.type_ids: dict[str, str] = {}
+        self.type_supers: dict[str, list[str]] = {}
+        self.fields: dict[str, dict[str, str]] = {}
+        self.static_explicit: dict[str, list[str]] = {}   # member name -> classes (import static a.B.m)
+        self.static_wild: list[str] = []                  # classes (import static a.B.*)
+        for imp in result.imports:
+            if imp.startswith("static "):
+                full = imp[len("static "):].strip()
+                cls, _, member = full.rpartition(".")
+                if member == "*":
+                    self.static_wild.append(cls)
+                elif cls:
+                    self.static_explicit.setdefault(member, []).append(cls)

@@ -179,6 +179,7 @@ class Symbol:
     start_line: int = 0
     end_line: int = 0
     resolution: str = "syntactic"
+    annotations: list[str] = field(default_factory=list)  # best-effort qualified names
 
 
 @dataclass

@@ -97,7 +97,9 @@ def test_calls_resolved_inferred_or_dropped():
     assert set(one_arg.values()) == {"inferred"} and len(one_arg) == 2
     # other() and list.size() have no declaration here -> counted, not emitted
     assert not any("other" in t or "size" in t for _, t, _ in calls)
-    assert r.unresolved_calls >= 2
+    assert r.unresolved_calls == 1  # list.size(): receiver type unknown
+    # other() is not declared in Outer: handed to the cross-file pass, which looks in supertypes
+    assert any(c.name == "other" and c.start_at_supers and c.receiver_fqn == "org.zaproxy.Outer" for c in r.call_sites)
 
 
 def test_c_style_array_params_do_not_collide():
@@ -113,3 +115,13 @@ def test_imports_hang_off_the_primary_type_not_the_file_node():
     r = JavaParser().parse_file("fix", "sha", "p/Main.java", src)
     imp = [x for x in r.relationships if x.type == "IMPORTS"]
     assert [x.source for x in imp] == ["symbol:fix:p.Main"]
+
+
+def test_annotations_are_recorded_with_qualified_names():
+    src = ("package p;\nimport org.x.Custom;\n@Deprecated\npublic class A {\n"
+           "  @Override @Custom(1) public String toString() { return \"\"; }\n  @Deprecated int f;\n}\n")
+    r = JavaParser().parse_file("fix", "sha", "p/A.java", src)
+    ann = {s.qualified_name: s.annotations for s in r.symbols}
+    assert ann["p.A"] == ["java.lang.Deprecated"]
+    assert ann["p.A#toString()"] == ["java.lang.Override", "org.x.Custom"]
+    assert ann["p.A#f"] == ["java.lang.Deprecated"]

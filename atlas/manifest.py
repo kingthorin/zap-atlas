@@ -13,6 +13,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from atlas.config import AtlasConfig
+from atlas.call_resolution import resolve_call_sites
 from atlas.ecosystem import discover_ecosystem
 from atlas.git_history import extract as extract_history
 from atlas.languages import count_languages
@@ -62,6 +63,8 @@ class AtlasGenerator:
         self.config = config
         self.ecosystem_coverage: dict[str, dict] = {}
         self.java_coverage: dict = {}
+        self.java_types: dict = {}       # qualified type name -> info, across all repos
+        self.call_sites: list = []
         self.java_parser = JavaParser()
         self.rows: dict[str, list[dict]] = {
             CHUNK_REPOS: [], CHUNK_COMMITS: [], CHUNK_MODULES: [],
@@ -82,6 +85,7 @@ class AtlasGenerator:
             self._process_repo(repo, repo_path)
 
         self._resolve_cross_file()
+        self._resolve_calls_and_api()
         chunk_names = self._write_history_shards(output_dir)
         chunk_names += self._write_repo_shards(output_dir, CHUNK_SYMBOLS, "symbols")
         chunk_names += self._write_repo_shards(output_dir, CHUNK_RELS, "relationships")
@@ -171,7 +175,8 @@ class AtlasGenerator:
 
         java_max = int(os.environ["ATLAS_JAVA_MAX"]) if os.environ.get("ATLAS_JAVA_MAX") else None
         java_files = sorted(repo_path.rglob("*.java"))[:java_max]
-        stats = {"java_files": 0, "java_parse_errors": 0, "unresolved_calls": 0}
+        stats = {"java_files": 0, "java_parse_errors": 0, "unresolved_calls": 0, "calls_total": 0,
+                 "calls_resolved_same_type": 0, "calls_inferred_same_type": 0}
         for jf in java_files:
             rel = jf.relative_to(repo_path).as_posix()
             try:
@@ -183,6 +188,15 @@ class AtlasGenerator:
                 continue
             stats["java_files"] += 1
             stats["unresolved_calls"] += result.unresolved_calls
+            stats["calls_total"] += result.calls_total
+            stats["calls_resolved_same_type"] += result.calls_resolved_same_type
+            stats["calls_inferred_same_type"] += result.calls_inferred_same_type
+            self.call_sites += result.call_sites
+            for fqn, info in result.types.items():
+                if fqn in self.java_types:
+                    self.java_types[fqn]["ambiguous"] = True   # same name declared twice: never guess
+                else:
+                    self.java_types[fqn] = info
             for sym in result.symbols:
                 self.rows[CHUNK_SYMBOLS].append(sym.__dict__)
             for rel_ in result.relationships:
@@ -212,6 +226,35 @@ class AtlasGenerator:
             d["commit_count"] = len(shas)
             d["last_changed"] = history.commits[shas[0]].committer_date if shas else None
             d["commits"] = [commit_id(repo_name, s) for s in shas[:50]]
+
+    def _resolve_calls_and_api(self) -> None:
+        """Calls on typed receivers, then module-level USES_API edges from resolved cross-repo imports."""
+        edges, call_stats = resolve_call_sites(self.java_types, self.call_sites)
+        self.rows[CHUNK_RELS] += [asdict(e) for e in edges]
+        self.java_coverage["calls"] = call_stats
+        mods: dict[str, list[tuple[str, str]]] = {}
+        for m in self.rows[CHUNK_MODULES]:
+            mods.setdefault(m["repository"], []).append((m["path"], m["id"]))
+        for v in mods.values():
+            v.sort(key=lambda x: len(x[0]), reverse=True)
+        sym = {x["id"]: x for x in self.rows[CHUNK_SYMBOLS]}
+        seen, api = set(), []
+        for r in self.rows[CHUNK_RELS]:
+            if r["type"] != "IMPORTS" or r["evidence_type"] != "resolved":
+                continue
+            src, dst = sym.get(r["source"]), sym.get(r["target"])
+            if not src or not dst or src["repository"] == dst["repository"]:
+                continue
+            path = src["file"].split(":", 3)[3]
+            module = next((mid for mp, mid in mods.get(src["repository"], []) if path.startswith(mp + "/")), None)
+            if module and (module, dst["id"]) not in seen:
+                seen.add((module, dst["id"]))
+                api.append({"source": module, "target": dst["id"], "type": "USES_API",
+                            "repository": src["repository"], "source_revision": None,
+                            "evidence_type": "resolved", "confidence": 1.0, "source_file": path,
+                            "source_line": None, "valid_from": None, "valid_to": None})
+        self.rows[CHUNK_RELS] += api
+        self.java_coverage["uses_api_edges"] = len(api)
 
     def _resolve_cross_file(self) -> None:
         """Point IMPORTS/EXTENDS/IMPLEMENTS at declared types (any repo) by qualified name."""
