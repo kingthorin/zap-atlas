@@ -8,7 +8,7 @@ export interface Repo { id: string; name: string; url: string; default_branch: s
 export interface Commit { id: string; repository: string; sha: string; parents: string[]; author_name: string; author_date: string; committer_date: string; subject: string; message: string; branches: string[]; tags: string[] }
 export interface Module { id: string; repository: string; name: string; path: string; kind: string; addon: boolean }
 export interface AddOn { id: string; module: string; name: string; status: string; author: string; url: string; dependencies: string[] }
-export interface Symbol { id: string; repository: string; file: string; qualified_name: string; kind: string; signature: string; start_line: number; end_line: number; resolution: string }
+export interface Symbol { id: string; repository: string; file: string; qualified_name: string; kind: string; signature: string; start_line: number; end_line: number; resolution: string; annotations?: string[] }
 export interface Relationship { source: string; target: string; type: string; repository: string; evidence_type: string; source_file?: string; source_line?: number }
 export interface Doc { id: string; repository: string; module?: string; commit_count?: number; last_changed?: string | null; commits?: string[]; path: string; title: string; headings: string[]; anchors: string[] }
 export interface Story { id: string; status?: string; title: string; description: string; audience: string; chapters: any[]; entities: string[]; commits: string[]; documents: string[] }
@@ -158,3 +158,5 @@ export interface LanguageRow { id: string; repository: string; module: string; l
 export async function loadLanguages(): Promise<LanguageRow[]> {
   return loadChunk("languages.jsonl") as Promise<LanguageRow[]>;
 }
+
+export const isDeprecated = (s: { annotations?: string[] }) => !!s.annotations?.includes("java.lang.Deprecated");

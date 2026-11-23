@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { Relationship, Repo, Symbol, filePathOf, githubBlob, loadRepoRelationships, loadRepoSymbols, loadRepos } from "../lib/data";
+import { Relationship, Repo, Symbol, filePathOf, githubBlob, isDeprecated, loadRepoRelationships, loadRepoSymbols, loadRepos } from "../lib/data";
 import { Loading, ErrorBox } from "../components/ui";
 
 export default function SymbolPage() {
@@ -42,6 +42,9 @@ export default function SymbolPage() {
         <dt className="text-slate-500">Kind</dt><dd>{sym.kind}</dd>
         <dt className="text-slate-500">Qualified name</dt><dd className="font-mono text-xs break-all">{sym.qualified_name}</dd>
         <dt className="text-slate-500">Resolution</dt><dd>{sym.resolution}</dd>
+        <dt className="text-slate-500">Annotations</dt>
+        <dd>{sym.annotations?.length ? sym.annotations.map(a => <span key={a} className="mr-2 font-mono text-xs">@{a}</span>) : "—"}
+          {isDeprecated(sym) && <span className="ml-1 px-1 rounded bg-amber-100 text-amber-800 text-xs">deprecated</span>}</dd>
         <dt className="text-slate-500">Source</dt>
         <dd className="break-all">{data.repo
           ? <a className="text-indigo-600 hover:underline" href={githubBlob(data.repo, path, sym.start_line, sym.end_line)}>{path}:{sym.start_line}-{sym.end_line}</a>

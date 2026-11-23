@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { Repo, Symbol, filePathOf, githubBlob, loadRepoSymbols, loadRepos } from "../lib/data";
+import { Repo, Symbol, filePathOf, githubBlob, isDeprecated, loadRepoSymbols, loadRepos } from "../lib/data";
 import { Loading, ErrorBox } from "../components/ui";
 
 const INDENT: Record<string, string> = { method: "pl-6", constructor: "pl-6", field: "pl-6" };
@@ -16,6 +16,7 @@ function FileNode({ path, symbols, repo }: { path: string; symbols: Symbol[]; re
             <li key={s.id} className={INDENT[s.kind] ?? ""}>
               <span className="text-xs text-slate-400 mr-2">{s.kind}</span>
               <Link className="text-indigo-600 hover:underline" to={`/symbol/${encodeURIComponent(s.id)}`}>{s.signature}</Link>
+              {isDeprecated(s) && <span className="ml-2 px-1 rounded bg-amber-100 text-amber-800 text-xs">deprecated</span>}
               {repo && <a className="ml-2 text-xs text-slate-400 hover:underline" href={githubBlob(repo, path, s.start_line, s.end_line)}>L{s.start_line}</a>}
             </li>
           ))}
