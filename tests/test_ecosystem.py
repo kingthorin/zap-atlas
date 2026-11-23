@@ -60,3 +60,18 @@ def test_images_from_shared_common_files_are_not_missing(tmp_path):
     shared.mkdir(parents=True)
     (shared / "shared.png").write_bytes(b"x")
     assert discover_ecosystem("fix", tmp_path).coverage["images_missing"] == 1
+
+
+def test_single_project_repo_becomes_one_add_on_module(tmp_path):
+    (tmp_path / "src/main/javahelp/org/example/help/contents").mkdir(parents=True)
+    (tmp_path / "src/main/javahelp/org/example/help/contents/hud.html").write_text("<h1>HUD</h1>")
+    (tmp_path / "build.gradle.kts").write_text('zapAddOn { addOnId.set("hud")\\n addOnName.set("HUD - Heads Up Display")\\n addOnStatus.set(AddOnStatus.BETA) }')
+    eco = discover_ecosystem("zap-hud", tmp_path)
+    assert [(m["id"], m["name"], m["path"], m["addon"]) for m in eco.modules] == [("module:zap-hud:src", "hud", "src", True)]
+    assert [(a["id"], a["name"], a["status"]) for a in eco.addons] == [("addon:hud", "HUD - Heads Up Display", "beta")]
+    assert [d["path"] for d in eco.docs] == ["src/main/javahelp/org/example/help/contents/hud.html"]
+
+
+def test_repo_without_gradle_project_has_no_modules(tmp_path):
+    (tmp_path / "docs").mkdir()
+    assert discover_ecosystem("r", tmp_path).modules == []

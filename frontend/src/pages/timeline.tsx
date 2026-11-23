@@ -8,7 +8,7 @@ import { Milestone, Story, Timeline, loadCommits, loadMilestones, loadStories, l
 import { Loading, ErrorBox } from "../components/ui";
 
 const W = 1000, ML = 124, MR = 12, LANE_H = 120, TOP = 18, STORY_H = 44, AXIS_H = 26;
-const REPO_COLOR: Record<string, string> = { zaproxy: "#4389ff", "zap-extensions": "#e08e00", "zap-core-help": "#2f9e6f" };
+const REPO_COLOR: Record<string, string> = { zaproxy: "#4389ff", "zap-extensions": "#e08e00", "zap-core-help": "#2f9e6f", "zap-hud": "#8e5bd0" };
 const DETAIL_MONTHS = 30; // at or below this visible span, weekly bars come from the commit shards
 type Metric = "commits" | "authors";
 type Bar = { x0: Date; x1: Date; v: number };
@@ -25,6 +25,8 @@ export default function TimelinePage() {
   const [error, setError] = useState("");
   const [metric, setMetric] = useState<Metric>("commits");
   const [t, setT] = useState<ZoomTransform>(zoomIdentity);
+  const [tip, setTip] = useState<{ x: number; y: number; text: string } | null>(null);
+  const wrap = useRef<HTMLDivElement>(null);
   // repo -> year -> [[weekStartMs, author]] for the weekly detail view
   const [detail, setDetail] = useState<Record<string, Record<string, { w: number; a: string }[]>>>({});
   const overlay = useRef<SVGRectElement>(null);
@@ -107,6 +109,7 @@ export default function TimelinePage() {
   if (error) return <ErrorBox message={error} />;
   if (!tl || !x || !base) return <Loading />;
 
+  const laneData = repos.map(r => bars(r));
   const plotBottom = TOP + STORY_H + repos.length * LANE_H;
   const H = plotBottom + AXIS_H;
   const inView = (a: Date, b: Date = a) => x(b) >= ML && x(a) <= W - MR;
@@ -124,6 +127,24 @@ export default function TimelinePage() {
   });
   const allYears = [...new Set(yearly.flatMap(o => Object.keys(o)))].sort();
 
+  // Bars sit under the zoom overlay so dragging works everywhere; hover is resolved from the pointer position.
+  const onMove = (e: React.MouseEvent<SVGRectElement>) => {
+    const svg = e.currentTarget.ownerSVGElement, box = wrap.current;
+    const ctm = svg?.getScreenCTM();
+    if (!svg || !box || !ctm) return;
+    const pt = new DOMPoint(e.clientX, e.clientY).matrixTransform(ctm.inverse());
+    const lane = Math.floor((pt.y - TOP - STORY_H) / LANE_H);
+    if (lane < 0 || lane >= repos.length) return setTip(null);
+    const at = x.invert(pt.x).getTime();
+    const { bars: lb, mode } = laneData[lane];
+    const hit = lb.find(b => b.x0.getTime() <= at && at < b.x1.getTime());
+    if (!hit) return setTip(null);
+    const rect = box.getBoundingClientRect();
+    const day = hit.x0.toISOString().slice(0, 10);
+    const when = mode === "weekly" ? `week of ${day}` : day.slice(0, 7);
+    const what = metric === "commits" ? `${hit.v.toLocaleString()} ${hit.v === 1 ? "commit" : "commits"}` : `${hit.v.toLocaleString()} active ${hit.v === 1 ? "author" : "authors"}`;
+    setTip({ x: e.clientX - rect.left, y: e.clientY - rect.top, text: `${repos[lane]} · ${when} · ${what}` });
+  };
   const onKey = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowLeft") panBy(120); else if (e.key === "ArrowRight") panBy(-120);
     else if (e.key === "+" || e.key === "=") zoomBy(1.5); else if (e.key === "-") zoomBy(1 / 1.5);
@@ -136,7 +157,7 @@ export default function TimelinePage() {
     <div className="space-y-4">
       <h1 className="text-2xl font-bold">Timeline</h1>
       <p className="text-slate-600">
-        Activity in the three repositories, stacked on one time axis. Orange diamonds are stories, vertical lines are
+        Activity in each repository, stacked on one time axis. Orange diamonds are stories, vertical lines are
         core release tags. Zoom in to see weekly bars; zoom out for monthly totals.
       </p>
       <div className="flex flex-wrap gap-2 items-center text-sm">
@@ -161,7 +182,7 @@ export default function TimelinePage() {
           {d0.toISOString().slice(0, 10)} to {d1.toISOString().slice(0, 10)} · {weekly ? "weekly" : "monthly"} bars
         </span>
       </div>
-      <div className="rounded-xl border border-slate-200 bg-white p-2" tabIndex={0} role="group" onKeyDown={onKey}
+      <div ref={wrap} className="relative rounded-xl border border-slate-200 bg-white p-2" tabIndex={0} role="group" onKeyDown={onKey}
         aria-label="Timeline chart. Arrow keys pan, plus and minus zoom, zero resets.">
         <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto select-none" role="img" aria-label="Commits per repository over time with release and story markers; a table follows">
           <defs><clipPath id="plot"><rect x={ML} y={0} width={W - ML - MR} height={H} /></clipPath></defs>
@@ -173,11 +194,11 @@ export default function TimelinePage() {
               </g>
             ))}
           </g>
-          <rect ref={overlay} x={ML} y={0} width={W - ML - MR} height={plotBottom} fill="transparent" style={{ cursor: "grab", touchAction: "none" }} />
+          <rect ref={overlay} x={ML} y={0} width={W - ML - MR} height={plotBottom} fill="transparent" style={{ cursor: "grab", touchAction: "none" }} onMouseMove={onMove} onMouseLeave={() => setTip(null)} />
           <g clipPath="url(#plot)">
             {repos.map((repo, i) => {
               const top = TOP + STORY_H + i * LANE_H, h = LANE_H - 26;
-              const { bars: all, mode } = bars(repo);
+              const { bars: all, mode } = laneData[i];
               const vis = all.filter(b => inView(b.x0, b.x1));
               const max = Math.max(1, ...vis.map(b => b.v));
               return (
@@ -218,6 +239,10 @@ export default function TimelinePage() {
             })}
           </g>
         </svg>
+        {tip && (
+          <div role="tooltip" className="pointer-events-none absolute z-10 rounded bg-slate-800 text-white text-xs px-2 py-1 shadow whitespace-nowrap"
+            style={{ left: Math.min(tip.x + 12, (wrap.current?.clientWidth ?? 0) - 260), top: tip.y + 12 }}>{tip.text}</div>
+        )}
       </div>
       <p className="text-xs text-slate-400">
         Drag to pan. Ctrl or cmd + scroll, double click, or the buttons zoom. Dates are committer dates. Line counts are not shown

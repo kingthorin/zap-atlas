@@ -27,7 +27,7 @@ test("repositories list modules and languages, and a module page opens", async (
 });
 
 test("every repository's symbol data loads", async ({ page }) => {
-  for (const [repo, mod, listed] of [["zaproxy", "zap", true], ["zap-extensions", "addOns/accessControl", true], ["zap-core-help", "addOns/help", false]] as const) {
+  for (const [repo, mod, listed] of [["zaproxy", "zap", true], ["zap-extensions", "addOns/accessControl", true], ["zap-core-help", "addOns/help", false], ["zap-hud", "src", true]] as const) {
     await page.goto(`module/${repo}/${mod}`);
     await noError(page);
     if (listed) await expect(page.locator("details").first()).toBeVisible(); // symbols loaded from the module's shards
@@ -66,27 +66,30 @@ test("search finds an add-on and, once enabled, a commit", async ({ page }) => {
   await expect(page.locator("a[href*='/commit/']").first()).toBeVisible({ timeout: 30_000 });
 });
 
-test("stories are grouped, oldest first, and can be filtered", async ({ page }) => {
+test("stories are one flat list tagged by group, sortable and filterable", async ({ page }) => {
   await page.goto("stories");
-  for (const h of ["Student projects", "Features and add-ons", "Project history and organisation"]) {
-    await expect(page.getByRole("heading", { name: h, level: 2 })).toBeVisible();
-  }
-  const dates = await page.locator("section[aria-labelledby='grp-projects'] a >> text=/^\\d{4}/").allTextContents();
-  const keys = dates.map(d => d.split(" · ")[0]);
-  expect(keys.length).toBeGreaterThan(10);
-  expect([...keys].sort()).toEqual(keys);
+  await expect(page.getByRole("heading", { level: 2 })).toHaveCount(0); // no group headings
+  const cards = page.locator("a[href*='/stories/']");
+  const meta = page.locator("a[href*='/stories/'] div.text-xs");
+  const dates = async () => (await meta.allTextContents()).map(t => t.match(/\d{4}(-\d\d){0,2}/)![0]);
+  const titles = async () => (await page.locator("a[href*='/stories/'] h3").allTextContents()).map(t => t.replace(/draft$/i, ""));
+  const asc = await dates();
+  expect(asc.length).toBeGreaterThan(30);
+  expect([...asc].sort()).toEqual(asc);
+  const tags = new Set((await meta.allTextContents()).map(t => t.split(/\d{4}/)[0]));
+  expect(tags).toEqual(new Set(["Student project", "Feature", "History"]));
   const sel = page.getByLabel("Sort");
-  const titles = () => page.locator("section[aria-labelledby='grp-projects'] h3").allTextContents();
   await sel.selectOption("date-desc");
-  expect((await page.locator("section[aria-labelledby='grp-projects'] a >> text=/^\\d{4}/").allTextContents()).map(d => d.split(" · ")[0])).toEqual([...keys].reverse());
+  expect(await dates()).toEqual([...asc].reverse());
   await sel.selectOption("az");
-  const az = (await titles()).map(t => t.replace(/draft$/i, ""));
+  const az = await titles();
   expect(az).toEqual([...az].sort((a, b) => a.localeCompare(b)));
   await sel.selectOption("za");
-  const za = (await titles()).map(t => t.replace(/draft$/i, ""));
+  const za = await titles();
   expect(za).toEqual([...za].sort((a, b) => b.localeCompare(a)));
   await page.getByRole("button", { name: /^Features and add-ons/ }).click();
-  await expect(page.getByRole("heading", { name: "Student projects", level: 2 })).toHaveCount(0);
+  expect(new Set((await meta.allTextContents()).map(t => t.split(/\d{4}/)[0]))).toEqual(new Set(["Feature"]));
+  expect(await cards.count()).toBeLessThan(asc.length);
 });
 
 test("stories list and a story open, labelled draft", async ({ page }) => {
@@ -132,7 +135,7 @@ test("releases list, a release page, and release markers in history", async ({ p
   await noError(page);
 });
 
-test("timeline draws three repositories with markers, zooms and has a table", async ({ page }) => {
+test("timeline draws the repositories with markers, zooms and has a table", async ({ page }) => {
   await page.goto("timeline");
   await noError(page);
   await expect(page.getByRole("img", { name: /Commits per repository/ })).toBeVisible();
@@ -142,6 +145,12 @@ test("timeline draws three repositories with markers, zooms and has a table", as
   await expect(status).toContainText("monthly bars");
   await page.getByRole("combobox", { name: /Jump to/ }).selectOption("2024");
   await expect(status).toContainText("weekly bars");
+  const plot = page.locator("svg[role=img] rect[style*='grab']");
+  const box = (await plot.boundingBox())!;
+  await page.mouse.move(box.x + box.width * 0.7, box.y + box.height * 0.45);
+  await expect(page.getByRole("tooltip")).toContainText(/ · \d+ commits?/);
+  await page.mouse.move(0, 0);
+  await expect(page.getByRole("tooltip")).toHaveCount(0);
   await page.getByText("Table: commits per year").click();
   await expect(page.getByRole("table", { name: "Commits per year by repository" })).toBeVisible();
 });
@@ -187,11 +196,12 @@ test("module graph draws, selects a module and filters edge types", async ({ pag
 test("module graph expands a module into its types and collapses it again", async ({ page }) => {
   await page.goto("graph");
   const summary = page.getByText(/\d+ modules.*linked pairs/);
-  await expect(summary).toContainText("89 modules ·");
+  await expect(summary).toContainText(/\d+ modules ·/);
+  const plain = (await summary.textContent())!;
   await page.getByLabel("Select a module").selectOption({ label: "automation" });
   await page.getByRole("button", { name: "Expand into types" }).click();
   await expect(summary).toContainText("+ 40 types");
   await expect(page.getByText("showing 40 of")).toBeVisible();
   await page.getByRole("button", { name: "Collapse types" }).click();
-  await expect(summary).toContainText("89 modules ·");
+  await expect(summary).toHaveText(plain);
 });

@@ -37,6 +37,10 @@ class AtlasConfig:
                 name="zap-core-help",
                 url="https://github.com/zaproxy/zap-core-help.git",
             ),
+            SourceRepo(
+                name="zap-hud",
+                url="https://github.com/zaproxy/zap-hud.git",
+            ),
         ]
     )
 

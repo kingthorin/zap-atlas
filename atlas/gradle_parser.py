@@ -24,6 +24,8 @@ class GradleModule:
     addon_author: str | None = None
     addon_url: str | None = None
     addon_dependencies: list[str] = field(default_factory=list)
+    slug: str | None = None   # module/add-on name when it is not the directory name (single-project repos)
+    base: str | None = None   # directory holding src/, relative to the repo root ("" = the root); default = path
 
 
 def _blocks(text: str, name: str) -> list[str]:
@@ -40,7 +42,7 @@ def _blocks(text: str, name: str) -> list[str]:
 
 def parse_addon_block(build_text: str) -> dict:
     """Extract zapAddOn { ... } metadata. Missing values are None / []."""
-    info = {"addon_name": None, "addon_status": None, "addon_author": None,
+    info = {"addon_id": None, "addon_name": None, "addon_status": None, "addon_author": None,
             "addon_url": None, "dependencies": [], "has_block": False}
     blocks = _blocks(build_text, "zapAddOn")
     if not blocks:
@@ -48,6 +50,7 @@ def parse_addon_block(build_text: str) -> dict:
     body = blocks[0]
     info["has_block"] = True
     for key, pat in (
+        ("addon_id", r'addOnId\.set\("([^"]+)"\)'),
         ("addon_name", r'addOnName\.set\("([^"]+)"\)'),
         ("addon_status", r'addOnStatus\.set\(AddOnStatus\.(\w+)\)'),
         ("addon_author", r'author\.set\("([^"]+)"\)'),
@@ -90,4 +93,19 @@ def discover_modules(repo_path: Path) -> list[GradleModule]:
             addon_author=info["addon_author"], addon_url=info["addon_url"],
             addon_dependencies=info["dependencies"],
         ))
-    return modules
+    return modules or _root_project(repo_path)
+
+
+def _root_project(repo_path: Path) -> list[GradleModule]:
+    """A single-project repository (build.gradle.kts and src/ at the root), such as zap-hud.
+
+    Its one module is the ``src`` directory, named after its add-on id when it declares one."""
+    build = repo_path / "build.gradle.kts"
+    if not build.is_file() or not (repo_path / "src").is_dir():
+        return []
+    info = parse_addon_block(build.read_text(errors="replace"))
+    return [GradleModule(
+        name="src", path="src", build_file="build.gradle.kts", is_addon=info["has_block"],
+        addon_name=info["addon_name"], addon_status=info["addon_status"], addon_author=info["addon_author"],
+        addon_url=info["addon_url"], addon_dependencies=info["dependencies"],
+        slug=info["addon_id"] or repo_path.name, base="")]

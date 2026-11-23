@@ -8,7 +8,7 @@ import {
 } from "../lib/data";
 import { Loading, ErrorBox } from "../components/ui";
 
-const REPO_COLOR: Record<string, string> = { zaproxy: "#4389ff", "zap-extensions": "#e08e00", "zap-core-help": "#2f9e6f" };
+const REPO_COLOR: Record<string, string> = { zaproxy: "#4389ff", "zap-extensions": "#e08e00", "zap-core-help": "#2f9e6f", "zap-hud": "#8e5bd0" };
 const TYPES = ["CALLS", "IMPORTS", "EXTENDS", "IMPLEMENTS", "USES_API", "DEPENDS_ON"];
 const reduceMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const isDark = () => document.documentElement.classList.contains("dark");

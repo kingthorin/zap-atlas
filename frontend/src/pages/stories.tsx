@@ -62,10 +62,10 @@ export function StoryDetail() {
   );
 }
 
-const GROUPS: { id: string; label: string; blurb: string }[] = [
-  { id: "projects", label: "Student projects", blurb: "Student Hall of Fame and other mentored projects, from the term they started." },
-  { id: "features", label: "Features and add-ons", blurb: "How a feature or add-on evolved, from the earliest event the story cites." },
-  { id: "history", label: "Project history and organisation", blurb: "The repositories, the build, the branches and the team." },
+const GROUPS: { id: string; label: string; short: string; blurb: string }[] = [
+  { id: "projects", label: "Student projects", short: "Student project", blurb: "Student Hall of Fame and other mentored projects, from the term they started." },
+  { id: "features", label: "Features and add-ons", short: "Feature", blurb: "How a feature or add-on evolved, from the earliest event the story cites." },
+  { id: "history", label: "Project history and organisation", short: "History", blurb: "The repositories, the build, the branches and the team." },
 ];
 
 const chip = (on: boolean) =>
@@ -89,13 +89,13 @@ export default function Stories() {
     v ? next.set(k, v) : next.delete(k);
     setParams(next, { replace: true });
   };
-  const shown = GROUPS.filter(g => !group || g.id === group);
+  const items = stories.filter(s => !group || s.group === group).sort(compare[sort] ?? compare["date-asc"]);
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold">Curated stories</h1>
       <p className="text-slate-600">
         Evidence-backed narratives that cite commits, add-ons, releases and ZAP project pages. Stories marked
-        <Badge status="draft" /> have not yet been reviewed by a maintainer. Cards are sorted within each group.
+        <Badge status="draft" /> have not yet been reviewed by a maintainer. Each card is tagged with its group; use the group buttons to filter.
       </p>
       <div className="flex flex-wrap gap-2" role="group" aria-label="Story group">
         <button aria-pressed={!group} className={chip(!group)} onClick={() => setParam("group", "")}>All ({stories.length})</button>
@@ -114,24 +114,18 @@ export default function Stories() {
         </label>
       </div>
       {stories.length === 0 && <p className="text-sm italic text-slate-500">No stories yet.</p>}
-      {shown.map(g => {
-        const items = stories.filter(s => s.group === g.id).sort(compare[sort] ?? compare["date-asc"]);
-        return items.length > 0 && (
-          <section key={g.id} aria-labelledby={`grp-${g.id}`}>
-            <h2 id={`grp-${g.id}`} className="text-xl font-semibold">{g.label}</h2>
-            <p className="text-sm text-slate-500 mb-3">{g.blurb}</p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {items.map((story: any) => (
-                <Link key={story.id} to={`/stories/${slugOf(story.id)}`} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm hover:border-indigo-400">
-                  <div className="text-xs text-slate-400 mb-1">{story.date} · {story.audience} · {story.chapters.length} chapters</div>
-                  <h3 className="text-lg font-bold">{story.title}<Badge status={story.status} /></h3>
-                  <p className="text-slate-600 text-sm mt-2">{story.description}</p>
-                </Link>
-              ))}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {items.map((story: any) => (
+          <Link key={story.id} to={`/stories/${slugOf(story.id)}`} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm hover:border-indigo-400">
+            <div className="text-xs text-slate-400 mb-1">
+              <span className="px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-700 mr-2">{GROUPS.find(g => g.id === story.group)?.short ?? story.group}</span>
+              {story.date} · {story.audience} · {story.chapters.length} chapters
             </div>
-          </section>
-        );
-      })}
+            <h3 className="text-lg font-bold">{story.title}<Badge status={story.status} /></h3>
+            <p className="text-slate-600 text-sm mt-2">{story.description}</p>
+          </Link>
+        ))}
+      </div>
     </div>
   );
 }

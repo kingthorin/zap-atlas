@@ -106,6 +106,13 @@ released under a Creative Commons licence). The globe is an orthographic project
 the [Natural Earth](https://www.naturalearthdata.com/) 110m land polygons (public domain)
 inside the logo's circle. The header colours come from zaproxy.org's stylesheet.
 
+## Licence
+
+The generator, frontend, tests and stories are under the [Apache License 2.0](LICENSE), as the
+ZAP repositories are. The logo artwork keeps the licence described above, and the generated
+dataset reproduces text, names and commit metadata from the upstream repositories, which carry
+their own licences.
+
 ## Data and privacy
 
 - Email addresses are never published: author names, commit subjects and

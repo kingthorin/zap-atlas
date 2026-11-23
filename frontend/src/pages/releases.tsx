@@ -6,6 +6,7 @@ import { Loading, ErrorBox } from "../components/ui";
 const KINDS: { id: string; label: string }[] = [
   { id: "core-release", label: "ZAP releases" },
   { id: "addon-release", label: "Add-on releases" },
+  { id: "hud-release", label: "HUD releases" },
   { id: "extensions-release", label: "Early zap-extensions releases" },
 ];
 const day = (iso: string) => iso.slice(0, 10);

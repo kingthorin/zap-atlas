@@ -248,7 +248,7 @@ class Milestone:
     description: str = ""
     date: str = ""
     commits: list[str] = field(default_factory=list)
-    kind: str = ""                 # core-release | addon-release | extensions-release
+    kind: str = ""                 # core-release | addon-release | extensions-release | hud-release
     version: str = ""
     tag: str = ""
     addon: str | None = None       # addon id, for add-on releases

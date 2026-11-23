@@ -30,21 +30,21 @@ class Ecosystem:
 def discover_ecosystem(repo_name: str, repo_path: Path, revision: str | None = None) -> Ecosystem:
     eco = Ecosystem()
     mods = discover_modules(repo_path)
-    known_addons = {Path(m.path).name for m in mods if m.is_addon}
+    known_addons = {m.slug or Path(m.path).name for m in mods if m.is_addon}
     cov = {"modules": len(mods), "addons": 0, "addons_without_status": 0,
            "addons_without_name": 0, "docs": 0, "unresolved_dependencies": 0}
     topics: list[tuple[str, object, str]] = []  # (doc id, HelpTopic, javahelp dir) for link resolution
 
     for m in mods:
         mid = module_id(repo_name, m.path)
-        eco.modules.append(asdict(Module(id=mid, repository=repo_name, name=Path(m.path).name,
+        eco.modules.append(asdict(Module(id=mid, repository=repo_name, name=m.slug or Path(m.path).name,
                                          path=m.path, addon=m.is_addon)))
         eco.relationships.append(asdict(Relationship(
             source=repo_id(repo_name), target=mid, type="CONTAINS", repository=repo_name,
             source_revision=revision, evidence_type="resolved", source_file=m.build_file)))
         if not m.is_addon:
             continue
-        slug = Path(m.path).name
+        slug = m.slug or Path(m.path).name
         cov["addons"] += 1
         cov["addons_without_status"] += m.addon_status is None
         cov["addons_without_name"] += m.addon_name is None
@@ -64,13 +64,14 @@ def discover_ecosystem(repo_name: str, repo_path: Path, revision: str | None = N
         # English help documents shipped inside this add-on (not locale packs).
         if _LOCALE_MODULE.match(slug):
             continue
-        for t in discover_help_topics(repo_path / m.path / "src" / "main" / "javahelp", repo_path):
+        base = m.path if m.base is None else m.base
+        for t in discover_help_topics(repo_path / base / "src" / "main" / "javahelp", repo_path):
             did = doc_id(repo_name, t.path)
             eco.docs.append(asdict(Document(id=did, repository=repo_name, module=mid, path=t.path,
                                             title=t.title, headings=t.headings,
                                             anchors=sorted(set(t.anchors)))))
             cov["docs"] += 1
-            topics.append((did, t, f"{m.path}/src/main/javahelp"))
+            topics.append((did, t, f"{base + '/' if base else ''}src/main/javahelp"))
             eco.relationships.append(asdict(Relationship(
                 source=did, target=addon_id(slug), type="DOCUMENTS", repository=repo_name,
                 source_revision=revision, evidence_type="resolved", source_file=t.path)))
