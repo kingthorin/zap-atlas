@@ -8,7 +8,7 @@
   "chapters": [
     {
       "title": "The Hall of Fame entry and the launch post",
-      "text": "The Student Hall of Fame lists Vitika Soni for \"Postman Support\", GSoC, 2023 Summer, with blog and add-on links. The blog post, dated 2023-09-25 and written by Vitika Soni, describes importing Postman collections from a local file or URL, entering collection variables as key-value pairs, and lists planned enhancements: import through an API and command line, importing variables defined in the collection, and automation support. In the credits history, \"Credits: Add Vitika Soni\" in zap-core-help is dated 2023-02-01.",
+      "text": "The Student Hall of Fame lists Vitika Soni for\"Postman Support\", GSoC, 2023 Summer, with blog and add-on links. The blog post, dated 2023-09-25 and written by Vitika Soni, describes importing Postman collections from a local file or URL, entering collection variables as key-value pairs, and lists planned enhancements: import through an API and command line, importing variables defined in the collection, and automation support. In the credits history,\"Credits: Add Vitika Soni\"in zap-core-help is dated 2023-02-01.",
       "entities": [
         "addon:postman"
       ],
@@ -29,7 +29,7 @@
     },
     {
       "title": "June to September 2023: first commit to first release",
-      "text": "\"Add Postman add-on\" by VitikaSoni (a handle, matched to the student by similarity) is dated 2023-06-03. It is followed by \"postman: Add dialogs for importing through the UI\" (2023-06-07), \"postman: Add importing through the CLI\" (2023-06-18), \"postman: Add importing through the API\" (2023-07-03), \"postman: Implement parser\" (2023-07-09; merged 2023-07-12) and \"postman: Implement sending http requests\" (2023-08-25). The changelog dates 0.0.1, \"First version.\", on 2023-09-25, the same day as the blog post.",
+      "text": "\"Add Postman add-on\"by VitikaSoni (a handle, matched to the student by similarity) is dated 2023-06-03. It is followed by\"postman: Add dialogs for importing through the UI\"(2023-06-07),\"postman: Add importing through the CLI\"(2023-06-18),\"postman: Add importing through the API\"(2023-07-03),\"postman: Implement parser\"(2023-07-09; merged 2023-07-12) and\"postman: Implement sending http requests\"(2023-08-25). The changelog dates 0.0.1,\"First version.\", on 2023-09-25, the same day as the blog post.",
       "entities": [
         "addon:postman"
       ],
@@ -46,7 +46,7 @@
     },
     {
       "title": "After the post: variables and automation",
-      "text": "\"postman: Support collection json variables\" is dated 2023-10-01, and the changelog lists \"Support collection JSON variables.\" under 0.1.0 (2023-10-04). \"postman: Add automation support\" is dated 2023-11-26, and the changelog lists \"Automation support.\" under 0.3.0 (2024-04-02). These two items match features the blog post listed as planned.",
+      "text": "\"postman: Support collection json variables\"is dated 2023-10-01, and the changelog lists\"Support collection JSON variables.\"under 0.1.0 (2023-10-04).\"postman: Add automation support\"is dated 2023-11-26, and the changelog lists\"Automation support.\"under 0.3.0 (2024-04-02). These two items match features the blog post listed as planned.",
       "entities": [
         "addon:postman",
         "addon:automation"
@@ -60,7 +60,7 @@
     },
     {
       "title": "Where it stands",
-      "text": "Later subjects include \"postman: correct deserialization of item groups\" (2024-04-01), \"postman: Make the API functional\" (2025-01-20) and \"postman: add statistics\" (2025-11-10). The changelog lists 0.10.0 on 2026-08-12, and the add-on still exists at HEAD.",
+      "text": "Later subjects include\"postman: correct deserialization of item groups\"(2024-04-01),\"postman: Make the API functional\"(2025-01-20) and\"postman: add statistics\"(2025-11-10). The changelog lists 0.10.0 on 2026-08-12, and the add-on still exists at HEAD.",
       "entities": [
         "addon:postman"
       ],

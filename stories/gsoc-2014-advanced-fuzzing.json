@@ -8,7 +8,7 @@
   "chapters": [
     {
       "title": "June 2014: multi-fuzzing in core and as an add-on",
-      "text": "The Student Hall of Fame lists Advanced fuzzing (Sebastian Schulze) as a 2014 Summer GSoC project. The wiki goals include \"Development of a stable HTTP - multifuzzing add-on\" and \"Inclusion of scripts as payload resources\". A zaproxy commit by BastiSchulze dated 2014-06-04 is titled \"Core packages for multi-fuzzing.\" A zap-extensions commit dated the same day begins \"Updated multi-fuzz add-on.\"",
+      "text": "The Student Hall of Fame lists Advanced fuzzing (Sebastian Schulze) as a 2014 Summer GSoC project. The wiki goals include\"Development of a stable HTTP - multifuzzing add-on\"and\"Inclusion of scripts as payload resources\". A zaproxy commit by BastiSchulze dated 2014-06-04 is titled\"Core packages for multi-fuzzing.\"A zap-extensions commit dated the same day begins\"Updated multi-fuzz add-on.\"",
       "entities": [
         "repo:zaproxy",
         "repo:zap-extensions"
@@ -31,7 +31,7 @@
     },
     {
       "title": "Summer 2014: payloads and scripts",
-      "text": "Commits by BastiSchulze in zaproxy include \"Changed label for fuzzing entry in right-click popup-menu.\" (2014-06-06) and one dated 2014-06-23 that begins \"New dialog layout, script payloads, regEx payloads and permanent availability of the single-fuzzing package\". The matching zap-extensions commit of 2014-06-23 has the same beginning.",
+      "text": "Commits by BastiSchulze in zaproxy include\"Changed label for fuzzing entry in right-click popup-menu.\"(2014-06-06) and one dated 2014-06-23 that begins\"New dialog layout, script payloads, regEx payloads and permanent availability of the single-fuzzing package\". The matching zap-extensions commit of 2014-06-23 has the same beginning.",
       "entities": [
         "repo:zaproxy"
       ],
@@ -50,7 +50,7 @@
     },
     {
       "title": "April 2015: merged into one add-on",
-      "text": "A zap-extensions commit dated 2015-04-12 is titled \"Remove multiFuzz add-on (Issue 1434)\". Commits dated 2015-04-13 include \"Issue 1434 - Merge Fuzzer with MultiFuzz and move the result to an add-on\" in zap-extensions and \"Remove fuzzers, pre-merge changes (Issue 1434)\" in zaproxy.",
+      "text": "A zap-extensions commit dated 2015-04-12 is titled\"Remove multiFuzz add-on (Issue 1434)\". Commits dated 2015-04-13 include\"Issue 1434 - Merge Fuzzer with MultiFuzz and move the result to an add-on\"in zap-extensions and\"Remove fuzzers, pre-merge changes (Issue 1434)\"in zaproxy.",
       "entities": [
         "addon:fuzz"
       ],
@@ -69,7 +69,7 @@
     },
     {
       "title": "2019 to now",
-      "text": "\"fuzz: relocate to its own project\" is dated 2019-04-03. The fuzz add-on is still in zap-extensions; the latest commit touching addOns/fuzz is dated 2026-10-05 (\"Update localized resources\"). The commit \"fuzz: Fix breadth first handling\" is dated 2026-08-04. The CHANGELOG for 13.17.0 (2026-08-07) lists under Fixed \"Correct (breadth-first) Pitchfork payload replacement when fuzzing multiple locations.\" and under Changed \"Rename payload replacement strategies to Cluster Bomb and Pitchfork in the UI and help (previously Depth First and Breadth First).\"",
+      "text": "\"fuzz: relocate to its own project\"is dated 2019-04-03. The fuzz add-on is still in zap-extensions; the latest commit touching addOns/fuzz is dated 2026-10-05 (\"Update localized resources\"). The commit\"fuzz: Fix breadth first handling\"is dated 2026-08-04. The CHANGELOG for 13.17.0 (2026-08-07) lists under Fixed\"Correct (breadth-first) Pitchfork payload replacement when fuzzing multiple locations.\"and under Changed\"Rename payload replacement strategies to Cluster Bomb and Pitchfork in the UI and help (previously Depth First and Breadth First).\"",
       "entities": [
         "addon:fuzz"
       ],

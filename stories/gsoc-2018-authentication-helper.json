@@ -8,7 +8,7 @@
   "chapters": [
     {
       "title": "The project",
-      "text": "The Student Hall of Fame lists Kajan Mohanagandhirasa for \"Authentication helper\", GSoC, 2018 Summer, with a link to the project wiki. The wiki page describes three features (automated configuration, guided configuration and authentication status scanning), says the add-on code was in a fork of zap-extensions, and says the required core changes were submitted as zaproxy PR #4898 and a reauthentication fix as PR #4682.",
+      "text": "The Student Hall of Fame lists Kajan Mohanagandhirasa for\"Authentication helper\", GSoC, 2018 Summer, with a link to the project wiki. The wiki page describes three features (automated configuration, guided configuration and authentication status scanning), says the add-on code was in a fork of zap-extensions, and says the required core changes were submitted as zaproxy PR #4898 and a reauthentication fix as PR #4682.",
       "entities": [
         "repo:zaproxy"
       ],
@@ -27,7 +27,7 @@
     },
     {
       "title": "May 2018: anti-CSRF tokens in POST-based authentication",
-      "text": "A zaproxy commit by the author name \"kajan\" dated 2018-05-21 is \"support acsrf token in post-based authentication\", followed on 2018-05-28 by \"replace fresh ACSRF token value without depending on the ACSRF token value in the first post request\". The merge \"Merge pull request #4682 from KajanM/dynamic-token-authentication\" is dated 2018-05-28 and its body says \"support reauthentication in the presence of an anti-CSRF token for post based authentication method type.\"",
+      "text": "A zaproxy commit by the author name\"kajan\"dated 2018-05-21 is\"support acsrf token in post-based authentication\", followed on 2018-05-28 by\"replace fresh ACSRF token value without depending on the ACSRF token value in the first post request\". The merge\"Merge pull request #4682 from KajanM/dynamic-token-authentication\"is dated 2018-05-28 and its body says\"support reauthentication in the presence of an anti-CSRF token for post based authentication method type.\"",
       "entities": [
         "repo:zaproxy",
         "module:zaproxy:zap"
@@ -47,7 +47,7 @@
     },
     {
       "title": "August 2018: core changes for the add-on",
-      "text": "On 2018-08-02 and 2018-08-05 commits by kajan are \"changes for authentication status scanning\", \"allow to add a node select field for non tabbed interfaces\", \"allow developers to add custom components to standard fields dialog\" and \"required changes for automated authentication configuration\". They were merged by \"Merge pull request #4898 from KajanM/changes-for-authentication-helper-add-on\" (2018-08-06). \"added _csrf to default ACSRF token names\" (2018-08-22) was merged by \"Merge pull request #4946 from KajanM/add-new-default-acsrf-token\" (2018-08-21 merge date). \"Merge pull request #4696 from KajanM/renew-cookie-before-each-login\" is dated 2018-08-28.",
+      "text": "On 2018-08-02 and 2018-08-05 commits by kajan are\"changes for authentication status scanning\",\"allow to add a node select field for non tabbed interfaces\",\"allow developers to add custom components to standard fields dialog\"and\"required changes for automated authentication configuration\". They were merged by\"Merge pull request #4898 from KajanM/changes-for-authentication-helper-add-on\"(2018-08-06).\"added _csrf to default ACSRF token names\"(2018-08-22) was merged by\"Merge pull request #4946 from KajanM/add-new-default-acsrf-token\"(2018-08-21 merge date).\"Merge pull request #4696 from KajanM/renew-cookie-before-each-login\"is dated 2018-08-28.",
       "entities": [
         "repo:zaproxy",
         "module:zaproxy:zap"
@@ -67,7 +67,7 @@
     },
     {
       "title": "The login page URI change merged a year later",
-      "text": "A commit by kajan dated 2018-08-29, \"Allow to specify the URI of the login page\", changes PostBasedAuthenticationMethodType.java and SessionDialog.java. The merge \"Merge pull request #4963 from KajanM/get-login-page-uri-from-user\" is dated 2019-10-07.",
+      "text": "A commit by kajan dated 2018-08-29,\"Allow to specify the URI of the login page\", changes PostBasedAuthenticationMethodType.java and SessionDialog.java. The merge\"Merge pull request #4963 from KajanM/get-login-page-uri-from-user\"is dated 2019-10-07.",
       "entities": [
         "repo:zaproxy"
       ],
@@ -80,7 +80,7 @@
     },
     {
       "title": "The authhelper add-on in zap-extensions",
-      "text": "The 2018 add-on code is not in the zap-extensions history analysed here; no commit message there mentions it. A different add-on, addOns/authhelper (named \"Authentication Helper\" in the dataset), begins with \"Authhelper - first version\" by Simon Bennetts on 2023-01-10, whose message says it \"Just supports authentication request detection and configuration.\" Its changelog lists 0.1.0 on 2023-01-17 and 0.44.0 on 2026-11-03, and the add-on has beta status in the dataset. The history analysed here does not state a link between this add-on and the 2018 project.",
+      "text": "The 2018 add-on code is not in the zap-extensions history analysed here; no commit message there mentions it. A different add-on, addOns/authhelper (named\"Authentication Helper\"in the dataset), begins with\"Authhelper - first version\"by Simon Bennetts on 2023-01-10, whose message says it\"Just supports authentication request detection and configuration.\"Its changelog lists 0.1.0 on 2023-01-17 and 0.44.0 on 2026-11-03, and the add-on has beta status in the dataset. The history analysed here does not state a link between this add-on and the 2018 project.",
       "entities": [
         "addon:authhelper"
       ],

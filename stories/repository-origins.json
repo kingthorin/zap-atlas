@@ -8,7 +8,7 @@
   "chapters": [
     {
       "title": "The first commits",
-      "text": "The earliest commit in the repository is \"Initial directory structure.\" dated 2010-08-16. The commit \"Version 1.0.0\" follows on 2010-09-04.",
+      "text": "The earliest commit in the repository is\"Initial directory structure.\"dated 2010-08-16. The commit\"Version 1.0.0\"follows on 2010-09-04.",
       "entities": [
         "repo:zaproxy"
       ],
@@ -25,7 +25,7 @@
     },
     {
       "title": "Subversion-era messages",
-      "text": "Commit messages from 2011 and 2012 still mention svn, for example \"Exclude svn data when copying files\" (2011-03-02) and \"merged changes on trunk into websockets branch fixed svn:ignore to ignore only eclipse files\" (2012-05-12). This shows the project used Subversion at the time; these commits do not say where it was hosted.",
+      "text": "Commit messages from 2011 and 2012 still mention svn, for example\"Exclude svn data when copying files\"(2011-03-02) and\"merged changes on trunk into websockets branch fixed svn:ignore to ignore only eclipse files\"(2012-05-12). This shows the project used Subversion at the time; these commits do not say where it was hosted.",
       "commits": [
         "commit:zaproxy:013c2ba8fa7fb4ce76743ec75893f729365024cd",
         "commit:zaproxy:348a01ecbaf93a650f05184e0be5aee4b80b4847"

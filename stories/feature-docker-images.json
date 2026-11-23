@@ -8,7 +8,7 @@
   "chapters": [
     {
       "title": "First Dockerfiles, 2014",
-      "text": "The commit \"Dockerfile needed for building the latest stable (2.3.1) release of zap.\" (2014-09-24) adds build/docker/Dockerfile-stable. \"Dockerfile for building weekly zap release. Does not download any addons, only the weekly.zip.\" (2014-09-26) adds build/docker/Dockerfile-weekly.",
+      "text": "The commit\"Dockerfile needed for building the latest stable (2.3.1) release of zap.\"(2014-09-24) adds build/docker/Dockerfile-stable.\"Dockerfile for building weekly zap release. Does not download any addons, only the weekly.zip.\"(2014-09-26) adds build/docker/Dockerfile-weekly.",
       "entities": [
         "repo:zaproxy"
       ],
@@ -21,7 +21,7 @@
     },
     {
       "title": "Packaged scan scripts, 2016 and 2017",
-      "text": "\"Added zap-baseline scan\" (2016-05-12) adds python/api/src/examples/zap-baseline.py. \"Added baseline script and reworked dockerfiles\" (2016-05-13) adds build/docker/zap-baseline.py. \"Package API scan script\" (2017-05-19) adds zap-api-scan.py under build/docker, and \"zap-full-scan.py - first version\" (2017-06-12) adds build/docker/zap-full-scan.py.",
+      "text": "\"Added zap-baseline scan\"(2016-05-12) adds python/api/src/examples/zap-baseline.py.\"Added baseline script and reworked dockerfiles\"(2016-05-13) adds build/docker/zap-baseline.py.\"Package API scan script\"(2017-05-19) adds zap-api-scan.py under build/docker, and\"zap-full-scan.py - first version\"(2017-06-12) adds build/docker/zap-full-scan.py.",
       "entities": [
         "repo:zaproxy"
       ],
@@ -36,7 +36,7 @@
     },
     {
       "title": "Live and bare images, 2017",
-      "text": "\"Create a new docker image for a ZAP live image\" (2017-01-26) adds build/docker/Dockerfile-live. \"added bare docker image file\" (2017-08-08) adds build/docker/Dockerfile-bare.",
+      "text": "\"Create a new docker image for a ZAP live image\"(2017-01-26) adds build/docker/Dockerfile-live.\"added bare docker image file\"(2017-08-08) adds build/docker/Dockerfile-bare.",
       "entities": [
         "repo:zaproxy"
       ],
@@ -49,7 +49,7 @@
     },
     {
       "title": "The docker directory moves to the top level, 2018",
-      "text": "\"Move docker dir to a top level dir\" (2018-03-07) renames the files under build/docker, including Dockerfile-bare, Dockerfile-live, Dockerfile-stable and Dockerfile-weekly, to docker/.",
+      "text": "\"Move docker dir to a top level dir\"(2018-03-07) renames the files under build/docker, including Dockerfile-bare, Dockerfile-live, Dockerfile-stable and Dockerfile-weekly, to docker/.",
       "entities": [
         "repo:zaproxy"
       ],
@@ -61,7 +61,7 @@
     },
     {
       "title": "The HUD and the live image, 2018 and 2019",
-      "text": "\"Include the HUD add-on in live Docker image\" (2018-12-05) says it changes Dockerfile-live to build and include the HUD add-on. \"Fix Docker live image\" (2019-06-10) says it uses Gradle tasks to create the release in the live image, and changes docker/Dockerfile-live and buildSrc/src/main/kotlin/org/zaproxy/zap/distributions.gradle.kts.",
+      "text": "\"Include the HUD add-on in live Docker image\"(2018-12-05) says it changes Dockerfile-live to build and include the HUD add-on.\"Fix Docker live image\"(2019-06-10) says it uses Gradle tasks to create the release in the live image, and changes docker/Dockerfile-live and buildSrc/src/main/kotlin/org/zaproxy/zap/distributions.gradle.kts.",
       "entities": [
         "repo:zaproxy"
       ],
@@ -74,7 +74,7 @@
     },
     {
       "title": "Registries, 2023 and 2024",
-      "text": "\"Push Docker images to GHCR\" (2023-06-07) adds a docker/CHANGELOG.md entry dated 2023-06-08 saying images are published to the GitHub Container Registry with tags instead of image names, for example \"ghcr.io/zaproxy/zaproxy:weekly\" instead of the old name \"owasp/zap2docker-weekly:latest\". A ZAP blog post dated 2023-06-13 lists the matching images on both registries. \"Publish Docker images to SSP DockerHub organization\" is dated 2023-08-02. \"Docker: No longer push to OWASP Docker Hub\" (2024-03-05) adds a docker/CHANGELOG.md entry dated 2024-03-05.",
+      "text": "\"Push Docker images to GHCR\"(2023-06-07) adds a docker/CHANGELOG.md entry dated 2023-06-08 saying images are published to the GitHub Container Registry with tags instead of image names, for example\"ghcr.io/zaproxy/zaproxy:weekly\"instead of the old name\"owasp/zap2docker-weekly:latest\". A ZAP blog post dated 2023-06-13 lists the matching images on both registries.\"Publish Docker images to SSP DockerHub organization\"is dated 2023-08-02.\"Docker: No longer push to OWASP Docker Hub\"(2024-03-05) adds a docker/CHANGELOG.md entry dated 2024-03-05.",
       "entities": [
         "repo:zaproxy"
       ],

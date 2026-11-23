@@ -8,7 +8,7 @@
   "chapters": [
     {
       "title": "April to May 2014: WSDL import, renamed to soap",
-      "text": "The Student Hall of Fame lists SOAP scanning (Alberto Verza) as a 2014 Summer GSoC project. A zap-extensions commit dated 2014-04-30 is titled \"WSDL file import Add-On.\" On 2014-05-21 a commit is titled \"\"importWSDL\" extension renamed to \"soap\". SOAP Action scanner is no longer using ExtensionLoader to get data from ExtensionImportWSDL.\"",
+      "text": "The Student Hall of Fame lists SOAP scanning (Alberto Verza) as a 2014 Summer GSoC project. A zap-extensions commit dated 2014-04-30 is titled\"WSDL file import Add-On.\"On 2014-05-21 a commit is titled\"\"importWSDL\" extension renamed to \"soap\". SOAP Action scanner is no longer using ExtensionLoader to get data from ExtensionImportWSDL.\"",
       "entities": [
         "addon:soap"
       ],
@@ -26,7 +26,7 @@
     },
     {
       "title": "Summer 2014: scanners",
-      "text": "Later commits include \"SOAPAction spoofing scanner now performs some real checks (instead of the test ones).\" (2014-05-27), \"New WSDL File passive scanner added.\" (2014-06-12) and \"New option to import a single WSDL file from a given URL.\" (2014-06-15; the log subject continues with a note on removing log4j). The project blog post dated 2014-09-03 says SOAP-specific scanners simulate attacks such as SOAP Action Spoofing and XML Injection and that the add-on passed GSoC final evaluations in alpha state.",
+      "text": "Later commits include\"SOAPAction spoofing scanner now performs some real checks (instead of the test ones).\"(2014-05-27),\"New WSDL File passive scanner added.\"(2014-06-12) and\"New option to import a single WSDL file from a given URL.\"(2014-06-15; the log subject continues with a note on removing log4j). The project blog post dated 2014-09-03 says SOAP-specific scanners simulate attacks such as SOAP Action Spoofing and XML Injection and that the add-on passed GSoC final evaluations in alpha state.",
       "entities": [
         "addon:soap"
       ],
@@ -49,7 +49,7 @@
     },
     {
       "title": "2019 to now",
-      "text": "\"soap: relocate to its own project\" is dated 2019-04-03. The add-on is still in zap-extensions: commits include \"soap: Allow limiting the number of messages imported\" (2026-07-21) and \"soap: Max Messsages GUI & API\" (2026-08-02). The add-on's history contains 198 commits.",
+      "text": "\"soap: relocate to its own project\"is dated 2019-04-03. The add-on is still in zap-extensions: commits include\"soap: Allow limiting the number of messages imported\"(2026-07-21) and\"soap: Max Messsages GUI & API\"(2026-08-02). The add-on's history contains 198 commits.",
       "entities": [
         "addon:soap"
       ],

@@ -8,7 +8,7 @@
   "chapters": [
     {
       "title": "First phase, January 2021",
-      "text": "The commit \"Automation add-on - first phase\" (2021-01-14) adds addOns/automation with AutomationEnvironment, AutomationJob, ExtensionAutomation and two jobs, AddOnJob and PassiveScanConfigJob. \"Automation: Support active scan\" follows on 2021-02-23. The CHANGELOG dates 0.0.1 (\"First version.\") to 2021-03-09, and \"Weekly - add automation and reports\" in zaproxy is dated the same day.",
+      "text": "The commit\"Automation add-on - first phase\"(2021-01-14) adds addOns/automation with AutomationEnvironment, AutomationJob, ExtensionAutomation and two jobs, AddOnJob and PassiveScanConfigJob.\"Automation: Support active scan\"follows on 2021-02-23. The CHANGELOG dates 0.0.1 (\"First version.\") to 2021-03-09, and\"Weekly - add automation and reports\"in zaproxy is dated the same day.",
       "entities": [
         "addon:automation",
         "module:zap-extensions:addOns/automation"
@@ -27,7 +27,7 @@
     },
     {
       "title": "Other add-ons gain jobs in 2021",
-      "text": "Commit subjects show add-ons adding Automation Framework support: \"Ajax Spider - add automation framework support\" (2021-02-19), \"OpenAPI: Automation Framework Support\" (2021-03-05), \"soap: Support Automation Framework\" (2021-03-16), \"graphql: Add Automation Framework Support\" (2021-03-22) and \"alertFilter: support automation framework\" (2021-09-13). The automation CHANGELOG lists 0.3.0 (2021-06-28) with \"A new Requestor job to make specific requests.\" and 0.8.0 (2021-11-02) with \"Delay job\". The scripts CHANGELOG lists \"Automation ScriptJob - Add or remove any script and run a standalone script\" under version 30 (2022-02-25).",
+      "text": "Commit subjects show add-ons adding Automation Framework support:\"Ajax Spider - add automation framework support\"(2021-02-19),\"OpenAPI: Automation Framework Support\"(2021-03-05),\"soap: Support Automation Framework\"(2021-03-16),\"graphql: Add Automation Framework Support\"(2021-03-22) and\"alertFilter: support automation framework\"(2021-09-13). The automation CHANGELOG lists 0.3.0 (2021-06-28) with\"A new Requestor job to make specific requests.\"and 0.8.0 (2021-11-02) with\"Delay job\". The scripts CHANGELOG lists\"Automation ScriptJob - Add or remove any script and run a standalone script\"under version 30 (2022-02-25).",
       "entities": [
         "addon:automation",
         "addon:spiderAjax",
@@ -53,7 +53,7 @@
     },
     {
       "title": "Docker packaged scans and the Retest add-on",
-      "text": "In zaproxy, \"Use the auto framework for simple baseline scans\" (2021-05-25) changes docker/zap-baseline.py and the Dockerfiles. \"Docker: change packaged scans to always update all add-on on start\" (2021-10-08) has the body \"This is to avoid a bug in the automation framework breaking plans\", and \"Docker: Automation Framework plan tests\" is dated 2021-11-02. In zap-extensions, the Retest add-on starts with \"Initial addon\" (2021-08-20), and the automation CHANGELOG for 0.5.0 (2021-08-23) lists \"Changes to support the Retest add-on.\"",
+      "text": "In zaproxy,\"Use the auto framework for simple baseline scans\"(2021-05-25) changes docker/zap-baseline.py and the Dockerfiles.\"Docker: change packaged scans to always update all add-on on start\"(2021-10-08) has the body\"This is to avoid a bug in the automation framework breaking plans\", and\"Docker: Automation Framework plan tests\"is dated 2021-11-02. In zap-extensions, the Retest add-on starts with\"Initial addon\"(2021-08-20), and the automation CHANGELOG for 0.5.0 (2021-08-23) lists\"Changes to support the Retest add-on.\"",
       "entities": [
         "repo:zaproxy",
         "addon:automation",
@@ -68,7 +68,7 @@
     },
     {
       "title": "GUI, authentication and beta status",
-      "text": "The CHANGELOG records \"First phase of GUI\" in 0.4.0 (2021-08-05), \"User and HTTP authentication support\" and \"Set ZAP exit code when \"-cmd\" and \"-autorun\" options used\" in 0.8.0 (2021-11-02), and, in 0.11.0 (2022-01-19), \"Form and JSON-based authentication support\" and \"Promoted to beta\". Script authentication support appears in 0.12.0 (2022-02-01).",
+      "text": "The CHANGELOG records\"First phase of GUI\"in 0.4.0 (2021-08-05),\"User and HTTP authentication support\"and\"Set ZAP exit code when \"-cmd\" and \"-autorun\" options used\"in 0.8.0 (2021-11-02), and, in 0.11.0 (2022-01-19),\"Form and JSON-based authentication support\"and\"Promoted to beta\". Script authentication support appears in 0.12.0 (2022-02-01).",
       "entities": [
         "addon:automation"
       ],
@@ -81,7 +81,7 @@
     },
     {
       "title": "Jobs move into the add-ons that own them",
-      "text": "The CHANGELOG for 0.19.0 (2022-10-27) says \"The spider job was removed, it is provided by the Spider add-on (Issue 3113).\" 0.42.0 (2024-09-02) says \"Rely on Passive Scanner add-on for the passive scan related jobs (Issue 7959).\" and deprecates the classes of the passive scan related jobs, and 0.44.0 (2025-01-09) lists \"Remove job implementations that were previously migrated to the Passive Scanner add-on (Issue 7959).\" The same 0.44.0 entry adds \"Active scan policy job.\", \"Add job to configure the active scanner, `activeScan-config`.\" and \"Add exitStatus job (Issue #6928)\".",
+      "text": "The CHANGELOG for 0.19.0 (2022-10-27) says\"The spider job was removed, it is provided by the Spider add-on (Issue 3113).\"0.42.0 (2024-09-02) says\"Rely on Passive Scanner add-on for the passive scan related jobs (Issue 7959).\"and deprecates the classes of the passive scan related jobs, and 0.44.0 (2025-01-09) lists\"Remove job implementations that were previously migrated to the Passive Scanner add-on (Issue 7959).\"The same 0.44.0 entry adds\"Active scan policy job.\",\"Add job to configure the active scanner, `activeScan-config`.\"and\"Add exitStatus job (Issue #6928)\".",
       "entities": [
         "addon:automation"
       ],
@@ -94,7 +94,7 @@
     },
     {
       "title": "Stopping, authentication jobs and AI assisted authentication",
-      "text": "The 0.52.0 entry (2025-09-02) lists \"Support for step delay in Browser Based Authentication.\", \"Support for min wait for in Client Script Authentication.\" and \"Support for stopping plans and jobs.\" 0.59.0 (2026-04-02) lists \"Allow to load a plan from the contents of the clipboard.\" and \"Move the Automation panel to the workspace window.\" 0.62.0 (2026-11-03) lists \"Support for AI assisted authentication.\"",
+      "text": "The 0.52.0 entry (2025-09-02) lists\"Support for step delay in Browser Based Authentication.\",\"Support for min wait for in Client Script Authentication.\"and\"Support for stopping plans and jobs.\"0.59.0 (2026-04-02) lists\"Allow to load a plan from the contents of the clipboard.\"and\"Move the Automation panel to the workspace window.\"0.62.0 (2026-11-03) lists\"Support for AI assisted authentication.\"",
       "entities": [
         "addon:automation",
         "addon:authhelper"
@@ -108,7 +108,7 @@
     },
     {
       "title": "State at HEAD",
-      "text": "The Unreleased section of the CHANGELOG lists \"A Batch tab, which runs all, or one, of the plans in a directory, stopping at the first failure, and optionally starting a new session for each plan.\" and \"The `-autorundir` command line option\". The dataset lists the add-on as beta, with addon:commonlib and addon:network as dependencies.",
+      "text": "The Unreleased section of the CHANGELOG lists\"A Batch tab, which runs all, or one, of the plans in a directory, stopping at the first failure, and optionally starting a new session for each plan.\"and\"The `-autorundir` command line option\". The dataset lists the add-on as beta, with addon:commonlib and addon:network as dependencies.",
       "entities": [
         "addon:automation",
         "addon:network"

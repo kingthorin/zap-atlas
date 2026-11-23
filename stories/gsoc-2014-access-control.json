@@ -8,7 +8,7 @@
   "chapters": [
     {
       "title": "June 2014: first commits",
-      "text": "The Student Hall of Fame lists Advanced Access Control testing (Cosmin Stefan) as a 2014 Summer GSoC project, linking the 2013 HTTP sessions wiki, whose goals include \"allow users to test access control with a tool that tries to access the URLs\". In zap-extensions, a commit by Cosmin Stefan-Dobrin dated 2014-06-03 is titled \"Added initial structure for the AccessControlExtension\". On 2014-06-09 a commit by the same name is titled \"Temporary removed the AccessControl Extension to be moved to separate branch\".",
+      "text": "The Student Hall of Fame lists Advanced Access Control testing (Cosmin Stefan) as a 2014 Summer GSoC project, linking the 2013 HTTP sessions wiki, whose goals include\"allow users to test access control with a tool that tries to access the URLs\". In zap-extensions, a commit by Cosmin Stefan-Dobrin dated 2014-06-03 is titled\"Added initial structure for the AccessControlExtension\". On 2014-06-09 a commit by the same name is titled\"Temporary removed the AccessControl Extension to be moved to separate branch\".",
       "entities": [
         "addon:accessControl"
       ],
@@ -30,7 +30,7 @@
     },
     {
       "title": "2014 to 2016: alpha add-on",
-      "text": "A commit by cosminstefanxp dated 2014-11-11 is titled \"Merge branch '2.4alpha' into alpha\". \"Fixed Access Control add-on help for wiki\" is dated 2015-10-06. \"Do not allow to dynamically unload Access Control\" is dated 2016-04-07, and \"accessControl: dynamically unload the add-on (#1521)\" 2018-04-03.",
+      "text": "A commit by cosminstefanxp dated 2014-11-11 is titled\"Merge branch '2.4alpha' into alpha\".\"Fixed Access Control add-on help for wiki\"is dated 2015-10-06.\"Do not allow to dynamically unload Access Control\"is dated 2016-04-07, and\"accessControl: dynamically unload the add-on (#1521)\"2018-04-03.",
       "entities": [
         "addon:accessControl"
       ],
@@ -50,7 +50,7 @@
     },
     {
       "title": "2019 to now",
-      "text": "\"accessControl: relocate to its own project\" is dated 2019-04-03 and \"Implement Access Control API\" 2019-06-19, by mbonino. \"Prepare release v6 Access Control\" is dated 2020-10-06. The add-on is still in zap-extensions: the latest commit touching it is dated 2026-11-05 (\"Update localized resources\"), and its directory has 137 commits.",
+      "text": "\"accessControl: relocate to its own project\"is dated 2019-04-03 and\"Implement Access Control API\"2019-06-19, by mbonino.\"Prepare release v6 Access Control\"is dated 2020-10-06. The add-on is still in zap-extensions: the latest commit touching it is dated 2026-11-05 (\"Update localized resources\"), and its directory has 137 commits.",
       "entities": [
         "addon:accessControl"
       ],

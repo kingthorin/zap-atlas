@@ -8,7 +8,7 @@
   "chapters": [
     {
       "title": "The Hall of Fame entry and a separate repository",
-      "text": "The Student Hall of Fame lists David Scrobonia for \"The ZAP HUD\", Direct, 2016-2018, with links to a repo and a video. The repo is github.com/zaproxy/zap-hud, which is not one of the repositories analysed here, so its own commits are not cited. Its README describes the HUD as \"an interface that provides the functionality of ZAP directly in the browser\" and also says it is no longer under active development.",
+      "text": "The Student Hall of Fame lists David Scrobonia for\"The ZAP HUD\", Direct, 2016-2018, with links to a repo and a video. The repo is github.com/zaproxy/zap-hud, which is not one of the repositories analysed here, so its own commits are not cited. Its README describes the HUD as\"an interface that provides the functionality of ZAP directly in the browser\"and also says it is no longer under active development.",
       "entities": [
         "repo:zaproxy"
       ],
@@ -27,7 +27,7 @@
     },
     {
       "title": "2018: first traces in zaproxy",
-      "text": "The earliest zaproxy commit whose message mentions the HUD is \"Register HUD tutorial examples\", dated 2018-11-05; it adds one line to docs/scanners.md, \"60200   HUD tutorial examples\". \"Include the HUD add-on in live Docker image\" is dated 2018-12-05 and its message says it changes Dockerfile-live \"to build and include the HUD add-on\". \"Correct copy task in Docker live image\" is dated 2019-03-18.",
+      "text": "The earliest zaproxy commit whose message mentions the HUD is\"Register HUD tutorial examples\", dated 2018-11-05; it adds one line to docs/scanners.md,\"60200   HUD tutorial examples\".\"Include the HUD add-on in live Docker image\"is dated 2018-12-05 and its message says it changes Dockerfile-live\"to build and include the HUD add-on\".\"Correct copy task in Docker live image\"is dated 2019-03-18.",
       "entities": [
         "repo:zaproxy"
       ],
@@ -41,7 +41,7 @@
     },
     {
       "title": "2019: bundled with ZAP",
-      "text": "\"Add main add-ons\" (2019-06-07) adds zap/src/main/add-ons.txt, which lists https://github.com/zaproxy/zap-hud/releases/download/v0.4.0/hud-beta-0.4.0.zap. \"Fix Docker live image\" (2019-06-10) is described as using \"Gradle tasks to create the release in the live image\"; its diff removes the lines that cloned zap-hud and ran its copyZapAddOn task. At HEAD the HUD is still listed in zap/src/main/main-add-ons.yml, pointing at hud-beta-0.19.0.zap under zap-hud release v0.19.0.",
+      "text": "\"Add main add-ons\"(2019-06-07) adds zap/src/main/add-ons.txt, which lists https://github.com/zaproxy/zap-hud/releases/download/v0.4.0/hud-beta-0.4.0.zap.\"Fix Docker live image\"(2019-06-10) is described as using\"Gradle tasks to create the release in the live image\"; its diff removes the lines that cloned zap-hud and ran its copyZapAddOn task. At HEAD the HUD is still listed in zap/src/main/main-add-ons.yml, pointing at hud-beta-0.19.0.zap under zap-hud release v0.19.0.",
       "entities": [
         "repo:zaproxy",
         "module:zaproxy:zap"
@@ -60,7 +60,7 @@
     },
     {
       "title": "HUD-related changes in zap-extensions",
-      "text": "A few zap-extensions commits mention the HUD in their subject: \"Make JS injection more like in the HUD\" (2019-01-18, by a commit author named Pamplemousse, front-end scanner), \"Added warning when HUD is enabled only in scope\" (2020-01-22, quickstart) and \"Set Firefox browser.tabs.documentchannel pref to false to fix HUD issue\" (2020-03-31, selenium). The quickstart changelog at HEAD still lists \"Warning when HUD is enabled only in scope\". A search of zaproxy commit messages found no further commits mentioning the HUD, so no other core change is attributed to it here.",
+      "text": "A few zap-extensions commits mention the HUD in their subject:\"Make JS injection more like in the HUD\"(2019-01-18, by a commit author named Pamplemousse, front-end scanner),\"Added warning when HUD is enabled only in scope\"(2020-01-22, quickstart) and\"Set Firefox browser.tabs.documentchannel pref to false to fix HUD issue\"(2020-03-31, selenium). The quickstart changelog at HEAD still lists\"Warning when HUD is enabled only in scope\". A search of zaproxy commit messages found no further commits mentioning the HUD, so no other core change is attributed to it here.",
       "entities": [
         "addon:quickstart",
         "addon:selenium"
@@ -75,7 +75,7 @@
     },
     {
       "title": "Credits",
-      "text": "In the credits page history, \"Added David, moved Goran\" is dated 2019-03-27 and the later \"Credit and website link tweaks\" (2020-09-15) is the commit in which David Scrobonia is removed from the Core Team list, as recorded in the Core Team story.",
+      "text": "In the credits page history,\"Added David, moved Goran\"is dated 2019-03-27 and the later\"Credit and website link tweaks\"(2020-09-15) is the commit in which David Scrobonia is removed from the Core Team list, as recorded in the Core Team story.",
       "entities": [
         "repo:zap-core-help"
       ],

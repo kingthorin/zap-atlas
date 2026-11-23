@@ -8,7 +8,7 @@
   "chapters": [
     {
       "title": "The account, June 2015",
-      "text": "The GitHub API gives the zapbot account (display name \"zapbot - ZAP helper bot\") a creation time of 2015-06-04 09:30 UTC. The comment that the logo notes in the zaproxy repository link to for the original lightning bolt design (issue 74, comment 108865883) was created by the zapbot account at 12:13 UTC the same day.",
+      "text": "The GitHub API gives the zapbot account (display name\"zapbot - ZAP helper bot\") a creation time of 2015-06-04 09:30 UTC. The comment that the logo notes in the zaproxy repository link to for the original lightning bolt design (issue 74, comment 108865883) was created by the zapbot account at 12:13 UTC the same day.",
       "evidence": [
         {
           "label": "zapbot on GitHub",
@@ -22,7 +22,7 @@
     },
     {
       "title": "The GitHub and X accounts",
-      "text": "The zapbot GitHub profile gives its location as \"In the 'cloud'\", its website as http://zapbot.github.io/zap-mgmt-scripts/index.html and its X username as zaproxybot. Its public repositories include forks of zaproxy and zap-core-help created on 2015-11-10 and of zap-extensions created on 2015-11-11, and a zap-mgmt-scripts repository created on 2015-11-10. The X profile at x.com/zaproxybot says \"Joined December 2016\", about 18 months after the GitHub account was created.",
+      "text": "The zapbot GitHub profile gives its location as\"In the 'cloud'\", its website as http://zapbot.github.io/zap-mgmt-scripts/index.html and its X username as zaproxybot. Its public repositories include forks of zaproxy and zap-core-help created on 2015-11-10 and of zap-extensions created on 2015-11-11, and a zap-mgmt-scripts repository created on 2015-11-10. The X profile at x.com/zaproxybot says\"Joined December 2016\", about 18 months after the GitHub account was created.",
       "evidence": [
         {
           "label": "zapbot on GitHub",
@@ -40,7 +40,7 @@
     },
     {
       "title": "First commits, November 2015",
-      "text": "The earliest commits in the dataset authored as zapbot are dated 2015-11-10 and are both titled \"Latest files from Crowdin\", one in zaproxy and one in zap-extensions. The same day, three merge commits in zap-extensions bring in pull requests #73, #74 and #75 from branches of the zapbot repositories (master, beta and alpha); they are recorded under a different author name for the bot.",
+      "text": "The earliest commits in the dataset authored as zapbot are dated 2015-11-10 and are both titled\"Latest files from Crowdin\", one in zaproxy and one in zap-extensions. The same day, three merge commits in zap-extensions bring in pull requests #73, #74 and #75 from branches of the zapbot repositories (master, beta and alpha); they are recorded under a different author name for the bot.",
       "entities": [
         "repo:zaproxy",
         "repo:zap-extensions"
@@ -53,7 +53,7 @@
     },
     {
       "title": "Releases and translations, 2021",
-      "text": "\"Release add-on(s)\" and \"Prepare next dev iteration(s)\" commits by zapbot start in zap-extensions on 2021-06-17 and in zap-core-help on 2021-10-06. \"Update localized resources\" starts on 2021-08-12 in zaproxy, zap-core-help and zap-hud, and on 2021-08-13 in zap-extensions. \"Webdriver Update\" starts in zap-extensions on 2022-04-28.",
+      "text": "\"Release add-on(s)\"and\"Prepare next dev iteration(s)\"commits by zapbot start in zap-extensions on 2021-06-17 and in zap-core-help on 2021-10-06.\"Update localized resources\"starts on 2021-08-12 in zaproxy, zap-core-help and zap-hud, and on 2021-08-13 in zap-extensions.\"Webdriver Update\"starts in zap-extensions on 2022-04-28.",
       "entities": [
         "repo:zaproxy",
         "repo:zap-extensions",
@@ -74,7 +74,7 @@
     },
     {
       "title": "The author name changes",
-      "text": "A few commits record the bot under a longer author name. The first is dated 2018-01-10 (\"Latest files from Crowdin (#1237)\" in zap-extensions). A later, shorter variant first appears on 2024-06-19 (\"Webdriver Update (#5515)\") and matches the account's display name on GitHub today. Most zapbot commits use the plain author name \"zapbot\".",
+      "text": "A few commits record the bot under a longer author name. The first is dated 2018-01-10 (\"Latest files from Crowdin (#1237)\"in zap-extensions). A later, shorter variant first appears on 2024-06-19 (\"Webdriver Update (#5515)\") and matches the account's display name on GitHub today. Most zapbot commits use the plain author name\"zapbot\".",
       "commits": [
         "commit:zap-extensions:9edcf655f32d5da23cf892063c30ee167e9a051c",
         "commit:zap-extensions:c09e7afa99c629043db476023d902bb83c8b118e"

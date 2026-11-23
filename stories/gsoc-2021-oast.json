@@ -8,7 +8,7 @@
   "chapters": [
     {
       "title": "The Hall of Fame entry and the launch post",
-      "text": "The Student Hall of Fame lists Akshath Kothari for \"Out-of-band Application Security Testing\", GSoC, 2021 Summer, with blog and add-on links. The blog post, dated 2021-08-23, says the OAST add-on lets ZAP communicate with out-of-band testing services, \"currently supports two services: BOAST and Callbacks\", and notes that Callbacks was previously part of ZAP core. The URL of that post contains \"owasp-zap\"; that is only its address.",
+      "text": "The Student Hall of Fame lists Akshath Kothari for\"Out-of-band Application Security Testing\", GSoC, 2021 Summer, with blog and add-on links. The blog post, dated 2021-08-23, says the OAST add-on lets ZAP communicate with out-of-band testing services,\"currently supports two services: BOAST and Callbacks\", and notes that Callbacks was previously part of ZAP core. The URL of that post contains\"owasp-zap\"; that is only its address.",
       "entities": [
         "addon:oast"
       ],
@@ -27,7 +27,7 @@
     },
     {
       "title": "June to August 2021: first commit to first releases",
-      "text": "The earliest commit under addOns/oast is \"oast: Initial commit\" by ricekot, dated 2021-06-18; \"oast: First Version\" is dated 2021-07-14 (git date order is not strictly the order of the log). The changelog lists 0.1.0 and 0.1.1 on 2021-08-04 and 0.2.0 on 2021-08-17, which adds polling frequency for BOAST servers, a table of payloads and canary values, and two example scripts. \"oast: Release add-on\" is dated 2021-08-19.",
+      "text": "The earliest commit under addOns/oast is\"oast: Initial commit\"by ricekot, dated 2021-06-18;\"oast: First Version\"is dated 2021-07-14 (git date order is not strictly the order of the log). The changelog lists 0.1.0 and 0.1.1 on 2021-08-04 and 0.2.0 on 2021-08-17, which adds polling frequency for BOAST servers, a table of payloads and canary values, and two example scripts.\"oast: Release add-on\"is dated 2021-08-19.",
       "entities": [
         "addon:oast"
       ],
@@ -42,7 +42,7 @@
     },
     {
       "title": "After the blog post: Interactsh and a core deprecation",
-      "text": "\"oast: Add \"Poll Now\" button\" is dated 2021-08-25 and \"oast: Support interactsh\" 2021-08-29, merged on 2021-09-22. In zaproxy, \"Deprecate extension callback\" by Akshath Kothari is dated 2021-09-23. In zap-extensions, \"oast, ascanrulesBeta: Remove usages of CallbackImplementor\" is dated 2021-12-06. In the dataset, addon:ascanrules and addon:ascanrulesBeta both list addon:oast as a dependency.",
+      "text": "\"oast: Add \"Poll Now\" button\"is dated 2021-08-25 and\"oast: Support interactsh\"2021-08-29, merged on 2021-09-22. In zaproxy,\"Deprecate extension callback\"by Akshath Kothari is dated 2021-09-23. In zap-extensions,\"oast, ascanrulesBeta: Remove usages of CallbackImplementor\"is dated 2021-12-06. In the dataset, addon:ascanrules and addon:ascanrulesBeta both list addon:oast as a dependency.",
       "entities": [
         "addon:oast",
         "addon:ascanrules",
@@ -61,7 +61,7 @@
     },
     {
       "title": "The permanent database and the database add-on",
-      "text": "The oast add-on depends on the database add-on, which a ZAP session otherwise lacks. \"Add database add-on\" is dated 2022-09-27 and \"Add Permanent Database Support\" 2022-10-18. The database CHANGELOG lists 0.1.0 (2022-10-27) with \"Provides the SQLite database engine for other add-ons to use.\" and \"Support for the ZAP permanent database.\" The oast CHANGELOG for 0.13.0 (2022-10-27) lists \"BOAST Payloads are persisted in the permanent database, and polled in future ZAP sessions.\" Two commits dated 2024-09-05 are \"oast: persist alert details in permanent DB\" and \"OAST Trim database\". The 0.20.0 entry (2024-09-17) lists \"Raise alerts for OAST interactions that happened in other sessions.\", \"Options to trim the OAST permanent database.\" and \"Depend on newer version of Database add-on.\" The 0.21.0 entry (2025-01-09) lists \"Include the handler and source when logging interactions not found in the permanent database.\"",
+      "text": "The oast add-on depends on the database add-on, which a ZAP session otherwise lacks.\"Add database add-on\"is dated 2022-09-27 and\"Add Permanent Database Support\"2022-10-18. The database CHANGELOG lists 0.1.0 (2022-10-27) with\"Provides the SQLite database engine for other add-ons to use.\"and\"Support for the ZAP permanent database.\"The oast CHANGELOG for 0.13.0 (2022-10-27) lists\"BOAST Payloads are persisted in the permanent database, and polled in future ZAP sessions.\"Two commits dated 2024-09-05 are\"oast: persist alert details in permanent DB\"and\"OAST Trim database\". The 0.20.0 entry (2024-09-17) lists\"Raise alerts for OAST interactions that happened in other sessions.\",\"Options to trim the OAST permanent database.\"and\"Depend on newer version of Database add-on.\"The 0.21.0 entry (2025-01-09) lists\"Include the handler and source when logging interactions not found in the permanent database.\"",
       "entities": [
         "addon:oast",
         "addon:database"
@@ -85,7 +85,7 @@
     },
     {
       "title": "2022 onward: other contributors and maintenance",
-      "text": "Later commits include \"oast: use server provided by the Network add-on\" (2022-01-31), \"oast: Add statistics\" (2022-02-18), \"chore: OAST: Help document default services\" (2022-05-18), \"oast: stop polling on shutdown\" (2025-10-07) and \"oast: generate Interactsh identifiers using native alphabets\" (2026-10-10). The changelog lists 0.26.0 on 2026-09-16 and the dataset gives the add-on beta status, so it still exists at HEAD.",
+      "text": "Later commits include\"oast: use server provided by the Network add-on\"(2022-01-31),\"oast: Add statistics\"(2022-02-18),\"chore: OAST: Help document default services\"(2022-05-18),\"oast: stop polling on shutdown\"(2025-10-07) and\"oast: generate Interactsh identifiers using native alphabets\"(2026-10-10). The changelog lists 0.26.0 on 2026-09-16 and the dataset gives the add-on beta status, so it still exists at HEAD.",
       "entities": [
         "addon:oast"
       ],

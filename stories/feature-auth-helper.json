@@ -8,7 +8,7 @@
   "chapters": [
     {
       "title": "authhelper starts in January 2023",
-      "text": "\"Authhelper - first version\" (2023-01-10) is the first commit under addOns/authhelper. The CHANGELOG lists 0.1.0 (2023-01-17) with \"Support of authentication request identification and configuration.\", 0.2.0 (2023-02-08) with \"Support for header based session management.\" and 0.3.0 (2023-03-13) with \"Support for browser based authentication.\" The related commit \"Authhelper: browser based authentication\" is dated 2023-03-01.",
+      "text": "\"Authhelper - first version\"(2023-01-10) is the first commit under addOns/authhelper. The CHANGELOG lists 0.1.0 (2023-01-17) with\"Support of authentication request identification and configuration.\", 0.2.0 (2023-02-08) with\"Support for header based session management.\"and 0.3.0 (2023-03-13) with\"Support for browser based authentication.\"The related commit\"Authhelper: browser based authentication\"is dated 2023-03-01.",
       "entities": [
         "addon:authhelper",
         "module:zap-extensions:addOns/authhelper"
@@ -26,7 +26,7 @@
     },
     {
       "title": "Auto-detection, beta and the Authentication Tester",
-      "text": "0.4.0 (2023-04-28) lists \"Support for auto-detect authentication.\", \"Support for auto-detect session management.\" and \"Support for auto-detect verification.\" 0.7.0 (2023-05-23) lists \"Authentication tester dialog.\" and \"Promoted to Beta\". 0.9.0 (2023-07-11) adds \"Direct support for handling browser based authentication in the AJAX spider.\"",
+      "text": "0.4.0 (2023-04-28) lists\"Support for auto-detect authentication.\",\"Support for auto-detect session management.\"and\"Support for auto-detect verification.\"0.7.0 (2023-05-23) lists\"Authentication tester dialog.\"and\"Promoted to Beta\". 0.9.0 (2023-07-11) adds\"Direct support for handling browser based authentication in the AJAX spider.\"",
       "entities": [
         "addon:authhelper",
         "addon:spiderAjax"
@@ -44,7 +44,7 @@
     },
     {
       "title": "Client script authentication and TOTP, 2024 to 2025",
-      "text": "The commit \"Client Script Based Auth (Ajax Spider)\" is dated 2024-07-02, and \"authhelper: Add Client Script Auth support for the Client Spider\" 2025-01-29. The CHANGELOG for 0.19.0 (2025-02-04) lists \"Added support for Client Script Authentication when used in conjunction with the Ajax Spider add-on or the Client Spider via the Client Side Integration add-on.\" and \"Add support for custom authentication steps in Browser Based Authentication.\" 0.22.0 (2025-02-12) lists \"Initial authentication report (JSON).\" The commit \"Use TOTP from credentials\" is dated 2025-03-21, and 0.25.0 (2025-03-25) lists \"Use TOTP data defined under user credentials for Client Script and Browser Based Authentication, when available.\"",
+      "text": "The commit\"Client Script Based Auth (Ajax Spider)\"is dated 2024-07-02, and\"authhelper: Add Client Script Auth support for the Client Spider\"2025-01-29. The CHANGELOG for 0.19.0 (2025-02-04) lists\"Added support for Client Script Authentication when used in conjunction with the Ajax Spider add-on or the Client Spider via the Client Side Integration add-on.\"and\"Add support for custom authentication steps in Browser Based Authentication.\"0.22.0 (2025-02-12) lists\"Initial authentication report (JSON).\"The commit\"Use TOTP from credentials\"is dated 2025-03-21, and 0.25.0 (2025-03-25) lists\"Use TOTP data defined under user credentials for Client Script and Browser Based Authentication, when available.\"",
       "entities": [
         "addon:authhelper",
         "addon:client"
@@ -57,7 +57,7 @@
     },
     {
       "title": "OAuth2 and AI assisted authentication, 2026",
-      "text": "\"authhelper: Support LLM assisted auth, phase 1\" is dated 2026-07-15 and \"authhelper: OAuth2.0 Support\" 2026-08-19. The CHANGELOG for 0.43.0 (2026-10-08) lists \"OAuth2 Authentication method, supporting the `client_credentials` and `password` grant types.\" and 0.44.0 (2026-11-03) lists \"AI Assisted Authentication\" and \"Support for the Authentication Report with OAuth2.\" The LLM Support add-on has its own history that begins with \"llm: New LLM Add-on\" (2024-10-24), and the dataset lists addon:llm as a dependency of authhelper. The Automation Framework 0.62.0 entry (2026-11-03) lists \"Support for AI assisted authentication.\"",
+      "text": "\"authhelper: Support LLM assisted auth, phase 1\"is dated 2026-07-15 and\"authhelper: OAuth2.0 Support\"2026-08-19. The CHANGELOG for 0.43.0 (2026-10-08) lists\"OAuth2 Authentication method, supporting the `client_credentials` and `password` grant types.\"and 0.44.0 (2026-11-03) lists\"AI Assisted Authentication\"and\"Support for the Authentication Report with OAuth2.\"The LLM Support add-on has its own history that begins with\"llm: New LLM Add-on\"(2024-10-24), and the dataset lists addon:llm as a dependency of authhelper. The Automation Framework 0.62.0 entry (2026-11-03) lists\"Support for AI assisted authentication.\"",
       "entities": [
         "addon:authhelper",
         "addon:llm",

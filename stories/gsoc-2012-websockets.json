@@ -8,7 +8,7 @@
   "chapters": [
     {
       "title": "2012: a branch for WebSockets in zaproxy",
-      "text": "The Student Hall of Fame lists WebSocket testing (Robert Koch) as a 2012 Summer GSoC project. The project wiki says it \"aims to adding support for WebSockets to ZAP\" and that \"one can see & even edit messages\". A zaproxy commit dated 2012-05-07 is titled \"create branch for my GSoC project: Enhancing ZAP with WebSockets support.\" A later commit dated 2012-05-22 is titled \"Merged trunk into WebSockets-Branch to keep up changes\".",
+      "text": "The Student Hall of Fame lists WebSocket testing (Robert Koch) as a 2012 Summer GSoC project. The project wiki says it\"aims to adding support for WebSockets to ZAP\"and that\"one can see & even edit messages\". A zaproxy commit dated 2012-05-07 is titled\"create branch for my GSoC project: Enhancing ZAP with WebSockets support.\"A later commit dated 2012-05-22 is titled\"Merged trunk into WebSockets-Branch to keep up changes\".",
       "entities": [
         "repo:zaproxy"
       ],
@@ -30,7 +30,7 @@
     },
     {
       "title": "2012: a UI for WebSocket traffic",
-      "text": "A commit dated 2012-06-13 is titled \"further refactorings plus new informations in WebSockets-UI-Panel (#, opcode, payload-length)\". An earlier commit the same day (da93cc9) is the first of the two to mention user interface classes for displaying WebSockets communication in its subject. These commits are in the zaproxy repository, where the WebSocket code was then part of core.",
+      "text": "A commit dated 2012-06-13 is titled\"further refactorings plus new informations in WebSockets-UI-Panel (#, opcode, payload-length)\". An earlier commit the same day (da93cc9) is the first of the two to mention user interface classes for displaying WebSockets communication in its subject. These commits are in the zaproxy repository, where the WebSocket code was then part of core.",
       "entities": [
         "repo:zaproxy"
       ],
@@ -48,7 +48,7 @@
     },
     {
       "title": "January 2013: moved out of core",
-      "text": "A zaproxy commit dated 2013-01-24 is titled \"removed WebSockets add-on (prepared to move over to extensions project)\". A zap-extensions commit dated the same day, 2013-01-24, begins \"moved WebSockets extension out of core\". The current zaproxy tree has no file with websocket in its path.",
+      "text": "A zaproxy commit dated 2013-01-24 is titled\"removed WebSockets add-on (prepared to move over to extensions project)\". A zap-extensions commit dated the same day, 2013-01-24, begins\"moved WebSockets extension out of core\". The current zaproxy tree has no file with websocket in its path.",
       "entities": [
         "repo:zaproxy",
         "repo:zap-extensions"
@@ -67,7 +67,7 @@
     },
     {
       "title": "2016 to 2019: unloading from core, then its own project",
-      "text": "A zap-extensions commit dated 2016-04-26 is titled \"websocket: unload components from core\". On 2019-04-03 a commit titled \"websocket: relocate to its own project\" is dated; it is the earliest commit in the history of the addOns/websocket directory.",
+      "text": "A zap-extensions commit dated 2016-04-26 is titled\"websocket: unload components from core\". On 2019-04-03 a commit titled\"websocket: relocate to its own project\"is dated; it is the earliest commit in the history of the addOns/websocket directory.",
       "entities": [
         "addon:websocket"
       ],
@@ -85,7 +85,7 @@
     },
     {
       "title": "Where it stands now",
-      "text": "The websocket add-on is still in zap-extensions. The latest commit touching addOns/websocket is dated 2026-09-23 and is titled \"websocket: Support GSPM for passive scripts\". The add-on's history contains 231 commits.",
+      "text": "The websocket add-on is still in zap-extensions. The latest commit touching addOns/websocket is dated 2026-09-23 and is titled\"websocket: Support GSPM for passive scripts\". The add-on's history contains 231 commits.",
       "entities": [
         "addon:websocket"
       ],

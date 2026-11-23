@@ -8,7 +8,7 @@
   "chapters": [
     {
       "title": "The two entries",
-      "text": "The Student Hall of Fame lists Manos Kirtas twice: \"Scanning websockets (phase 1)\", GSoC, 2018 Summer, with a blog link, and \"Scanning websockets (phase 2)\", GSoC, 2019 Summer, with a blog and a wiki link. The 2019 wiki page names three goals: passive scanning (iss#5346), a WebSocket TreeMap (iss#5539) and active scanning (iss#4276). It describes passive scanning as delivered, the TreeMap as in progress and active scanning as not yet started in earnest. The phase 1 blog link is an archived page that could not be retrieved while preparing this story, so nothing here is taken from it.",
+      "text": "The Student Hall of Fame lists Manos Kirtas twice:\"Scanning websockets (phase 1)\", GSoC, 2018 Summer, with a blog link, and\"Scanning websockets (phase 2)\", GSoC, 2019 Summer, with a blog and a wiki link. The 2019 wiki page names three goals: passive scanning (iss#5346), a WebSocket TreeMap (iss#5539) and active scanning (iss#4276). It describes passive scanning as delivered, the TreeMap as in progress and active scanning as not yet started in earnest. The phase 1 blog link is an archived page that could not be retrieved while preparing this story, so nothing here is taken from it.",
       "entities": [
         "addon:websocket"
       ],
@@ -31,7 +31,7 @@
     },
     {
       "title": "2018: phase 1 commits",
-      "text": "Commits in zap-extensions by Manolis Kirtas and Manos Kirtas start with \"WebSocket regex & non-regex filter #1382 (#1506)\" (2018-04-27). Later subjects in 2018 include \"Websocket heartbeat messages are handled by WebSocket Proxy\" (2018-06-27), \"Websocket Test Utilities\" and \"Websocket Handshake Builder and Sender\" (both 2018-06-28), and \"Tests for ServerConnectionEstablisher and WebSocketProxy (#1738)\" (2018-07-31). The Handshake Builder commit adds HttpHandshakeBuilder.java and ServerConnectionEstablisher.java.",
+      "text": "Commits in zap-extensions by Manolis Kirtas and Manos Kirtas start with\"WebSocket regex & non-regex filter #1382 (#1506)\"(2018-04-27). Later subjects in 2018 include\"Websocket heartbeat messages are handled by WebSocket Proxy\"(2018-06-27),\"Websocket Test Utilities\"and\"Websocket Handshake Builder and Sender\"(both 2018-06-28), and\"Tests for ServerConnectionEstablisher and WebSocketProxy (#1738)\"(2018-07-31). The Handshake Builder commit adds HttpHandshakeBuilder.java and ServerConnectionEstablisher.java.",
       "entities": [
         "addon:websocket",
         "repo:zap-extensions"
@@ -48,7 +48,7 @@
     },
     {
       "title": "2019: relocation, then passive scan scripts",
-      "text": "\"websocket: relocate to its own project\" is dated 2019-04-03. The 2019 commits by Manos Kirtas carry a \"[WS-Passive-Scan]\" prefix, for example \"[WS-Passive-Scan] Infrastructure & Passive Script Plugin\" (2019-07-04) and \"[WS-Passive-Scan] Add Base64 disclosure script\" (2019-05-22), with ID commits such as \"Application Error: add id(110001) and name\" (2019-07-12). The add-on changelog entry [20], dated 2019-07-23, lists \"Add WebSocket passive scan infrastructure\", template scripts for Python and Javascript and eight default scripts (Base64, email, application error, private IP, credit card, username, debug error and suspicious XML comments disclosure). \"Release websocket v20\" is dated 2019-07-23.",
+      "text": "\"websocket: relocate to its own project\"is dated 2019-04-03. The 2019 commits by Manos Kirtas carry a\"[WS-Passive-Scan]\"prefix, for example\"[WS-Passive-Scan] Infrastructure & Passive Script Plugin\"(2019-07-04) and\"[WS-Passive-Scan] Add Base64 disclosure script\"(2019-05-22), with ID commits such as\"Application Error: add id(110001) and name\"(2019-07-12). The add-on changelog entry [20], dated 2019-07-23, lists\"Add WebSocket passive scan infrastructure\", template scripts for Python and Javascript and eight default scripts (Base64, email, application error, private IP, credit card, username, debug error and suspicious XML comments disclosure).\"Release websocket v20\"is dated 2019-07-23.",
       "entities": [
         "addon:websocket"
       ],
@@ -64,7 +64,7 @@
     },
     {
       "title": "September 2019: TreeMap infrastructure",
-      "text": "\"Add infrastructure for WebSocket Tree Map\" by Manos Kirtas is dated 2019-09-18 and adds WebSocketTreeMap.java and node classes under websocket/treemap. These files are still present under addOns/websocket at HEAD. The commits examined do not show an active-scan implementation for WebSockets.",
+      "text": "\"Add infrastructure for WebSocket Tree Map\"by Manos Kirtas is dated 2019-09-18 and adds WebSocketTreeMap.java and node classes under websocket/treemap. These files are still present under addOns/websocket at HEAD. The commits examined do not show an active-scan implementation for WebSockets.",
       "entities": [
         "addon:websocket"
       ],
@@ -76,7 +76,7 @@
     },
     {
       "title": "Where it stands",
-      "text": "The WebSockets add-on exists at HEAD with release status in the dataset; its changelog lists version 38 on 2026-08-07, and a commit dated 2026-09-23 is \"websocket: Support GSPM for passive scripts\".",
+      "text": "The WebSockets add-on exists at HEAD with release status in the dataset; its changelog lists version 38 on 2026-08-07, and a commit dated 2026-09-23 is\"websocket: Support GSPM for passive scripts\".",
       "entities": [
         "addon:websocket"
       ],

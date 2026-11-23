@@ -8,7 +8,7 @@
   "chapters": [
     {
       "title": "The domain and the first repositories, 2015",
-      "text": "The registry's RDAP record gives zaproxy.org a registration date of 2015-11-04. On GitHub, the zaproxy organisation's zap-swag repository (artwork for ZAP swag) was created on 2015-11-16 and zaproxy.github.io, described as \"ZAP Website\", on 2015-12-16.",
+      "text": "The registry's RDAP record gives zaproxy.org a registration date of 2015-11-04. On GitHub, the zaproxy organisation's zap-swag repository (artwork for ZAP swag) was created on 2015-11-16 and zaproxy.github.io, described as\"ZAP Website\", on 2015-12-16.",
       "evidence": [
         {
           "label": "zaproxy.org RDAP record (Public Interest Registry)",
@@ -26,7 +26,7 @@
     },
     {
       "title": "A Hugo site, 2016 and 2017",
-      "text": "The first commit in the zaproxy-website repository is dated 2016-07-03 and titled \"Basic setup - gulp + webpack + hugo\". The Internet Archive's earliest capture of www.zaproxy.org is from 2016-06-08. In 2017 the zaproxy logo notes record that the new logo was designed \"as part of the design of the new ZAP website\" (see the logo story).",
+      "text": "The first commit in the zaproxy-website repository is dated 2016-07-03 and titled\"Basic setup - gulp + webpack + hugo\". The Internet Archive's earliest capture of www.zaproxy.org is from 2016-06-08. In 2017 the zaproxy logo notes record that the new logo was designed\"as part of the design of the new ZAP website\"(see the logo story).",
       "commits": [
         "commit:zaproxy:ae4fac423b2e7fe28f996f0b31bc7f7744a8d4e6"
       ],
@@ -43,7 +43,7 @@
     },
     {
       "title": "January 2020: ZAP's files point at the new site",
-      "text": "On 2020-01-14 zap-extensions has \"Getting Started Guide - updated website links\", on 2020-01-15 zap-core-help has \"Update for new website\" (merged as pull request #293 from psiinon/new-website) and on 2020-01-16 zaproxy has \"Changed to use zaproxy.org\", the day before the ZAP 2.9.0 tag. GitHub shows the zaproxy-website repository as created on 2020-01-27, with the description \"The source of ZAP website\", homepage https://www.zaproxy.org and the MIT licence, although its first commit is from 2016.",
+      "text": "On 2020-01-14 zap-extensions has\"Getting Started Guide - updated website links\", on 2020-01-15 zap-core-help has\"Update for new website\"(merged as pull request #293 from psiinon/new-website) and on 2020-01-16 zaproxy has\"Changed to use zaproxy.org\", the day before the ZAP 2.9.0 tag. GitHub shows the zaproxy-website repository as created on 2020-01-27, with the description\"The source of ZAP website\", homepage https://www.zaproxy.org and the MIT licence, although its first commit is from 2016.",
       "commits": [
         "commit:zap-extensions:420679437ce81231c98ea2cd992128babfd9d3f8",
         "commit:zap-core-help:fbfb6189b3b0a58151b4915404abf0d01d121eeb",

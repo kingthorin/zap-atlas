@@ -8,7 +8,7 @@
   "chapters": [
     {
       "title": "The project and the first commits",
-      "text": "The Student Hall of Fame lists a CMS add-on (Abdelhadi Azouni) as a 2013 Summer GSoC project. The linked idea page calls the project \"ZAP CMSS\". In zap-extensions the cmss directory (org/zaproxy/zap/extension/cmss) first appears in four commits dated 2013-09-14, whose subject lines are empty and whose author names are email addresses, so they are cited by SHA only. This story does not claim the commits' author from the Hall of Fame entry.",
+      "text": "The Student Hall of Fame lists a CMS add-on (Abdelhadi Azouni) as a 2013 Summer GSoC project. The linked idea page calls the project\"ZAP CMSS\". In zap-extensions the cmss directory (org/zaproxy/zap/extension/cmss) first appears in four commits dated 2013-09-14, whose subject lines are empty and whose author names are email addresses, so they are cited by SHA only. This story does not claim the commits' author from the Hall of Fame entry.",
       "entities": [
         "repo:zap-extensions"
       ],
@@ -32,7 +32,7 @@
     },
     {
       "title": "2013 to 2018: build files and maintenance",
-      "text": "\"Updated build file for birtreport, cmss, jruby and wappalyser add-ons.\" is dated 2013-10-30. \"Issue 1113 - Change add-on dir structure (help and resources)\" is dated 2014-03-26, \"added tests for CMSSUtils#checksum(byte[])\" 2014-05-02, and \"cmss: remove unnecessary call to finalize\" 2018-06-29.",
+      "text": "\"Updated build file for birtreport, cmss, jruby and wappalyser add-ons.\"is dated 2013-10-30.\"Issue 1113 - Change add-on dir structure (help and resources)\"is dated 2014-03-26,\"added tests for CMSSUtils#checksum(byte[])\"2014-05-02, and\"cmss: remove unnecessary call to finalize\"2018-06-29.",
       "entities": [
         "repo:zap-extensions"
       ],
@@ -52,7 +52,7 @@
     },
     {
       "title": "2019 to 2020: relocated, then removed",
-      "text": "\"cmss: remove unused extension\" is dated 2019-03-22 and \"cmss: relocate to its own project\" 2019-04-03. On 2020-12-16 a commit titled \"wafp: Remove\" is dated; its message body reads \"Remove the wafp (cmss) project.\" There is no cmss add-on in the current dataset or tree.",
+      "text": "\"cmss: remove unused extension\"is dated 2019-03-22 and\"cmss: relocate to its own project\"2019-04-03. On 2020-12-16 a commit titled\"wafp: Remove\"is dated; its message body reads\"Remove the wafp (cmss) project.\"There is no cmss add-on in the current dataset or tree.",
       "entities": [
         "repo:zap-extensions"
       ],
