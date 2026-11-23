@@ -8,13 +8,16 @@ exist in the dataset) is checked by ``atlas validate``.
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 
 from atlas.schema import Story, story_id
 from dataclasses import asdict
 
-_REQUIRED = ("title", "description", "audience", "status", "chapters")
+_REQUIRED = ("title", "description", "audience", "group", "date", "status", "chapters")
 STATUSES = ("draft", "reviewed")
+GROUPS = ("projects", "features", "history")
+_DATE = re.compile(r"^\d{4}(-\d{2}(-\d{2})?)?$")  # YYYY, YYYY-MM or YYYY-MM-DD
 
 
 def load_stories(stories_dir: Path) -> list[dict]:
@@ -29,6 +32,10 @@ def load_stories(stories_dir: Path) -> list[dict]:
             raise ValueError(f"{path.name}: missing {', '.join(missing)}")
         if raw["status"] not in STATUSES:
             raise ValueError(f"{path.name}: status must be one of {STATUSES}")
+        if raw["group"] not in GROUPS:
+            raise ValueError(f"{path.name}: group must be one of {GROUPS}")
+        if not _DATE.match(str(raw["date"])):
+            raise ValueError(f"{path.name}: date must be YYYY, YYYY-MM or YYYY-MM-DD")
         if not raw["chapters"]:
             raise ValueError(f"{path.name}: a story needs at least one chapter")
 
@@ -43,10 +50,11 @@ def load_stories(stories_dir: Path) -> list[dict]:
         story = Story(
             id=story_id(path.stem), title=raw["title"], description=raw["description"],
             audience=raw["audience"], chapters=raw["chapters"],
-            entities=union("entities"), commits=union("commits"), documents=union("documents"),
+            entities=union("entities"), commits=union("commits"), documents=union("documents"), milestones=union("milestones"),
             evidence=sorted({e["url"] for ch in raw["chapters"] for e in ch.get("evidence", [])}),
         )
         row = asdict(story)
         row["status"] = raw["status"]
+        row["group"], row["date"] = raw["group"], str(raw["date"])
         rows.append(row)
     return rows

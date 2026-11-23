@@ -88,6 +88,10 @@ def branch_id(repo: str, name: str) -> str:
     return f"branch:{repo}:{name}"
 
 
+def milestone_id(repo: str, tag: str) -> str:
+    return f"milestone:{repo}:{tag}"
+
+
 def tag_id(repo: str, name: str) -> str:
     return f"tag:{repo}:{name}"
 
@@ -244,6 +248,11 @@ class Milestone:
     description: str = ""
     date: str = ""
     commits: list[str] = field(default_factory=list)
+    kind: str = ""                 # core-release | addon-release | extensions-release
+    version: str = ""
+    tag: str = ""
+    addon: str | None = None       # addon id, for add-on releases
+    release_notes: str | None = None  # help page id, for core releases
 
 
 @dataclass
@@ -252,10 +261,13 @@ class Story:
     title: str
     description: str
     audience: str = ""
+    group: str = ""
+    date: str = ""
     chapters: list[dict] = field(default_factory=list)
     entities: list[str] = field(default_factory=list)
     commits: list[str] = field(default_factory=list)
     documents: list[str] = field(default_factory=list)
+    milestones: list[str] = field(default_factory=list)
     evidence: list[str] = field(default_factory=list)
 
 

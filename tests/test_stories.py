@@ -7,7 +7,7 @@ from atlas.stories import load_stories
 from atlas.validate import validate_dataset
 
 GOOD = {
-    "title": "T", "description": "D", "audience": "developers", "status": "draft",
+    "title": "T", "description": "D", "audience": "developers", "group": "history", "date": "2019-04", "status": "draft",
     "chapters": [
         {"title": "c1", "text": "x", "commits": ["commit:r:a"], "entities": ["repo:r"],
          "evidence": [{"label": "L", "url": "https://example.org/p"}]},
@@ -28,10 +28,12 @@ def test_loader_builds_row_with_unions(tmp_path):
     assert row["id"] == "story:atlas:s" and row["status"] == "draft"
     assert row["commits"] == ["commit:r:a"] and row["entities"] == ["repo:r"]
     assert row["evidence"] == ["https://example.org/p"]
+    assert (row["group"], row["date"]) == ("history", "2019-04")
 
 
 @pytest.mark.parametrize("over,msg", [
-    ({"status": "final"}, "status"), ({"chapters": []}, "chapter"), ({"title": None}, None)])
+    ({"status": "final"}, "status"), ({"chapters": []}, "chapter"), ({"title": None}, None),
+    ({"group": "misc"}, "group"), ({"date": "June 2019"}, "date")])
 def test_loader_rejects_bad_stories(tmp_path, over, msg):
     d = _story(tmp_path, **{k: v for k, v in over.items() if v is not None})
     if over.get("title", 1) is None:
@@ -75,3 +77,21 @@ def test_repo_stories_are_well_formed():
     rows = load_stories(Path(__file__).parent.parent / "stories")
     assert rows and all(r["status"] in ("draft", "reviewed") for r in rows)
     assert not any("OWASP ZAP" in json.dumps(r) for r in rows)
+
+
+def test_story_can_cite_milestones(tmp_path):
+    d = tmp_path / "stories"; d.mkdir()
+    (d / "m.json").write_text(json.dumps({**{"title": "T", "description": "D", "audience": "community", "group": "history", "date": "2023", "status": "draft"},
+        "chapters": [{"title": "c", "text": "x", "milestones": ["milestone:zaproxy:2.8.0"]}]}))
+    (row,) = load_stories(d)
+    assert row["milestones"] == ["milestone:zaproxy:2.8.0"]
+    ds = tmp_path / "ds"; ds.mkdir(); _dataset(ds, row)
+    assert validate_dataset(ds) is False  # milestone not in dataset
+    (ds / "milestones.jsonl").write_text(json.dumps({"id": "milestone:zaproxy:2.8.0", "commits": ["commit:r:a"]}) + "\n")
+    assert validate_dataset(ds) is True
+
+
+def test_repo_stories_have_group_and_date_and_dates_sort_within_groups():
+    rows = load_stories(Path(__file__).parent.parent / "stories")
+    assert {r["group"] for r in rows} == {"projects", "features", "history"}
+    assert all(len(r["date"]) in (4, 7, 10) for r in rows)

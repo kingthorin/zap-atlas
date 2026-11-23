@@ -39,6 +39,9 @@ def build_search_index(dataset: Path) -> list[str]:
     for d in _rows(dataset, "docs.jsonl"):
         eco.append({"k": "doc", "i": d["id"], "t": d["title"],
                     "x": " ".join(d.get("headings", [])[1:] + d.get("anchors", []))})
+    for m in _rows(dataset, "milestones.jsonl"):
+        if m["kind"] == "core-release":
+            eco.append({"k": "release", "i": m["id"], "t": m["title"], "x": f'{m["version"]} {m["tag"]} {m["date"][:10]}'})
     for s in _rows(dataset, "stories.jsonl"):
         eco.append({"k": "story", "i": s["id"], "t": s["title"], "x": s.get("description", "")})
 

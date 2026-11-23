@@ -17,11 +17,12 @@ from atlas.call_resolution import resolve_call_sites
 from atlas.ecosystem import discover_ecosystem
 from atlas.git_history import extract as extract_history
 from atlas.languages import count_languages
+from atlas.milestones import build_milestones
 from atlas.stories import load_stories
 from atlas.java_parser import JavaParser
 from atlas.schema import (
     SCHEMA_VERSION, GENERATOR_VERSION, Manifest, DatasetInventory,
-    Repository, Module, AddOn, Commit, Branch, Tag, Contributor,
+    Repository, Module, AddOn, Commit, Branch, Tag, Contributor, Relationship,
     repo_id, module_id, addon_id, commit_id, branch_id, tag_id,
     contributor_id, doc_id, story_id,
 )
@@ -38,6 +39,7 @@ CHUNK_RELS = "relationships.jsonl"
 CHUNK_DOCS = "docs.jsonl"
 CHUNK_STORIES = "stories.jsonl"
 CHUNK_LANGS = "languages.jsonl"
+CHUNK_MILESTONES = "milestones.jsonl"
 
 
 def _sha256_file(path: Path) -> str:
@@ -63,13 +65,14 @@ class AtlasGenerator:
         self.config = config
         self.ecosystem_coverage: dict[str, dict] = {}
         self.java_coverage: dict = {}
+        self.milestone_coverage: dict[str, dict] = {}
         self.java_types: dict = {}       # qualified type name -> info, across all repos
         self.call_sites: list = []
         self.java_parser = JavaParser()
         self.rows: dict[str, list[dict]] = {
             CHUNK_REPOS: [], CHUNK_COMMITS: [], CHUNK_MODULES: [],
             CHUNK_ADDONS: [], CHUNK_FILES: [], CHUNK_SYMBOLS: [],
-            CHUNK_RELS: [], CHUNK_DOCS: [], CHUNK_STORIES: [], CHUNK_LANGS: [],
+            CHUNK_RELS: [], CHUNK_DOCS: [], CHUNK_STORIES: [], CHUNK_LANGS: [], CHUNK_MILESTONES: [],
             "branches.jsonl": [], "tags.jsonl": [], "contributors.jsonl": [],
         }
 
@@ -86,6 +89,7 @@ class AtlasGenerator:
 
         self._resolve_cross_file()
         self._resolve_calls_and_api()
+        self._link_milestones()
         chunk_names = self._write_history_shards(output_dir)
         chunk_names += self._write_repo_shards(output_dir, CHUNK_SYMBOLS, "symbols")
         chunk_names += self._write_repo_shards(output_dir, CHUNK_RELS, "relationships")
@@ -140,6 +144,10 @@ class AtlasGenerator:
 
         history = extract_history(repo_path, repo.name)
         self._attach_doc_history(repo.name, history)
+        names = {a["id"].removeprefix("addon:"): a["name"] for a in eco.addons}
+        ms, ms_cov = build_milestones(repo.name, repo_path, set(history.commits), names)
+        self.rows[CHUNK_MILESTONES] += ms
+        self.milestone_coverage[repo.name] = ms_cov
         for c in history.commits.values():
             self.rows[CHUNK_COMMITS].append(Commit(
                 id=commit_id(repo.name, c.sha), repository=repo.name, sha=c.sha,
@@ -256,6 +264,23 @@ class AtlasGenerator:
         self.rows[CHUNK_RELS] += api
         self.java_coverage["uses_api_edges"] = len(api)
 
+    def _link_milestones(self) -> None:
+        """Release-notes pages for core releases, and PART_OF edges from add-on releases to their add-on."""
+        docs = {d["id"] for d in self.rows[CHUNK_DOCS]}
+        for m in self.rows[CHUNK_MILESTONES]:
+            if m["kind"] == "core-release":
+                path = f"addOns/help/src/main/javahelp/contents/releases/{m['version']}.html"
+                did = f"doc:zap-core-help:{path}"
+                if did in docs:
+                    m["release_notes"] = did
+                    self.rows[CHUNK_RELS].append(asdict(Relationship(
+                        source=did, target=m["id"], type="DOCUMENTS", repository="zap-core-help",
+                        evidence_type="resolved", source_file=path)))
+            elif m["kind"] == "addon-release" and m["addon"]:
+                self.rows[CHUNK_RELS].append(asdict(Relationship(
+                    source=m["id"], target=m["addon"], type="PART_OF", repository=m["repository"],
+                    evidence_type="resolved")))
+
     def _resolve_cross_file(self) -> None:
         """Point IMPORTS/EXTENDS/IMPLEMENTS at declared types (any repo) by qualified name."""
         types = {"class", "interface", "enum", "record", "annotation_type"}
@@ -298,7 +323,8 @@ class AtlasGenerator:
             coverage={"note": "Modules, add-ons and help reflect current structure at the checked-out HEAD only; "
                       "help is English only; older (Ant-era) layouts are not parsed.",
                       "ecosystem": self.ecosystem_coverage,
-                      "java": self.java_coverage},
+                      "java": self.java_coverage,
+                      "milestones": self.milestone_coverage},
             chunks=chunk_names,
         )
 
