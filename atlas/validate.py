@@ -96,6 +96,13 @@ def validate_dataset(dataset: Path) -> bool:
         if not src.get("sha"):
             errors.append(f"source {src.get('name')} missing sha")
 
+    # Deeper checks apply to real datasets, which record an inventory of their files.
+    if "inventory" in manifest:
+        from atlas.integrity import check_integrity, story_warnings
+        errors += check_integrity(dataset, manifest, all_rows)
+        for w in story_warnings(all_rows):
+            print(f"[validate] warning: {w}")
+
     if errors:
         print(f"[validate] FAILED with {len(errors)} error(s):")
         for e in errors[:50]:

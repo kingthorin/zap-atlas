@@ -31,7 +31,7 @@ differs, and what is planned next. Update it with each change that moves an item
 - Repository landscape (repo, module, package, file hierarchy with size and activity).
 - Source explorer file page with file history.
 - Architecture graph with drill-down (the current explorer is tables).
-- Validation: manifest hashes, paths, source-revision references, schema compatibility, pinned GitHub URLs.
+- Validation: done in `atlas/integrity.py` (manifest hashes and sizes, unlisted files, schema version and required fields, pinned 40-character SHAs and revision references, relative paths, shard indexes against shard files, story text artefacts). Open: stricter per-field types, and checking quoted text against CHANGELOGs and source files (only commit subjects can be checked from the dataset, and that is a warning).
 - `atlas inspect` and `atlas history` commands (stubs today).
 - Accessibility audit: first pass done. axe (WCAG 2.1 A and AA) passes on 15 pages in both themes, and no page scrolls sideways at 390 px (both run in `e2e/audit.spec.ts`). Not covered: a keyboard-only walkthrough, screen reader testing, and contrast of the graph canvas labels in dark mode.
 - Licence file and attribution notices for the Atlas repository.
