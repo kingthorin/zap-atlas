@@ -2,6 +2,8 @@
   "title": "The Params feature: from core to an add-on",
   "description": "How the Params tab and extension is recorded in the zaproxy and zap-extensions histories: introduced in core in 2011 and migrated to the params add-on from 2025.",
   "audience": "developers",
+  "group": "features",
+  "date": "2011-10-29",
   "status": "draft",
   "chapters": [
     {

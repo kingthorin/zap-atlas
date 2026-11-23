@@ -2,6 +2,8 @@
   "title": "The DOM XSS scanner (2015, directly mentored)",
   "description": "The DOM XSS Scanner entry in the Student Hall of Fame and the history of the domxss add-on in zap-extensions.",
   "audience": "community",
+  "group": "projects",
+  "date": "2015-06",
   "status": "draft",
   "chapters": [
     {

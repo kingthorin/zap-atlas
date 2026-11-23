@@ -2,36 +2,60 @@
   "title": "Form handling (Ryan Wehe, Christopher Laguna, Rian Franey, Mozilla Winter of Security)",
   "description": "A team project that let users define the values the spider puts into forms: core changes in March 2017, an add-on the same month, and its later rename to Value Generator.",
   "audience": "community",
+  "group": "projects",
+  "date": "2016",
   "status": "draft",
   "chapters": [
     {
       "title": "The project",
       "text": "The Student Hall of Fame lists Ryan Wehe, Christopher Laguna and Rian Franey for \"Form handling (team project)\", MWoS, 2016 Winter, with a link to the Mozilla wiki. The wiki page says the three were Arizona State University students working on a senior capstone project, that it aimed to let users \"define default values based on pattern matching\" for spider-filled forms, and that the first pull request was merged into ZAP 2.6 while a second, an add-on in zap-extensions, was in progress when the page was last edited on March 9, 2017.",
-      "entities": ["repo:zaproxy", "repo:zap-extensions"],
+      "entities": [
+        "repo:zaproxy",
+        "repo:zap-extensions"
+      ],
       "commits": [],
       "documents": [],
       "evidence": [
-        {"label": "ZAP Student Hall of Fame", "url": "https://www.zaproxy.org/student-hall-of-fame/"},
-        {"label": "Mozilla Winter of Security 2016: ZAP Form Handling", "url": "https://wiki.mozilla.org/Security/Automation/Winter_Of_Security_2016/ZAP_Form_Handling"}
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        },
+        {
+          "label": "Mozilla Winter of Security 2016: ZAP Form Handling",
+          "url": "https://wiki.mozilla.org/Security/Automation/Winter_Of_Security_2016/ZAP_Form_Handling"
+        }
+      ],
+      "milestones": [
+        "milestone:zaproxy:2.6.0"
       ]
     },
     {
       "title": "March 2017: core interface, then the add-on",
       "text": "In zaproxy, a commit by Ryan Wehe dated 2017-03-05 is \"Create ValueGenerator and DefaultValueGenerator\". In zap-extensions, a commit by Ryan Wehe dated 2017-03-22 is \"Form Handler Extension This extension will allow the user to custom define values used by the Value Generator for the Spider.\" Its file list includes ExtensionFormHandler.java, FormHandlerParam.java, FormHandlerValueGenerator.java, an options panel and add/modify field dialogs, and a help page FormHandlerHelp.html.",
-      "entities": ["addon:formhandler", "repo:zaproxy"],
+      "entities": [
+        "addon:formhandler",
+        "repo:zaproxy"
+      ],
       "commits": [
         "commit:zaproxy:70927f58954df26772a3555c0a6e179a61deaa49",
         "commit:zap-extensions:cda47a6f5405971f628ede33a7e471935e647430"
       ],
-      "documents": ["doc:zap-extensions:addOns/formhandler/src/main/javahelp/org/zaproxy/zap/extension/formhandler/resources/help/contents/FormHandlerHelp.html"],
+      "documents": [
+        "doc:zap-extensions:addOns/formhandler/src/main/javahelp/org/zaproxy/zap/extension/formhandler/resources/help/contents/FormHandlerHelp.html"
+      ],
       "evidence": [
-        {"label": "Mozilla Winter of Security 2016: ZAP Form Handling", "url": "https://wiki.mozilla.org/Security/Automation/Winter_Of_Security_2016/ZAP_Form_Handling"}
+        {
+          "label": "Mozilla Winter of Security 2016: ZAP Form Handling",
+          "url": "https://wiki.mozilla.org/Security/Automation/Winter_Of_Security_2016/ZAP_Form_Handling"
+        }
       ]
     },
     {
       "title": "2018 to 2020: params tab, its own project, beta",
       "text": "\"Formhandler Params Tab Integration (#1855)\" is dated 2018-10-26. On 2019-04-03 the commit \"formhandler: relocate to its own project\" moves it out of the monolithic tree. \"Form handler: promote to beta\" is dated 2020-10-27.",
-      "entities": ["addon:formhandler"],
+      "entities": [
+        "addon:formhandler"
+      ],
       "commits": [
         "commit:zap-extensions:3ac7e9188b1b99490f26280688833d7992421efe",
         "commit:zap-extensions:0774851284dc54afb5a6c62f7c5e47ef43ce9b24",
@@ -43,7 +67,11 @@
     {
       "title": "2022 to 2024: exposing the generator and leaving core",
       "text": "Commits in zap-extensions include \"formhandler: expose value generator\" (2022-08-17), \"formhandler: remove core spider usage\" (2022-10-14), \"formhandler: Allow fields to be matched via regex\" (2023-02-26) and \"formhandler: Add more default (datafaker generated) values\" (2023-03-17). \"formhandler: Renamed \\\"Value Generator\\\"\" is dated 2023-05-26, and the changelog for 6.3.0 (2023-06-02) says it was renamed to \"Value Generator\" to more clearly identify what the add-on does. In zaproxy, \"Deprecate `ValueGenerator`\" is dated 2024-07-30. In zap-extensions, \"Move `ValueGenerator` from core and rename it\" (2024-11-13) adds DefaultValueProvider.java and ValueProvider.java under addOns/commonlib.",
-      "entities": ["addon:formhandler", "addon:commonlib", "repo:zaproxy"],
+      "entities": [
+        "addon:formhandler",
+        "addon:commonlib",
+        "repo:zaproxy"
+      ],
       "commits": [
         "commit:zap-extensions:2b55ecbc5e20b98f5bae7432e0a082b7092856c7",
         "commit:zap-extensions:9fb8e5cee702554d9f9ef5afe34e087bf6e875ad",
@@ -59,11 +87,16 @@
     {
       "title": "Where it stands",
       "text": "The add-on still exists at HEAD under addOns/formhandler; the dataset names it \"Value Generator\" with status beta. Its changelog lists 6.9.0 (2026-10-08) as \"Now depends on the params add-on (Issue 9210).\"",
-      "entities": ["addon:formhandler"],
+      "entities": [
+        "addon:formhandler"
+      ],
       "commits": [],
       "documents": [],
       "evidence": [
-        {"label": "Value Generator add-on page", "url": "https://www.zaproxy.org/docs/desktop/addons/value-generator/"}
+        {
+          "label": "Value Generator add-on page",
+          "url": "https://www.zaproxy.org/docs/desktop/addons/value-generator/"
+        }
       ]
     }
   ]

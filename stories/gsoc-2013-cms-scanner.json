@@ -2,6 +2,8 @@
   "title": "The CMS add-on (GSoC 2013): cmss in zap-extensions",
   "description": "The 2013 CMS add-on in the Student Hall of Fame and the cmss add-on in zap-extensions, from September 2013 to its removal in 2020.",
   "audience": "community",
+  "group": "projects",
+  "date": "2013-06",
   "status": "draft",
   "chapters": [
     {

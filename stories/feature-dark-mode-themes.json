@@ -2,6 +2,8 @@
   "title": "Look and feel, FlatLaf and dark mode",
   "description": "How look-and-feel selection and dark mode appear in the zaproxy history: selectable look and feel in 2018, the FlatLaf dependency in 2020, dynamic switching, and later fixes.",
   "audience": "community",
+  "group": "features",
+  "date": "2016-11-02",
   "status": "draft",
   "chapters": [
     {
@@ -68,6 +70,9 @@
           "label": "ZAP 2.10.0 release notes",
           "url": "https://www.zaproxy.org/docs/desktop/releases/2.10.0/"
         }
+      ],
+      "milestones": [
+        "milestone:zaproxy:v2.10.0"
       ]
     },
     {

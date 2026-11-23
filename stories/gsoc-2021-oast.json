@@ -2,23 +2,35 @@
   "title": "Out-of-band testing, OAST (Akshath Kothari, 2021 GSoC)",
   "description": "The OAST add-on from its first commit in June 2021 through BOAST, Interactsh and its use by scan rules, with the matching change in ZAP core.",
   "audience": "community",
+  "group": "projects",
+  "date": "2021-06",
   "status": "draft",
   "chapters": [
     {
       "title": "The Hall of Fame entry and the launch post",
       "text": "The Student Hall of Fame lists Akshath Kothari for \"Out-of-band Application Security Testing\", GSoC, 2021 Summer, with blog and add-on links. The blog post, dated 2021-08-23, says the OAST add-on lets ZAP communicate with out-of-band testing services, \"currently supports two services: BOAST and Callbacks\", and notes that Callbacks was previously part of ZAP core. The URL of that post contains \"owasp-zap\"; that is only its address.",
-      "entities": ["addon:oast"],
+      "entities": [
+        "addon:oast"
+      ],
       "commits": [],
       "documents": [],
       "evidence": [
-        {"label": "ZAP Student Hall of Fame", "url": "https://www.zaproxy.org/student-hall-of-fame/"},
-        {"label": "OAST blog post (2021-08-23)", "url": "https://www.zaproxy.org/blog/2021-08-23-oast-with-owasp-zap/"}
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        },
+        {
+          "label": "OAST blog post (2021-08-23)",
+          "url": "https://www.zaproxy.org/blog/2021-08-23-oast-with-owasp-zap/"
+        }
       ]
     },
     {
       "title": "June to August 2021: first commit to first releases",
       "text": "The earliest commit under addOns/oast is \"oast: Initial commit\" by ricekot, dated 2021-06-18; \"oast: First Version\" is dated 2021-07-14 (git date order is not strictly the order of the log). The changelog lists 0.1.0 and 0.1.1 on 2021-08-04 and 0.2.0 on 2021-08-17, which adds polling frequency for BOAST servers, a table of payloads and canary values, and two example scripts. \"oast: Release add-on\" is dated 2021-08-19.",
-      "entities": ["addon:oast"],
+      "entities": [
+        "addon:oast"
+      ],
       "commits": [
         "commit:zap-extensions:9969f9fe51c5b09c93e6e2c2f81ddb493abe0096",
         "commit:zap-extensions:843ed2ce7b1d411921e6fec1c77555459c23a65b",
@@ -31,7 +43,12 @@
     {
       "title": "After the blog post: Interactsh and a core deprecation",
       "text": "\"oast: Add \\\"Poll Now\\\" button\" is dated 2021-08-25 and \"oast: Support interactsh\" 2021-08-29, merged on 2021-09-22. In zaproxy, \"Deprecate extension callback\" by Akshath Kothari is dated 2021-09-23. In zap-extensions, \"oast, ascanrulesBeta: Remove usages of CallbackImplementor\" is dated 2021-12-06. In the dataset, addon:ascanrules and addon:ascanrulesBeta both list addon:oast as a dependency.",
-      "entities": ["addon:oast", "addon:ascanrules", "addon:ascanrulesBeta", "repo:zaproxy"],
+      "entities": [
+        "addon:oast",
+        "addon:ascanrules",
+        "addon:ascanrulesBeta",
+        "repo:zaproxy"
+      ],
       "commits": [
         "commit:zap-extensions:287adc5aecf6059ffc1f1d5e0bcbc7d6a589c021",
         "commit:zap-extensions:61ca54d4d031d9a57c9e84eff6f8b118d850eae4",
@@ -45,7 +62,9 @@
     {
       "title": "2022 onward: other contributors and maintenance",
       "text": "Later commits include \"oast: use server provided by the Network add-on\" (2022-01-31), \"oast: Add statistics\" (2022-02-18), \"chore: OAST: Help document default services\" (2022-05-18), \"oast: stop polling on shutdown\" (2025-10-07) and \"oast: generate Interactsh identifiers using native alphabets\" (2026-10-10). The changelog lists 0.26.0 on 2026-09-16 and the dataset gives the add-on beta status, so it still exists at HEAD.",
-      "entities": ["addon:oast"],
+      "entities": [
+        "addon:oast"
+      ],
       "commits": [
         "commit:zap-extensions:3923278155d5584bb0a78181d8d6c7f9c61906c3",
         "commit:zap-extensions:b316b9e4ac2cb3207720fd9b7bfdf2dc5e5634da",
@@ -55,7 +74,10 @@
       ],
       "documents": [],
       "evidence": [
-        {"label": "OAST Support add-on page", "url": "https://www.zaproxy.org/docs/desktop/addons/oast-support/"}
+        {
+          "label": "OAST Support add-on page",
+          "url": "https://www.zaproxy.org/docs/desktop/addons/oast-support/"
+        }
       ]
     }
   ]

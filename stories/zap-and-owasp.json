@@ -2,17 +2,29 @@
   "title": "ZAP, OWASP and Checkmarx",
   "description": "What the ZAP project's own pages say about leaving OWASP in 2023 and about current ownership.",
   "audience": "community",
+  "group": "history",
+  "date": "2023-08",
   "status": "draft",
   "chapters": [
     {
       "title": "No longer an OWASP project",
       "text": "The ZAP project states that \"ZAP is no longer an OWASP project, and has not been one since August 2023\", and that the correct name is \"ZAP\" or \"ZAP by Checkmarx\".",
-      "evidence": [{"label": "ZAP: no longer an OWASP project", "url": "https://www.zaproxy.org/docs/nowaspzap/"}]
+      "evidence": [
+        {
+          "label": "ZAP: no longer an OWASP project",
+          "url": "https://www.zaproxy.org/docs/nowaspzap/"
+        }
+      ]
     },
     {
       "title": "Who runs ZAP now",
       "text": "The ownership page describes ZAP as \"an independent Open Source project controlled by the ZAP Core Team and supported by Checkmarx\". It links a post titled \"ZAP Has Joined Forces With Checkmarx\" (URL dated 2024-09-24).",
-      "evidence": [{"label": "ZAP ownership", "url": "https://www.zaproxy.org/docs/zap-ownership/"}]
+      "evidence": [
+        {
+          "label": "ZAP ownership",
+          "url": "https://www.zaproxy.org/docs/zap-ownership/"
+        }
+      ]
     }
   ]
 }

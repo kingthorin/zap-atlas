@@ -2,6 +2,8 @@
   "title": "From Ant to Gradle across ZAP's repositories",
   "description": "How the zaproxy, zap-extensions and zap-core-help builds moved from Ant to Gradle in 2019, as recorded in the repository history.",
   "audience": "developers",
+  "group": "history",
+  "date": "2010-09-04",
   "status": "draft",
   "chapters": [
     {
@@ -19,6 +21,9 @@
       "text": "On 2016-07-21 a commit titled \"Add Gradle tasks to build/publish zap-2.5.0.jar\" adds build.gradle. The Ant build file is still present at that point.",
       "commits": [
         "commit:zaproxy:f1f21050fb878fbe937e46c16acf0b13530f7b77"
+      ],
+      "milestones": [
+        "milestone:zaproxy:2.5.0"
       ]
     },
     {

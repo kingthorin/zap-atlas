@@ -2,12 +2,16 @@
   "title": "Import/Export: exim and the add-ons it superseded",
   "description": "From the 2014 importurls and importLogFiles add-ons, through the exim add-on that began in April 2021, to its HAR, URL, log, PCAP and Automation Framework features.",
   "audience": "developers",
+  "group": "features",
+  "date": "2014-03-07",
   "status": "draft",
   "chapters": [
     {
       "title": "Import add-ons from 2014",
       "text": "The zap-extensions commit \"Added import URLs add-on\" is dated 2014-03-07. \"Issue 432 - Import ModSecurity logs\" is dated 2014-09-01 and is the first commit touching the importLogFiles code. On 2019-04-03 commits titled \"importurls: relocate to its own project\" and \"importLogFiles: relocate to its own project\" move both into their own Gradle projects.",
-      "entities": ["repo:zap-extensions"],
+      "entities": [
+        "repo:zap-extensions"
+      ],
       "commits": [
         "commit:zap-extensions:fa4441c7a7d97ea6929f7155fc8e18005f64de4a",
         "commit:zap-extensions:faf891b8af00817777e5d325baa5d1900d9889aa",
@@ -18,7 +22,10 @@
     {
       "title": "exim begins on 2021-04-09",
       "text": "The commit \"exim: Initial Addition\" (2021-04-09) has the body \"Initial add-on with migration of saveraw and savexml.\" It adds PopupMenuSaveRawMessage and PopupMenuSaveXmlMessage. \"exim: Add HAR functionality\" follows on 2021-04-19.",
-      "entities": ["addon:exim", "module:zap-extensions:addOns/exim"],
+      "entities": [
+        "addon:exim",
+        "module:zap-extensions:addOns/exim"
+      ],
       "commits": [
         "commit:zap-extensions:462790650eae082c85ff52eb77ff41292043b689",
         "commit:zap-extensions:03c816015082d97b23f457a779c301202ba0bb4f"
@@ -27,20 +34,28 @@
     {
       "title": "URLs and logs imported, old add-ons removed",
       "text": "\"improve:exim: Add importUrls functionality\" (2021-09-27) and \"improve:exim: Add importLogs functionality\" (2021-09-29) add the URL and log importers to exim. The CHANGELOG lists 0.0.1 (2021-12-22) as \"First release.\" On 2022-02-26 the commit \"chore: Remove superseded import and save add-ons\" removes importLogFiles, importurls and two save add-ons; its body reads \"Remove importLogFIles, importurls, saverawmesave, and savexmlmessage which have been superseded by exim. (Related to issue 6579)\"",
-      "entities": ["addon:exim"],
+      "entities": [
+        "addon:exim"
+      ],
       "commits": [
         "commit:zap-extensions:60a313c9013930501883629cc8d90c4fc376412c",
         "commit:zap-extensions:00f8548313727ccdcf54142759b28aa90a97ed26",
         "commit:zap-extensions:9fb694e7c75a039834f20269dd58b803ccbbee85"
       ],
       "evidence": [
-        {"label": "exim CHANGELOG.md", "url": "https://github.com/zaproxy/zap-extensions/blob/main/addOns/exim/CHANGELOG.md"}
+        {
+          "label": "exim CHANGELOG.md",
+          "url": "https://github.com/zaproxy/zap-extensions/blob/main/addOns/exim/CHANGELOG.md"
+        }
       ]
     },
     {
       "title": "Core export items and HAR endpoints are deprecated",
       "text": "In zaproxy, \"Deprecate and remove use of URL Export menu items being moved to exim\" (2022-05-12) says PopupMenuExportContextURLs, PopupMenuExportSelectedURLs, PopupMenuExportURLs and PopupMenuCopyUrls are deprecated. \"deprecate: Core HAR API Endpoints\" is dated 2022-08-23, and the exim CHANGELOG for 0.3.0 (2022-10-27) lists \"HAR related API endpoints being migrated from core (Issue 6579).\" \"Deprecate `HarUtils`\" (2024-12-06) says \"Discourage the use of `HarUtils` by 3rd-party add-ons.\"",
-      "entities": ["repo:zaproxy", "addon:exim"],
+      "entities": [
+        "repo:zaproxy",
+        "addon:exim"
+      ],
       "commits": [
         "commit:zaproxy:d6d4de944a30ae6c8c17528cd642515f0dd4e1de",
         "commit:zaproxy:09541505dbc8a179f5cd673896668266b85fb24d",
@@ -50,21 +65,32 @@
     {
       "title": "Automation Framework, PCAP and plugable formats",
       "text": "The commit \"Added support for Automation Framework (with GUI)\" is dated 2022-02-26, and the 0.1.0 CHANGELOG entry (2022-03-07) lists \"Automation Framework (Issue 7078)\" and \"Promoted to Beta.\" 0.9.0 (2024-05-07) lists \"Initial PCAP import support (Issue 4812).\" The commit \"exim: Pcap import - simplest HTTP/1.1 case (#5608)\" is dated 2024-09-20. 0.13.0 (2025-01-09) lists \"Add Automation Framework job to export data (e.g. HAR, URLs).\" and \"Support for Sites Tree export and prune.\" 0.18.0 (2026-03-31) lists \"Support for plugable exporters and importers.\"",
-      "entities": ["addon:exim", "addon:automation"],
+      "entities": [
+        "addon:exim",
+        "addon:automation"
+      ],
       "commits": [
         "commit:zap-extensions:8f6e79a85a8995739cc48ce1493b4716eb289f8d",
         "commit:zap-extensions:301a666fdaad9c5d83fe190b86cd239dfdaa0f37"
       ],
       "evidence": [
-        {"label": "exim CHANGELOG.md", "url": "https://github.com/zaproxy/zap-extensions/blob/main/addOns/exim/CHANGELOG.md"}
+        {
+          "label": "exim CHANGELOG.md",
+          "url": "https://github.com/zaproxy/zap-extensions/blob/main/addOns/exim/CHANGELOG.md"
+        }
       ]
     },
     {
       "title": "State at HEAD",
       "text": "The newest release in the CHANGELOG is 0.22.0 (2026-08-12), which lists \"Option to send requests when importing a HAR file, including via the Automation Framework and API.\" The dataset lists the add-on as beta.",
-      "entities": ["addon:exim"],
+      "entities": [
+        "addon:exim"
+      ],
       "evidence": [
-        {"label": "Import/Export add-on page", "url": "https://www.zaproxy.org/docs/desktop/addons/import-export/"}
+        {
+          "label": "Import/Export add-on page",
+          "url": "https://www.zaproxy.org/docs/desktop/addons/import-export/"
+        }
       ]
     }
   ]

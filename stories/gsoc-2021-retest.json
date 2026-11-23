@@ -2,23 +2,36 @@
   "title": "Retesting alerts (Pranav Saxena, 2021 GSoC)",
   "description": "The Retest add-on's first commit and release in August 2021, its later history, and the contributor's other commits in zaproxy and zap-extensions that year.",
   "audience": "community",
+  "group": "projects",
+  "date": "2021-06",
   "status": "draft",
   "chapters": [
     {
       "title": "The Hall of Fame entry and the launch post",
       "text": "The Student Hall of Fame lists Pranav Saxena for \"Retesting Alerts\", GSoC, 2021 Summer, with blog and add-on links. The blog post, dated 2021-08-23, describes generating a Retest Plan from selected alerts, a Verify button, running the plan in the Automation Framework, and a Retest API. It says retesting authenticated alerts is not yet supported.",
-      "entities": ["addon:retest"],
+      "entities": [
+        "addon:retest"
+      ],
       "commits": [],
       "documents": [],
       "evidence": [
-        {"label": "ZAP Student Hall of Fame", "url": "https://www.zaproxy.org/student-hall-of-fame/"},
-        {"label": "Retesting alerts blog post (2021-08-23)", "url": "https://www.zaproxy.org/blog/2021-08-23-retest-with-zap/"}
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        },
+        {
+          "label": "Retesting alerts blog post (2021-08-23)",
+          "url": "https://www.zaproxy.org/blog/2021-08-23-retest-with-zap/"
+        }
       ]
     },
     {
       "title": "Earlier 2021 commits by pranavsaxena17",
       "text": "The commit author handle pranavsaxena17 appears on commits in zap-extensions and zaproxy from March 2021; the handle is matched to the student by similarity only. Examples in zap-extensions: \"Introduce DiceMatcher to replace HirshbergMatcher in scan rules\" (2021-05-03), \"Add variable support for automation framework\" (2021-05-07), \"automation: Add new requestor Job\" (2021-06-30) and \"automation: Add alert tests\" (2021-07-08). In zaproxy: \"Added menu item to add the base URL to a context\" (2021-04-24). The Hall of Fame entry is about retesting; the automation commits are the add-on that Retest builds on.",
-      "entities": ["addon:automation", "repo:zaproxy"],
+      "entities": [
+        "addon:automation",
+        "repo:zaproxy"
+      ],
       "commits": [
         "commit:zap-extensions:aaa4fc9050e7ad8cd33adcdd4959dbab058337f9",
         "commit:zap-extensions:0c8119bbeeae50002456df98119f34adc7a2f24d",
@@ -32,7 +45,10 @@
     {
       "title": "August 2021: first commit and first release",
       "text": "\"Initial addon\" by pranavsaxena17 is dated 2021-08-20 and creates addOns/retest (AlertData.java, retest.gradle.kts, CHANGELOG.md) while also editing the automation add-on. \"Made minor tweaks to the automation and retest addon\" follows on 2021-08-21. The changelog dates 0.0.1 on 2021-08-23, with \"Allow retesting for the presence/absence of certain alerts using the Automation Framework.\"; thc202's \"Trigger release of automation and retest\" is dated the same day.",
-      "entities": ["addon:retest", "addon:automation"],
+      "entities": [
+        "addon:retest",
+        "addon:automation"
+      ],
       "commits": [
         "commit:zap-extensions:53d7cfd82d0add70db41ff1bb0d230a3dcfc31a2",
         "commit:zap-extensions:7c6505867998cec731df887f9f457df9c369b621",
@@ -44,7 +60,9 @@
     {
       "title": "Since then",
       "text": "Later commits include \"retest: fix plan generator\" (2022-10-21), \"retest: include HTTP version for requestor job\" (2022-11-28), and \"Move passive scan jobs to `pscan`\" (2024-08-16). The changelog lists 0.9.0 (2024-05-07), 0.10.0 (2024-09-02) and 0.11.0 (2025-01-10), and the add-on is still under addOns/retest at HEAD with an unreleased change raising the minimum ZAP version to 2.17.0.",
-      "entities": ["addon:retest"],
+      "entities": [
+        "addon:retest"
+      ],
       "commits": [
         "commit:zap-extensions:4cefd44580252c8fc12ab8f72342ef52c535eee8",
         "commit:zap-extensions:94a7f32cebd93b7743b527ffb960596eb6d8828c",
@@ -52,7 +70,13 @@
       ],
       "documents": [],
       "evidence": [
-        {"label": "Retest add-on page", "url": "https://www.zaproxy.org/docs/desktop/addons/retest/"}
+        {
+          "label": "Retest add-on page",
+          "url": "https://www.zaproxy.org/docs/desktop/addons/retest/"
+        }
+      ],
+      "milestones": [
+        "milestone:zaproxy:v2.17.0"
       ]
     }
   ]

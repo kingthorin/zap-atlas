@@ -2,6 +2,8 @@
   "title": "Enhanced HTTP Session Handling (GSoC 2013) in the zaproxy history",
   "description": "The 2012 and 2013 session-handling commits in zaproxy next to the Hall of Fame entry and the HTTP Sessions code that is still in core.",
   "audience": "developers",
+  "group": "projects",
+  "date": "2013-06",
   "status": "draft",
   "chapters": [
     {

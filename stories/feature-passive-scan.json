@@ -2,6 +2,8 @@
   "title": "The passive scanner: core to add-ons",
   "description": "How passive scanning is recorded in the zaproxy and zap-extensions histories: a core extension from 2011, scan rules in zap-extensions, per-add-on rule projects in 2019, and the pscan add-on from 2024.",
   "audience": "developers",
+  "group": "features",
+  "date": "2011-01-03",
   "status": "draft",
   "chapters": [
     {

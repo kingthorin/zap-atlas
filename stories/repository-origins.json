@@ -2,17 +2,26 @@
   "title": "Where the zaproxy history begins",
   "description": "The earliest commits in the zaproxy repository, and traces of its Subversion past in later commit messages.",
   "audience": "community",
+  "group": "history",
+  "date": "2010-08-16",
   "status": "draft",
   "chapters": [
     {
       "title": "The first commits",
       "text": "The earliest commit in the repository is \"Initial directory structure.\" dated 2010-08-16. The commit \"Version 1.0.0\" follows on 2010-09-04.",
-      "entities": ["repo:zaproxy"],
+      "entities": [
+        "repo:zaproxy"
+      ],
       "commits": [
         "commit:zaproxy:04007f6557f02ddee870035598c201a4bc4ec086",
         "commit:zaproxy:544e8a59a432be2cd5807ad0f85e7f487224bce1"
       ],
-      "evidence": [{"label": "ZAP history page (lists 2009-2010 entries; still being written)", "url": "https://www.zaproxy.org/docs/history/"}]
+      "evidence": [
+        {
+          "label": "ZAP history page (lists 2009-2010 entries; still being written)",
+          "url": "https://www.zaproxy.org/docs/history/"
+        }
+      ]
     },
     {
       "title": "Subversion-era messages",

@@ -2,6 +2,8 @@
   "title": "The ZAP Docker images",
   "description": "How the docker directory of zaproxy developed: the first Dockerfiles in 2014, packaged scan scripts, live and bare images, a HUD change, and registry changes in 2023 and 2024.",
   "audience": "community",
+  "group": "features",
+  "date": "2014-09-24",
   "status": "draft",
   "chapters": [
     {
