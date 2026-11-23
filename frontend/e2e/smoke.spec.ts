@@ -94,7 +94,8 @@ test("stories are one flat list tagged by group, sortable and filterable", async
 
 test("stories list and a story open, labelled draft", async ({ page }) => {
   await page.goto("stories");
-  await page.locator("a[href*='/stories/']").first().click();
+  // Reviewed stories carry no badge, so open one that is still a draft.
+  await page.locator("a[href*='/stories/']", { hasText: "draft" }).first().click();
   await expect(page.getByText("draft").first()).toBeVisible();
   await noError(page);
 });
