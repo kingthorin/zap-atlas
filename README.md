@@ -89,7 +89,8 @@ last good site stays live. A newer run cancels one in progress.
 **One-time setting:** Settings → Pages → Source → **GitHub Actions**.
 
 Manual runs accept a `ref` (applies to every repository) or `repo_refs`, a JSON
-map such as `{"zaproxy": "v2.16.1"}`, to analyze a specific branch, tag or SHA.
+map such as `{"zaproxy": "v2.16.1"}`, to analyze a specific branch, tag or SHA. They are passed to
+`atlas analyze --ref` and `--repo-refs`, which do the cloning, so the same options work locally.
 The site's base path is taken from the repository name, so it works under
 `https://<owner>.github.io/<repo>/`. Deep links work because the build copies
 `index.html` to `404.html`.

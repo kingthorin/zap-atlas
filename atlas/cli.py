@@ -26,6 +26,10 @@ def _build_parser() -> argparse.ArgumentParser:
     p_analyze = sub.add_parser("analyze", help="Run analysis and generation")
     p_analyze.add_argument("--sources", type=Path, default=DEFAULT_CONFIG.sources_dir)
     p_analyze.add_argument("--output", type=Path, default=DEFAULT_CONFIG.output_dir)
+    p_analyze.add_argument("--ref", default="",
+                           help="branch, tag or SHA to analyse in every repository (default: each default branch)")
+    p_analyze.add_argument("--repo-refs", default="",
+                           help='JSON map of repository name to ref, e.g. \'{"zaproxy": "v2.15.0"}\'; wins over --ref')
     p_analyze.add_argument("--focus", action="append", default=None,
                            help="Restrict to a module/addon (repeatable)")
 
@@ -91,6 +95,8 @@ def cmd_analyze(args) -> int:
     config = DEFAULT_CONFIG
     if args.focus:
         config.focus_modules = args.focus
+    from atlas.config import apply_ref_overrides
+    apply_ref_overrides(config, args.ref, args.repo_refs)
     print(f"[atlas] analyze -> sources {args.sources} output {args.output}")
     from atlas.manifest import AtlasGenerator
     gen = AtlasGenerator(config)

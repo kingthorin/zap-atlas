@@ -27,3 +27,16 @@ def test_refresh_follows_remote_branch_not_stale_local(tmp_path):
     _git(origin, "commit", "-q", "-am", "c2")
     second = run()  # existing clone: must pick up c2
     assert second.sha == _git(origin, "rev-parse", "HEAD") != first.sha
+
+
+def test_ref_overrides_apply_per_repository_and_tolerate_empty_input():
+    import pytest
+    from atlas.config import AtlasConfig, apply_ref_overrides
+    cfg = AtlasConfig()
+    apply_ref_overrides(cfg, "", "")                      # a scheduled run passes empty strings
+    assert all(s.branch is None for s in cfg.sources)
+    apply_ref_overrides(cfg, "v1", '{"zaproxy": "v2.15.0"}')
+    refs = {s.name: s.branch for s in cfg.sources}
+    assert refs["zaproxy"] == "v2.15.0" and refs["zap-hud"] == "v1"
+    with pytest.raises(ValueError, match="unknown repositories"):
+        apply_ref_overrides(AtlasConfig(), "", '{"nope": "main"}')

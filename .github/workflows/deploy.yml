@@ -27,8 +27,6 @@ jobs:
   analyze:
     name: Analyze sources & validate data
     runs-on: ubuntu-latest
-    outputs:
-      sources_json: ${{ steps.sources.outputs.sources_json }}
     steps:
       - name: Checkout Atlas repo
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -46,16 +44,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install tree-sitter tree-sitter-java pytest
 
-      - name: Check out upstream sources (full history)
-        id: sources
-        run: |
-          python .github/workflows/scripts/checkout_sources.py
+      - name: Run generator (clones the upstream repositories with full history)
+        run: python -m atlas analyze --sources ./sources --output ./data --ref "$REF" --repo-refs "$REPO_REFS"
         env:
           REF: ${{ inputs.ref }}
           REPO_REFS: ${{ inputs.repo_refs }}
-
-      - name: Run generator
-        run: python -m atlas analyze --sources ./sources --output ./data
 
       - name: Validate generated data
         run: python -m atlas validate ./data --contract

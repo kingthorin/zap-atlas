@@ -66,6 +66,20 @@ class AtlasConfig:
 
 
 
+def apply_ref_overrides(config: AtlasConfig, ref: str = "", repo_refs: str = "") -> None:
+    """Pin repositories to a branch, tag or SHA. ``repo_refs`` is a JSON object keyed by repository
+    name and wins over ``ref``; both may be empty (the scheduled workflow has no inputs)."""
+    import json
+    per_repo = json.loads(repo_refs) if repo_refs.strip() else {}
+    unknown = sorted(set(per_repo) - {s.name for s in config.sources})
+    if unknown:
+        raise ValueError(f"unknown repositories in --repo-refs: {', '.join(unknown)}")
+    for src in config.sources:
+        chosen = per_repo.get(src.name) or ref.strip()
+        if chosen:
+            src.branch = chosen
+
+
 DEFAULT_CONFIG = AtlasConfig()
 
 

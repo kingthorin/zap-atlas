@@ -1,3 +1,5 @@
+import fs from "node:fs";
+import path from "node:path";
 import { expect, test } from "@playwright/test";
 
 // Every page must load real data: no error box, no script errors, no failed data requests.
@@ -162,13 +164,31 @@ test("timeline draws the repositories with markers, zooms and has a table", asyn
   await expect(page.getByRole("table", { name: "Commits per year by repository" })).toBeVisible();
 });
 
-// Expected counts were taken from the old whole-repository relationship files, before sharding.
+// The oracle scans every relationship shard of the repository, so it does not depend on the incoming/ copies
+// that the page uses, and it follows whatever data the build was generated from.
+function edgeCounts(repo: string, id: string): { out: number; inc: number } {
+  const dir = path.join(process.cwd(), "dist", "data", "relationships", repo);
+  let out = 0, inc = 0;
+  for (const f of fs.readdirSync(dir)) {
+    for (const line of fs.readFileSync(path.join(dir, f), "utf8").split("\n")) {
+      if (!line) continue;
+      const r = JSON.parse(line);
+      if (r.source === id) out++;
+      if (r.target === id) inc++;
+    }
+  }
+  return { out, inc };
+}
+
 test("symbol pages count edges the same across shards, including cross-shard incoming", async ({ page }) => {
-  for (const [id, out, inc] of [
-    ["symbol:zap-extensions:org.zaproxy.addon.automation.AutomationJob", 112, 108],
-    ["symbol:zaproxy:org.parosproxy.paros.Constant", 229, 474],
-    ["symbol:zap-extensions:org.zaproxy.zap.testutils.TestUtils", 82, 439],
-  ] as const) {
+  for (const id of [
+    "symbol:zap-extensions:org.zaproxy.addon.automation.AutomationJob",
+    "symbol:zaproxy:org.parosproxy.paros.Constant",
+    "symbol:zap-extensions:org.zaproxy.zap.testutils.TestUtils",
+  ]) {
+    const { out, inc } = edgeCounts(id.split(":")[1], id);
+    expect(out).toBeGreaterThan(0);
+    expect(inc).toBeGreaterThan(0);
     await page.goto(`symbol/${encodeURIComponent(id)}`);
     await expect(page.getByRole("heading", { name: `Outgoing (${out})` })).toBeVisible();
     await expect(page.getByRole("heading", { name: `Incoming (${inc})` })).toBeVisible();
