@@ -23,31 +23,31 @@ differs, and what is planned next. Update it with each change that moves an item
 | M3 Code intelligence | Mostly done | Types, members, annotations, imports, inheritance, calls resolved by declared type and arity (including supertypes and static imports), `USES_API`. Open: overload resolution beyond arity, generics, `var` and chained calls (a compiler-backed pass), Javadoc `@deprecated`. |
 | M4 Ecosystem | Mostly done | Modules, add-ons, dependencies, help pages, help link graph, per-page history, languages. Open: JavaHelp navigation (`toc.xml`, `index.xml`, `map.jhm`), core API links. |
 | M5 Historical analysis | Not started | Symbol events, snapshots, `MODIFIED_BY`, `INTRODUCED_BY`, `PART_OF`, automated milestone suggestions. Current structure only today. |
-| M6 Polish | In progress | Search, stories, README, smoke tests done. Accessibility audit, performance work and licensing open. |
+| M6 Polish | Mostly done | Search, stories, README, smoke tests, Apache 2.0 licence, per-module shards and a first accessibility pass (axe in both themes, phone width) are done. Open: keyboard-only and screen reader testing, licence headers in source files if wanted. |
 
 ## Definition of done: open items
 
 - Entities `Revision`, `Package` and `Milestone`; file entities for every tracked file, not only changed ones.
 - Repository landscape (repo, module, package, file hierarchy with size and activity).
 - Source explorer file page with file history.
-- Architecture graph with drill-down (the current explorer is tables).
+- Architecture graph with drill-down: done as the Graph page (modules, expandable into types) and the Source page's module links. Open: files and directories as nodes.
 - Validation: done in `atlas/integrity.py` (manifest hashes and sizes, unlisted files, schema version and required fields, pinned 40-character SHAs and revision references, relative paths, shard indexes against shard files, story text artefacts). Open: stricter per-field types, and checking quoted text against CHANGELOGs and source files (only commit subjects can be checked from the dataset, and that is a warning).
-- `atlas inspect` and `atlas history` commands (stubs today).
+- `atlas inspect` and `atlas history` commands (stubs today). Planned: `inspect --entity <id> --dataset <dir>` prints a row with its edges by type and evidence, its shard and, for add-ons, dependencies and citing stories; `history --repository <name>` prints commits by year, releases, busiest months and top contributors, with `--year`, `--since` and `--path` (file history).
 - Accessibility audit: first pass done. axe (WCAG 2.1 A and AA) passes on 15 pages in both themes, and no page scrolls sideways at 390 px (both run in `e2e/audit.spec.ts`). Not covered: a keyboard-only walkthrough, screen reader testing, and contrast of the graph canvas labels in dark mode.
-- Licence file and attribution notices for the Atlas repository.
+- Licence file and attribution notices for the Atlas repository: done. `LICENSE` is Apache 2.0, and the README says the logo artwork and the upstream-derived data keep their own licences. No copyright holder or per-file headers yet.
 - Performance: symbols and relationships are sharded per module (done); the module graph is `module_graph.json` (24 KB). Remaining: the shard index for zap-extensions is 5 MB raw (0.5 MB gzipped).
 - Least privilege: the analyze job no longer overrides to `contents: write` (done, CI passed without it).
 
 ## Planned: interactive resources
 
-1. **Zoomable timeline** (first version done: `timeline.json` monthly commits and active authors per repo, weekly bars from the year shards when zoomed in, release and story markers, table alternative; open: line counts, sub-section selector, Hall of Fame and core-team overlays; the generator never records `additions`/`deletions`, they are 0 in every file change). Three repositories stacked or overlaid. A small precomputed
+1. **Zoomable timeline** (first version done: `timeline.json` monthly commits and active authors per repo, weekly bars from the year shards when zoomed in, hover tooltips, core and HUD release lines, story markers, a strip of add-on releases under each lane that opens the Releases page for that repository and period, table alternative; open: line counts, sub-section selector, Hall of Fame and core-team overlays; the generator never records `additions`/`deletions`, they are 0 in every file change). Four repositories stacked. A small precomputed
    monthly aggregate (commits, lines added and removed, active contributors) per repo
    and module or add-on; zooming below a month loads the per-year commit shards.
    Sub-section selector (repo, add-on, language, path prefix). Overlays: release tags,
    story milestones, Hall of Fame projects, core-team changes. Stories can link to a
    range or module.
 2. **Weighted graph explorer (GitNexus-style)** (first version done: module-level graph from `module_graph.json` with Sigma.js, Graphology and ForceAtlas2, edge-type filters, neighbour table and module picker; module expansion into its 40 most connected types is done; open: files and directories, year slider, recency colouring, file tree, language and evidence filters). A force-directed knowledge graph of
-   all three repositories together, rendered with WebGL (Sigma.js and Graphology, both
+   all four repositories together, rendered with WebGL (Sigma.js and Graphology, both
    MIT; GitNexus itself is PolyForm Noncommercial, so we take the idea, not its code).
    - Nodes: repositories, modules and add-ons, directories, files, types, and
      optionally methods. Size by lines, commits (churn) or relationship count; colour
@@ -74,8 +74,8 @@ Built with D3 modules for scales, zoom, brush and hierarchy, rendered as SVG by 
 
 ## Planned: page improvements (from review)
 
-- **Repositories:** make the module cards expandable. When a repository has more than 5 modules, collapse everything below the summary stats and bar chart behind an expand/collapse control.
-- **Stories:** sort control for A to Z, Z to A, date ascending and date descending.
+- **Repositories:** done. A repository with more than 5 modules folds its module list behind "Modules (N)"; the stats and language bars stay visible.
+- **Stories:** done. One flat list with a group tag on each card (no group headings), a group filter, and a sort by date or title, ascending or descending.
 - **Source and Architecture:** merged into one Source page (done): module and directory tree on the left, tabs for module links (from `module_graph.json`), symbols, relationships and add-on dependencies. Each module loads only its own shards. Open: file-level pages with history, a drawn graph (the graph explorer).
 
 ## Planned: stories
@@ -96,8 +96,15 @@ Built with D3 modules for scales, zoom, brush and hierarchy, rendered as SVG by 
 
 ## Next
 
-1. Review the draft stories with the maintainers and mark them `reviewed`.
+1. Stories: 24 of 41 are marked `reviewed` (19 projects and 5 history). 17 remain draft: the 11 feature stories, plus BIRT reporting, CMS scanner, bug tracker, Authentication helper and DOM XSS scanner.
 2. M3 remainder: a compiler-backed pass for overloads, generics and chained calls (optional).
 3. ~~Release and tag milestones~~ (done: `milestones.jsonl`, Releases page, history markers, add-on release lists, story references).
 4. ~~Timeline~~ (first version done), ~~graph explorer~~ (module level and type expansion done).
-5. ~~Per-module shards~~ (done). The graph explorer; accessibility audit; licence.
+5. ~~Per-module shards~~, ~~licence~~, ~~validator integrity checks~~, ~~zap-hud as a fourth repository~~, ~~accessibility first pass~~, ~~least-privilege CI~~ (all done).
+6. Open, roughly in order of value:
+   - `atlas inspect` and `atlas history`.
+   - Line counts: the generator needs `git log --numstat`, a full rerun and heavier file shards; this unlocks a lines metric on the timeline.
+   - Graph extras: directories and files as nodes, a year slider, recency colouring, language and evidence filters, a file tree.
+   - Timeline extras: sub-section selector (repo, add-on, language, path), Hall of Fame and core-team overlays.
+   - Keyboard-only and screen reader accessibility testing, including the graph canvas.
+   - M5 historical analysis and the optional M3 compiler-backed pass.
