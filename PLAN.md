@@ -100,7 +100,7 @@ Built with D3 modules for scales, zoom, brush and hierarchy, rendered as SVG by 
 2. M3 remainder: a compiler-backed pass for overloads, generics and chained calls (optional).
 3. ~~Release and tag milestones~~ (done: `milestones.jsonl`, Releases page, history markers, add-on release lists, story references).
 4. ~~Timeline~~ (first version done), ~~graph explorer~~ (module level and type expansion done).
-5. ~~Per-module shards~~, ~~workflow `ref` and `repo_refs` inputs~~ (now passed to `atlas analyze --ref/--repo-refs`; `checkout_sources.py` removed; first CI run pending),  ~~licence~~, ~~validator integrity checks~~, ~~zap-hud as a fourth repository~~, ~~accessibility first pass~~, ~~least-privilege CI~~ (all done).
+5. ~~Per-module shards~~, ~~workflow `ref` and `repo_refs` inputs~~ (now passed to `atlas analyze --ref/--repo-refs`; `checkout_sources.py` removed; CI passed with empty inputs, a run with `repo_refs` set is still untested),  ~~licence~~, ~~validator integrity checks~~, ~~zap-hud as a fourth repository~~, ~~accessibility first pass~~, ~~least-privilege CI~~ (all done).
 6. Open, roughly in order of value:
    - `atlas inspect` and `atlas history`.
    - Line counts: the generator needs `git log --numstat`, a full rerun and heavier file shards; this unlocks a lines metric on the timeline.
