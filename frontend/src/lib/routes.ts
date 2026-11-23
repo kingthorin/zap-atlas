@@ -10,6 +10,7 @@ export function routeForEntity(id: string, commitYearHint?: string): string | nu
     case "commit": return `/commit/${a}/${b}${commitYearHint ? `?y=${commitYearHint}` : ""}`;
     case "symbol": return `/symbol/${encodeURIComponent(id)}`;
     case "doc": return `/doc/${encodeURIComponent(id)}`;
+    case "milestone": return `/release/${encodeURIComponent(id)}`;
     case "story": return `/stories/${id.split(":").pop()}`;
     default: return null;
   }

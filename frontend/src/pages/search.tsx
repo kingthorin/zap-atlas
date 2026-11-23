@@ -11,7 +11,7 @@ const GROUPS: { id: SearchGroup; label: string; hint: string }[] = [
 ];
 
 const KIND_LABEL: Record<string, string> = {
-  repository: "repo", module: "module", addon: "add-on", doc: "doc", story: "story", commit: "commit",
+  repository: "repo", module: "module", addon: "add-on", doc: "doc", story: "story", commit: "commit", release: "release",
 };
 
 /** Internal route for a record, or null when it links outside (docs open GitHub at the pinned SHA). */
@@ -21,6 +21,7 @@ function routeFor(r: SearchRecord): string | null {
     case "repository": return "/repositories";
     case "module": return `/module/${a}/${b}`;
     case "addon": return `/addon/${encodeURIComponent(r.i)}`;
+    case "release": return `/release/${encodeURIComponent(r.i)}`;
     case "story": return `/stories/${r.i.split(":").pop()}`;
     case "doc": return `/doc/${encodeURIComponent(r.i)}`;
     case "commit": return `/commit/${a}/${b}${r.y ? `?y=${r.y}` : ""}`;

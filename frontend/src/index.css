@@ -5,7 +5,7 @@
 /* Header and headings follow zaproxy.org: white bar, bold blue-dark links, orange accent. */
 @layer components {
   .site-header { position: sticky; top: 0; z-index: 50; background: #fff; border-bottom: 1px solid #dceaff; }
-  .site-nav-link { display: flex; align-items: center; gap: .5rem; padding: .5rem .75rem; font-family: theme("fontFamily.nav"); font-weight: 700;
+  .site-nav-link { display: flex; align-items: center; gap: .5rem; padding: .5rem .6rem; white-space: nowrap; font-family: theme("fontFamily.nav"); font-weight: 700;
     font-size: .9rem; color: #00549e; border-bottom: 3px solid transparent; transition: border-color .1s ease; }
   .site-nav-link:hover { border-bottom-color: #ffa400; }
   .site-nav-link[aria-current="page"] { border-bottom-color: #ffa400; background: #f4faff; }

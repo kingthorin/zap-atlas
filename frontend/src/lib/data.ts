@@ -11,7 +11,7 @@ export interface AddOn { id: string; module: string; name: string; status: strin
 export interface Symbol { id: string; repository: string; file: string; qualified_name: string; kind: string; signature: string; start_line: number; end_line: number; resolution: string; annotations?: string[] }
 export interface Relationship { source: string; target: string; type: string; repository: string; evidence_type: string; source_file?: string; source_line?: number }
 export interface Doc { id: string; repository: string; module?: string; commit_count?: number; last_changed?: string | null; commits?: string[]; path: string; title: string; headings: string[]; anchors: string[] }
-export interface Story { id: string; status?: string; title: string; description: string; audience: string; chapters: any[]; entities: string[]; commits: string[]; documents: string[] }
+export interface Story { id: string; status?: string; group?: string; date?: string; title: string; description: string; audience: string; chapters: any[]; entities: string[]; commits: string[]; documents: string[] }
 export interface Manifest { schema_version: string; generator_version: string; generated_at: string; sources: any[]; inventory: any[]; coverage: any; chunks: string[] }
 
 const DATA_DIR = import.meta.env.DEV ? "/data" : (import.meta.env.BASE_URL || "/") + "data";
@@ -160,3 +160,12 @@ export async function loadLanguages(): Promise<LanguageRow[]> {
 }
 
 export const isDeprecated = (s: { annotations?: string[] }) => !!s.annotations?.includes("java.lang.Deprecated");
+
+export interface Milestone { id: string; repository: string; title: string; date: string; commits: string[]; kind: string; version: string; tag: string; addon: string | null; release_notes: string | null }
+export async function loadMilestones(): Promise<Milestone[]> {
+  return loadChunk("milestones.jsonl") as Promise<Milestone[]>;
+}
+/** GitHub source tree at a release tag. */
+export function githubTag(repo: Repo, tag: string): string {
+  return `${repo.url.replace(/\.git$/, "")}/tree/${tag}`;
+}

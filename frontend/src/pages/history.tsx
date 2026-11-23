@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { loadCommits, loadHistoryIndex, HistoryIndex, shaOf } from "../lib/data";
+import { Milestone, loadCommits, loadHistoryIndex, loadMilestones, HistoryIndex, shaOf } from "../lib/data";
 import { Loading, ErrorBox } from "../components/ui";
 
 const PAGE = 100;
@@ -12,6 +12,7 @@ export default function History() {
   const [commits, setCommits] = useState<any[]>([]);
   const [shown, setShown] = useState(PAGE);
   const [loading, setLoading] = useState(false);
+  const [milestones, setMilestones] = useState<Milestone[]>([]);
   const [error, setError] = useState("");
 
   const years = (r: string) => Object.keys(index?.[r] ?? {}).sort().reverse();
@@ -19,11 +20,13 @@ export default function History() {
   useEffect(() => {
     loadHistoryIndex().then(i => {
       setIndex(i);
-      const r = Object.keys(i)[0] ?? "";
+      const r = "zaproxy" in i ? "zaproxy" : Object.keys(i)[0] ?? "";
       setRepo(r);
       setYear(Object.keys(i[r] ?? {}).sort().reverse()[0] ?? "");
     }).catch(e => setError(e.message));
   }, []);
+
+  useEffect(() => { loadMilestones().then(setMilestones).catch(() => {}); }, []);
 
   useEffect(() => {
     if (!repo || !year) return;
@@ -36,6 +39,12 @@ export default function History() {
 
   if (error) return <ErrorBox message={error} />;
   if (!index) return <Loading />;
+
+  const inYear = milestones.filter(m => m.repository === repo && m.date.startsWith(year));
+  const markers = inYear.filter(m => m.kind !== "addon-release").sort((a, b) => a.date.localeCompare(b.date));
+  const addonReleases = inYear.length - markers.length;
+  const releaseAt = new Map<string, Milestone[]>();
+  for (const m of inYear) if (m.kind !== "addon-release") releaseAt.set(m.commits[0], [...(releaseAt.get(m.commits[0]) ?? []), m]);
 
   return (
     <div className="space-y-6">
@@ -58,6 +67,15 @@ export default function History() {
           </select>
         </label>
       </div>
+      {(markers.length > 0 || addonReleases > 0) && (
+        <div className="text-sm flex flex-wrap items-center gap-x-3 gap-y-1" aria-label="Releases this year">
+          <span className="text-slate-500">Releases in {year}:</span>
+          {markers.map(m => (
+            <Link key={m.id} className="px-2 rounded bg-indigo-100 text-indigo-700 hover:underline" to={`/release/${encodeURIComponent(m.id)}`}>{m.version} · {m.date.slice(5, 10)}</Link>
+          ))}
+          {addonReleases > 0 && <Link className="text-indigo-600 hover:underline" to="/releases?kind=addon-release">{addonReleases} add-on {addonReleases === 1 ? "release" : "releases"}</Link>}
+        </div>
+      )}
       {loading ? <Loading /> : (
       <div className="overflow-x-auto">
         <table className="w-full text-sm border-collapse">
@@ -73,6 +91,9 @@ export default function History() {
               <tr key={c.id} className="hover:bg-slate-50">
                 <td className="pb-2 pr-4 text-[11px] font-mono text-slate-600 truncate max-w-[20%]">
                   <Link className="text-indigo-600 hover:underline" to={`/commit/${repo}/${c.sha}?y=${year}`}>{c.sha.slice(0,10)}</Link>
+                  {(releaseAt.get(c.id) ?? []).map(m => (
+                    <Link key={m.id} className="ml-2 px-1 rounded bg-indigo-100 text-indigo-700 text-xs" to={`/release/${encodeURIComponent(m.id)}`}>{m.tag}</Link>
+                  ))}
                 </td>
                 <td className="pb-2 text-[11px] font-mono text-slate-500">
                   {c.parents.length ? c.parents.map((p: string) => (

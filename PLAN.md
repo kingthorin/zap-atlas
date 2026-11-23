@@ -93,6 +93,6 @@ Built with D3 modules for scales, zoom, brush and hierarchy, rendered as SVG by 
 
 1. Review the draft stories with the maintainers and mark them `reviewed`.
 2. M3 remainder: a compiler-backed pass for overloads, generics and chained calls (optional).
-3. Release and tag milestones (entity, history view, stories).
-4. Timeline (with milestone markers), then starburst.
+3. ~~Release and tag milestones~~ (done: `milestones.jsonl`, Releases page, history markers, add-on release lists, story references).
+4. Timeline (with milestone markers), then the graph explorer.
 5. Per-module shards; accessibility audit; licence.

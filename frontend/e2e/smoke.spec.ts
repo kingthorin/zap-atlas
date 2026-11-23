@@ -56,6 +56,19 @@ test("search finds an add-on and, once enabled, a commit", async ({ page }) => {
   await expect(page.locator("a[href*='/commit/']").first()).toBeVisible({ timeout: 30_000 });
 });
 
+test("stories are grouped, oldest first, and can be filtered", async ({ page }) => {
+  await page.goto("stories");
+  for (const h of ["Student projects", "Features and add-ons", "Project history and organisation"]) {
+    await expect(page.getByRole("heading", { name: h, level: 2 })).toBeVisible();
+  }
+  const dates = await page.locator("section[aria-labelledby='grp-projects'] a >> text=/^\\d{4}/").allTextContents();
+  const keys = dates.map(d => d.split(" · ")[0]);
+  expect(keys.length).toBeGreaterThan(10);
+  expect([...keys].sort()).toEqual(keys);
+  await page.getByRole("button", { name: /^Features and add-ons/ }).click();
+  await expect(page.getByRole("heading", { name: "Student projects", level: 2 })).toHaveCount(0);
+});
+
 test("stories list and a story open, labelled draft", async ({ page }) => {
   await page.goto("stories");
   await page.locator("a[href*='/stories/']").first().click();
@@ -87,4 +100,14 @@ test("header stays pinned to the top while scrolling", async ({ page }) => {
   await page.evaluate(() => window.scrollTo(0, 2000));
   expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(500);
   expect(await page.evaluate(() => Math.round(document.querySelector("header")!.getBoundingClientRect().top))).toBe(0);
+});
+
+test("releases list, a release page, and release markers in history", async ({ page }) => {
+  await page.goto("releases");
+  await expect(page.getByText(/\d+ releases, newest first/)).toBeVisible();
+  await page.getByRole("link", { name: /^ZAP 2\.1\d/ }).first().click();
+  await expect(page.getByText("Tag", { exact: true })).toBeVisible();
+  await page.goto("history");
+  await expect(page.getByLabel("Releases this year")).toBeVisible();
+  await noError(page);
 });

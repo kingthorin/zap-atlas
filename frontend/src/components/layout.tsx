@@ -22,6 +22,9 @@ const ActivityIcon = () => (
 const BookIcon = () => (
   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" /></svg>
 );
+const TagIcon = () => (
+  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M3 12V5a2 2 0 012-2h7l9 9a2 2 0 010 2.83l-6.17 6.17a2 2 0 01-2.83 0L3 12z" /></svg>
+);
 const SearchIcon = () => (
   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
 );
@@ -31,6 +34,7 @@ export const NAV = [
   { to: "/repositories", label: "Repositories", icon: FileIcon },
   { to: "/architecture", label: "Architecture", icon: DatabaseIcon },
   { to: "/history", label: "History", icon: ActivityIcon },
+  { to: "/releases", label: "Releases", icon: TagIcon },
   { to: "/source", label: "Source", icon: FileIcon },
   { to: "/stories", label: "Stories", icon: BookIcon },
   { to: "/search", label: "Search", icon: SearchIcon },
@@ -81,20 +85,20 @@ export function Nav() {
     <header className="site-header">
       <nav aria-label="Main navigation">
         <div className="flex items-center justify-between px-4 py-2">
-          <Link to="/" className="flex items-center gap-2 font-nav font-bold text-xl tracking-tight text-zap-dark" aria-label="ZAP Atlas home">
+          <Link to="/" className="flex items-center gap-2 whitespace-nowrap font-nav font-bold text-xl tracking-tight text-zap-dark" aria-label="ZAP Atlas home">
             <img src={`${import.meta.env.BASE_URL}logo.svg`} alt="" width={38} height={38} />
             <span>ZAP <span className="text-zap-orange-dark">Atlas</span></span>
           </Link>
-          <button className="md:hidden p-2 text-zap-dark" onClick={() => setOpen(!open)} aria-label="Toggle menu" aria-expanded={open}>
+          <button className="xl:hidden p-2 text-zap-dark" onClick={() => setOpen(!open)} aria-label="Toggle menu" aria-expanded={open}>
             {open ? <XIcon /> : <MenuIcon />}
           </button>
-          <div className="hidden md:flex md:flex-row md:items-center">
+          <div className="hidden xl:flex xl:flex-row xl:items-center">
             <NavLinks pathname={location.pathname} />
             <ThemeButton />
           </div>
         </div>
         {open && (
-          <div className="md:hidden flex flex-col px-4 pb-3" onClick={() => setOpen(false)}>
+          <div className="xl:hidden flex flex-col px-4 pb-3" onClick={() => setOpen(false)}>
             <NavLinks pathname={location.pathname} />
             <ThemeButton />
           </div>

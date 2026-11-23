@@ -12,6 +12,7 @@ import AddOnPage from "./pages/addon";
 import ModulePage from "./pages/module";
 import SymbolPage from "./pages/symbol";
 import DocPage from "./pages/doc";
+import Releases, { ReleasePage } from "./pages/releases";
 import NotFound from "./pages/notfound";
 
 export default function App() {
@@ -30,6 +31,8 @@ export default function App() {
           <Route path="/commit/:repo/:sha" element={<CommitPage />} />
           <Route path="/addon/:id" element={<AddOnPage />} />
           <Route path="/module/:repo/*" element={<ModulePage />} />
+          <Route path="/releases" element={<Releases />} />
+          <Route path="/release/:id" element={<ReleasePage />} />
           <Route path="/doc/:id" element={<DocPage />} />
           <Route path="/symbol/:id" element={<SymbolPage />} />
           <Route path="*" element={<NotFound />} />

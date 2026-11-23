@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { AddOn, Doc, Repo, loadAddons, loadDocs, loadModules, loadRepos } from "../lib/data";
+import { AddOn, Doc, Milestone, Repo, loadAddons, loadDocs, loadMilestones, loadModules, loadRepos } from "../lib/data";
 import { Loading, ErrorBox } from "../components/ui";
 
 const safeUrl = (u: string) => (/^https?:\/\//i.test(u) ? u : undefined);
 
 export default function AddOnPage() {
   const { id = "" } = useParams();
-  const [data, setData] = useState<{ addons: AddOn[]; docs: Doc[]; repos: Repo[]; modules: any[] } | null>(null);
+  const [data, setData] = useState<{ addons: AddOn[]; docs: Doc[]; repos: Repo[]; modules: any[]; releases: Milestone[] } | null>(null);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    Promise.all([loadAddons(), loadDocs(), loadRepos(), loadModules()])
-      .then(([addons, docs, repos, modules]) => setData({ addons, docs, repos, modules }))
+    Promise.all([loadAddons(), loadDocs(), loadRepos(), loadModules(), loadMilestones()])
+      .then(([addons, docs, repos, modules, releases]) => setData({ addons, docs, repos, modules, releases }))
       .catch(e => setError(e.message));
   }, []);
 
@@ -25,6 +25,7 @@ export default function AddOnPage() {
   const known = new Set(data.addons.map(a => a.id));
   const dependents = data.addons.filter(a => a.dependencies.includes(addon.id));
   const docs = data.docs.filter(d => d.module === addon.module);
+  const releases = data.releases.filter(r => r.addon === addon.id).sort((a, b) => b.date.localeCompare(a.date));
   const url = safeUrl(addon.url);
   const addonLink = (a: string) => known.has(a)
     ? <Link className="text-indigo-600 hover:underline" to={`/addon/${encodeURIComponent(a)}`}>{a.replace("addon:", "")}</Link>
@@ -48,6 +49,18 @@ export default function AddOnPage() {
       <section>
         <h2 className="text-lg font-semibold mb-1">Required by ({dependents.length})</h2>
         <ul className="text-sm flex flex-wrap gap-x-4">{dependents.map(d => <li key={d.id}>{addonLink(d.id)}</li>)}</ul>
+      </section>
+      <section>
+        <h2 className="text-lg font-semibold mb-1">Releases ({releases.length})</h2>
+        {releases.length === 0 ? <p className="text-sm text-slate-400 italic">No release tags found.</p> : (
+          <ul className="text-sm flex flex-wrap gap-x-4">
+            {releases.slice(0, 40).map(r => (
+              <li key={r.id}><Link className="text-indigo-600 hover:underline" to={`/release/${encodeURIComponent(r.id)}`}>{r.version}</Link>
+                <span className="text-xs text-slate-400"> {r.date.slice(0, 10)}</span></li>
+            ))}
+          </ul>
+        )}
+        {releases.length > 40 && <p className="text-xs text-slate-400 mt-1">Showing the newest 40. <Link className="text-indigo-600 hover:underline" to={`/releases?kind=addon-release&q=${encodeURIComponent(addon.id.replace("addon:", ""))}`}>All releases</Link></p>}
       </section>
       <section>
         <h2 className="text-lg font-semibold mb-1">Help topics ({docs.length})</h2>
