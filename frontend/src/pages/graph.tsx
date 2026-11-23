@@ -13,6 +13,25 @@ const TYPES = ["CALLS", "IMPORTS", "EXTENDS", "IMPLEMENTS", "USES_API", "DEPENDS
 const reduceMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const isDark = () => document.documentElement.classList.contains("dark");
 
+/** Sigma's own hover box is always white, which hides a light label in the dark theme, so draw one that follows the theme. */
+function drawHover(ctx: CanvasRenderingContext2D, data: any, settings: any) {
+  const dark = isDark(), size = settings.labelSize;
+  ctx.font = `${settings.labelWeight} ${size}px ${settings.labelFont}`;
+  ctx.save();
+  ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 0; ctx.shadowBlur = 8; ctx.shadowColor = dark ? "#000" : "#00000066";
+  ctx.fillStyle = dark ? "#1e293b" : "#fff";
+  if (typeof data.label === "string") {
+    const w = ctx.measureText(data.label).width + 8, h = size + 8, x = data.x + data.size + 3;
+    ctx.fillRect(x, data.y - h / 2, w, h);
+  }
+  ctx.beginPath(); ctx.arc(data.x, data.y, data.size + 3, 0, Math.PI * 2); ctx.closePath(); ctx.fill();
+  ctx.restore();
+  if (typeof data.label === "string") {
+    ctx.fillStyle = dark ? "#e2e8f0" : "#334155";
+    ctx.fillText(data.label, data.x + data.size + 7, data.y + size / 3);
+  }
+}
+
 const repoOf = (id: string) => id.split(":")[1];
 const pathOf = (id: string) => id.split(":").slice(2).join(":");
 const short = (id: string) => (repoOf(id) === "zaproxy" ? `${pathOf(id)} (core)` : pathOf(id).replace(/^addOns\//, ""));
@@ -136,12 +155,12 @@ export default function GraphPage() {
   useEffect(() => {
     if (!graph || !box.current) return;
     const s = new Sigma(graph, box.current, {
-      labelRenderedSizeThreshold: 7, labelColor: { color: isDark() ? "#e2e8f0" : "#334155" }, renderEdgeLabels: false,
+      labelRenderedSizeThreshold: 7, defaultDrawNodeHover: drawHover, labelColor: { color: isDark() ? "#e2e8f0" : "#334155" }, renderEdgeLabels: false,
       nodeReducer: (n, d) => {
         const cur = selRef.current;
         if (!cur) return d;
         if (n === cur) return { ...d, highlighted: true, zIndex: 2 };
-        return graph.hasNode(cur) && graph.hasEdge(cur, n) ? { ...d, zIndex: 1 } : { ...d, color: "#d5dde6", label: "", zIndex: 0 };
+        return graph.hasNode(cur) && graph.hasEdge(cur, n) ? { ...d, zIndex: 1 } : { ...d, color: isDark() ? "#334155" : "#d5dde6", label: "", zIndex: 0 };
       },
       edgeReducer: (e, d) => {
         const cur = selRef.current;

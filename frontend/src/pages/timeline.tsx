@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { scaleUtc } from "d3-scale";
 import { select } from "d3-selection";
 import { zoom as d3zoom, zoomIdentity, ZoomBehavior, ZoomTransform } from "d3-zoom";
@@ -9,10 +9,15 @@ import { Loading, ErrorBox } from "../components/ui";
 
 const W = 1000, ML = 124, MR = 12, LANE_H = 120, TOP = 18, STORY_H = 44, AXIS_H = 26;
 const REPO_COLOR: Record<string, string> = { zaproxy: "#4389ff", "zap-extensions": "#e08e00", "zap-core-help": "#2f9e6f", "zap-hud": "#8e5bd0" };
+// Cursor over the chart; "grabbing" shows while dragging. Try "crosshair", "grab" or "pointer".
+const CURSOR = "crosshair";
 const DETAIL_MONTHS = 30; // at or below this visible span, weekly bars come from the commit shards
 type Metric = "commits" | "authors";
 type Bar = { x0: Date; x1: Date; v: number };
 
+const binStart = (d: Date, mode: "weekly" | "monthly") => (mode === "weekly" ? utcMonday.floor(d) : new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1)));
+const binEnd = (start: Date, mode: "weekly" | "monthly") => (mode === "weekly" ? new Date(start.getTime() + 7 * 864e5) : new Date(Date.UTC(start.getUTCFullYear(), start.getUTCMonth() + 1, 1)));
+type RelBin = { x0: Date; x1: Date; items: Milestone[] };
 const monthStart = (m: string) => new Date(Date.UTC(+m.slice(0, 4), +m.slice(5, 7) - 1, 1));
 const monthEnd = (m: string) => new Date(Date.UTC(+m.slice(0, 4), +m.slice(5, 7), 1));
 const storyDate = (d?: string) => d ? new Date(`${d.length === 4 ? d + "-01-01" : d.length === 7 ? d + "-01" : d}T00:00:00Z`) : null;
@@ -25,6 +30,8 @@ export default function TimelinePage() {
   const [error, setError] = useState("");
   const [metric, setMetric] = useState<Metric>("commits");
   const [t, setT] = useState<ZoomTransform>(zoomIdentity);
+  const navigate = useNavigate();
+  const [dragging, setDragging] = useState(false);
   const [tip, setTip] = useState<{ x: number; y: number; text: string } | null>(null);
   const wrap = useRef<HTMLDivElement>(null);
   // repo -> year -> [[weekStartMs, author]] for the weekly detail view
@@ -54,6 +61,8 @@ export default function TimelinePage() {
       .extent([[ML, 0], [W - MR, 1]])
       .translateExtent([[ML, 0], [W - MR, 1]])
       .filter(e => (e.type !== "wheel" || e.ctrlKey || e.metaKey) && !e.button)
+      .on("start", e => setDragging(e.sourceEvent?.type === "mousedown"))
+      .on("end", () => setDragging(false))
       .on("zoom", e => setT(e.transform));
     zoomRef.current = z;
     select(overlay.current).call(z);
@@ -110,6 +119,16 @@ export default function TimelinePage() {
   if (!tl || !x || !base) return <Loading />;
 
   const laneData = repos.map(r => bars(r));
+  // Add-on release tags (thousands in zap-extensions) are binned like the bars and drawn as a strip under each lane.
+  const releaseBins = repos.map((repo, i) => {
+    const mode = laneData[i].mode, out = new Map<number, RelBin>();
+    for (const m of milestones) {
+      if (m.repository !== repo || m.kind !== "addon-release") continue;
+      const start = binStart(new Date(m.date), mode), key = start.getTime();
+      (out.get(key) ?? out.set(key, { x0: start, x1: binEnd(start, mode), items: [] }).get(key)!).items.push(m);
+    }
+    return out;
+  });
   const plotBottom = TOP + STORY_H + repos.length * LANE_H;
   const H = plotBottom + AXIS_H;
   const inView = (a: Date, b: Date = a) => x(b) >= ML && x(a) <= W - MR;
@@ -138,12 +157,33 @@ export default function TimelinePage() {
     const at = x.invert(pt.x).getTime();
     const { bars: lb, mode } = laneData[lane];
     const hit = lb.find(b => b.x0.getTime() <= at && at < b.x1.getTime());
-    if (!hit) return setTip(null);
+    const rel = releaseBins[lane].get(binStart(new Date(at), mode).getTime());
+    const inStrip = pt.y >= TOP + STORY_H + lane * LANE_H + LANE_H - 26 + 5;
     const rect = box.getBoundingClientRect();
-    const day = hit.x0.toISOString().slice(0, 10);
-    const when = mode === "weekly" ? `week of ${day}` : day.slice(0, 7);
+    const label = (d: Date) => (mode === "weekly" ? `week of ${d.toISOString().slice(0, 10)}` : d.toISOString().slice(0, 7));
+    const at2 = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    const names = (r: RelBin) => `${r.items.length} add-on ${r.items.length === 1 ? "release" : "releases"}`;
+    if (inStrip) {
+      if (!rel) return setTip(null);
+      const list = rel.items.slice(0, 6).map(m => m.title).join(", ") + (rel.items.length > 6 ? ` and ${rel.items.length - 6} more` : "");
+      return setTip({ ...at2, text: `${repos[lane]} · ${label(rel.x0)} · ${names(rel)}: ${list}` });
+    }
+    if (!hit) return setTip(null);
+    const when = label(hit.x0);
     const what = metric === "commits" ? `${hit.v.toLocaleString()} ${hit.v === 1 ? "commit" : "commits"}` : `${hit.v.toLocaleString()} active ${hit.v === 1 ? "author" : "authors"}`;
-    setTip({ x: e.clientX - rect.left, y: e.clientY - rect.top, text: `${repos[lane]} · ${when} · ${what}` });
+    setTip({ ...at2, text: `${repos[lane]} · ${when} · ${what}${rel ? ` · ${names(rel)}` : ""}` });
+  };
+  // A click on a release block opens the Releases page for that repository and period.
+  const onClick = (e: React.MouseEvent<SVGRectElement>) => {
+    const svg = e.currentTarget.ownerSVGElement, ctm = svg?.getScreenCTM();
+    if (!ctm) return;
+    const pt = new DOMPoint(e.clientX, e.clientY).matrixTransform(ctm.inverse());
+    const lane = Math.floor((pt.y - TOP - STORY_H) / LANE_H);
+    if (lane < 0 || lane >= repos.length || pt.y < TOP + STORY_H + lane * LANE_H + LANE_H - 26 + 5) return;
+    const rel = releaseBins[lane].get(binStart(new Date(x.invert(pt.x).getTime()), laneData[lane].mode).getTime());
+    if (!rel) return;
+    const day = (d: Date) => d.toISOString().slice(0, 10);
+    navigate(`/releases?kind=addon-release&repo=${repos[lane]}&from=${day(rel.x0)}&to=${day(rel.x1)}`);
   };
   const onKey = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowLeft") panBy(120); else if (e.key === "ArrowRight") panBy(-120);
@@ -157,8 +197,7 @@ export default function TimelinePage() {
     <div className="space-y-4">
       <h1 className="text-2xl font-bold">Timeline</h1>
       <p className="text-slate-600">
-        Activity in each repository, stacked on one time axis. Orange diamonds are stories, vertical lines are
-        core release tags. Zoom in to see weekly bars; zoom out for monthly totals.
+        Activity in each repository, stacked on one time axis. Orange diamonds are stories, vertical lines are core and HUD release tags, and the small blocks under a lane count its add-on releases. Click a release block to list those releases. Zoom in to see weekly bars; zoom out for monthly totals.
       </p>
       <div className="flex flex-wrap gap-2 items-center text-sm">
         <label>Show{" "}
@@ -194,7 +233,8 @@ export default function TimelinePage() {
               </g>
             ))}
           </g>
-          <rect ref={overlay} x={ML} y={0} width={W - ML - MR} height={plotBottom} fill="transparent" style={{ cursor: "grab", touchAction: "none" }} onMouseMove={onMove} onMouseLeave={() => setTip(null)} />
+          <rect ref={overlay} x={ML} y={0} width={W - ML - MR} height={plotBottom} fill="transparent" style={{ cursor: dragging ? "grabbing" : CURSOR, touchAction: "none" }}
+            onMouseMove={onMove} onClick={onClick} onMouseLeave={() => setTip(null)} />
           <g clipPath="url(#plot)">
             {repos.map((repo, i) => {
               const top = TOP + STORY_H + i * LANE_H, h = LANE_H - 26;
@@ -208,6 +248,15 @@ export default function TimelinePage() {
                     const bh = Math.max(1, (b.v / max) * h);
                     return <rect key={b.x0.getTime()} x={x(b.x0)} y={top + 4 + h - bh} width={Math.max(1, x(b.x1) - x(b.x0) - 1)} height={bh} fill={REPO_COLOR[repo] ?? "#7e92a4"} />;
                   })}
+                  {(() => {
+                    const vis = [...releaseBins[i].values()].filter(b => inView(b.x0, b.x1));
+                    const top2 = Math.max(1, ...vis.map(b => b.items.length));
+                    return (
+                      <g className="text-indigo-600" fill="currentColor">
+                        {vis.map(b => <rect key={b.x0.getTime()} x={x(b.x0)} y={top + h + 8} width={Math.max(1.5, x(b.x1) - x(b.x0) - 1)} height={2 + 10 * (b.items.length / top2)} opacity={0.85} />)}
+                      </g>
+                    );
+                  })()}
                   <text x={W - MR - 4} y={top + 14} textAnchor="end" fontSize="10" fill="currentColor" className="text-slate-500">max {max} per {mode === "weekly" ? "week" : "month"}</text>
                 </g>
               );
@@ -221,7 +270,7 @@ export default function TimelinePage() {
             {repos.map((repo, i) => releases.filter(m => m.repository === repo).map(m => {
               const top = TOP + STORY_H + i * LANE_H, mx = x(new Date(m.date));
               return (
-                <Link key={m.id} to={`/release/${encodeURIComponent(m.id)}`}>
+                <Link key={m.id} to={`/release/${encodeURIComponent(m.id)}`} style={{ cursor: dragging ? "grabbing" : CURSOR }}>
                   <title>{`${m.title} · ${m.date.slice(0, 10)}`}</title>
                   <line x1={mx} x2={mx} y1={top + 2} y2={top + LANE_H - 22} stroke="#00549e" strokeWidth={1.2} strokeOpacity={0.7} />
                   <line x1={mx} x2={mx} y1={top + 2} y2={top + LANE_H - 22} stroke="transparent" strokeWidth={8} />
@@ -240,13 +289,14 @@ export default function TimelinePage() {
           </g>
         </svg>
         {tip && (
-          <div role="tooltip" className="pointer-events-none absolute z-10 rounded bg-slate-800 text-white text-xs px-2 py-1 shadow whitespace-nowrap"
-            style={{ left: Math.min(tip.x + 12, (wrap.current?.clientWidth ?? 0) - 260), top: tip.y + 12 }}>{tip.text}</div>
+          <div role="tooltip" className="pointer-events-none absolute z-10 rounded bg-slate-800 text-white text-xs px-2 py-1 shadow max-w-xs"
+            style={{ left: tip.x > (wrap.current?.clientWidth ?? 0) * 0.55 ? tip.x - 12 : tip.x + 12, top: tip.y + 12,
+              transform: tip.x > (wrap.current?.clientWidth ?? 0) * 0.55 ? "translateX(-100%)" : undefined }}>{tip.text}</div>
         )}
       </div>
       <p className="text-xs text-slate-400">
         Drag to pan. Ctrl or cmd + scroll, double click, or the buttons zoom. Dates are committer dates. Line counts are not shown
-        because the dataset does not record them yet. Add-on release tags are on the <Link className="text-indigo-600 hover:underline" to="/releases">Releases</Link> page.
+        because the dataset does not record them yet. Every release is listed on the <Link className="text-indigo-600 hover:underline" to="/releases">Releases</Link> page.
       </p>
       <details className="text-sm">
         <summary className="cursor-pointer text-indigo-600">Table: commits per year</summary>

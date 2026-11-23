@@ -146,10 +146,16 @@ test("timeline draws the repositories with markers, zooms and has a table", asyn
   await expect(status).toContainText("monthly bars");
   await page.getByRole("combobox", { name: /Jump to/ }).selectOption("2024");
   await expect(status).toContainText("weekly bars");
-  const plot = page.locator("svg[role=group] rect[style*='grab']");
+  const plot = page.locator("svg[role=group] rect[style*='touch-action']");
   const box = (await plot.boundingBox())!;
   await page.mouse.move(box.x + box.width * 0.7, box.y + box.height * 0.45);
   await expect(page.getByRole("tooltip")).toContainText(/ · \d+ commits?/);
+  await page.mouse.move(box.x + box.width * 0.9, box.y + box.height * 0.535); // release strip under the zap-extensions lane
+  await expect(page.getByRole("tooltip")).toContainText(/\d+ add-on releases?: /);
+  await page.mouse.click(box.x + box.width * 0.9, box.y + box.height * 0.535);
+  await expect(page).toHaveURL(/releases\?kind=addon-release&repo=zap-extensions&from=\d{4}-\d\d-\d\d&to=/);
+  await expect(page.getByText(/\d+ releases, newest first · zap-extensions from/)).toBeVisible();
+  await page.goBack();
   await page.mouse.move(0, 0);
   await expect(page.getByRole("tooltip")).toHaveCount(0);
   await page.getByText("Table: commits per year").click();

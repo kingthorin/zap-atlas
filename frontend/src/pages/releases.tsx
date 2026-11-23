@@ -36,12 +36,14 @@ export default function Releases() {
   const [params, setParams] = useSearchParams();
   const kind = params.get("kind") ?? "core-release";
   const q = (params.get("q") ?? "").toLowerCase();
+  const repoFilter = params.get("repo") ?? "", from = params.get("from") ?? "", to = params.get("to") ?? ""; // `to` is exclusive
   const [shown, setShown] = useState(100);
   useEffect(() => setShown(100), [kind, q]);
 
   const rows = useMemo(() => (data?.ms ?? [])
-    .filter(m => m.kind === kind && (!q || m.title.toLowerCase().includes(q) || m.tag.toLowerCase().includes(q)))
-    .sort((a, b) => b.date.localeCompare(a.date)), [data, kind, q]);
+    .filter(m => m.kind === kind && (!q || m.title.toLowerCase().includes(q) || m.tag.toLowerCase().includes(q))
+      && (!repoFilter || m.repository === repoFilter) && (!from || day(m.date) >= from) && (!to || day(m.date) < to))
+    .sort((a, b) => b.date.localeCompare(a.date)), [data, kind, q, repoFilter, from, to]);
   if (error) return <ErrorBox message={error} />;
   if (!data) return <Loading />;
   const repoOf = (name: string) => data.repos.find(r => r.name === name);
@@ -65,7 +67,11 @@ export default function Releases() {
       </div>
       <input type="search" placeholder="Filter by name or tag…" aria-label="Filter releases" value={params.get("q") ?? ""} onChange={e => set("q", e.target.value)}
         className="w-full md:w-80 rounded border border-slate-200 bg-white px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" />
-      <p className="text-sm text-slate-500" aria-live="polite">{rows.length.toLocaleString()} releases, newest first</p>
+      <p className="text-sm text-slate-500" aria-live="polite">
+        {rows.length.toLocaleString()} releases, newest first
+        {(repoFilter || from || to) && <> · {repoFilter}{from && <> from {from}</>}{to && <> to {to} (not including)</>}{" "}
+          <button className="text-indigo-600 hover:underline" onClick={() => { const n = new URLSearchParams(params); ["repo", "from", "to"].forEach(k => n.delete(k)); setParams(n, { replace: true }); }}>Clear</button></>}
+      </p>
       <div className="overflow-x-auto">
         <table className="w-full text-sm border-collapse">
           <thead><tr className="text-left text-slate-500 border-b border-slate-200"><th className="pb-2">Date</th><th className="pb-2 pl-4">Release</th><th className="pb-2 pl-4">Links</th></tr></thead>
