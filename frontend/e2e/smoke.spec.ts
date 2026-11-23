@@ -177,9 +177,21 @@ test("module graph draws, selects a module and filters edge types", async ({ pag
   const before = await summary.textContent();
   await page.getByLabel("Select a module").selectOption({ label: "automation" });
   await expect(page.getByRole("heading", { name: "automation", level: 2 })).toBeVisible();
-  await expect(page.getByText(/\d+ linked modules/)).toBeVisible();
+  await expect(page.getByText(/zap-extensions · \d+ linked/)).toBeVisible();
   await expect(page.locator("aside tbody tr").first()).toBeVisible();
   for (const t of ["CALLS", "IMPORTS", "EXTENDS", "IMPLEMENTS", "USES_API"]) await page.getByRole("button", { name: t, exact: true }).click();
   await expect(page.getByRole("button", { name: "DEPENDS_ON", exact: true })).toHaveAttribute("aria-pressed", "true");
   await expect(summary).not.toHaveText(before!); // only add-on dependency pairs remain
+});
+
+test("module graph expands a module into its types and collapses it again", async ({ page }) => {
+  await page.goto("graph");
+  const summary = page.getByText(/\d+ modules.*linked pairs/);
+  await expect(summary).toContainText("89 modules ·");
+  await page.getByLabel("Select a module").selectOption({ label: "automation" });
+  await page.getByRole("button", { name: "Expand into types" }).click();
+  await expect(summary).toContainText("+ 40 types");
+  await expect(page.getByText("showing 40 of")).toBeVisible();
+  await page.getByRole("button", { name: "Collapse types" }).click();
+  await expect(summary).toContainText("89 modules ·");
 });

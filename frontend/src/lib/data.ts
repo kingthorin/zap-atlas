@@ -107,6 +107,10 @@ export async function loadModuleSymbols(repo: string, modPath: string): Promise<
 export async function loadModuleRelationships(repo: string, modPath: string): Promise<Relationship[]> {
   return loadShards(repo, "relationships", k => k === modPath || k.startsWith(modPath + "/")) as Promise<Relationship[]>;
 }
+/** Edges from other shards whose target is a symbol under a module path. */
+export async function loadModuleIncoming(repo: string, modPath: string): Promise<Relationship[]> {
+  return loadShards(repo, "incoming", k => k === modPath || k.startsWith(modPath + "/")) as Promise<Relationship[]>;
+}
 /** Module-to-module edge counts: nodes are module ids, edges are [source, target, type, count]. */
 export interface ModuleGraph { nodes: string[]; edges: [number, number, string, number][] }
 let moduleGraphCache: Promise<ModuleGraph> | null = null;
