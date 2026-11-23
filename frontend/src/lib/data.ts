@@ -112,7 +112,7 @@ export async function loadModuleIncoming(repo: string, modPath: string): Promise
   return loadShards(repo, "incoming", k => k === modPath || k.startsWith(modPath + "/")) as Promise<Relationship[]>;
 }
 /** Module-to-module edge counts: nodes are module ids, edges are [source, target, type, count]. */
-export interface ModuleGraph { nodes: string[]; edges: [number, number, string, number][] }
+export interface ModuleGraph { nodes: string[]; edges: [number, number, string, number, string][] }   // [source, target, type, count, evidence]
 let moduleGraphCache: Promise<ModuleGraph> | null = null;
 export function loadModuleGraph(): Promise<ModuleGraph> {
   if (!moduleGraphCache) moduleGraphCache = fetchText(`${DATA_DIR}/module_graph.json`).then(t => JSON.parse(t));
@@ -212,4 +212,12 @@ let timelineCache: Promise<Timeline> | null = null;
 export function loadTimeline(): Promise<Timeline> {
   if (!timelineCache) timelineCache = fetchText(`${DATA_DIR}/timeline.json`).then(t => JSON.parse(t));
   return timelineCache;
+}
+
+/** Module id -> first and last commit day, commits touching it and lines changed (added + deleted). */
+export interface ModuleActivity { first: string; last: string; commits: number; lines: number }
+let activityCache: Promise<Record<string, ModuleActivity>> | null = null;
+export function loadModuleActivity(): Promise<Record<string, ModuleActivity>> {
+  if (!activityCache) activityCache = fetchText(`${DATA_DIR}/module_activity.json`).then(t => JSON.parse(t));
+  return activityCache;
 }

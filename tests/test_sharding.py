@@ -17,7 +17,7 @@ def test_history_is_sharded_by_repo_and_year(tmp_path):
     ]
     names = gen._write_history_shards(tmp_path)
     assert set(names) == {"commits/r/2021.jsonl", "commits/r/2022.jsonl",
-                          "files/r/2021.jsonl", "files/r/2022.jsonl", "history_index.json", "timeline.json"}
+                          "files/r/2021.jsonl", "files/r/2022.jsonl", "history_index.json", "timeline.json", "module_activity.json"}
     assert len((tmp_path / "files/r/2022.jsonl").read_text().splitlines()) == 2
     assert json.loads((tmp_path / "history_index.json").read_text()) == {
         "r": {"2021": {"commits": 1, "files": 1}, "2022": {"commits": 1, "files": 2}}}
@@ -61,7 +61,7 @@ def test_module_shards_index_incoming_edges_and_module_graph(tmp_path):
     incoming = [json.loads(l) for l in (tmp_path / "incoming/r/addOns__b.jsonl").read_text().splitlines()]
     assert [(r["source"], r["target"]) for r in incoming] == [("symbol:r:A", "symbol:r:B")]  # cross-shard only
     graph = json.loads((tmp_path / "module_graph.json").read_text())
-    assert graph["nodes"] == ["module:r:addOns/a", "module:r:addOns/b"] and graph["edges"] == [[0, 1, "CALLS", 1]]
+    assert graph["nodes"] == ["module:r:addOns/a", "module:r:addOns/b"] and graph["edges"] == [[0, 1, "CALLS", 1, "resolved"]]
 
 
 def test_oversized_module_splits_by_directory_and_small_dirs_stay_in_parent():

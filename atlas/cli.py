@@ -39,7 +39,7 @@ def _build_parser() -> argparse.ArgumentParser:
     p_reshard = sub.add_parser("reshard", help="Rewrite symbols and relationships of a dataset into per-module shards")
     p_reshard.add_argument("dataset", type=Path)
 
-    p_timeline = sub.add_parser("timeline", help="Rebuild timeline.json from the commit shards of a dataset")
+    p_timeline = sub.add_parser("timeline", help="Rebuild timeline.json and module_activity.json from the shards of a dataset")
     p_timeline.add_argument("dataset", type=Path)
 
     p_validate = sub.add_parser("validate", help="Validate generated data")
@@ -81,8 +81,9 @@ def main(argv: list[str] | None = None) -> int:
         print(f"[atlas] wrote {len(reshard(args.dataset))} shard files")
         return 0
     if args.command == "timeline":
+        from atlas.activity import rebuild_from_shards as rebuild_activity
         from atlas.timeline import rebuild_from_shards
-        print(f"[atlas] wrote {rebuild_from_shards(args.dataset)}")
+        print(f"[atlas] wrote {rebuild_from_shards(args.dataset)} and {rebuild_activity(args.dataset)}")
         return 0
     if args.command == "report":
         from atlas.report import build_report

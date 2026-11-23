@@ -4,11 +4,12 @@ import Graph from "graphology";
 import forceAtlas2 from "graphology-layout-forceatlas2";
 import Sigma from "sigma";
 import {
-  ModuleGraph, Relationship, ShardIndex, loadModuleGraph, loadModuleIncoming, loadModuleRelationships, loadModuleSymbols, loadShardIndex,
+  ModuleActivity, ModuleGraph, Relationship, ShardIndex, loadModuleActivity, loadModuleGraph, loadModuleIncoming, loadModuleRelationships, loadModuleSymbols, loadShardIndex,
 } from "../lib/data";
 import { Loading, ErrorBox } from "../components/ui";
 
 const REPO_COLOR: Record<string, string> = { zaproxy: "#4389ff", "zap-extensions": "#e08e00", "zap-core-help": "#2f9e6f", "zap-hud": "#8e5bd0" };
+const EVIDENCE = ["resolved", "inferred", "syntactic"];
 const TYPES = ["CALLS", "IMPORTS", "EXTENDS", "IMPLEMENTS", "USES_API", "DEPENDS_ON"];
 const reduceMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const isDark = () => document.documentElement.classList.contains("dark");
@@ -32,6 +33,15 @@ function drawHover(ctx: CanvasRenderingContext2D, data: any, settings: any) {
   }
 }
 
+type SizeBy = "edges" | "commits" | "lines";
+type ColourBy = "repo" | "recency";
+const yearOf = (day: string) => +day.slice(0, 4);
+/** Old to new: slate to ZAP orange, both readable on the light and dark canvases. */
+function ramp(t: number): string {
+  const a = [0x6b, 0x7f, 0x94], b = [0xff, 0xa4, 0x00];
+  return "#" + a.map((v, i) => Math.round(v + (b[i] - v) * Math.max(0, Math.min(1, t))).toString(16).padStart(2, "0")).join("");
+}
+
 const repoOf = (id: string) => id.split(":")[1];
 const pathOf = (id: string) => id.split(":").slice(2).join(":");
 const short = (id: string) => (repoOf(id) === "zaproxy" ? `${pathOf(id)} (core)` : pathOf(id).replace(/^addOns\//, ""));
@@ -51,7 +61,7 @@ interface Pair { a: string; b: string; weight: number; types: Record<string, num
  * Pairs for the graph with some modules expanded: their module-level code edges are replaced by edges
  * between their most connected types and the types or modules on the other side.
  */
-function expandedPairs(g: ModuleGraph, types: Set<string>, expanded: string[], detail: Map<string, Detail>,
+function expandedPairs(g: ModuleGraph, types: Set<string>, evidence: Set<string>, expanded: string[], detail: Map<string, Detail>,
                        indexes: Record<string, ShardIndex>): { pairs: Pair[]; typeParent: Map<string, string> } {
   const open = new Set(expanded.filter(m => detail.has(m)));
   const typeParent = new Map<string, string>();
@@ -76,8 +86,8 @@ function expandedPairs(g: ModuleGraph, types: Set<string>, expanded: string[], d
     p.weight += n; p.types[type] = (p.types[type] ?? 0) + n;
     flip ? (p.ba += n) : (p.ab += n);
   };
-  for (const [s, t, type, n] of g.edges) {
-    if (!types.has(type)) continue;
+  for (const [s, t, type, n, ev] of g.edges) {
+    if (!types.has(type) || !evidence.has(ev)) continue;
     const a = g.nodes[s], b = g.nodes[t];
     if (CODE_EDGES.has(type) && (open.has(a) || open.has(b))) continue;
     add(a, b, type, n);
@@ -86,7 +96,7 @@ function expandedPairs(g: ModuleGraph, types: Set<string>, expanded: string[], d
   for (const m of open) {
     for (const t of detail.get(m)!.types) add(m, t, "CONTAINS", 1);
     for (const r of detail.get(m)!.rels) {
-      if (!CODE_EDGES.has(r.type) || !types.has(r.type)) continue;
+      if (!CODE_EDGES.has(r.type) || !types.has(r.type) || !evidence.has(r.evidence_type)) continue;
       const key = `${r.source}|${r.target}|${r.type}|${r.source_line}`;
       if (seen.has(key)) continue;
       seen.add(key);
@@ -136,34 +146,68 @@ export default function GraphPage() {
   const [detail, setDetail] = useState<Map<string, Detail>>(new Map());
   const [indexes, setIndexes] = useState<Record<string, ShardIndex>>({});
   const [loading, setLoading] = useState("");
+  const [evidence, setEvidence] = useState<Set<string>>(new Set(EVIDENCE));
+  const [sizeBy, setSizeBy] = useState<SizeBy>("edges");
+  const [colourBy, setColourBy] = useState<ColourBy>("repo");
+  const [year, setYear] = useState<number | null>(null);       // null: every year
+  const [activity, setActivity] = useState<Record<string, ModuleActivity>>({});
   const box = useRef<HTMLDivElement>(null);
   const sigma = useRef<Sigma | null>(null);
   const camera = useRef<any>(null);
   const positions = useRef(new Map<string, { x: number; y: number }>());
   const selRef = useRef("");
   selRef.current = sel;
+  const years = useMemo(() => {
+    const all = Object.values(activity).flatMap(a => [yearOf(a.first), yearOf(a.last)]);
+    return all.length ? { min: Math.min(...all), max: Math.max(...all) } : null;
+  }, [activity]);
+  const maxOf = useMemo(() => ({
+    commits: Math.max(1, ...Object.values(activity).map(a => a.commits)), lines: Math.max(1, ...Object.values(activity).map(a => a.lines)),
+  }), [activity]);
 
-  useEffect(() => { loadModuleGraph().then(setData).catch(e => setError(e.message)); }, []);
+  useEffect(() => {
+    loadModuleGraph().then(setData).catch(e => setError(e.message));
+    loadModuleActivity().then(setActivity).catch(() => {});
+  }, []);
 
   const { pairs, typeParent } = useMemo(
-    () => (data ? expandedPairs(data, types, expanded, detail, indexes) : { pairs: [] as Pair[], typeParent: new Map<string, string>() }),
-    [data, types, expanded, detail, indexes]);
+    () => (data ? expandedPairs(data, types, evidence, expanded, detail, indexes) : { pairs: [] as Pair[], typeParent: new Map<string, string>() }),
+    [data, types, evidence, expanded, detail, indexes]);
+  const styleRef = useRef<any>({});
+  styleRef.current = { sizeBy, colourBy, year, activity, years, maxOf, typeParent };
   const graph = useMemo(
     () => (data ? buildGraph(data.nodes, pairs, typeParent, positions.current, positions.current.size === 0) : null),
     [data, pairs, typeParent]);
+
+  /** Is a module (or the module a type belongs to) outside the chosen year, by its first and last commit? */
+  const isFaded = (n: string): boolean => {
+    const st = styleRef.current, act = st.activity[st.typeParent.get(n) ?? n];
+    return st.year != null && !!act && (yearOf(act.first) > st.year || yearOf(act.last) < st.year);
+  };
+  /** Size by activity, colour by recency, and fade by year, applied on top of the graph's own attributes. */
+  const styleNode = (n: string, d: any) => {
+    const st = styleRef.current, isTypeNode = st.typeParent.has(n), act = st.activity[st.typeParent.get(n) ?? n];
+    if (!act) return d;
+    let out = d;
+    if (!isTypeNode && st.sizeBy !== "edges") out = { ...out, size: 3 + 19 * Math.sqrt(act[st.sizeBy as "commits" | "lines"] / st.maxOf[st.sizeBy as "commits" | "lines"]) };
+    if (!isTypeNode && st.colourBy === "recency" && st.years) out = { ...out, color: ramp((yearOf(act.last) - st.years.min) / Math.max(1, st.years.max - st.years.min)) };
+    if (isFaded(n)) out = { ...out, color: isDark() ? "#2a3548" : "#e6ecf2", label: "", zIndex: -1 };
+    return out;
+  };
 
   useEffect(() => {
     if (!graph || !box.current) return;
     const s = new Sigma(graph, box.current, {
       labelRenderedSizeThreshold: 7, defaultDrawNodeHover: drawHover, labelColor: { color: isDark() ? "#e2e8f0" : "#334155" }, renderEdgeLabels: false,
-      nodeReducer: (n, d) => {
-        const cur = selRef.current;
+      nodeReducer: (n, raw) => {
+        const cur = selRef.current, d = styleNode(n, raw);
         if (!cur) return d;
         if (n === cur) return { ...d, highlighted: true, zIndex: 2 };
         return graph.hasNode(cur) && graph.hasEdge(cur, n) ? { ...d, zIndex: 1 } : { ...d, color: isDark() ? "#334155" : "#d5dde6", label: "", zIndex: 0 };
       },
       edgeReducer: (e, d) => {
         const cur = selRef.current;
+        if (styleRef.current.year != null && graph.extremities(e).some(n => isFaded(n))) return { ...d, hidden: true };
         return !cur ? d : graph.hasExtremity(e, cur) ? { ...d, color: "#00549e", size: d.size + 1 } : { ...d, hidden: true };
       },
     });
@@ -178,7 +222,7 @@ export default function GraphPage() {
     return () => { camera.current = s.getCamera().getState(); theme.disconnect(); s.kill(); sigma.current = null; };
   }, [graph]);
 
-  useEffect(() => { sigma.current?.refresh(); }, [sel]);
+  useEffect(() => { sigma.current?.refresh(); }, [sel, sizeBy, colourBy, year, activity]);
   useEffect(() => { if (sel && graph && !graph.hasNode(sel)) setSel(""); }, [graph, sel]);
 
   const expand = async (id: string) => {
@@ -236,6 +280,11 @@ export default function GraphPage() {
         <div className="flex flex-wrap gap-1" role="group" aria-label="Edge types">
           {TYPES.map(t => <button key={t} aria-pressed={types.has(t)} className={chip(types.has(t))} onClick={() => toggle(t)}>{t}</button>)}
         </div>
+        <div className="flex flex-wrap gap-1" role="group" aria-label="Evidence level">
+          <span className="text-xs text-slate-500 self-center">Evidence:</span>
+          {EVIDENCE.map(e => <button key={e} aria-pressed={evidence.has(e)} className={chip(evidence.has(e))}
+            onClick={() => { const n = new Set(evidence); n.has(e) ? n.delete(e) : n.add(e); setEvidence(n); }}>{e}</button>)}
+        </div>
         <label className="ml-auto">Module{" "}
           <select className="border border-slate-300 rounded px-2 py-1 bg-white max-w-[14rem]" value={sel} onChange={e => setSel(e.target.value)} aria-label="Select a module">
             <option value="">none</option>
@@ -246,6 +295,29 @@ export default function GraphPage() {
         <button className={chip(false)} onClick={() => zoom(1 / 1.5)} aria-label="Zoom out">−</button>
         <button className={chip(false)} onClick={resetView}>Reset view</button>
         {expanded.length > 0 && <button className={chip(false)} onClick={() => setExpanded([])}>Collapse all</button>}
+      </div>
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
+        <label>Size by{" "}
+          <select className="border border-slate-300 rounded px-2 py-1 bg-white" value={sizeBy} onChange={e => setSizeBy(e.target.value as SizeBy)}>
+            <option value="edges">links to other modules</option><option value="commits">commits</option><option value="lines">lines changed</option>
+          </select>
+        </label>
+        <label>Colour by{" "}
+          <select className="border border-slate-300 rounded px-2 py-1 bg-white" value={colourBy} onChange={e => setColourBy(e.target.value as ColourBy)}>
+            <option value="repo">repository</option><option value="recency">last activity</option>
+          </select>
+        </label>
+        {years && (
+          <label className="flex items-center gap-2">Year
+            <input type="range" min={years.min} max={years.max + 1} value={year ?? years.max + 1}
+              onChange={e => setYear(+e.target.value > years.max ? null : +e.target.value)} aria-valuetext={year == null ? "Any year" : `Active in ${year}`} />
+            <span className="w-28 text-slate-600">{year == null ? "any year" : `active in ${year}`}</span>
+          </label>
+        )}
+        {colourBy === "recency" && years && (
+          <span className="flex items-center gap-1 text-xs text-slate-600">last commit {years.min}
+            <span className="inline-block w-24 h-2 rounded" style={{ background: `linear-gradient(to right, ${ramp(0)}, ${ramp(1)})` }} aria-hidden="true" />{years.max}</span>
+        )}
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_22rem] gap-3 items-start">
         <div className="rounded-xl border border-slate-200 bg-white overflow-hidden">
@@ -269,6 +341,7 @@ export default function GraphPage() {
               <div className="text-xs text-slate-500 mb-2 space-y-1">
                 <div>{repoOf(sel)} · {neighbours.length} linked ·{" "}
                   <Link className="text-indigo-600 hover:underline" to={`/source?repo=${repoOf(sel)}&mod=${encodeURIComponent(pathOf(sel))}&tab=symbols`}>open in Source</Link></div>
+                {activity[sel] && <div>{activity[sel].commits.toLocaleString()} commits · {activity[sel].lines.toLocaleString()} lines changed · first {activity[sel].first}, last {activity[sel].last}</div>}
                 {expanded.includes(sel)
                   ? <div><button className={chip(false)} onClick={() => collapse(sel)}>Collapse types</button>{" "}
                       showing {detail.get(sel)!.types.length} of {detail.get(sel)!.total} types (the most connected)</div>
@@ -291,7 +364,7 @@ export default function GraphPage() {
           </>)}
         </aside>
       </div>
-      <p className="text-xs text-slate-400">Edge counts are resolved, inferred and syntactic edges together. Hover a row for its edge types. Expanded modules show their {TOP_TYPES} most connected types; the rest stay inside the module node.</p>
+      <p className="text-xs text-slate-400">Edge counts are resolved, inferred and syntactic edges together. Hover a row for its edge types. Expanded modules show their {TOP_TYPES} most connected types; the rest stay inside the module node. Year fades modules whose first commit is later, or last commit earlier, than the chosen year Activity counts file changes under the module\'s current path only, so history from before a module moved there (most zap-extensions add-ons were reorganised in 2019) is not included, and a module with no commits in between still counts as active.</p>
     </div>
   );
 }

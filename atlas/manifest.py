@@ -20,6 +20,7 @@ from atlas.languages import count_languages
 from atlas.milestones import build_milestones
 from atlas.stories import load_stories
 from atlas.sharding import write_module_shards
+from atlas.activity import write_activity
 from atlas.timeline import write_timeline
 from atlas.java_parser import JavaParser
 from atlas.schema import (
@@ -130,6 +131,7 @@ class AtlasGenerator:
         (output_dir / HISTORY_INDEX).write_text(json.dumps(index, indent=1), encoding="utf-8")
         names.append(HISTORY_INDEX)
         names.append(write_timeline(output_dir, self.rows[CHUNK_COMMITS]))
+        names.append(write_activity(output_dir, self.rows[CHUNK_MODULES], self.rows[CHUNK_COMMITS], self.rows[CHUNK_FILES]))
         return names
 
     def _process_repo(self, repo, repo_path: Path) -> None:

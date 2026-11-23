@@ -236,3 +236,22 @@ test("module graph expands a module into its types and collapses it again", asyn
   await page.getByRole("button", { name: "Collapse types" }).click();
   await expect(summary).toHaveText(plain);
 });
+
+test("module graph: evidence filter, size and colour modes, and the year slider", async ({ page }) => {
+  await page.goto("graph");
+  const summary = page.getByText(/\d+ modules.*linked pairs/);
+  const all = (await summary.textContent())!;
+  await page.getByRole("button", { name: "resolved", exact: true }).click();     // leaves inferred and syntactic edges only
+  await expect(summary).not.toHaveText(all);
+  await page.getByRole("button", { name: "resolved", exact: true }).click();
+  await expect(summary).toHaveText(all);
+  await page.getByLabel("Size by").selectOption("lines");
+  await page.getByLabel("Colour by").selectOption("recency");
+  await expect(page.getByText(/last commit \d{4}/)).toBeVisible();
+  const slider = page.getByRole("slider", { name: /Year/ });
+  await expect(page.getByText("any year")).toBeVisible();
+  await slider.fill("2014");
+  await expect(page.getByText("active in 2014")).toBeVisible();
+  await page.getByLabel("Select a module").selectOption({ label: "automation" });
+  await expect(page.getByText(/\d+ commits · [\d,]+ lines changed · first \d{4}-/)).toBeVisible();
+});

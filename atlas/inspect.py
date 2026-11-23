@@ -159,7 +159,7 @@ def _enrich(dataset: Path, entity_id: str, row: dict) -> list[str]:
         graph = json.loads((dataset / "module_graph.json").read_text(encoding="utf-8")) if (dataset / "module_graph.json").is_file() else None
         if graph and entity_id in graph["nodes"]:
             at, totals = graph["nodes"].index(entity_id), defaultdict(int)
-            for s, t, _, n in graph["edges"]:
+            for s, t, _, n, *_ in graph["edges"]:
                 if at in (s, t):
                     totals[graph["nodes"][t if s == at else s]] += n
             top = sorted(totals.items(), key=lambda kv: -kv[1])[:5]

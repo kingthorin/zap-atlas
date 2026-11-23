@@ -10,7 +10,7 @@ Layout, for each repository ``<repo>``::
 A shard is a module path. A module whose rows exceed LIMIT bytes is split by directory, and a
 directory below MIN bytes stays in its parent's shard. Shard names replace "/" with "__".
 Files that belong to no module go to ``_root``, and edges with no file or symbol source (release
-links) go to ``_meta``. ``module_graph.json`` aggregates edges between modules for the graph view.
+links) go to ``_meta``. ``module_graph.json`` aggregates edges between modules for the graph view: [source, target, type, count, evidence].
 """
 from __future__ import annotations
 
@@ -161,10 +161,10 @@ def _write_module_graph(output_dir: Path, modules: list[dict], addons: list[dict
             continue
         s, t = module_of(r["source"]), module_of(r["target"])
         if s and t and s != t:
-            counts[(s, t, r["type"])] += 1
-    nodes = sorted({n for s, t, _ in counts for n in (s, t)})
+            counts[(s, t, r["type"], r.get("evidence_type") or "resolved")] += 1
+    nodes = sorted({n for s, t, _, _ in counts for n in (s, t)})
     at = {n: i for i, n in enumerate(nodes)}
-    edges = [[at[s], at[t], ty, n] for (s, t, ty), n in sorted(counts.items())]
+    edges = [[at[s], at[t], ty, n, ev] for (s, t, ty, ev), n in sorted(counts.items())]
     (output_dir / MODULE_GRAPH).write_text(
         json.dumps({"nodes": nodes, "edges": edges}, separators=(",", ":")), encoding="utf-8")
     return MODULE_GRAPH
