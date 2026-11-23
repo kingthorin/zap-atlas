@@ -12,7 +12,7 @@ import { filePathOf } from "../lib/data";
 
 const REPO_COLOR: Record<string, string> = { zaproxy: "#4389ff", "zap-extensions": "#e08e00", "zap-core-help": "#2f9e6f", "zap-hud": "#8e5bd0" };
 const EVIDENCE = ["resolved", "inferred", "syntactic"];
-const TYPES = ["CALLS", "IMPORTS", "EXTENDS", "IMPLEMENTS", "USES_API", "DEPENDS_ON"];
+const TYPES = ["CALLS", "IMPORTS", "EXTENDS", "IMPLEMENTS", "USES_API", "DEPENDS_ON", "REFERENCES"];
 const reduceMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const isDark = () => document.documentElement.classList.contains("dark");
 
@@ -57,10 +57,11 @@ const short = (id: string) => (repoOf(id) === "zaproxy" ? `${pathOf(id)} (core)`
 
 const TYPE_KINDS = new Set(["class", "interface", "enum", "record", "annotation_type"]);
 const CODE_EDGES = new Set(["CALLS", "IMPORTS", "EXTENDS", "IMPLEMENTS"]); // edges that expanding a module replaces with type-level ones
+const DOC_PREFIX = /^doc:[^:]+:/;   // doc:<repo>:<path>; help pages link to each other with REFERENCES edges
 const TOP_TYPES = 40; // most connected types shown per expanded module
 
 type Mode = "types" | "files";
-const TOP_FILES = 40; // most connected files shown per module expanded into files
+const TOP_FILES = 40, TOP_DOCS = 20; // most connected source files and help pages shown per module expanded into files
 interface Detail { types: string[]; rels: Relationship[]; total: number; files: string[]; totalFiles: number; fileOf: Map<string, string> }
 const ownerType = (id: string) => id.split("#")[0];
 const fnode = (m: string, path: string) => `fnode:${repoOf(m)}:${path}`;
@@ -138,6 +139,12 @@ function expandedPairs(g: ModuleGraph, types: Set<string>, evidence: Set<string>
   };
   const nodeFor = (symbol: string): string | null => {
     const t = ownerType(symbol);
+    if (DOC_PREFIX.test(t)) {                    // a help page: its file node if shown, else the module that holds it
+      const repo = t.split(":")[1], p = t.replace(DOC_PREFIX, "");
+      const mod = (modulesOf.get(repo) ?? []).filter(m => p.startsWith(m + "/")).sort((a, b) => b.length - a.length)[0];
+      const id = mod ? `module:${repo}:${mod}` : null;
+      return id && open.has(id) && modes[id] === "files" && shownFiles.has(fnode(id, p)) ? fnode(id, p) : id;
+    }
     if (childParent.has(t)) return t;
     const m = moduleOf(symbol);
     if (m && open.has(m) && modes[m] === "files") {
@@ -165,12 +172,12 @@ function expandedPairs(g: ModuleGraph, types: Set<string>, evidence: Set<string>
   const seen = new Set<string>();
   for (const m of open) {
     for (const r of detail.get(m)!.rels) {
-      if (!CODE_EDGES.has(r.type) || !types.has(r.type) || !evidence.has(r.evidence_type)) continue;
+      if (!(CODE_EDGES.has(r.type) || r.type === "REFERENCES") || !types.has(r.type) || !evidence.has(r.evidence_type)) continue;
       const key = `${r.source}|${r.target}|${r.type}|${r.source_line}`;
       if (seen.has(key)) continue;
       seen.add(key);
       const a = nodeFor(r.source), b = nodeFor(r.target);
-      if (a && b) add(a, b, r.type, 1);
+      if (a && b && (r.type !== "REFERENCES" || isFileNode(a) || isFileNode(b))) add(a, b, r.type, 1);   // page links show only between shown pages
     }
   }
   return { pairs: [...by.values()], childParent, kinds };
@@ -433,9 +440,16 @@ export default function GraphPage() {
         if (typeIds.has(t)) degree.set(t, (degree.get(t) ?? 0) + 1);
         if (f) fileDegree.set(f, (fileDegree.get(f) ?? 0) + 1);
       }
+      const inModule = (p: string) => p === path || p.startsWith(path + "/");
+      const docDegree = new Map<string, number>();
+      for (const r of rels) if (r.type === "REFERENCES") for (const e of [r.source, r.target]) {
+        const p = DOC_PREFIX.test(e) ? e.replace(DOC_PREFIX, "") : "";
+        if (p && inModule(p)) docDegree.set(p, (docDegree.get(p) ?? 0) + 1);
+      }
+      const docs = [...docDegree.keys()].sort((a, b) => docDegree.get(b)! - docDegree.get(a)!).slice(0, TOP_DOCS);
       const top = [...typeIds].filter(t => degree.has(t)).sort((a, b) => degree.get(b)! - degree.get(a)!).slice(0, TOP_TYPES);
-      const files = [...fileDegree.keys()].sort((a, b) => fileDegree.get(b)! - fileDegree.get(a)!).slice(0, TOP_FILES);
-      setDetail(d => new Map(d).set(id, { types: top, rels, total: typeIds.size, files, totalFiles: new Set(fileOf.values()).size, fileOf }));
+      const files = [...[...fileDegree.keys()].sort((a, b) => fileDegree.get(b)! - fileDegree.get(a)!).slice(0, TOP_FILES), ...docs];
+      setDetail(d => new Map(d).set(id, { types: top, rels, total: typeIds.size, files, totalFiles: new Set(fileOf.values()).size + docDegree.size, fileOf }));
       done();
     } catch (e: any) { setError(e.message); } finally { setLoading(""); }
   };

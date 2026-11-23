@@ -4,6 +4,8 @@ Produces the versioned manifest and chunked JSON/JSONL static data.
 """
 
 from __future__ import annotations
+
+from atlas import jsonfmt
 import os
 
 import copy
@@ -158,7 +160,7 @@ class AtlasGenerator:
 
         manifest = self._build_manifest(output_dir, chunk_names)
         (output_dir / CHUNK_MANIFEST).write_text(
-            json.dumps(asdict(manifest), indent=2, ensure_ascii=False),
+            jsonfmt.dumps(asdict(manifest), ensure_ascii=False),
             encoding="utf-8",
         )
         print(f"[atlas] wrote {len(chunk_names)} chunks + manifest to {output_dir}")
@@ -180,13 +182,13 @@ class AtlasGenerator:
                 _write_jsonl(output_dir / name, rows)
                 names.append(name)
                 index.setdefault(repo, {}).setdefault(year, {})[kind] = len(rows)
-        (output_dir / HISTORY_INDEX).write_text(json.dumps(index, indent=1), encoding="utf-8")
+        (output_dir / HISTORY_INDEX).write_text(jsonfmt.dumps(index), encoding="utf-8")
         names.append(HISTORY_INDEX)
         names.append(write_timeline(output_dir, self.rows[CHUNK_COMMITS]))
         if self.core_team:
-            (output_dir / CORE_TEAM).write_text(json.dumps(self.core_team, separators=(",", ":"), ensure_ascii=False), encoding="utf-8")
+            (output_dir / CORE_TEAM).write_text(jsonfmt.dumps(self.core_team, ensure_ascii=False), encoding="utf-8")
             names.append(CORE_TEAM)
-        names += write_activity(output_dir, self.rows[CHUNK_MODULES], self.rows[CHUNK_COMMITS], self.rows[CHUNK_FILES], self.rows[CHUNK_SYMBOLS])
+        names += write_activity(output_dir, self.rows[CHUNK_MODULES], self.rows[CHUNK_COMMITS], self.rows[CHUNK_FILES], self.rows[CHUNK_SYMBOLS], self.rows[CHUNK_DOCS])
         return names
 
     # -- per-repository cache ----------------------------------------------------------------------

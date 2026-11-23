@@ -10,6 +10,8 @@ Record: ``k`` kind, ``i`` entity id, ``t`` title, ``x`` extra searchable text,
 
 from __future__ import annotations
 
+from atlas import jsonfmt
+
 import hashlib
 import json
 from pathlib import Path
@@ -62,7 +64,7 @@ def build_search_index(dataset: Path) -> list[str]:
     out.mkdir(exist_ok=True)
     for group, rows in (("ecosystem", eco), ("symbols", symbols), ("commits", commits)):
         name = f"search/{group}.json"
-        (dataset / name).write_text(json.dumps(rows, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+        (dataset / name).write_text(jsonfmt.dumps(rows, ensure_ascii=False), encoding="utf-8")
         names.append(name)
     _register(dataset, names)
     return names
@@ -78,4 +80,4 @@ def _register(dataset: Path, names: list[str]) -> None:
         manifest["inventory"] = [i for i in manifest["inventory"] if i["name"] != name] + [entry]
         if name not in manifest["chunks"]:
             manifest["chunks"].append(name)
-    mpath.write_text(json.dumps(manifest, indent=2, ensure_ascii=False), encoding="utf-8")
+    mpath.write_text(jsonfmt.dumps(manifest, ensure_ascii=False), encoding="utf-8")

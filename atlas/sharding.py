@@ -14,6 +14,8 @@ links) go to ``_meta``. ``module_graph.json`` aggregates edges between modules f
 """
 from __future__ import annotations
 
+from atlas import jsonfmt
+
 import json
 from collections import Counter
 from pathlib import Path
@@ -137,7 +139,7 @@ def write_module_shards(output_dir: Path, repos: list[str], modules: list[dict],
                  "s": {sid.split(":", 2)[2]: keys.index(k) for sid, k in sym_key.items()}}
         name = f"shards/{repo}.json"
         (output_dir / name).parent.mkdir(parents=True, exist_ok=True)
-        (output_dir / name).write_text(json.dumps(index, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+        (output_dir / name).write_text(jsonfmt.dumps(index, ensure_ascii=False), encoding="utf-8")
         names.append(name)
     names.append(_write_module_graph(output_dir, modules, addons, sym_module, rels))
     return names
@@ -166,7 +168,7 @@ def _write_module_graph(output_dir: Path, modules: list[dict], addons: list[dict
     at = {n: i for i, n in enumerate(nodes)}
     edges = [[at[s], at[t], ty, n, ev] for (s, t, ty, ev), n in sorted(counts.items())]
     (output_dir / MODULE_GRAPH).write_text(
-        json.dumps({"nodes": nodes, "edges": edges}, separators=(",", ":")), encoding="utf-8")
+        jsonfmt.dumps({"nodes": nodes, "edges": edges}), encoding="utf-8")
     return MODULE_GRAPH
 
 
@@ -202,5 +204,5 @@ def reshard(dataset: Path) -> list[str]:
     manifest["inventory"] = [i for i in manifest["inventory"] if not stale(i["name"])] + [
         {"name": n, "items": 0, "size_bytes": (dataset / n).stat().st_size,
          "sha256": hashlib.sha256((dataset / n).read_bytes()).hexdigest()} for n in names]
-    mpath.write_text(json.dumps(manifest, indent=2, ensure_ascii=False), encoding="utf-8")
+    mpath.write_text(jsonfmt.dumps(manifest, ensure_ascii=False), encoding="utf-8")
     return names

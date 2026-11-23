@@ -161,6 +161,12 @@ test("timeline draws the repositories with markers, zooms and has a table", asyn
   await page.getByLabel("Focus").selectOption({ label: "zap-extensions · addOns/automation" });   // one add-on's own activity
   await page.mouse.move(box.x + box.width * 0.7, box.y + 244 * scale);
   await expect(page.getByRole("tooltip")).toContainText(/^zap-extensions · addOns\/automation · 20\d\d-\d\d · \d+ commits?/);
+  await page.getByLabel("Focus").selectOption({ label: "zap-extensions · Java" });                  // a language
+  await page.mouse.move(box.x + box.width * 0.7, box.y + 244 * scale);
+  await expect(page.getByRole("tooltip")).toContainText(/^zap-extensions · Java · 20\d\d-\d\d · \d+ commits?/);
+  await page.getByLabel("Focus").selectOption({ label: "zap-extensions · addOns/automation/" });  // a directory
+  await page.mouse.move(box.x + box.width * 0.7, box.y + 244 * scale);
+  await expect(page.getByRole("tooltip")).toContainText(/^zap-extensions · addOns\/automation · 20\d\d-\d\d · \d+ commits?/);
   await page.getByLabel("Focus").selectOption("");
   await page.mouse.move(box.x + box.width * 0.9, box.y + 290 * scale); // release strip under the zap-extensions lane
   await expect(page.getByRole("tooltip")).toContainText(/\d+ add-on releases?: /);
@@ -269,8 +275,8 @@ test("module graph expands a module into directories and files, and a file opens
   const summary = page.getByText(/\d+ modules.*linked pairs/);
   await page.getByLabel("Select a module").selectOption({ label: "automation" });
   await page.getByRole("button", { name: "Expand into files", exact: true }).click();
-  await expect(summary).toContainText(/\+ 40 files, \d+ directories/);
-  await expect(page.getByText(/showing 40 of \d+ files/)).toBeVisible();
+  await expect(summary).toContainText(/\+ (4\d|5\d|60) files, \d+ directories/);   // 40 source files and up to 20 help pages
+  await expect(page.getByText(/showing \d+ of \d+ files/)).toBeVisible();
   await page.getByRole("button", { name: "Expand into types" }).click();            // switching modes replaces the files
   await expect(summary).toContainText("+ 40 types");
   await expect(summary).not.toContainText("files");

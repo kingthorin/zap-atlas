@@ -6,6 +6,8 @@ never emails.
 """
 from __future__ import annotations
 
+from atlas import jsonfmt
+
 import json
 from pathlib import Path
 
@@ -28,7 +30,7 @@ def build_timeline(commits: list[dict]) -> dict[str, dict[str, list[int]]]:
 
 
 def write_timeline(output_dir: Path, commits: list[dict]) -> str:
-    (output_dir / TIMELINE).write_text(json.dumps(build_timeline(commits), separators=(",", ":")), encoding="utf-8")
+    (output_dir / TIMELINE).write_text(jsonfmt.dumps(build_timeline(commits)), encoding="utf-8")
     return TIMELINE
 
 

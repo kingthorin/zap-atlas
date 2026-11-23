@@ -7,11 +7,16 @@ keeps the history of files that were moved into it.
 
 * module_activity.json: module id -> {"first", "last", "commits", "lines"} (lines = added + deleted). A file belongs to
   the module with the longest path that is a prefix of its current path (the same rule as the shards).
-* file_activity.json: repository -> path -> [first, last, commits, lines] for the files that currently declare symbols.
+* file_activity.json: repository -> path -> [first, last, commits, lines] for the files that currently declare symbols and
+  for help pages.
+* timeline_sections.json: "path:<repo>:<directory>" and "lang:<repo>:<language>" -> month -> the same row, on current paths,
+  for the timeline's focus selector (directories to depth 4 with at least 50 commits).
 * timeline_modules.json: module id -> "YYYY-MM" -> [commits, distinct authors, lines added, lines deleted], the same shape
   as timeline.json but for one module, for the timeline's focus selector.
 """
 from __future__ import annotations
+
+from atlas import jsonfmt
 
 import json
 from collections import defaultdict
@@ -20,6 +25,8 @@ from pathlib import Path
 ACTIVITY = "module_activity.json"
 FILE_ACTIVITY = "file_activity.json"
 MODULE_TIMELINE = "timeline_modules.json"
+SECTION_TIMELINE = "timeline_sections.json"
+SECTION_DEPTH, SECTION_MIN_COMMITS = 4, 50    # directories up to this depth with at least this many commits
 
 
 def credited_changes(commits: list[dict], file_changes: list[dict]):
@@ -75,6 +82,31 @@ def build_module_timeline(modules: list[dict], commits: list[dict], file_changes
     return {mid: dict(sorted(months.items())) for mid, months in sorted(out.items())}
 
 
+def build_section_timeline(commits: list[dict], file_changes: list[dict]) -> dict[str, dict[str, list[int]]]:
+    """Per directory prefix and per language, per month: [commits, distinct authors, lines added, lines deleted]."""
+    from atlas.languages import _language
+    author_of = {c["id"]: c.get("author_name", "") for c in commits}
+    seen: dict[tuple[str, str], tuple[set[str], set[str]]] = {}
+    out: dict[str, dict[str, list[int]]] = {}
+    for repo, path, commit, day, added, deleted in credited_changes(commits, file_changes):
+        parts = path.split("/")[:-1]
+        keys = [f"path:{repo}:{'/'.join(parts[:i])}" for i in range(1, min(len(parts), SECTION_DEPTH) + 1)]
+        keys.append(f"lang:{repo}:{_language(path)}")
+        month = day[:7]
+        for key in keys:
+            row = out.setdefault(key, {}).setdefault(month, [0, 0, 0, 0])
+            ids, names = seen.setdefault((key, month), (set(), set()))
+            if commit not in ids:
+                ids.add(commit)
+                names.add(author_of.get(commit, ""))
+                row[0] += 1
+                row[1] = len(names)
+            row[2] += added
+            row[3] += deleted
+    kept = {k: v for k, v in out.items() if k.startswith("lang:") or sum(r[0] for r in v.values()) >= SECTION_MIN_COMMITS}
+    return {k: dict(sorted(v.items())) for k, v in sorted(kept.items())}
+
+
 def _add(stats: dict, key, day: str, lines: int, commit: str, touched: dict) -> None:
     s = stats.setdefault(key, {"first": day, "last": day, "commits": 0, "lines": 0})
     s["first"], s["last"] = min(s["first"], day), max(s["last"], day)
@@ -107,19 +139,23 @@ def build_activity(modules: list[dict], commits: list[dict], file_changes: list[
     return dict(sorted(mod_stats.items())), files
 
 
-def write_activity(output_dir: Path, modules: list[dict], commits: list[dict], file_changes: list[dict], symbols: list[dict] | None = None) -> list[str]:
+def write_activity(output_dir: Path, modules: list[dict], commits: list[dict], file_changes: list[dict], symbols: list[dict] | None = None,
+                   docs: list[dict] | None = None) -> list[str]:
     current: dict[str, set[str]] = defaultdict(set)
     for s in symbols or []:
         current[s["repository"]].add(s["file"].split(":", 3)[3])
+    for d in docs or []:                           # help pages are files of the graph too
+        current[d["repository"]].add(d["path"])
     mods, files = build_activity(modules, commits, file_changes, current)
-    (output_dir / ACTIVITY).write_text(json.dumps(mods, separators=(",", ":")), encoding="utf-8")
-    (output_dir / FILE_ACTIVITY).write_text(json.dumps(files, separators=(",", ":")), encoding="utf-8")
-    (output_dir / MODULE_TIMELINE).write_text(json.dumps(build_module_timeline(modules, commits, file_changes), separators=(",", ":")), encoding="utf-8")
-    return [ACTIVITY, FILE_ACTIVITY, MODULE_TIMELINE]
+    (output_dir / ACTIVITY).write_text(jsonfmt.dumps(mods), encoding="utf-8")
+    (output_dir / FILE_ACTIVITY).write_text(jsonfmt.dumps(files), encoding="utf-8")
+    (output_dir / MODULE_TIMELINE).write_text(jsonfmt.dumps(build_module_timeline(modules, commits, file_changes)), encoding="utf-8")
+    (output_dir / SECTION_TIMELINE).write_text(jsonfmt.dumps(build_section_timeline(commits, file_changes)), encoding="utf-8")
+    return [ACTIVITY, FILE_ACTIVITY, MODULE_TIMELINE, SECTION_TIMELINE]
 
 
 def rebuild_from_shards(dataset: Path) -> list[str]:
     """Recompute both files from the commit, file and symbol shards of an existing dataset."""
     def rows(pattern: str) -> list[dict]:
         return [json.loads(l) for p in sorted(dataset.glob(pattern)) for l in p.read_text(encoding="utf-8").splitlines() if l.strip()]
-    return write_activity(dataset, rows("modules.jsonl"), rows("commits/*/*.jsonl"), rows("files/*/*.jsonl"), rows("symbols/*/*.jsonl"))
+    return write_activity(dataset, rows("modules.jsonl"), rows("commits/*/*.jsonl"), rows("files/*/*.jsonl"), rows("symbols/*/*.jsonl"), rows("docs.jsonl"))

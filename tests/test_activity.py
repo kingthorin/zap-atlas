@@ -1,6 +1,6 @@
 import json
 
-from atlas.activity import build_activity, build_module_timeline, rebuild_from_shards
+from atlas.activity import build_section_timeline, build_activity, build_module_timeline, rebuild_from_shards
 
 MODULES = [{"id": "module:r:addOns/a", "repository": "r", "path": "addOns/a"},
            {"id": "module:r:addOns", "repository": "r", "path": "addOns"},
@@ -52,7 +52,7 @@ def test_rebuild_from_shards(tmp_path):
                        ("symbols", [{"repository": "r", "file": "file:r:sha:addOns/a/A.java"}])):
         (tmp_path / kind / "r").mkdir(parents=True)
         (tmp_path / kind / "r" / "2020.jsonl").write_text(json.dumps(rows[0]) + "\n")
-    assert rebuild_from_shards(tmp_path) == ["module_activity.json", "file_activity.json", "timeline_modules.json"]
+    assert rebuild_from_shards(tmp_path) == ["module_activity.json", "file_activity.json", "timeline_modules.json", "timeline_sections.json"]
     assert json.loads((tmp_path / "module_activity.json").read_text())["module:r:addOns/a"]["lines"] == 5
     assert json.loads((tmp_path / "file_activity.json").read_text())["r"]["addOns/a/A.java"] == ["2020-01-05", "2020-01-05", 1, 5]
 
@@ -65,3 +65,12 @@ def test_module_timeline_counts_commits_authors_and_lines_per_month():
     out = build_module_timeline(MODULES, commits, files)
     assert out["module:r:addOns/a"] == {"2020-01": [1, 1, 15, 1], "2023-03": [1, 1, 0, 4]}
     assert out["module:r:addOns"] == {"2023-03": [1, 1, 2, 0]}
+
+
+def test_section_timeline_has_directory_prefixes_and_languages():
+    files = [_fc("1", "addOns/a/src/A.java", 10, 0), _fc("1", "addOns/a/b.md", 2, 1), _fc("2", "top.txt", 1, 0)]
+    out = build_section_timeline(COMMITS, files)
+    assert out["lang:r:Java"] == {"2020-01": [1, 1, 10, 0]}
+    assert out["lang:r:Markdown"] == {"2020-01": [1, 1, 2, 1]}
+    assert "path:r:addOns" not in out          # below the 50 commit floor
+    assert not any(k.endswith(":top.txt") for k in out)

@@ -4,7 +4,7 @@ import { scaleUtc } from "d3-scale";
 import { select } from "d3-selection";
 import { zoom as d3zoom, zoomIdentity, ZoomBehavior, ZoomTransform } from "d3-zoom";
 import { utcMonday } from "d3-time";
-import { CoreTeam, Milestone, ModuleTimeline, Story, Timeline, loadCommits, loadCoreTeam, loadMilestones, loadModuleTimeline, loadStories, loadTimeline } from "../lib/data";
+import { CoreTeam, Milestone, ModuleTimeline, Story, Timeline, loadCommits, loadCoreTeam, loadMilestones, loadModuleTimeline, loadSectionTimeline, loadStories, loadTimeline } from "../lib/data";
 import { Loading, ErrorBox } from "../components/ui";
 
 const TEAM_ROW = 12, TEAM_HEAD = 24;      // the core team lane: one row per concurrent member
@@ -52,7 +52,7 @@ export default function TimelinePage() {
 
   useEffect(() => {
     loadTimeline().then(setTl).catch(e => setError(e.message));
-    loadModuleTimeline().then(setModTl).catch(() => {});
+    Promise.all([loadModuleTimeline(), loadSectionTimeline()]).then(([m, s]) => setModTl({ ...m, ...s })).catch(() => loadModuleTimeline().then(setModTl).catch(() => {}));
     loadCoreTeam().then(setTeam).catch(() => {});
     loadMilestones().then(setMilestones).catch(() => {});
     loadStories().then(setStories).catch(() => {});
@@ -155,7 +155,7 @@ export default function TimelinePage() {
     const mode = laneData[i].mode, out = new Map<number, RelBin>();
     for (const m of milestones) {
       if (m.repository !== repo || m.kind !== "addon-release") continue;
-      if (focus && repo === focusRepo && m.addon !== `addon:${focusPath.split("/").pop()}`) continue;      // the focused add-on's releases only
+      if (focus && repo === focusRepo && (!focus.startsWith("module:") || m.addon !== `addon:${focusPath.split("/").pop()}`)) continue;      // the focused add-on's releases only (none for a directory or language)
       const start = binStart(new Date(m.date), mode), key = start.getTime();
       (out.get(key) ?? out.set(key, { x0: start, x1: binEnd(start, mode), items: [] }).get(key)!).items.push(m);
     }
@@ -255,8 +255,11 @@ export default function TimelinePage() {
           <label>Focus{" "}
             <select className="border border-slate-300 rounded px-2 py-1 bg-white max-w-[13rem]" value={focus} onChange={e => setFocus(e.target.value)}>
               <option value="">all activity</option>
-              {Object.keys(modTl).sort((a, b) => a.split(":").slice(1).join(":").localeCompare(b.split(":").slice(1).join(":"))).map(id => (
-                <option key={id} value={id}>{id.split(":")[1]} · {id.split(":").slice(2).join(":")}</option>))}
+              {([["module", "Modules"], ["path", "Directories"], ["lang", "Languages"]] as const).map(([kind, label]) => (
+                <optgroup key={kind} label={label}>
+                  {Object.keys(modTl).filter(id => id.startsWith(kind + ":")).sort((a, b) => a.split(":").slice(1).join(":").localeCompare(b.split(":").slice(1).join(":"))).map(id => (
+                    <option key={id} value={id}>{id.split(":")[1]} · {id.split(":").slice(2).join(":")}{kind === "path" ? "/" : ""}</option>))}
+                </optgroup>))}
             </select>
           </label>
         )}
@@ -273,7 +276,7 @@ export default function TimelinePage() {
         <button className={btn} onClick={() => zoomBy(1 / 1.5)} aria-label="Zoom out">−</button>
         <button className={btn} onClick={reset}>Reset</button>
         <span className="text-slate-500">
-          {d0.toISOString().slice(0, 10)} to {d1.toISOString().slice(0, 10)} · {weekly ? "weekly" : "monthly"} bars{focus && weekly ? " (the focused module is monthly only)" : ""}
+          {d0.toISOString().slice(0, 10)} to {d1.toISOString().slice(0, 10)} · {weekly ? "weekly" : "monthly"} bars{focus && weekly ? " (the focused module, directory or language is monthly only)" : ""}
         </span>
       </div>
       <div ref={wrap} className="relative rounded-xl border border-slate-200 bg-white p-2" tabIndex={0} role="group" onKeyDown={onKey}

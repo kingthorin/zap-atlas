@@ -232,6 +232,12 @@ export function loadFileActivity(): Promise<FileActivity> {
 
 /** Module id -> "YYYY-MM" -> [commits, distinct authors, lines added, lines deleted], on each file's current path. */
 export type ModuleTimeline = Record<string, Record<string, number[]>>;
+let sectionTimelineCache: Promise<ModuleTimeline> | null = null;
+/** "path:<repo>:<directory>" or "lang:<repo>:<language>" -> month -> same row as ModuleTimeline. */
+export function loadSectionTimeline(): Promise<ModuleTimeline> {
+  if (!sectionTimelineCache) sectionTimelineCache = fetchText(`${DATA_DIR}/timeline_sections.json`).then(t => JSON.parse(t));
+  return sectionTimelineCache;
+}
 let moduleTimelineCache: Promise<ModuleTimeline> | null = null;
 export function loadModuleTimeline(): Promise<ModuleTimeline> {
   if (!moduleTimelineCache) moduleTimelineCache = fetchText(`${DATA_DIR}/timeline_modules.json`).then(t => JSON.parse(t));
