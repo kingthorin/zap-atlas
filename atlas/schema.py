@@ -310,4 +310,5 @@ class Manifest:
     inventory: list[DatasetInventory]
     coverage: dict
     chunks: list[str]
+    fingerprint: str = ""       # see atlas.fingerprint: the inputs this dataset was built from
 

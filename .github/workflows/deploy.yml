@@ -44,6 +44,15 @@ jobs:
           python -m pip install --upgrade pip
           pip install tree-sitter tree-sitter-java pytest
 
+      # A repository that has not moved since an earlier run is replayed from this cache: it is not cloned or parsed.
+      # Entries are named by repository, commit and generator code, so a stale one is simply ignored.
+      - name: Restore parsed repositories
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: sources/.atlas-cache
+          key: atlas-parsed-${{ github.run_id }}
+          restore-keys: atlas-parsed-
+
       - name: Run generator (clones the upstream repositories with full history)
         run: python -m atlas analyze --sources ./sources --output ./data --ref "$REF" --repo-refs "$REPO_REFS"
         env:

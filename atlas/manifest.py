@@ -6,9 +6,11 @@ Produces the versioned manifest and chunked JSON/JSONL static data.
 from __future__ import annotations
 import os
 
+import copy
 import hashlib
 import json
-from dataclasses import asdict
+import pickle
+from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -20,6 +22,7 @@ from atlas.languages import count_languages
 from atlas.milestones import build_milestones
 from atlas.stories import load_stories
 from atlas.sharding import write_module_shards
+from atlas import fingerprint
 from atlas.activity import write_activity
 from atlas.credits import CORE_TEAM, core_team
 from atlas.timeline import write_timeline
@@ -62,6 +65,23 @@ def _write_jsonl(path: Path, rows: list[dict]) -> int:
     return len(rows)
 
 
+CACHE_DIR = ".atlas-cache"
+
+
+@dataclass
+class RepoDelta:
+    """What processing one repository added to the generator's state, for replaying it without the repository."""
+    sha: str
+    default_branch: str
+    rows: dict
+    call_sites: list
+    types: dict
+    ecosystem: dict | None
+    milestones: dict | None
+    java: dict | None
+    core_team: dict | None
+
+
 class AtlasGenerator:
     """Orchestrates analysis + generation for the configured source repos."""
 
@@ -73,6 +93,8 @@ class AtlasGenerator:
         self.java_types: dict = {}       # qualified type name -> info, across all repos
         self.call_sites: list = []
         self.core_team: dict | None = None   # from the help credits page history
+        self.fingerprint = ""
+        self._repo_types: dict = {}
         self.java_parser = JavaParser()
         self.rows: dict[str, list[dict]] = {
             CHUNK_REPOS: [], CHUNK_COMMITS: [], CHUNK_MODULES: [],
@@ -81,16 +103,44 @@ class AtlasGenerator:
             "branches.jsonl": [], "tags.jsonl": [], "contributors.jsonl": [],
         }
 
-    def run(self, sources_dir: Path, output_dir: Path) -> Manifest:
+    def run(self, sources_dir: Path, output_dir: Path, force: bool = False) -> Manifest | None:
+        """Build the dataset. Returns None when ``output_dir`` already holds one built from the same inputs.
+
+        A repository at a commit that was parsed before (same generator code) is replayed from the cache in
+        ``<sources>/.atlas-cache`` without being cloned or parsed; only repositories that moved are processed.
+        """
         output_dir.mkdir(parents=True, exist_ok=True)
         from atlas.sources import checkout_sources
-        checkouts = checkout_sources(self.config, sources_dir)
+        remote: dict[str, str] = {}
+        if not force:
+            try:
+                remote = {s.name: fingerprint.remote_sha(s) for s in self.config.sources}
+            except Exception as e:               # offline or unknown ref: do the full work
+                print(f"[atlas] could not read the upstream commits ({e}); analysing everything")
+        if remote:
+            expected = fingerprint.key(self.config, remote)
+            if fingerprint.is_current(output_dir, expected):
+                print(f"[atlas] {output_dir} is up to date: same upstream commits, generator and stories "
+                      f"(fingerprint {expected[:12]}). Use --force to rebuild.")
+                return None
+        cache_dir = sources_dir / CACHE_DIR
+        deltas = {s.name: self._load_delta(cache_dir, s, remote.get(s.name)) for s in self.config.sources}
+        misses = [s for s in self.config.sources if deltas[s.name] is None]
+        checkouts = checkout_sources(AtlasConfig(sources=misses, sources_dir=self.config.sources_dir), sources_dir) if misses else {}
+        for s in self.config.sources:
+            if deltas[s.name] is not None:
+                s.sha, s.default_branch = deltas[s.name].sha, deltas[s.name].default_branch
+                print(f"[atlas] {s.name} @ {s.sha} reused from the cache (not cloned or parsed)")
+        self.fingerprint = fingerprint.key(self.config, {s.name: s.sha or "" for s in self.config.sources})
         self.rows[CHUNK_STORIES] = load_stories(self.config.stories_dir)
 
-        names = [s.name for s in self.config.sources]
-        for repo_name, repo_path in checkouts.items():
-            repo = self.config.sources[names.index(repo_name)]
-            self._process_repo(repo, repo_path)
+        for repo in self.config.sources:
+            if deltas[repo.name] is not None:
+                self._apply_delta(deltas[repo.name])
+            else:
+                before = self._snapshot()
+                self._process_repo(repo, checkouts[repo.name])
+                self._save_delta(cache_dir, repo, self._capture(repo, before))
 
         self._resolve_cross_file()
         self._resolve_calls_and_api()
@@ -138,6 +188,54 @@ class AtlasGenerator:
             names.append(CORE_TEAM)
         names += write_activity(output_dir, self.rows[CHUNK_MODULES], self.rows[CHUNK_COMMITS], self.rows[CHUNK_FILES], self.rows[CHUNK_SYMBOLS])
         return names
+
+    # -- per-repository cache ----------------------------------------------------------------------
+
+    def _delta_path(self, cache_dir: Path, repo, sha: str) -> Path:
+        key = hashlib.sha256(json.dumps([repo.name, sha, fingerprint.code_hash(), os.environ.get("ATLAS_JAVA_MAX", "")]).encode()).hexdigest()[:16]
+        return cache_dir / f"{repo.name}-{key}.pkl"
+
+    def _load_delta(self, cache_dir: Path, repo, sha: str | None) -> "RepoDelta | None":
+        if not sha:
+            return None
+        path = self._delta_path(cache_dir, repo, sha)
+        if not path.is_file():
+            return None
+        try:
+            with path.open("rb") as f:
+                delta = pickle.load(f)
+            return delta if isinstance(delta, RepoDelta) and delta.sha == sha else None
+        except Exception:                      # an unreadable entry is just a miss
+            return None
+
+    def _save_delta(self, cache_dir: Path, repo, delta: "RepoDelta") -> None:
+        cache_dir.mkdir(parents=True, exist_ok=True)
+        for old in cache_dir.glob(f"{repo.name}-*.pkl"):      # only the latest commit of a repository is worth keeping
+            old.unlink()
+        with self._delta_path(cache_dir, repo, delta.sha).open("wb") as f:
+            pickle.dump(delta, f, protocol=pickle.HIGHEST_PROTOCOL)
+
+    def _snapshot(self) -> dict:
+        return {"rows": {k: len(v) for k, v in self.rows.items()}, "calls": len(self.call_sites), "team": self.core_team}
+
+    def _capture(self, repo, before: dict) -> "RepoDelta":
+        name = repo.name
+        return RepoDelta(
+            sha=repo.sha or "", default_branch=repo.default_branch or "main",
+            rows={k: self.rows[k][before["rows"].get(k, 0):] for k in self.rows if len(self.rows[k]) > before["rows"].get(k, 0)},
+            call_sites=self.call_sites[before["calls"]:], types=self._repo_types,
+            ecosystem=self.ecosystem_coverage.get(name), milestones=self.milestone_coverage.get(name), java=self.java_coverage.get(name),
+            core_team=self.core_team if self.core_team is not before["team"] else None)
+
+    def _apply_delta(self, d: "RepoDelta") -> None:
+        for k, rows in d.rows.items():
+            self.rows[k] += rows
+        self.call_sites += d.call_sites
+        self._merge_types(copy.deepcopy(d.types))
+        repo = d.rows[CHUNK_REPOS][0]["name"]
+        self.ecosystem_coverage[repo], self.milestone_coverage[repo], self.java_coverage[repo] = d.ecosystem, d.milestones, d.java
+        if d.core_team:
+            self.core_team = d.core_team
 
     def _process_repo(self, repo, repo_path: Path) -> None:
         repo_obj = Repository(id=repo_id(repo.name), name=repo.name, url=repo.url,
@@ -203,6 +301,7 @@ class AtlasGenerator:
 
         java_max = int(os.environ["ATLAS_JAVA_MAX"]) if os.environ.get("ATLAS_JAVA_MAX") else None
         java_files = sorted(repo_path.rglob("*.java"))[:java_max]
+        repo_types: dict = {}            # this repository's own types, before the cross-repository merge
         stats = {"java_files": 0, "java_parse_errors": 0, "unresolved_calls": 0, "calls_total": 0,
                  "calls_resolved_same_type": 0, "calls_inferred_same_type": 0}
         for jf in java_files:
@@ -221,15 +320,24 @@ class AtlasGenerator:
             stats["calls_inferred_same_type"] += result.calls_inferred_same_type
             self.call_sites += result.call_sites
             for fqn, info in result.types.items():
-                if fqn in self.java_types:
-                    self.java_types[fqn]["ambiguous"] = True   # same name declared twice: never guess
+                if fqn in repo_types:
+                    repo_types[fqn]["ambiguous"] = True        # same name declared twice: never guess
                 else:
-                    self.java_types[fqn] = info
+                    repo_types[fqn] = info
             for sym in result.symbols:
                 self.rows[CHUNK_SYMBOLS].append(sym.__dict__)
             for rel_ in result.relationships:
                 self.rows[CHUNK_RELS].append(asdict(rel_))
         self.java_coverage[repo.name] = stats
+        self._repo_types = copy.deepcopy(repo_types)             # what a cache entry stores
+        self._merge_types(repo_types)
+
+    def _merge_types(self, repo_types: dict) -> None:
+        for fqn, info in repo_types.items():
+            if fqn in self.java_types:
+                self.java_types[fqn]["ambiguous"] = True       # same name declared in two places: never guess
+            else:
+                self.java_types[fqn] = info
 
     def _attach_doc_history(self, repo_name: str, history) -> None:
         """Commit count, last change and recent commits per help page, following renames."""
@@ -334,5 +442,6 @@ class AtlasGenerator:
                       "java": self.java_coverage,
                       "milestones": self.milestone_coverage},
             chunks=chunk_names,
+            fingerprint=self.fingerprint,
         )
 

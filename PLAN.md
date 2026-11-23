@@ -100,6 +100,13 @@ Built with D3 modules for scales, zoom, brush and hierarchy, rendered as SVG by 
 - **Updated logo:** TODO. The Atlas logo (`frontend/public/logo.svg`) uses the geometry of the ZAP logo as published at zaproxy.org; it needs updating to the new one.
 - **Website:** TODO. The Atlas header and colours follow zaproxy.org's stylesheet.
 
+## Incremental runs
+
+`atlas analyze` skips unchanged work: the whole run when the upstream commits, generator code and stories match the output
+dataset, and per repository when only some moved (`sources/.atlas-cache`, one entry per repository, keyed by commit and
+generator code). CI restores that cache with `actions/cache`. Measured locally with only zap-extensions moved: 70 seconds
+against 84 for a full run, output identical for all 673 files; the saving in CI is mostly the clones of the three quiet repositories.
+
 ## Next
 
 1. Stories: 24 of 41 are marked `reviewed` (19 projects and 5 history). 17 remain draft: the 11 feature stories, plus BIRT reporting, CMS scanner, bug tracker, Authentication helper and DOM XSS scanner.

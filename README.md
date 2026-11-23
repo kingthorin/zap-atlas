@@ -60,7 +60,12 @@ python -m pytest tests
 ```
 
 A full run over four repositories with complete history takes about a minute once
-they are cloned (the first clone takes longer). `ATLAS_JAVA_MAX=100` limits Java files per repository for quick trials.
+they are cloned (the first clone takes longer).
+Runs are incremental. `atlas analyze` reads each repository's commit with `git ls-remote` first.
+If every commit, the generator code and the stories match the dataset already in the output
+directory, it stops (about 8 seconds). Otherwise a repository whose commit was parsed before is
+replayed from `sources/.atlas-cache` without being cloned or parsed, and only repositories that
+moved are processed. `--force` rebuilds everything. The CI workflow keeps that cache between runs. `ATLAS_JAVA_MAX=100` limits Java files per repository for quick trials.
 
 To run the site against the generated data:
 

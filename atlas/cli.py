@@ -30,6 +30,7 @@ def _build_parser() -> argparse.ArgumentParser:
                            help="branch, tag or SHA to analyse in every repository (default: each default branch)")
     p_analyze.add_argument("--repo-refs", default="",
                            help='JSON map of repository name to ref, e.g. \'{"zaproxy": "v2.15.0"}\'; wins over --ref')
+    p_analyze.add_argument("--force", action="store_true", help="rebuild even when the dataset is up to date")
     p_analyze.add_argument("--focus", action="append", default=None,
                            help="Restrict to a module/addon (repeatable)")
 
@@ -108,7 +109,8 @@ def cmd_analyze(args) -> int:
     print(f"[atlas] analyze -> sources {args.sources} output {args.output}")
     from atlas.manifest import AtlasGenerator
     gen = AtlasGenerator(config)
-    gen.run(args.sources, args.output)
+    if gen.run(args.sources, args.output, force=args.force) is None:
+        return 0
     from atlas.search_index import build_search_index
     build_search_index(args.output)
     print("[atlas] analyze complete")
