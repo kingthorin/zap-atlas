@@ -41,11 +41,19 @@ test("history shows commits and a commit page opens", async ({ page }) => {
   await noError(page);
 });
 
-test("architecture filters and dependencies tab", async ({ page }) => {
-  await page.goto("architecture");
-  await expect(page.getByText(/of [\d,]+ relationships/)).toBeVisible({ timeout: 30_000 });
+test("source explorer: module links, module tree, symbols and relationships", async ({ page }) => {
+  await page.goto("source");
+  await expect(page.getByText(/\d+ modules/).first()).toBeVisible();
+  await page.getByRole("button", { name: "addOns/accessControl", exact: true }).click();
+  await expect(page.getByRole("button", { name: /^addOns\/accessControl/ }).first()).toHaveAttribute("aria-current", "true");
+  await page.getByRole("tab", { name: "Symbols" }).click();
+  await expect(page.locator("a[href*='/symbol/']").first()).toBeVisible();
+  await page.getByRole("tab", { name: "Relationships" }).click();
+  await expect(page.getByText(/of [\d,]+ relationships/)).toBeVisible();
   await page.getByRole("button", { name: /^CALLS/ }).click();
   await expect(page.getByRole("button", { name: /^CALLS/ })).toHaveAttribute("aria-pressed", "true");
+  await page.getByRole("tab", { name: "Module links" }).click();
+  await expect(page.getByText(/Modules linked to/)).toBeVisible();
   await page.getByRole("tab", { name: "Add-on dependencies" }).click();
   await expect(page.getByText(/\d+ add-ons/)).toBeVisible();
 });

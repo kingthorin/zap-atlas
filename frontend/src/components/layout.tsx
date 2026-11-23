@@ -13,9 +13,6 @@ const MapIcon = () => (
 const FilesIcon = () => (
   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20 7h-3a2 2 0 01-2-2V2" /><path d="M9 18a2 2 0 01-2-2V4a2 2 0 012-2h7l4 4v10a2 2 0 01-2 2z" /><path d="M3 7.6v12.8A1.6 1.6 0 004.6 22h9.8" /></svg>
 );
-const DatabaseIcon = () => (
-  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.022.547M6 5a2 2 0 012-2h8a2 2 0 012 2v2.586a1 1 0 00.293.707l2.143 2.143c.04.04.075.086.105.124l.508.508a1 1 0 00.293.293l.508.508c.038.038.084.065.124.105l2.143 2.143a1 1 0 00.707.293V19a2 2 0 01-2 2H6a2 2 0 01-2-2V5zM9 14a2 2 0 00-2-2H5a2 2 0 00-2 2v1a2 2 0 002 2h2a2 2 0 002-2zm0 0l2-2m-2 2l2 2m-2-2H7.2a2 2 0 00-1.134.894L4.226 16.8a2 2 0 00-.338.937V19a2 2 0 002 2h10a2 2 0 002-2v-1.2a2 2 0 00-.338-.937l-1.268-.634a2 2 0 00-1.134-.894H11a2 2 0 00-2-2z" /></svg>
-);
 const HistoryIcon = () => (
   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 109-9 9.75 9.75 0 00-6.74 2.74L3 8" /><path d="M3 3v5h5" /><path d="M12 7v5l4 2" /></svg>
 );
@@ -38,7 +35,6 @@ const SearchIcon = () => (
 export const NAV = [
   { to: "/", label: "Overview", icon: MapIcon },
   { to: "/repositories", label: "Repositories", icon: CylinderIcon },
-  { to: "/architecture", label: "Architecture", icon: DatabaseIcon },
   { to: "/history", label: "History", icon: HistoryIcon },
   { to: "/timeline", label: "Timeline", icon: TimelineIcon },
   { to: "/releases", label: "Releases", icon: TagIcon },

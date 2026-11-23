@@ -2,10 +2,9 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Layout } from "./components/layout";
 import Home from "./pages/home";
 import Repositories from "./pages/repositories";
-import Architecture from "./pages/architecture";
 import History from "./pages/history";
 import Timeline from "./pages/timeline";
-import Source from "./pages/source";
+import Code from "./pages/code";
 import Search from "./pages/search";
 import Stories, { StoryDetail } from "./pages/stories";
 import CommitPage from "./pages/commit";
@@ -23,10 +22,9 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/repositories" element={<Repositories />} />
-          <Route path="/architecture" element={<Architecture />} />
           <Route path="/history" element={<History />} />
           <Route path="/timeline" element={<Timeline />} />
-          <Route path="/source" element={<Source />} />
+          <Route path="/source" element={<Code />} />
           <Route path="/search" element={<Search />} />
           <Route path="/stories" element={<Stories />} />
           <Route path="/stories/:slug" element={<StoryDetail />} />

@@ -76,7 +76,7 @@ Built with D3 modules for scales, zoom, brush and hierarchy, rendered as SVG by 
 
 - **Repositories:** make the module cards expandable. When a repository has more than 5 modules, collapse everything below the summary stats and bar chart behind an expand/collapse control.
 - **Stories:** sort control for A to Z, Z to A, date ascending and date descending.
-- **Source and Architecture:** both are flat. Source shows little beyond one add-on with no real tree or layers; Architecture is fuller but also flat. Open question: merge them into one explorer (repo, module, package, file tree with the architecture view as a lens on it) or improve them separately. Leaning to merge, since both need the same per-module shards and hierarchy, and the graph explorer will replace the flat architecture view.
+- **Source and Architecture:** merged into one Source page (done): module and directory tree on the left, tabs for module links (from `module_graph.json`), symbols, relationships and add-on dependencies. Each module loads only its own shards. Open: file-level pages with history, a drawn graph (the graph explorer).
 
 ## Planned: stories
 
@@ -101,4 +101,4 @@ Built with D3 modules for scales, zoom, brush and hierarchy, rendered as SVG by 
 2. M3 remainder: a compiler-backed pass for overloads, generics and chained calls (optional).
 3. ~~Release and tag milestones~~ (done: `milestones.jsonl`, Releases page, history markers, add-on release lists, story references).
 4. ~~Timeline~~ (first version done), then the graph explorer.
-5. ~~Per-module shards~~ (done). Source and Architecture merge, then the graph explorer; accessibility audit; licence.
+5. ~~Per-module shards~~ (done). The graph explorer; accessibility audit; licence.

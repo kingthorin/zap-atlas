@@ -103,6 +103,17 @@ export async function loadModuleSymbols(repo: string, modPath: string): Promise<
   const all = await loadShards(repo, "symbols", k => k === modPath || k.startsWith(modPath + "/")) as Symbol[];
   return all.filter(s => { const p = filePathOf(s.file); return p === modPath || p.startsWith(modPath + "/"); });
 }
+/** Outgoing edges of the files under a module path (its own shards and finer ones below it). */
+export async function loadModuleRelationships(repo: string, modPath: string): Promise<Relationship[]> {
+  return loadShards(repo, "relationships", k => k === modPath || k.startsWith(modPath + "/")) as Promise<Relationship[]>;
+}
+/** Module-to-module edge counts: nodes are module ids, edges are [source, target, type, count]. */
+export interface ModuleGraph { nodes: string[]; edges: [number, number, string, number][] }
+let moduleGraphCache: Promise<ModuleGraph> | null = null;
+export function loadModuleGraph(): Promise<ModuleGraph> {
+  if (!moduleGraphCache) moduleGraphCache = fetchText(`${DATA_DIR}/module_graph.json`).then(t => JSON.parse(t));
+  return moduleGraphCache;
+}
 /** A symbol with its shard's symbols and edges, plus the edges that reach it from other shards. */
 export async function loadSymbolShard(repo: string, symbolId: string) {
   const ix = await loadShardIndex(repo);
