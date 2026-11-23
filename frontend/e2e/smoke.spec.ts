@@ -152,6 +152,10 @@ test("timeline draws the repositories with markers, zooms and has a table", asyn
   const box = (await plot.boundingBox())!;
   await page.mouse.move(box.x + box.width * 0.7, box.y + box.height * 0.45);
   await expect(page.getByRole("tooltip")).toContainText(/ · \d+ commits?/);
+  await page.getByLabel("Show").selectOption("added");
+  await page.mouse.move(box.x + box.width * 0.7, box.y + box.height * 0.45);
+  await expect(page.getByRole("tooltip")).toContainText(/ · [\d,]+ lines? added/);
+  await page.getByLabel("Show").selectOption("commits");
   await page.mouse.move(box.x + box.width * 0.9, box.y + box.height * 0.535); // release strip under the zap-extensions lane
   await expect(page.getByRole("tooltip")).toContainText(/\d+ add-on releases?: /);
   await page.mouse.click(box.x + box.width * 0.9, box.y + box.height * 0.535);

@@ -199,6 +199,8 @@ class Commit:
     message: str = ""
     branches: list[str] = field(default_factory=list)
     tags: list[str] = field(default_factory=list)
+    additions: int = 0      # lines added and deleted across the commit's changed files (merges have none)
+    deletions: int = 0
 
 
 @dataclass

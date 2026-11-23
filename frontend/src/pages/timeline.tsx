@@ -12,12 +12,16 @@ const REPO_COLOR: Record<string, string> = { zaproxy: "#4389ff", "zap-extensions
 // Cursor over the chart; "grabbing" shows while dragging. Try "crosshair", "grab" or "pointer".
 const CURSOR = "crosshair";
 const DETAIL_MONTHS = 30; // at or below this visible span, weekly bars come from the commit shards
-type Metric = "commits" | "authors";
+type Metric = "commits" | "authors" | "added" | "deleted";
 type Bar = { x0: Date; x1: Date; v: number };
 
 const binStart = (d: Date, mode: "weekly" | "monthly") => (mode === "weekly" ? utcMonday.floor(d) : new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1)));
 const binEnd = (start: Date, mode: "weekly" | "monthly") => (mode === "weekly" ? new Date(start.getTime() + 7 * 864e5) : new Date(Date.UTC(start.getUTCFullYear(), start.getUTCMonth() + 1, 1)));
 type RelBin = { x0: Date; x1: Date; items: Milestone[] };
+const pick = (metric: Metric, [commits, authors, added, deleted]: number[]) => ({ commits, authors, added, deleted })[metric];
+const unit = (metric: Metric, n: number) =>
+  metric === "commits" ? (n === 1 ? "commit" : "commits") : metric === "authors" ? (n === 1 ? "active author" : "active authors")
+  : metric === "added" ? (n === 1 ? "line added" : "lines added") : (n === 1 ? "line deleted" : "lines deleted");
 const monthStart = (m: string) => new Date(Date.UTC(+m.slice(0, 4), +m.slice(5, 7) - 1, 1));
 const monthEnd = (m: string) => new Date(Date.UTC(+m.slice(0, 4), +m.slice(5, 7), 1));
 const storyDate = (d?: string) => d ? new Date(`${d.length === 4 ? d + "-01-01" : d.length === 7 ? d + "-01" : d}T00:00:00Z`) : null;
@@ -35,7 +39,7 @@ export default function TimelinePage() {
   const [tip, setTip] = useState<{ x: number; y: number; text: string } | null>(null);
   const wrap = useRef<HTMLDivElement>(null);
   // repo -> year -> [[weekStartMs, author]] for the weekly detail view
-  const [detail, setDetail] = useState<Record<string, Record<string, { w: number; a: string }[]>>>({});
+  const [detail, setDetail] = useState<Record<string, Record<string, { w: number; a: string; add: number; del: number }[]>>>({});
   const overlay = useRef<SVGRectElement>(null);
   const zoomRef = useRef<ZoomBehavior<SVGRectElement, unknown> | null>(null);
 
@@ -96,7 +100,7 @@ export default function TimelinePage() {
     for (const repo of repos) for (const y of visibleYears) {
       if (detail[repo]?.[y] || !Object.keys(tl[repo]).some(m => m.startsWith(y))) continue;
       loadCommits(repo, y).then(cs => {
-        const rows = cs.map(c => ({ w: utcMonday.floor(new Date(c.committer_date)).getTime(), a: c.author_name }));
+        const rows = cs.map(c => ({ w: utcMonday.floor(new Date(c.committer_date)).getTime(), a: c.author_name, add: c.additions ?? 0, del: c.deletions ?? 0 }));
         setDetail(d => ({ ...d, [repo]: { ...d[repo], [y]: rows } }));
       }).catch(() => setDetail(d => ({ ...d, [repo]: { ...d[repo], [y]: [] } })));
     }
@@ -105,14 +109,14 @@ export default function TimelinePage() {
   const bars = (repo: string): { bars: Bar[]; mode: "weekly" | "monthly" } => {
     const ready = weekly && visibleYears.every(y => detail[repo]?.[y] || !Object.keys(tl![repo]).some(m => m.startsWith(y)));
     if (ready) {
-      const byWeek = new Map<number, { n: number; a: Set<string> }>();
+      const byWeek = new Map<number, { n: number; a: Set<string>; add: number; del: number }>();
       for (const y of visibleYears) for (const r of detail[repo]?.[y] ?? []) {
-        const e = byWeek.get(r.w) ?? { n: 0, a: new Set<string>() };
-        e.n++; e.a.add(r.a); byWeek.set(r.w, e);
+        const e = byWeek.get(r.w) ?? { n: 0, a: new Set<string>(), add: 0, del: 0 };
+        e.n++; e.a.add(r.a); e.add += r.add; e.del += r.del; byWeek.set(r.w, e);
       }
-      return { mode: "weekly", bars: [...byWeek].map(([w, e]) => ({ x0: new Date(w), x1: new Date(w + 7 * 864e5), v: metric === "commits" ? e.n : e.a.size })) };
+      return { mode: "weekly", bars: [...byWeek].map(([w, e]) => ({ x0: new Date(w), x1: new Date(w + 7 * 864e5), v: pick(metric, [e.n, e.a.size, e.add, e.del]) })) };
     }
-    return { mode: "monthly", bars: Object.entries(tl![repo]).map(([m, [n, a]]) => ({ x0: monthStart(m), x1: monthEnd(m), v: metric === "commits" ? n : a })) };
+    return { mode: "monthly", bars: Object.entries(tl![repo]).map(([m, row]) => ({ x0: monthStart(m), x1: monthEnd(m), v: pick(metric, row) })) };
   };
 
   if (error) return <ErrorBox message={error} />;
@@ -170,7 +174,7 @@ export default function TimelinePage() {
     }
     if (!hit) return setTip(null);
     const when = label(hit.x0);
-    const what = metric === "commits" ? `${hit.v.toLocaleString()} ${hit.v === 1 ? "commit" : "commits"}` : `${hit.v.toLocaleString()} active ${hit.v === 1 ? "author" : "authors"}`;
+    const what = `${hit.v.toLocaleString()} ${unit(metric, hit.v)}`;
     setTip({ ...at2, text: `${repos[lane]} · ${when} · ${what}${rel ? ` · ${names(rel)}` : ""}` });
   };
   // A click on a release block opens the Releases page for that repository and period.
@@ -204,6 +208,8 @@ export default function TimelinePage() {
           <select className="border border-slate-300 rounded px-2 py-1 bg-white" value={metric} onChange={e => setMetric(e.target.value as Metric)}>
             <option value="commits">Commits</option>
             <option value="authors">Active authors</option>
+            <option value="added">Lines added</option>
+            <option value="deleted">Lines deleted</option>
           </select>
         </label>
         <label>Jump to{" "}
@@ -295,8 +301,8 @@ export default function TimelinePage() {
         )}
       </div>
       <p className="text-xs text-slate-400">
-        Drag to pan. Ctrl or cmd + scroll, double click, or the buttons zoom. Dates are committer dates. Line counts are not shown
-        because the dataset does not record them yet. Every release is listed on the <Link className="text-indigo-600 hover:underline" to="/releases">Releases</Link> page.
+        Drag to pan. Ctrl or cmd + scroll, double click, or the buttons zoom. Dates are committer dates. Line counts come from each
+        commit's diff (merges have none) and include generated and translated files, so one bot commit can dominate a month. Every release is listed on the <Link className="text-indigo-600 hover:underline" to="/releases">Releases</Link> page.
       </p>
       <details className="text-sm">
         <summary className="cursor-pointer text-indigo-600">Table: commits per year</summary>

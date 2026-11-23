@@ -152,6 +152,11 @@ class AtlasGenerator:
         ms, ms_cov = build_milestones(repo.name, repo_path, set(history.commits), names)
         self.rows[CHUNK_MILESTONES] += ms
         self.milestone_coverage[repo.name] = ms_cov
+        lines: dict[str, list[int]] = {}
+        for fc in history.file_changes:
+            tot = lines.setdefault(fc.sha, [0, 0])
+            tot[0] += fc.additions
+            tot[1] += fc.deletions
         for c in history.commits.values():
             self.rows[CHUNK_COMMITS].append(Commit(
                 id=commit_id(repo.name, c.sha), repository=repo.name, sha=c.sha,
@@ -159,6 +164,7 @@ class AtlasGenerator:
                 author_date=c.author_date, committer_date=c.committer_date,
                 subject=c.subject, message=c.message,
                 branches=c.branches, tags=c.tags,
+                additions=lines.get(c.sha, [0, 0])[0], deletions=lines.get(c.sha, [0, 0])[1],
             ).__dict__)
         for ref in history.refs:
             row = Branch if ref.type == "branch" else Tag

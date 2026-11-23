@@ -1,8 +1,8 @@
 """Monthly activity per repository, for the zoomable timeline.
 
-timeline.json maps repository -> "YYYY-MM" -> [commits, distinct authors]. Months are by committer
+timeline.json maps repository -> "YYYY-MM" -> [commits, distinct authors, lines added, lines deleted]. Months are by committer
 date, the same basis as the per-year commit shards. Author counts use the published author names,
-never emails. Line counts are not included: the generator does not collect them yet.
+never emails.
 """
 from __future__ import annotations
 
@@ -13,13 +13,18 @@ TIMELINE = "timeline.json"
 
 
 def build_timeline(commits: list[dict]) -> dict[str, dict[str, list[int]]]:
-    counts: dict[str, dict[str, int]] = {}
+    counts: dict[str, dict[str, list[int]]] = {}
     authors: dict[tuple[str, str], set[str]] = {}
     for c in commits:
         month = c["committer_date"][:7]
-        counts.setdefault(c["repository"], {})[month] = counts.get(c["repository"], {}).get(month, 0) + 1
+        row = counts.setdefault(c["repository"], {}).setdefault(month, [0, 0, 0, 0])
+        row[0] += 1
+        row[2] += c.get("additions", 0)
+        row[3] += c.get("deletions", 0)
         authors.setdefault((c["repository"], month), set()).add(c["author_name"])
-    return {r: {m: [n, len(authors[(r, m)])] for m, n in sorted(months.items())} for r, months in sorted(counts.items())}
+    for (repo, month), names in authors.items():
+        counts[repo][month][1] = len(names)
+    return {r: dict(sorted(months.items())) for r, months in sorted(counts.items())}
 
 
 def write_timeline(output_dir: Path, commits: list[dict]) -> str:

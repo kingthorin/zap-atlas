@@ -59,8 +59,8 @@ python -m atlas index ./data                                  # rebuild only the
 python -m pytest tests
 ```
 
-A full run clones four repositories with complete history and takes about ten
-minutes. `ATLAS_JAVA_MAX=100` limits Java files per repository for quick trials.
+A full run over four repositories with complete history takes about a minute once
+they are cloned (the first clone takes longer). `ATLAS_JAVA_MAX=100` limits Java files per repository for quick trials.
 
 To run the site against the generated data:
 

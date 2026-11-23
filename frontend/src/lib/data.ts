@@ -5,7 +5,7 @@ shell never downloads the whole dataset at startup.
 */
 
 export interface Repo { id: string; name: string; url: string; default_branch: string; sha: string; description?: string }
-export interface Commit { id: string; repository: string; sha: string; parents: string[]; author_name: string; author_date: string; committer_date: string; subject: string; message: string; branches: string[]; tags: string[] }
+export interface Commit { id: string; repository: string; sha: string; parents: string[]; author_name: string; author_date: string; committer_date: string; subject: string; message: string; branches: string[]; tags: string[]; additions?: number; deletions?: number }
 export interface Module { id: string; repository: string; name: string; path: string; kind: string; addon: boolean }
 export interface AddOn { id: string; module: string; name: string; status: string; author: string; url: string; dependencies: string[] }
 export interface Symbol { id: string; repository: string; file: string; qualified_name: string; kind: string; signature: string; start_line: number; end_line: number; resolution: string; annotations?: string[] }
@@ -206,8 +206,8 @@ export function githubTag(repo: Repo, tag: string): string {
   return `${repo.url.replace(/\.git$/, "")}/tree/${tag}`;
 }
 
-/** repo -> "YYYY-MM" -> [commits, distinct authors]; small, drives the zoomable timeline. */
-export type Timeline = Record<string, Record<string, [number, number]>>;
+/** repo -> "YYYY-MM" -> [commits, distinct authors, lines added, lines deleted]; small, drives the zoomable timeline. */
+export type Timeline = Record<string, Record<string, number[]>>;
 let timelineCache: Promise<Timeline> | null = null;
 export function loadTimeline(): Promise<Timeline> {
   if (!timelineCache) timelineCache = fetchText(`${DATA_DIR}/timeline.json`).then(t => JSON.parse(t));

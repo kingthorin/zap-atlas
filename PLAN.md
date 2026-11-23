@@ -40,7 +40,7 @@ differs, and what is planned next. Update it with each change that moves an item
 
 ## Planned: interactive resources
 
-1. **Zoomable timeline** (first version done: `timeline.json` monthly commits and active authors per repo, weekly bars from the year shards when zoomed in, hover tooltips, core and HUD release lines, story markers, a strip of add-on releases under each lane that opens the Releases page for that repository and period, table alternative; open: line counts, sub-section selector, Hall of Fame and core-team overlays; the generator never records `additions`/`deletions`, they are 0 in every file change). Four repositories stacked. A small precomputed
+1. **Zoomable timeline** (first version done: `timeline.json` monthly commits and active authors per repo, weekly bars from the year shards when zoomed in, hover tooltips, core and HUD release lines, story markers, a strip of add-on releases under each lane that opens the Releases page for that repository and period, table alternative; line counts are in: Lines added and Lines deleted per month or week, from each commit's totals. Open: sub-section selector, Hall of Fame and core-team overlays). Four repositories stacked. A small precomputed
    monthly aggregate (commits, lines added and removed, active contributors) per repo
    and module or add-on; zooming below a month loads the per-year commit shards.
    Sub-section selector (repo, add-on, language, path prefix). Overlays: release tags,
@@ -94,6 +94,12 @@ Built with D3 modules for scales, zoom, brush and hierarchy, rendered as SVG by 
   in the dataset (`tags.jsonl`); milestones need the release-note pages and a rule for
   which tags count as releases (skip weekly and RC tags by default).
 
+## TODO (from the maintainer; details to be filled in)
+
+- **zapbot:** TODO.
+- **Updated logo:** TODO. The Atlas logo (`frontend/public/logo.svg`) uses the geometry of the ZAP logo as published at zaproxy.org; it needs updating to the new one.
+- **Website:** TODO. The Atlas header and colours follow zaproxy.org's stylesheet.
+
 ## Next
 
 1. Stories: 24 of 41 are marked `reviewed` (19 projects and 5 history). 17 remain draft: the 11 feature stories, plus BIRT reporting, CMS scanner, bug tracker, Authentication helper and DOM XSS scanner.
@@ -102,7 +108,6 @@ Built with D3 modules for scales, zoom, brush and hierarchy, rendered as SVG by 
 4. ~~Timeline~~ (first version done), ~~graph explorer~~ (module level and type expansion done).
 5. ~~Per-module shards~~, ~~workflow `ref` and `repo_refs` inputs~~ (now passed to `atlas analyze --ref/--repo-refs`; `checkout_sources.py` removed; CI passed with empty inputs, a run with `repo_refs` set is still untested),  ~~licence~~, ~~validator integrity checks~~, ~~zap-hud as a fourth repository~~, ~~accessibility first pass~~, ~~least-privilege CI~~ (all done).
 6. Open, roughly in order of value:
-   - Line counts: the generator needs `git log --numstat`, a full rerun and heavier file shards; this unlocks a lines metric on the timeline.
    - Graph extras: directories and files as nodes, a year slider, recency colouring, language and evidence filters, a file tree.
    - Timeline extras: sub-section selector (repo, add-on, language, path), Hall of Fame and core-team overlays.
    - Keyboard-only and screen reader accessibility testing, including the graph canvas.
