@@ -231,9 +231,11 @@ test("full width is offered on wide screens for data pages only", async ({ page 
   await page.goto("stories");
   await expect(page.getByRole("button", { name: /width/ })).toHaveCount(0);
   expect((await main.boundingBox())!.width).toBeLessThanOrEqual(normal);
-  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.setViewportSize({ width: 1512, height: 900 });
   await page.goto("graph");
-  await expect(page.getByRole("button", { name: /width/ })).toBeHidden();                    // narrower than 2xl
+  await expect(page.getByRole("button", { name: /width/ })).toBeVisible();                   // a 1512 px laptop screen
+  await page.setViewportSize({ width: 1300, height: 900 });
+  await expect(page.getByRole("button", { name: /width/ })).toBeHidden();                    // narrower than 1352 px
   await page.evaluate(() => localStorage.removeItem("atlas-wide"));
 });
 

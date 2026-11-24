@@ -138,7 +138,7 @@ function NavLinks({ pathname }: { pathname: string }) {
   );
 }
 
-// Pages with wide content can use the whole window; the choice is offered only on screens 2xl (1536 px) and wider.
+// Pages with wide content can use the whole window; the choice is offered only on screens 1352 px and wider (the standard width leaves at least 150 px unused from there).
 const WIDE_PAGES = ["/graph", "/timeline", "/source", "/releases", "/history"];
 
 function useWide(): [boolean, () => void] {
@@ -153,9 +153,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-zap-lightest text-slate-900 font-sans">
       <Nav />
-      <main className={`p-4 md:p-6 max-w-6xl mx-auto ${wide && canWiden ? "2xl:max-w-none" : ""}`}>
+      <main className={`p-4 md:p-6 max-w-6xl mx-auto ${wide && canWiden ? "min-[1352px]:max-w-none" : ""}`}>
         {canWiden && (
-          <div className="hidden 2xl:flex justify-end -mt-2 mb-2">
+          <div className="hidden min-[1352px]:flex justify-end -mt-2 mb-2">
             <button className="flex items-center gap-1.5 px-2.5 py-1 rounded border border-indigo-300 bg-white text-sm font-semibold text-indigo-700 hover:border-indigo-500 hover:bg-indigo-50"
               aria-pressed={wide} onClick={toggleWide}>
               {wide ? <ShrinkIcon /> : <ExpandIcon />}
