@@ -1,7 +1,6 @@
 {
   "title": "Reporting: from core and BIRT to the reports add-on",
   "description": "Report generation as recorded in the zaproxy and zap-extensions histories: core report classes in the first import, the 2013 BIRT add-on, the reports add-on from March 2021, and the removal of the older code.",
-  "audience": "developers",
   "group": "features",
   "date": "2021-03-09",
   "status": "draft",
@@ -76,13 +75,6 @@
           "label": "Report Generation add-on page",
           "url": "https://www.zaproxy.org/docs/desktop/addons/report-generation/"
         }
-      ]
-    },
-    {
-      "title": "State at HEAD",
-      "text": "The newest release in the CHANGELOG is 0.46.0 (2026-07-06), which lists \"Added script diagnostics section to Traditional Reports.\" and, as a fix, exclusion of invalid alerts from generated reports (Issue 6880).",
-      "entities": [
-        "addon:reports"
       ]
     }
   ]

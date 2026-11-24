@@ -1,7 +1,6 @@
 {
   "title": "The ZAP website: zaproxy.org",
   "description": "Dated facts about the zaproxy.org domain, the repositories behind the site, and the January 2020 commits that point ZAP's own files at it.",
-  "audience": "community",
   "group": "history",
   "date": "2015-11-04",
   "status": "draft",

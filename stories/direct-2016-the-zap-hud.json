@@ -1,7 +1,6 @@
 {
   "title": "The ZAP HUD (David Scrobonia, 2016-2018)",
   "description": "The HUD lives in its own repository, so this story follows only its traces in zaproxy, zap-extensions, and the credits: registration, Docker, bundling as a main add-on, and the credits entries.",
-  "audience": "community",
   "group": "projects",
   "date": "2016",
   "status": "reviewed",

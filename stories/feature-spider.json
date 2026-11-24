@@ -1,7 +1,6 @@
 {
   "title": "The Spider: from core to add-on",
   "description": "How the ZAP Spider (crawler) is recorded in the zaproxy and zap-extensions histories: code in core since 2012, the Ajax Spider as an add-on, and the 2022 migration of the Spider into the spider add-on.",
-  "audience": "developers",
   "group": "features",
   "date": "2022-04-27",
   "status": "draft",

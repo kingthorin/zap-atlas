@@ -1,7 +1,6 @@
 {
   "title": "Postman support (Vitika Soni, 2023 GSoC)",
   "description": "The Postman add-on from its first commit in June 2023 to the planned features named in the launch post, and its state at HEAD.",
-  "audience": "community",
   "group": "projects",
   "date": "2023-06",
   "status": "reviewed",

@@ -1,7 +1,6 @@
 {
   "title": "The network add-on and the core networking it supersedes",
   "description": "How the network add-on started in zap-extensions in November 2021 and how core zaproxy commits from 2022 and 2023 deprecate proxy, connection, client certificate, and HttpSender code in its favour.",
-  "audience": "developers",
   "group": "features",
   "date": "2021-11-15",
   "status": "draft",
@@ -81,14 +80,6 @@
           "label": "Network add-on page",
           "url": "https://www.zaproxy.org/docs/desktop/addons/network/"
         }
-      ]
-    },
-    {
-      "title": "State at HEAD",
-      "text": "The newest dated entry is 0.33.0 (2026-11-03), a fixes-only release, and the dataset lists the add-on's status as beta. The Automation Framework add-on declares network as a dependency in the dataset.",
-      "entities": [
-        "addon:network",
-        "addon:automation"
       ]
     }
   ]

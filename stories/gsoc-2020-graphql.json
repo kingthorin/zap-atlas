@@ -1,7 +1,6 @@
 {
   "title": "GraphQL support (Akshath Kothari, 2020 GSoC)",
   "description": "From an initial commit in May 2020 to the add-on's activity in 2026, following the GraphQL add-on's commits and changelog.",
-  "audience": "community",
   "group": "projects",
   "date": "2020-06",
   "status": "reviewed",

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { scaleUtc } from "d3-scale";
 import { select } from "d3-selection";
 import { zoom as d3zoom, zoomIdentity, ZoomBehavior, ZoomTransform } from "d3-zoom";
@@ -48,6 +48,13 @@ export default function TimelinePage() {
   // repo -> year -> [[weekStartMs, author]] for the weekly detail view
   const [detail, setDetail] = useState<Record<string, Record<string, { w: number; a: string; add: number; del: number }[]>>>({});
   const overlay = useRef<SVGRectElement>(null);
+  // Drag pans, or selects a range to zoom to ("select" mode, or hold Shift while dragging).
+  const [selectMode, setSelectMode] = useState(false);
+  const selectModeRef = useRef(false);
+  selectModeRef.current = selectMode;
+  const [band, setBand] = useState<{ a: number; b: number } | null>(null);
+  const bandRef = useRef<{ a: number; b: number } | null>(null);
+  const justSelected = useRef(false);
   const zoomRef = useRef<ZoomBehavior<SVGRectElement, unknown> | null>(null);
 
   useEffect(() => {
@@ -72,7 +79,16 @@ export default function TimelinePage() {
     }
     return { rows, count: ends.length };
   }, [team]);
-  const repos = useMemo(() => Object.keys(tl ?? {}), [tl]);
+  const allRepos = useMemo(() => Object.keys(tl ?? {}), [tl]);
+  // Repositories hidden with the checkboxes, kept in the URL as ?hide=a,b; at least one stays visible.
+  const [params, setParams] = useSearchParams();
+  const hidden = useMemo(() => new Set((params.get("hide") ?? "").split(",").filter(r => allRepos.includes(r))), [params, allRepos]);
+  const repos = useMemo(() => allRepos.filter(r => !hidden.has(r)), [allRepos, hidden]);
+  const toggleRepo = (r: string) => {
+    const next = new Set(hidden);
+    if (next.has(r)) next.delete(r); else if (repos.length > 1) next.add(r);
+    setParams(p => { const q = new URLSearchParams(p); next.size ? q.set("hide", [...next].join(",")) : q.delete("hide"); return q; }, { replace: true });
+  };
   const base = useMemo(() => {
     const months = Object.values(tl ?? {}).flatMap(m => Object.keys(m)).sort();
     if (!months.length) return null;
@@ -87,7 +103,8 @@ export default function TimelinePage() {
       .scaleExtent([1, 600])
       .extent([[ML, 0], [W - MR, 1]])
       .translateExtent([[ML, 0], [W - MR, 1]])
-      .filter(e => (e.type !== "wheel" || e.ctrlKey || e.metaKey) && !e.button)
+      .filter(e => (e.type !== "wheel" || e.ctrlKey || e.metaKey) && !e.button
+        && !((e.type === "mousedown" || e.type === "touchstart") && (selectModeRef.current || e.shiftKey)))   // those start a range selection instead
       .on("start", e => setDragging(e.sourceEvent?.type === "mousedown"))
       .on("end", () => setDragging(false))
       .on("zoom", e => setT(e.transform));
@@ -106,6 +123,33 @@ export default function TimelinePage() {
     const x0 = base(new Date(Date.UTC(y, 0, 1))), x1 = base(new Date(Date.UTC(y + 1, 0, 1)));
     const k = (W - MR - ML) / (x1 - x0);
     call((s, z) => z.transform(s, zoomIdentity.translate(ML - k * x0, 0).scale(k)));
+  };
+
+  const svgX = (e: React.PointerEvent<SVGRectElement>) => {
+    const ctm = e.currentTarget.ownerSVGElement?.getScreenCTM();
+    return ctm ? new DOMPoint(e.clientX, e.clientY).matrixTransform(ctm.inverse()).x : 0;
+  };
+  const clampX = (v: number) => Math.max(ML, Math.min(W - MR, v));
+  const onSelectStart = (e: React.PointerEvent<SVGRectElement>) => {
+    if (e.button || !(selectMode || e.shiftKey)) return;
+    e.currentTarget.setPointerCapture(e.pointerId);
+    bandRef.current = { a: clampX(svgX(e)), b: clampX(svgX(e)) };
+    setBand(bandRef.current); setTip(null);
+  };
+  const onSelectMove = (e: React.PointerEvent<SVGRectElement>) => {
+    if (!bandRef.current) return;
+    bandRef.current = { ...bandRef.current, b: clampX(svgX(e)) };
+    setBand(bandRef.current);
+  };
+  const onSelectEnd = () => {
+    const r = bandRef.current;
+    bandRef.current = null; setBand(null);
+    if (!r) return;
+    const [a, b] = [Math.min(r.a, r.b), Math.max(r.a, r.b)];
+    if (b - a < 6) return;                                       // a click, not a selection
+    justSelected.current = true;
+    const k = Math.min(600, t.k * (W - MR - ML) / (b - a)), xa = (a - t.x) / t.k;
+    call((s, z) => z.transform(s, zoomIdentity.translate(ML - k * xa, 0).scale(k)));
   };
 
   const [d0, d1] = x ? x.domain() : [new Date(), new Date()];
@@ -263,6 +307,15 @@ export default function TimelinePage() {
             </select>
           </label>
         )}
+        <fieldset className="flex flex-wrap gap-x-3 items-center">
+          <legend className="sr-only">Repositories shown</legend>
+          {allRepos.map(r => (
+            <label key={r} className="flex items-center gap-1 text-slate-600">
+              <input type="checkbox" checked={!hidden.has(r)} disabled={!hidden.has(r) && repos.length === 1} onChange={() => toggleRepo(r)} />
+              <span className="inline-block w-2 h-2 rounded-sm" style={{ background: REPO_COLOR[r] ?? "#7e92a4" }} aria-hidden="true" />{r}
+            </label>
+          ))}
+        </fieldset>
         {team && <label className="text-slate-600"><input type="checkbox" checked={showTeam} onChange={e => setShowTeam(e.target.checked)} /> Core team</label>}
         <label>Jump to{" "}
           <select className="border border-slate-300 rounded px-2 py-1 bg-white" value="" onChange={e => e.target.value && jumpToYear(+e.target.value)}>
@@ -275,6 +328,8 @@ export default function TimelinePage() {
         <button className={btn} onClick={() => zoomBy(1.5)} aria-label="Zoom in">+</button>
         <button className={btn} onClick={() => zoomBy(1 / 1.5)} aria-label="Zoom out">−</button>
         <button className={btn} onClick={reset}>Reset</button>
+        <button className={`${btn} ${selectMode ? "!bg-indigo-600 !text-white !border-indigo-600" : ""}`} aria-pressed={selectMode} onClick={() => setSelectMode(m => !m)}
+          title="When on, dragging selects a range to zoom to. Shift+drag does the same when off.">Select range</button>
         <span className="text-slate-500">
           {d0.toISOString().slice(0, 10)} to {d1.toISOString().slice(0, 10)} · {weekly ? "weekly" : "monthly"} bars{focus && weekly ? " (the focused module, directory or language is monthly only)" : ""}
         </span>
@@ -292,7 +347,9 @@ export default function TimelinePage() {
             ))}
           </g>
           <rect ref={overlay} x={ML} y={0} width={W - ML - MR} height={plotBottom} fill="transparent" style={{ cursor: dragging ? "grabbing" : CURSOR, touchAction: "none" }}
-            onMouseMove={onMove} onClick={onClick} onMouseLeave={() => setTip(null)} />
+            onPointerDown={onSelectStart} onPointerMove={onSelectMove} onPointerUp={onSelectEnd} onPointerCancel={onSelectEnd}
+            onMouseMove={e => { if (!bandRef.current) onMove(e); }} onClick={e => { if (justSelected.current) { justSelected.current = false; return; } onClick(e); }} onMouseLeave={() => setTip(null)} />
+          {band && <rect x={Math.min(band.a, band.b)} y={0} width={Math.abs(band.b - band.a)} height={plotBottom} fill="#4389ff" fillOpacity={0.18} stroke="#4389ff" strokeOpacity={0.6} pointerEvents="none" />}
           <g clipPath="url(#plot)">
             {repos.map((repo, i) => {
               const top = TOP + STORY_H + i * LANE_H, h = LANE_H - 26;
@@ -371,7 +428,7 @@ export default function TimelinePage() {
         )}
       </div>
       <p className="text-xs text-slate-400">
-        Drag to pan. Ctrl or cmd + scroll, double click, or the buttons zoom. Dates are committer dates. Line counts come from each
+        Drag to pan, or turn on Select range (or hold Shift) and drag to zoom to that range. Ctrl or cmd + scroll, double click, or the buttons zoom. Dates are committer dates. Line counts come from each
         commit's diff (merges have none) and include generated and translated files, so one bot commit can dominate a month. Every release is listed on the <Link className="text-indigo-600 hover:underline" to="/releases">Releases</Link> page.
       </p>
       <details className="text-sm">

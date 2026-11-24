@@ -1,7 +1,6 @@
 {
   "title": "The passive scanner: core to the pscan add-on",
   "description": "How the passive scanner engine is recorded in the zaproxy and zap-extensions histories: a core extension from 2011, and the pscan add-on from 2024. The scan rules are in a separate story.",
-  "audience": "developers",
   "group": "features",
   "date": "2024-06-25",
   "status": "draft",
@@ -70,8 +69,8 @@
       "evidence": []
     },
     {
-      "title": "Statistics move, and the state at HEAD",
-      "text": "On 2025-12-04 zaproxy has \"Remove pscan alerts statistics (migrating to add-on)\". The pscan add-on's changelog lists 0.6.0 dated 2025-12-15 with \"Migrate handling of Alerts raised statistics from the core.\" At HEAD, zaproxy still contains zap/src/main/java/org/zaproxy/zap/extension/pscan/ExtensionPassiveScan.java, and zap-extensions contains addOns/pscan, addOns/pscanrules, addOns/pscanrulesBeta, and addOns/pscanrulesAlpha.",
+      "title": "Statistics move",
+      "text": "On 2025-12-04 zaproxy has \"Remove pscan alerts statistics (migrating to add-on)\". The pscan add-on's changelog lists 0.6.0 dated 2025-12-15 with \"Migrate handling of Alerts raised statistics from the core.\"",
       "entities": [
         "addon:pscan",
         "module:zaproxy:zap"

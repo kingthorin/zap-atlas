@@ -1,14 +1,13 @@
 {
   "title": "The CMS add-on (GSoC 2013)",
-  "description": "The 2013 CMS add-on in the Student Hall of Fame and the cmss add-on in zap-extensions, from September 2013 to its removal in 2020.",
-  "audience": "community",
+  "description": "The 2013 CMS add-on from the Student Hall of Fame, which the zap-extensions history shows as the cmss add-on (also named wafp), from September 2013 to its removal in December 2020.",
   "group": "projects",
   "date": "2013-06",
-  "status": "draft",
+  "status": "reviewed",
   "chapters": [
     {
       "title": "The project and the first commits",
-      "text": "The Student Hall of Fame lists a CMS add-on (Abdelhadi Azouni) as a 2013 Summer GSoC project. The linked idea page calls the project \"ZAP CMSS\". In zap-extensions the cmss directory (org/zaproxy/zap/extension/cmss) first appears in four commits dated 2013-09-14, whose subject lines are empty and whose author names are email addresses, so they are cited by SHA only. This story does not claim the commits' author from the Hall of Fame entry.",
+      "text": "The Student Hall of Fame lists a CMS add-on (Abdelhadi Azouni) as a 2013 Summer GSoC project. The linked idea page calls the project \"ZAP CMSS\". The last commit to change CMSFingerprinter.java before the add-on was removed (2019-05-08, \"Normalise format/style Java code\") has a commented-out method whose comment reads \"Use BlindElephant DB to fingerprint webapp\". It reads joomla.xml, requests each listed path under a target URL, and compares the response checksum with the md5 values in that file to print versions. In zap-extensions the cmss directory (org/zaproxy/zap/extension/cmss) first appears in four commits dated 2013-09-14, whose subject lines are empty and whose author names are email addresses, so they are cited by SHA only. This story does not claim the commits' author from the Hall of Fame entry.",
       "entities": [
         "repo:zap-extensions"
       ],
@@ -16,7 +15,8 @@
         "commit:zap-extensions:2380710241636e83c90d1f7708064f67f6a943ed",
         "commit:zap-extensions:c6ba8bd934d106ddb3f78483ae9d3a5ecbb1fb51",
         "commit:zap-extensions:a3dc356292c6240b9bb21c28bb12e2f64bf3ce7d",
-        "commit:zap-extensions:ea9e7dc9ae2aecc6eb2edabb3b4cca7ff36ad37b"
+        "commit:zap-extensions:ea9e7dc9ae2aecc6eb2edabb3b4cca7ff36ad37b",
+        "commit:zap-extensions:dad0380fce8a8c414d0fb4b76897fbf1d97fc24c"
       ],
       "documents": [],
       "evidence": [

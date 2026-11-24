@@ -37,7 +37,6 @@ export function StoryDetail() {
     <article className="space-y-6 max-w-3xl">
       <div className="text-sm"><Link to="/stories" className="text-indigo-600 hover:underline">← Stories</Link></div>
       <header>
-        <div className="text-xs text-slate-400">{story.audience}</div>
         <h1 className="text-2xl font-bold">{story.title}<Badge status={story.status} /></h1>
         <p className="mt-2 text-slate-600">{story.description}</p>
       </header>
@@ -119,7 +118,7 @@ export default function Stories() {
           <Link key={story.id} to={`/stories/${slugOf(story.id)}`} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm hover:border-indigo-400">
             <div className="text-xs text-slate-400 mb-1">
               <span className="px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-700 mr-2">{GROUPS.find(g => g.id === story.group)?.short ?? story.group}</span>
-              {story.date} · {story.audience} · {story.chapters.length} chapters
+              {story.date} · {story.chapters.length} chapters
             </div>
             <h3 className="text-lg font-bold">{story.title}<Badge status={story.status} /></h3>
             <p className="text-slate-600 text-sm mt-2">{story.description}</p>

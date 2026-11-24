@@ -1,10 +1,9 @@
 {
   "title": "Zest: the graphical scripting language in ZAP",
-  "description": "How Zest appears in the histories: a Zest add-on in zap-extensions from 2013, script engine support in the core, its own project in 2019, and Zest script chains in the Automation Framework.",
-  "audience": "developers",
+  "description": "Zest's history with ZAP: a Zest add-on in zap-extensions from 2013, script engine support in the core, its own project in 2019, and Zest script chains in the Automation Framework.",
   "group": "features",
   "date": "2013-03-29",
-  "status": "draft",
+  "status": "reviewed",
   "chapters": [
     {
       "title": "The Zest add-on begins, 2013",

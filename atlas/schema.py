@@ -262,7 +262,6 @@ class Story:
     id: str
     title: str
     description: str
-    audience: str = ""
     group: str = ""
     date: str = ""
     chapters: list[dict] = field(default_factory=list)

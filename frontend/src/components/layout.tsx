@@ -131,11 +131,29 @@ function NavLinks({ pathname }: { pathname: string }) {
   );
 }
 
+// Pages with wide content can use the whole window; the choice is offered only on screens 2xl (1536 px) and wider.
+const WIDE_PAGES = ["/graph", "/timeline", "/source", "/releases", "/history"];
+
+function useWide(): [boolean, () => void] {
+  const [wide, setWide] = useState(() => { try { return localStorage.getItem("atlas-wide") === "1"; } catch { return false; } });
+  const toggle = () => setWide(w => { try { localStorage.setItem("atlas-wide", w ? "0" : "1"); } catch { /* ignore */ } return !w; });
+  return [wide, toggle];
+}
+
 export function Layout({ children }: { children: React.ReactNode }) {
+  const [wide, toggleWide] = useWide();
+  const canWiden = WIDE_PAGES.includes(useLocation().pathname);
   return (
     <div className="min-h-screen bg-zap-lightest text-slate-900 font-sans">
       <Nav />
-      <main className="p-4 md:p-6 max-w-6xl mx-auto">
+      <main className={`p-4 md:p-6 max-w-6xl mx-auto ${wide && canWiden ? "2xl:max-w-none" : ""}`}>
+        {canWiden && (
+          <div className="hidden 2xl:flex justify-end -mt-2 mb-2">
+            <button className="text-xs text-slate-500 hover:text-indigo-600 underline" aria-pressed={wide} onClick={toggleWide}>
+              {wide ? "Standard width" : "Full width"}
+            </button>
+          </div>
+        )}
         {children}
       </main>
     </div>

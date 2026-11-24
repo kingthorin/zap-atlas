@@ -7,7 +7,7 @@ from atlas.stories import load_stories
 from atlas.validate import validate_dataset
 
 GOOD = {
-    "title": "T", "description": "D", "audience": "developers", "group": "history", "date": "2019-04", "status": "draft",
+    "title": "T", "description": "D", "group": "history", "date": "2019-04", "status": "draft",
     "chapters": [
         {"title": "c1", "text": "x", "commits": ["commit:r:a"], "entities": ["repo:r"],
          "evidence": [{"label": "L", "url": "https://example.org/p"}]},
@@ -81,7 +81,7 @@ def test_repo_stories_are_well_formed():
 
 def test_story_can_cite_milestones(tmp_path):
     d = tmp_path / "stories"; d.mkdir()
-    (d / "m.json").write_text(json.dumps({**{"title": "T", "description": "D", "audience": "community", "group": "history", "date": "2023", "status": "draft"},
+    (d / "m.json").write_text(json.dumps({**{"title": "T", "description": "D", "group": "history", "date": "2023", "status": "draft"},
         "chapters": [{"title": "c", "text": "x", "milestones": ["milestone:zaproxy:2.8.0"]}]}))
     (row,) = load_stories(d)
     assert row["milestones"] == ["milestone:zaproxy:2.8.0"]

@@ -63,7 +63,7 @@ def test_same_inputs_skip_the_whole_run_and_force_rebuilds(gitrepo, stories, tmp
 def test_a_changed_story_or_a_damaged_file_means_not_current(gitrepo, stories, tmp_path):
     sources, out = tmp_path / "sources", tmp_path / "out"
     AtlasGenerator(_config(str(gitrepo), stories)).run(sources, out)
-    (stories / "s.json").write_text(json.dumps({"title": "x", "description": "d", "audience": "developers", "group": "history",
+    (stories / "s.json").write_text(json.dumps({"title": "x", "description": "d", "group": "history",
                                                 "date": "2020", "status": "draft", "chapters": [{"title": "c", "text": "t"}]}))
     assert AtlasGenerator(_config(str(gitrepo), stories)).run(sources, out) is not None      # stories are an input
     (out / "repos.jsonl").write_text("{}\n")

@@ -1,7 +1,6 @@
 {
   "title": "Three branches to one in zap-extensions",
   "description": "How zap-extensions went from alpha, beta, and master branches to a single main line, and a change in commit SHAs that predates it. Based on the repository and GitHub's pull request records.",
-  "audience": "developers",
   "group": "history",
   "date": "2015-06",
   "status": "reviewed",

@@ -1,7 +1,6 @@
 {
   "title": "Import/Export: exim and the add-ons it superseded",
   "description": "From the 2014 importurls and importLogFiles add-ons, through the exim add-on that began in April 2021, to its HAR, URL, log, PCAP, and Automation Framework features.",
-  "audience": "developers",
   "group": "features",
   "date": "2021-04-09",
   "status": "draft",
@@ -77,19 +76,6 @@
         {
           "label": "exim CHANGELOG.md",
           "url": "https://github.com/zaproxy/zap-extensions/blob/main/addOns/exim/CHANGELOG.md"
-        }
-      ]
-    },
-    {
-      "title": "State at HEAD",
-      "text": "The newest release in the CHANGELOG is 0.22.0 (2026-08-12), which lists \"Option to send requests when importing a HAR file, including via the Automation Framework and API.\" The dataset lists the add-on as beta.",
-      "entities": [
-        "addon:exim"
-      ],
-      "evidence": [
-        {
-          "label": "Import/Export add-on page",
-          "url": "https://www.zaproxy.org/docs/desktop/addons/import-export/"
         }
       ]
     }

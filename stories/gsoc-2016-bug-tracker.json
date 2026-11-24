@@ -1,7 +1,6 @@
 {
   "title": "Bug tracker support (Sanchit Kapoor, 2016 GSoC)",
   "description": "The Hall of Fame project \"Bug tracker support\" and what the history shows: a first commit in 2016, a relocation into its own project in 2019, and maintenance since.",
-  "audience": "community",
   "group": "projects",
   "date": "2016-06",
   "status": "draft",

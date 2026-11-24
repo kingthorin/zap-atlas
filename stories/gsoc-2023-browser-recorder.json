@@ -1,7 +1,6 @@
 {
   "title": "Browser Recorder (Aryan Gupta, 2023 GSoC)",
   "description": "How the Client Side Integration add-on and Zest's client statements appear in zap-extensions around the 2023 Browser Recorder project.",
-  "audience": "community",
   "group": "projects",
   "date": "2023-06",
   "status": "reviewed",

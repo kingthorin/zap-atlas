@@ -1,7 +1,6 @@
 {
   "title": "Retesting alerts (Pranav Saxena, 2021 GSoC)",
   "description": "The Retest add-on's first commit and release in August 2021, its later history, and the contributor's other commits in zaproxy and zap-extensions that year.",
-  "audience": "community",
   "group": "projects",
   "date": "2021-06",
   "status": "reviewed",

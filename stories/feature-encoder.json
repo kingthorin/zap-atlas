@@ -1,7 +1,6 @@
 {
   "title": "Encode/Decode: from core dialog to the encoder add-on",
   "description": "The encode/decode tool as recorded in the zaproxy and zap-extensions histories: a core extension in the first import, an add-on from 2018, and the core classes' deprecation and removal.",
-  "audience": "developers",
   "group": "features",
   "date": "2020-05-18",
   "status": "draft",

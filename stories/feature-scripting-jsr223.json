@@ -1,10 +1,9 @@
 {
   "title": "Scripting in ZAP: from the Script Console add-on to JSR 223 in core",
   "description": "How script support appears in the zap-extensions and zaproxy histories: a Script Console extension in 2012, script support moved into the core in 2013 on javax.script, and the scripts add-on from 2019.",
-  "audience": "developers",
   "group": "features",
   "date": "2012-06-25",
-  "status": "draft",
+  "status": "reviewed",
   "chapters": [
     {
       "title": "A ScriptConsole extension, 2012",

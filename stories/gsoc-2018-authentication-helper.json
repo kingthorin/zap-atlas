@@ -1,7 +1,6 @@
 {
   "title": "Authentication helper (Kajan Mohanagandhirasa, 2018 GSoC)",
   "description": "The core changes that the 2018 Authentication helper project left in zaproxy, and how the later authhelper add-on appears in zap-extensions.",
-  "audience": "community",
   "group": "projects",
   "date": "2018-06",
   "status": "draft",

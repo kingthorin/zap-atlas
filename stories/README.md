@@ -6,7 +6,6 @@ Human-authored, evidence-backed narratives. One JSON file per story; the file na
 {
   "title": "…",
   "description": "one or two sentences",
-  "audience": "developers | community",
   "group": "projects | features | history",
   "date": "YYYY | YYYY-MM | YYYY-MM-DD",
   "status": "draft | reviewed",

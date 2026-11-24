@@ -1,7 +1,6 @@
 {
   "title": "Look and feel, FlatLaf, and dark mode",
   "description": "How look-and-feel selection and dark mode appear in the zaproxy history: selectable look and feel in 2018, the FlatLaf dependency in 2020, dynamic switching, and later fixes.",
-  "audience": "community",
   "group": "features",
   "date": "2016-11-02",
   "status": "draft",
@@ -76,8 +75,8 @@
       ]
     },
     {
-      "title": "Later fixes and the state at HEAD",
-      "text": "Later commits in zaproxy include \"fix: HTTP Panels Font setting for dark LaFs (Theme)\" (2021-04-21), \"Use FlatLaf add-on for SwingX\" (2025-03-02, which adds one line to zap/zap.gradle.kts) and \"Address UI trees not updating fully on theme switch\" (2026-03-04). 58 commits in the zaproxy history have a subject beginning \"Update FlatLaf\". At HEAD zap/zap.gradle.kts declares implementation(libs.flatlaf) and implementation(libs.flatlaf.swingx). No add-on in the dataset has a look-and-feel or theme name.",
+      "title": "Later fixes",
+      "text": "Later commits in zaproxy include \"fix: HTTP Panels Font setting for dark LaFs (Theme)\" (2021-04-21), \"Use FlatLaf add-on for SwingX\" (2025-03-02, which adds one line to zap/zap.gradle.kts) and \"Address UI trees not updating fully on theme switch\" (2026-03-04). 58 commits in the zaproxy history have a subject beginning \"Update FlatLaf\".",
       "entities": [
         "module:zaproxy:zap"
       ],

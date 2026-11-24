@@ -1,7 +1,6 @@
 {
   "title": "Param Digger (Arkaprabha Chakraborty, 2022 GSoC)",
   "description": "An add-on that began as \"param miner\" in June 2022, was renamed to Param Digger in August 2022, and has been maintained since.",
-  "audience": "community",
   "group": "projects",
   "date": "2022-06",
   "status": "reviewed",

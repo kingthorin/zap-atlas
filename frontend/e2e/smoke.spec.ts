@@ -182,6 +182,61 @@ test("timeline draws the repositories with markers, zooms and has a table", asyn
   await expect(page.getByRole("table", { name: "Commits per year by repository" })).toBeVisible();
 });
 
+test("timeline: repositories can be hidden, a dragged range zooms, and the choices survive", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 1100 });
+  await page.goto("timeline");
+  const lanes = () => page.locator("svg[role=group] text[font-weight='bold']");
+  await expect(lanes().first()).toBeVisible();                       // wait for the chart before counting
+  const before = await lanes().count();
+  await page.getByRole("checkbox", { name: /zap-hud/ }).uncheck();
+  await expect(lanes()).toHaveCount(before - 1);
+  await expect(page).toHaveURL(/hide=zap-hud/);
+  for (const r of ["zap-core-help", "zap-extensions"]) await page.getByRole("checkbox", { name: new RegExp(r) }).uncheck();
+  await expect(page.getByRole("checkbox", { name: /zaproxy$/ })).toBeDisabled();          // the last one stays
+  await page.reload();
+  await expect(page.getByRole("checkbox", { name: /zap-hud/ })).not.toBeChecked();         // the URL keeps the choice
+  for (const r of ["zap-hud", "zap-core-help", "zap-extensions"]) await page.getByRole("checkbox", { name: new RegExp(r) }).check();
+  const status = page.locator("span.text-slate-500", { hasText: " bars" });
+  const span = async () => (await status.textContent())!.match(/(\d{4}-\d\d-\d\d) to (\d{4}-\d\d-\d\d)/)!.slice(1).map(d => Date.parse(d));
+  const [a0, a1] = await span();
+  const box = (await page.locator("svg[role=group] rect[style*='touch-action']").boundingBox())!;
+  await page.mouse.move(box.x + box.width * 0.4, box.y + 100);                              // Shift+drag selects a range
+  await page.keyboard.down("Shift");
+  await page.mouse.down();
+  await page.mouse.move(box.x + box.width * 0.6, box.y + 100, { steps: 5 });
+  await page.mouse.up();
+  await page.keyboard.up("Shift");
+  const [b0, b1] = await span();
+  expect(b1 - b0).toBeLessThan((a1 - a0) * 0.3);
+  await page.getByRole("button", { name: "Reset" }).click();
+  await page.getByRole("button", { name: "Select range" }).click();                         // the toggle: plain drag selects
+  await expect(page.getByRole("button", { name: "Select range" })).toHaveAttribute("aria-pressed", "true");
+  await page.mouse.move(box.x + box.width * 0.3, box.y + 100);
+  await page.mouse.down();
+  await page.mouse.move(box.x + box.width * 0.5, box.y + 100, { steps: 5 });
+  await page.mouse.up();
+  const [c0, c1] = await span();
+  expect(c1 - c0).toBeLessThan((a1 - a0) * 0.3);
+});
+
+test("full width is offered on wide screens for data pages only", async ({ page }) => {
+  await page.setViewportSize({ width: 1800, height: 900 });
+  await page.goto("timeline");
+  const main = page.locator("main");
+  const normal = (await main.boundingBox())!.width;
+  await page.getByRole("button", { name: "Full width" }).click();
+  expect((await main.boundingBox())!.width).toBeGreaterThan(normal + 200);
+  await page.reload();
+  await expect(page.getByRole("button", { name: "Standard width" })).toBeVisible();          // remembered
+  await page.goto("stories");
+  await expect(page.getByRole("button", { name: /width/ })).toHaveCount(0);
+  expect((await main.boundingBox())!.width).toBeLessThanOrEqual(normal);
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto("graph");
+  await expect(page.getByRole("button", { name: /width/ })).toBeHidden();                    // narrower than 2xl
+  await page.evaluate(() => localStorage.removeItem("atlas-wide"));
+});
+
 // The oracle scans every relationship shard of the repository, so it does not depend on the incoming/ copies
 // that the page uses, and it follows whatever data the build was generated from.
 function edgeCounts(repo: string, id: string): { out: number; inc: number } {

@@ -1,7 +1,6 @@
 {
   "title": "The Automation Framework add-on",
   "description": "How the automation add-on began in January 2021, which jobs and add-ons joined it, its use in Docker scripts and the Retest add-on, and its 2026 state, according to commits and CHANGELOGs.",
-  "audience": "developers",
   "group": "features",
   "date": "2021-01-14",
   "status": "draft",
@@ -103,20 +102,6 @@
         {
           "label": "automation CHANGELOG.md",
           "url": "https://github.com/zaproxy/zap-extensions/blob/main/addOns/automation/CHANGELOG.md"
-        }
-      ]
-    },
-    {
-      "title": "State at HEAD",
-      "text": "The Unreleased section of the CHANGELOG lists \"A Batch tab, which runs all, or one, of the plans in a directory, stopping at the first failure, and optionally starting a new session for each plan.\" and \"The `-autorundir` command line option\". The dataset lists the add-on as beta, with addon:commonlib and addon:network as dependencies.",
-      "entities": [
-        "addon:automation",
-        "addon:network"
-      ],
-      "evidence": [
-        {
-          "label": "Automation Framework add-on page",
-          "url": "https://www.zaproxy.org/docs/desktop/addons/automation-framework/"
         }
       ]
     }

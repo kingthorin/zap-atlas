@@ -1,7 +1,6 @@
 {
   "title": "Out-of-band testing, OAST (Akshath Kothari, 2021 GSoC)",
   "description": "The OAST add-on from its first commit in June 2021 through BOAST, Interactsh, and its use by scan rules, with the matching change in ZAP core.",
-  "audience": "community",
   "group": "projects",
   "date": "2021-06",
   "status": "reviewed",

@@ -1,7 +1,6 @@
 {
   "title": "SOAP scanning (Alberto Verza, 2014 GSoC)",
   "description": "The 2014 SOAP scanning project in the Student Hall of Fame and the history of the soap add-on, which began as an importWSDL extension.",
-  "audience": "community",
   "group": "projects",
   "date": "2014-06",
   "status": "reviewed",

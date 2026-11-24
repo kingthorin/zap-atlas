@@ -1,7 +1,6 @@
 {
   "title": "Scanning WebSockets (Manos Kirtas, 2018 and 2019 GSoC)",
   "description": "Two Hall of Fame entries for the same student: 2018 phase 1 and 2019 phase 2 of WebSocket scanning, followed through zap-extensions commits and the WebSockets add-on changelog.",
-  "audience": "community",
   "group": "projects",
   "date": "2018-06",
   "status": "reviewed",

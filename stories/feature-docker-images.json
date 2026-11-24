@@ -1,7 +1,6 @@
 {
   "title": "The ZAP Docker images",
   "description": "How the docker directory of zaproxy developed: the first Dockerfiles in 2014, packaged scan scripts, live and bare images, a HUD change, and registry changes in 2023 and 2024.",
-  "audience": "community",
   "group": "features",
   "date": "2014-09-24",
   "status": "draft",
@@ -90,16 +89,6 @@
           "url": "https://www.zaproxy.org/blog/2023-06-13-ghcr-docker-images/"
         }
       ]
-    },
-    {
-      "title": "State at HEAD",
-      "text": "At HEAD the docker directory of zaproxy contains Dockerfile-bare, Dockerfile-live, Dockerfile-stable, Dockerfile-tests, Dockerfile-weekly, zap-api-scan.py, zap-baseline.py, zap-full-scan.py, zap_common.py and CHANGELOG.md.",
-      "entities": [
-        "repo:zaproxy"
-      ],
-      "commits": [],
-      "documents": [],
-      "evidence": []
     }
   ]
 }

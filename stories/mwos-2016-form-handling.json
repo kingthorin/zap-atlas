@@ -1,7 +1,6 @@
 {
   "title": "Form handling (Ryan Wehe, Christopher Laguna, Rian Franey, Mozilla Winter of Security)",
   "description": "A team project that let users define the values the spider puts into forms: core changes in March 2017, an add-on the same month, and its later rename to Value Generator.",
-  "audience": "community",
   "group": "projects",
   "date": "2016",
   "status": "reviewed",

@@ -1,7 +1,6 @@
 {
   "title": "The Authentication Helper add-on",
   "description": "The authhelper add-on in zap-extensions from January 2023: browser based, client script, OAuth2, and AI assisted authentication. Earlier authentication work in core is in the Google Summer of Code 2018 story.",
-  "audience": "developers",
   "group": "features",
   "date": "2023-01-10",
   "status": "draft",

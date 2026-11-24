@@ -1,7 +1,6 @@
 {
   "title": "The Params feature: from core to an add-on",
   "description": "How the Params tab and extension is recorded in the zaproxy and zap-extensions histories: introduced in core in 2011 and migrated to the params add-on from 2025.",
-  "audience": "developers",
   "group": "features",
   "date": "2025-11-11",
   "status": "draft",
@@ -55,17 +54,6 @@
         "commit:zaproxy:1d6a45ff4aa811b7e17f02013d36afa9c1ef65f6",
         "commit:zap-extensions:19b7559830eb67ab07fd7a080dda7579515997b6"
       ],
-      "documents": [],
-      "evidence": []
-    },
-    {
-      "title": "State at HEAD",
-      "text": "The params add-on's changelog lists 0.1.0 dated 2026-10-08 with the entry \"Migrated from core.\" At HEAD, addOns/params exists in zap-extensions and zaproxy still contains zap/src/main/java/org/zaproxy/zap/extension/params/ExtensionParams.java.",
-      "entities": [
-        "addon:params",
-        "module:zaproxy:zap"
-      ],
-      "commits": [],
       "documents": [],
       "evidence": []
     }

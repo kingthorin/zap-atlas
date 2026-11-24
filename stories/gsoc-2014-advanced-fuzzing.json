@@ -1,7 +1,6 @@
 {
   "title": "Advanced fuzzing (Sebastian Schulze, 2014 GSoC)",
   "description": "The 2014 advanced fuzzing project in the Student Hall of Fame next to the multi-fuzz commits, the 2015 merge into the fuzz add-on, and where it stands now.",
-  "audience": "community",
   "group": "projects",
   "date": "2014-06",
   "status": "reviewed",

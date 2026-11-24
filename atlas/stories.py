@@ -14,7 +14,7 @@ from pathlib import Path
 from atlas.schema import Story, story_id
 from dataclasses import asdict
 
-_REQUIRED = ("title", "description", "audience", "group", "date", "status", "chapters")
+_REQUIRED = ("title", "description", "group", "date", "status", "chapters")
 STATUSES = ("draft", "reviewed")
 GROUPS = ("projects", "features", "history")
 _DATE = re.compile(r"^\d{4}(-\d{2}(-\d{2})?)?$")  # YYYY, YYYY-MM or YYYY-MM-DD
@@ -49,7 +49,7 @@ def load_stories(stories_dir: Path) -> list[dict]:
 
         story = Story(
             id=story_id(path.stem), title=raw["title"], description=raw["description"],
-            audience=raw["audience"], chapters=raw["chapters"],
+            chapters=raw["chapters"],
             entities=union("entities"), commits=union("commits"), documents=union("documents"), milestones=union("milestones"),
             evidence=sorted({e["url"] for ch in raw["chapters"] for e in ch.get("evidence", [])}),
         )

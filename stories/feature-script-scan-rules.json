@@ -1,7 +1,6 @@
 {
   "title": "Script scan rules: from core scripts to first-class scan rules",
   "description": "How active and passive scripts became scan rules: script scanners in the core from 2013, their move to the scripts add-on in 2023 and 2024, and scripts treated as first-class scan rules from scripts 45.2.0.",
-  "audience": "developers",
   "group": "features",
   "date": "2013-07-15",
   "status": "draft",
