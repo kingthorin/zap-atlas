@@ -1,0 +1,87 @@
+{
+  "title": "Zest: the graphical scripting language in ZAP",
+  "description": "How Zest appears in the histories: a Zest add-on in zap-extensions from 2013, script engine support in the core, its own project in 2019, and Zest script chains in the Automation Framework.",
+  "audience": "developers",
+  "group": "features",
+  "date": "2013-03-29",
+  "status": "draft",
+  "chapters": [
+    {
+      "title": "The Zest add-on begins, 2013",
+      "text": "On 2013-03-29 zap-extensions has \"First version of Zest add-on\", followed by \"Added Zest\" (2013-04-03) and \"Started on the Zest help pages\" (2013-04-04). The March 2016 newsletter describes Zest as \"a graphical security scripting language from the Mozilla Security team\".",
+      "entities": [
+        "repo:zap-extensions",
+        "addon:zest"
+      ],
+      "commits": [
+        "commit:zap-extensions:d03c29b1291dd7ada53365e61396b82aa60f9ef6",
+        "commit:zap-extensions:f4bc4c2954f5f1282525f392cee06aa138156304",
+        "commit:zap-extensions:eaffdabb34f4acbf32ff7fe9c71e281c5907d79a"
+      ],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "ZAP Newsletter, 2016 March",
+          "url": "https://www.zaproxy.org/blog/2016-03-29-zap-newsletter-2016-march/"
+        }
+      ]
+    },
+    {
+      "title": "Support in the core, 2013 and 2014",
+      "text": "zaproxy has \"Allow scripts to override interfaces (Zest support)\" (2013-08-06) and \"Added initial Zest templates\" (2013-08-14). On 2014-02-10 it has \"Moved Zest scripts from core\".",
+      "entities": [
+        "repo:zaproxy"
+      ],
+      "commits": [
+        "commit:zaproxy:1494226ffbb10f512164bcc5033169710dad580a",
+        "commit:zaproxy:7fb59e0aff52a38c6f3a8b8ad4957be2b780301d",
+        "commit:zaproxy:9cf61b6d0bcda9d963820d321a048a9934ec8788"
+      ],
+      "documents": [],
+      "evidence": []
+    },
+    {
+      "title": "Authentication with Zest scripts",
+      "text": "zaproxy has \"Required changes to properly propagate session cookies during Zest Authentication\" (2014-02-15), \"Fixed issue with Zest based Authentication scripts\" (2014-02-21) and \"Issue 1411 - Missing authentication handling for Zest scripts called from scanner\" (2014-11-18).",
+      "entities": [
+        "repo:zaproxy"
+      ],
+      "commits": [
+        "commit:zaproxy:c5ce71ce10cf747dac760c1e6a7b0ebc03473a6b",
+        "commit:zaproxy:efce0450275bc9f744513bf1fd553d2981509255",
+        "commit:zaproxy:13262470a60ed55ee05627ea6c633739854002a8"
+      ],
+      "documents": [],
+      "evidence": []
+    },
+    {
+      "title": "Its own project, 2019",
+      "text": "On 2019-04-03 zap-extensions has \"zest: relocate to its own project\".",
+      "entities": [
+        "addon:zest"
+      ],
+      "commits": [
+        "commit:zap-extensions:60654f53f5da8df5c7643d89ad18a03a00c9a6e1"
+      ],
+      "documents": [],
+      "evidence": []
+    },
+    {
+      "title": "Options and chains, 2023 to 2026",
+      "text": "On 2023-11-13 zap-extensions has \"jython, zest: Move options under \"Scripts\" node\". The scripts add-on changelog for 45.18.0 (2026-03-31) lists support for \"Executing a chain of one or more Zest standalone scripts using the chain parameter\" in the Automation Framework Script job, and 45.20.0 (2026-07-13) lists GUI support for Zest script chains.",
+      "entities": [
+        "addon:zest",
+        "addon:scripts"
+      ],
+      "commits": [
+        "commit:zap-extensions:40e6c6b3f7a8a2340d426734073c55a3a41b5c11"
+      ],
+      "documents": [],
+      "evidence": [],
+      "milestones": [
+        "milestone:zap-extensions:scripts-v45.18.0",
+        "milestone:zap-extensions:scripts-v45.20.0"
+      ]
+    }
+  ]
+}

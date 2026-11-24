@@ -1,0 +1,86 @@
+{
+  "title": "Scripting in ZAP: from the Script Console add-on to JSR 223 in core",
+  "description": "How script support appears in the zap-extensions and zaproxy histories: a Script Console extension in 2012, script support moved into the core in 2013 on javax.script, and the scripts add-on from 2019.",
+  "audience": "developers",
+  "group": "features",
+  "date": "2012-06-25",
+  "status": "draft",
+  "chapters": [
+    {
+      "title": "A ScriptConsole extension, 2012",
+      "text": "On 2012-06-25 zap-extensions has the commit \"Added the ScriptConsole extension\".",
+      "entities": [
+        "repo:zap-extensions"
+      ],
+      "commits": [
+        "commit:zap-extensions:a01a37e58be27a0c84d2312f8cb555f17b8415c9"
+      ],
+      "documents": [],
+      "evidence": []
+    },
+    {
+      "title": "Script support moves into the core, 2013",
+      "text": "On 2013-07-15 zaproxy has \"Issue 735: Move script support into the core\". It adds ExtensionScript.java, ScriptEngineWrapper.java, ScriptWrapper.java, ScriptType.java and JavascriptEngineWrapper.java under org/zaproxy/zap/extension/script, active and passive script classes, and ECMAScript templates. The new classes import javax.script types such as ScriptEngine and Invocable.",
+      "entities": [
+        "repo:zaproxy",
+        "module:zaproxy:zap"
+      ],
+      "commits": [
+        "commit:zaproxy:e7ffc1235579980b6b97166018d1d0cac4df4176"
+      ],
+      "documents": [],
+      "evidence": []
+    },
+    {
+      "title": "Languages that are not text, 2013",
+      "text": "On 2013-08-02 zaproxy has \"Issue 750: Upgrade script console to support non text based scripting languages\", and on 2013-08-06 \"Allow scripts to override interfaces (Zest support)\".",
+      "entities": [
+        "repo:zaproxy"
+      ],
+      "commits": [
+        "commit:zaproxy:ba7d7f3db9a6e869f8264c8e0c2daf1453d4a769",
+        "commit:zaproxy:1494226ffbb10f512164bcc5033169710dad580a"
+      ],
+      "documents": [],
+      "evidence": []
+    },
+    {
+      "title": "A new script type, 2014",
+      "text": "On 2014-02-09 zaproxy has \"Added Custom Input Vector scripting capabilities to ZAP\".",
+      "entities": [
+        "repo:zaproxy"
+      ],
+      "commits": [
+        "commit:zaproxy:2b4bef98426544ef1bd851a8feaf83600f1b2603"
+      ],
+      "documents": [],
+      "evidence": []
+    },
+    {
+      "title": "What ZAP says about JSR 223",
+      "text": "The March 2016 newsletter says \"By default ZAP supports ECMAScript (JavaScipt) and Zest, a graphical security scripting language from the Mozilla Security team\", that add-ons extend support to Jython and JRuby, and \"ZAP will be able to support any language that supports JSR 223\".",
+      "entities": [],
+      "commits": [],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "ZAP Newsletter, 2016 March",
+          "url": "https://www.zaproxy.org/blog/2016-03-29-zap-newsletter-2016-march/"
+        }
+      ]
+    },
+    {
+      "title": "The scripts add-on, 2019 and after",
+      "text": "On 2019-04-03 zap-extensions has \"scripts: relocate to its own project\". The add-on's changelog has, under Unreleased, \"Move script types from core (Issue 8027).\" At HEAD zaproxy still contains zap/src/main/java/org/zaproxy/zap/extension/script/ExtensionScript.java.",
+      "entities": [
+        "addon:scripts",
+        "module:zaproxy:zap"
+      ],
+      "commits": [
+        "commit:zap-extensions:44fa54167c65ff1ef88f3578db0b408ff3715350"
+      ],
+      "documents": [],
+      "evidence": []
+    }
+  ]
+}

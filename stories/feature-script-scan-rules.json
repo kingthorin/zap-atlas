@@ -1,0 +1,93 @@
+{
+  "title": "Script scan rules: from core scripts to first-class scan rules",
+  "description": "How active and passive scripts became scan rules: script scanners in the core from 2013, their move to the scripts add-on in 2023 and 2024, and scripts treated as first-class scan rules from scripts 45.2.0.",
+  "audience": "developers",
+  "group": "features",
+  "date": "2013-07-15",
+  "status": "draft",
+  "chapters": [
+    {
+      "title": "Active and passive scripts in core, 2013 to 2015",
+      "text": "The 2013-07-15 commit \"Issue 735: Move script support into the core\" adds ScriptsActiveScanner.java, ScriptsPassiveScanner.java, ActiveScript.java and PassiveScript.java, with active-template.js and passive-template.js. On 2015-02-24 zaproxy has \"Issue 1541 : Enable active scan scripts to scan just a URL rather than every parameter\".",
+      "entities": [
+        "repo:zaproxy",
+        "module:zaproxy:zap"
+      ],
+      "commits": [
+        "commit:zaproxy:e7ffc1235579980b6b97166018d1d0cac4df4176",
+        "commit:zaproxy:2a9c3c0b60ddaee75bd004daf32995b3993f791f"
+      ],
+      "documents": [],
+      "evidence": []
+    },
+    {
+      "title": "Moved from core to the scripts add-on, 2023 to 2024",
+      "text": "On 2023-12-27 zaproxy has \"Deprecate Script Scan Rules and related classes\", whose message says \"These will be made available as part of the scripts add-on.\" On 2023-12-30 zap-extensions has \"scripts: Migrate scan rule functionality from core\". The scripts changelog for 45.0.0 (2024-02-12) says \"The scan rule functionality of scripts was moved from the ZAP core to this add-on (Related to Issue 7105).\" Both commits are by ricekot.",
+      "entities": [
+        "addon:scripts",
+        "repo:zaproxy"
+      ],
+      "commits": [
+        "commit:zaproxy:03af24df7f72887ff2beacbcfe045cf69c8053b2",
+        "commit:zap-extensions:563e33bd706f16cde3541d5c9156176c778b63ad"
+      ],
+      "documents": [],
+      "evidence": [],
+      "milestones": [
+        "milestone:zap-extensions:scripts-v45.0.0"
+      ]
+    },
+    {
+      "title": "First-class scan rules, 2024",
+      "text": "On 2024-03-26 zap-extensions merges pull request #5322 from ricekot/scripts/scan-rules, with the commit \"Expose Active & Passive Scripts as Scan Rules\". The changelog for 45.2.0 (2024-04-11) says \"Active and Passive Scripts with a getMetadata() function are now treated as first-class scan rules (Issue 7105).\" 45.3.0 (2024-05-07) adds code and help links for script scan rules and raises the minimum ZAP version to 2.15.0.",
+      "entities": [
+        "addon:scripts"
+      ],
+      "commits": [
+        "commit:zap-extensions:bafe94ca0af4a0acdca773d8d64045934d5139ad",
+        "commit:zap-extensions:0237f38e528c57c7f07f298ab7fd664620467887",
+        "commit:zap-extensions:a9053b2f48303ad26130c0adc441e33430bee602"
+      ],
+      "documents": [
+        "doc:zap-extensions:addOns/scripts/src/main/javahelp/org/zaproxy/zap/extension/scripts/resources/help/contents/scanrules.html"
+      ],
+      "evidence": [],
+      "milestones": [
+        "milestone:zap-extensions:scripts-v45.2.0",
+        "milestone:zap-extensions:scripts-v45.3.0",
+        "milestone:zaproxy:v2.15.0"
+      ]
+    },
+    {
+      "title": "The announcement, 2024-07-17",
+      "text": "The blog post \"ZAP Scripts are now Full Scan Rules!\" by Akshath Kothari opens \"ZAP active and passive scripts are now first-class scan rules!\" It says any active or passive script that implements a getMetadata function is exposed as a scan rule, that each such script needs a unique ID or it will not be loaded, and that all passive scripts and most active scripts in the community-scripts repository were updated to implement getMetadata().",
+      "entities": [],
+      "commits": [],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "ZAP Scripts are now Full Scan Rules! (2024-07-17)",
+          "url": "https://www.zaproxy.org/blog/2024-07-17-script-scan-rules/"
+        }
+      ]
+    },
+    {
+      "title": "Later additions, 2025",
+      "text": "The scripts changelog lists support for alert reference overrides in script scan rule metadata (45.14.0, 2025-10-07), a scanHost method for active script scan rules called once per host (45.15.0, 2025-11-04), and a fix for script scan rules not using the attack strength and alert threshold from active scan policies (45.16.0, 2025-12-03). The commits \"scripts: Support alertRefOverrides in scan rule metadata\" (2025-10-07) and \"scripts: Support `scanHost` method in active scripts\" (2025-10-17) are by ricekot.",
+      "entities": [
+        "addon:scripts"
+      ],
+      "commits": [
+        "commit:zap-extensions:b2f12b5c54ad593dc0382161b1a790fcf01f5910",
+        "commit:zap-extensions:9ffb2cc438c40f9785c2d7be6e43944068931f22"
+      ],
+      "documents": [],
+      "evidence": [],
+      "milestones": [
+        "milestone:zap-extensions:scripts-v45.14.0",
+        "milestone:zap-extensions:scripts-v45.15.0",
+        "milestone:zap-extensions:scripts-v45.16.0"
+      ]
+    }
+  ]
+}
