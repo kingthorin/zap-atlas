@@ -244,6 +244,8 @@ test("graph: the sweep shows who committed in a month, and plays and pauses", as
   await page.waitForSelector("canvas");
   const minYear = +(await page.getByRole("slider").first().getAttribute("min"))!;          // the Year slider starts at the first active year
   const month = page.getByRole("slider", { name: "Month" });
+  await expect(month).toHaveAttribute("aria-valuetext", /^2010-(0[89]|1)/);                  // starts at the first contribution, not at January
+  await expect(page.getByLabel("Speed").locator("option", { hasText: "1.5x" })).toHaveCount(1);
   await month.evaluate((el: HTMLInputElement, v) => {
     Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!.call(el, String(v));
     el.dispatchEvent(new Event("input", { bubbles: true }));
@@ -254,11 +256,19 @@ test("graph: the sweep shows who committed in a month, and plays and pauses", as
   await page.getByRole("checkbox", { name: "Include bots" }).check();
   await expect(summary).toContainText("zapbot:");
   await page.getByRole("checkbox", { name: "Include bots" }).uncheck();
+  await expect(summary).toContainText(/\d+ others? \(\d+ commits?\)/);                       // everyone beyond the top 8
+  await page.getByRole("textbox", { name: "Always show" }).fill("thc202");
+  await expect(summary).toContainText("plus anyone matching the text above");
+  await page.getByRole("textbox", { name: "Always show" }).fill("");
   await page.getByRole("button", { name: "Play" }).click();
   await expect(page.getByRole("button", { name: "Pause" })).toBeVisible();
   await expect(month).toHaveAttribute("aria-valuetext", /^2024-(0[7-9]|1)/, { timeout: 8000 });   // it advanced on its own
   await page.getByRole("button", { name: "Pause" }).click();
   await expect(page.getByRole("button", { name: "Play" })).toBeVisible();
+  await page.setViewportSize({ width: 1800, height: 1000 });                                  // with full width there is room: the names move beside the graph
+  await page.getByRole("button", { name: "Full width" }).click();
+  await expect(page.getByRole("complementary", { name: /Contributors in 20/ })).toBeVisible();
+  await page.evaluate(() => localStorage.removeItem("atlas-wide"));
 });
 
 // The oracle scans every relationship shard of the repository, so it does not depend on the incoming/ copies

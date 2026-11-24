@@ -36,6 +36,18 @@ function drawHover(ctx: CanvasRenderingContext2D, data: any, settings: any) {
   }
 }
 
+/** Node labels with an outline in the page colour, so light text stays readable where it crosses the light grey edges. */
+function drawLabel(ctx: CanvasRenderingContext2D, data: any, settings: any) {
+  if (!data.label) return;
+  const size = settings.labelSize, x = data.x + data.size + 3, y = data.y + size / 3;
+  ctx.font = `${settings.labelWeight} ${size}px ${settings.labelFont}`;
+  ctx.lineJoin = "round"; ctx.lineWidth = 4;
+  ctx.strokeStyle = isDark() ? "rgba(15,23,42,0.92)" : "rgba(255,255,255,0.85)";
+  ctx.strokeText(data.label, x, y);
+  ctx.fillStyle = isDark() ? "#e2e8f0" : "#334155";
+  ctx.fillText(data.label, x, y);
+}
+
 type SizeBy = "edges" | "commits" | "lines" | "dependents";
 type View = "all" | "deps";
 type ColourBy = "repo" | "recency" | "language";
@@ -297,6 +309,8 @@ export default function GraphPage() {
   const [activity, setActivity] = useState<Record<string, ModuleActivity>>({});
   const box = useRef<HTMLDivElement>(null);
   const [host, setHost] = useState<HTMLDivElement | null>(null);   // wraps the canvas; the sweep overlay is drawn in it
+  const [side, setSide] = useState<HTMLDivElement | null>(null);   // beside it: the sweep's contributor names go here when there is room
+  const relayout = useCallback(() => { sigma.current?.resize(); sigma.current?.refresh(); }, []);
   const sigma = useRef<Sigma | null>(null);
   const camera = useRef<any>(null);
   const positions = useRef(new Map<string, { x: number; y: number }>());
@@ -402,7 +416,7 @@ export default function GraphPage() {
   useEffect(() => {
     if (!graph || !box.current) return;
     const s = new Sigma(graph, box.current, {
-      labelRenderedSizeThreshold: 7, defaultDrawNodeHover: drawHover, labelColor: { color: isDark() ? "#e2e8f0" : "#334155" }, renderEdgeLabels: false, edgeProgramClasses: { arrow: EdgeArrowProgram },
+      labelRenderedSizeThreshold: 7, defaultDrawNodeHover: drawHover, defaultDrawNodeLabel: drawLabel, labelColor: { color: isDark() ? "#e2e8f0" : "#334155" }, renderEdgeLabels: false, edgeProgramClasses: { arrow: EdgeArrowProgram },
       nodeReducer: (n, raw) => {
         const cur = selRef.current, d = styleNode(n, raw);
         if (!cur) return d;
@@ -583,16 +597,19 @@ export default function GraphPage() {
             onSelect={setSel} onToggle={id => (expanded.includes(id) ? collapse(id) : expand(id, "files"))} />
         </div>
         <div className="rounded-xl border border-slate-200 bg-white overflow-hidden">
-          <div ref={setHost} className="relative">
-            <div ref={box} className="h-[60vh] min-h-[360px] w-full" role="img"
-              aria-label={`Graph of ${graph.order} nodes and ${graph.size} linked pairs. The table beside it lists a selected node's neighbours.`} />
+          <div className="flex">
+            <div ref={setHost} className="relative flex-1 min-w-0">
+              <div ref={box} className="h-[60vh] min-h-[360px] w-full" role="img"
+                aria-label={`Graph of ${graph.order} nodes and ${graph.size} linked pairs. The table beside it lists a selected node's neighbours.`} />
+            </div>
+            <div ref={setSide} className="empty:hidden" />
           </div>
           <div className="flex flex-wrap gap-3 px-3 py-1.5 text-xs text-slate-600 border-t border-slate-100">
             {Object.entries(REPO_COLOR).filter(([r]) => data.nodes.some(n => repoOf(n) === r)).map(([r, c]) =>
               <span key={r}><span className="inline-block w-2.5 h-2.5 rounded-full mr-1 align-middle" style={{ background: c }} />{r}</span>)}
             <span>{graph.order - typeParent.size} modules{counts.length > 0 && <> + {counts.map(([l, n]) => `${n} ${l}`).join(", ")}</>} · {graph.size} linked pairs</span>
           </div>
-          {years && <Sweep host={host} minYear={years.min} maxYear={years.max} label={short} nodePosition={sweepPosition} colorOf={sweepColor} />}
+          {years && <Sweep host={host} side={side} onLayout={relayout} minYear={years.min} maxYear={years.max} label={short} nodePosition={sweepPosition} colorOf={sweepColor} />}
         </div>
         <aside aria-live="polite" className="rounded-xl border border-slate-200 bg-white p-3 text-sm lg:max-h-[calc(60vh+2.5rem)] overflow-y-auto">
           {!sel ? <p className="text-slate-500 italic">Select a module in the graph or the list to see what it is linked to. Expand a module to see its most connected types, or its files and directories.</p> : (<>
