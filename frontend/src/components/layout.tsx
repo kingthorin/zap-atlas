@@ -35,6 +35,13 @@ const SearchIcon = () => (
   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
 );
 
+const ExpandIcon = () => (
+  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M3 12h18M7 8l-4 4 4 4M17 8l4 4-4 4" /></svg>
+);
+const ShrinkIcon = () => (
+  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M3 12h7M14 12h7M7 8l4 4-4 4M17 8l-4 4 4 4" /></svg>
+);
+
 export const NAV = [
   { to: "/", label: "Overview", icon: MapIcon },
   { to: "/timeline", label: "Timeline", icon: TimelineIcon },
@@ -149,7 +156,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <main className={`p-4 md:p-6 max-w-6xl mx-auto ${wide && canWiden ? "2xl:max-w-none" : ""}`}>
         {canWiden && (
           <div className="hidden 2xl:flex justify-end -mt-2 mb-2">
-            <button className="text-xs text-slate-500 hover:text-indigo-600 underline" aria-pressed={wide} onClick={toggleWide}>
+            <button className="flex items-center gap-1.5 px-2.5 py-1 rounded border border-indigo-300 bg-white text-sm font-semibold text-indigo-700 hover:border-indigo-500 hover:bg-indigo-50"
+              aria-pressed={wide} onClick={toggleWide}>
+              {wide ? <ShrinkIcon /> : <ExpandIcon />}
               {wide ? "Standard width" : "Full width"}
             </button>
           </div>
