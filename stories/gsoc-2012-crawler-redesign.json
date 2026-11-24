@@ -8,7 +8,7 @@
   "chapters": [
     {
       "title": "2012: a new spider package in core",
-      "text": "The Student Hall of Fame lists a crawler redesign with session support (Cosmin Stefan) as a 2012 Summer GSoC project. The wiki lists goals including a\"redesigned (or possibly replaced) site crawler\". A zaproxy commit by cosminstefanxp dated 2012-05-29 is titled\"New SpiderParam in org.zaproxy.zap.spider. Modified extensions to accommodate with change.\"",
+      "text": "The Student Hall of Fame lists a crawler redesign with session support (Cosmin Stefan) as a 2012 Summer GSoC project. The wiki lists goals including a \"redesigned (or possibly replaced) site crawler\". A zaproxy commit by cosminstefanxp dated 2012-05-29 is titled \"New SpiderParam in org.zaproxy.zap.spider. Modified extensions to accommodate with change.\"",
       "entities": [
         "repo:zaproxy"
       ],
@@ -29,7 +29,7 @@
     },
     {
       "title": "Summer 2012: features added",
-      "text": "Commits by cosminstefanxp in the spider paths show the work step by step:\"Added support for depth of crawling.\"(2012-06-06),\"Added support for Frames and IFrames. Added tests for Frames and IFrames.\"(2012-06-13),\"Started work on Form handling. Added parser for HTML forms. Integration with rest of spider. Handling of simple text input fields. Added corresponding tests for Wavsep.\"(2012-07-03),\"Removed old and unused Spider-related Paros Proxy packages.\"(2012-07-12) and\"Add support in Spider for parsing of robots.txt files for finding more resources. On dev_spider branch.\"(2012-08-06).",
+      "text": "Commits by cosminstefanxp in the spider paths show the work step by step: \"Added support for depth of crawling.\" (2012-06-06), \"Added support for Frames and IFrames. Added tests for Frames and IFrames.\" (2012-06-13), \"Started work on Form handling. Added parser for HTML forms. Integration with rest of spider. Handling of simple text input fields. Added corresponding tests for Wavsep.\" (2012-07-03), \"Removed old and unused Spider-related Paros Proxy packages.\" (2012-07-12) and \"Add support in Spider for parsing of robots.txt files for finding more resources. On dev_spider branch.\" (2012-08-06).",
       "entities": [
         "repo:zaproxy"
       ],
@@ -50,7 +50,7 @@
     },
     {
       "title": "2017: functionality moved to a Spider extension",
-      "text": "A zaproxy commit dated 2017-01-04 is titled\"Move Spider functionality to Spider extension\".",
+      "text": "A zaproxy commit dated 2017-01-04 is titled \"Move Spider functionality to Spider extension\".",
       "entities": [
         "repo:zaproxy"
       ],
@@ -67,7 +67,7 @@
     },
     {
       "title": "2022: a spider add-on; 2026: deprecated spider removed",
-      "text": "In zap-extensions, a commit dated 2022-01-20 is titled\"feat: spider: Add spider add-on with SVG href parsing\"and one dated 2022-04-27 is titled\"feat: Spider Migration\". In zaproxy, a commit dated 2026-01-23 is titled\"Remove deprecated spider\"; its file list includes org/zaproxy/zap/spider/Spider.java and SpiderParam.java. The spider add-on remains in zap-extensions.",
+      "text": "In zap-extensions, a commit dated 2022-01-20 is titled \"feat: spider: Add spider add-on with SVG href parsing\" and one dated 2022-04-27 is titled \"feat: Spider Migration\". In zaproxy, a commit dated 2026-01-23 is titled \"Remove deprecated spider\"; its file list includes org/zaproxy/zap/spider/Spider.java and SpiderParam.java. The spider add-on remains in zap-extensions.",
       "entities": [
         "addon:spider"
       ],

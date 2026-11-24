@@ -8,7 +8,7 @@
   "chapters": [
     {
       "title": "Pull requests into three branches",
-      "text": "GitHub's records show pull requests targeting three branches from mid-2015: #6 into beta (2015-06-02), #7 into master (2015-06-15) and #9 into alpha (2015-07-06). Merge commits such as\"Merge origin/alpha into alpha\"and\"Merge branch 'beta' ... into beta\"(July and August 2015) are part of the history today.",
+      "text": "GitHub's records show pull requests targeting three branches from mid-2015: #6 into beta (2015-06-02), #7 into master (2015-06-15) and #9 into alpha (2015-07-06). Merge commits such as \"Merge origin/alpha into alpha\" and \"Merge branch 'beta' ... into beta\" (July and August 2015) are part of the history today.",
       "entities": [
         "repo:zap-extensions"
       ],
@@ -50,7 +50,7 @@
     },
     {
       "title": "The last pull requests into alpha and beta",
-      "text": "On 2019-04-03 the last pull requests merged into beta (#1973) and alpha (#1974) are both titled\"Build add-ons with Gradle\". The same morning the commit\"Remove Ant build and set up Gradle build\"lands. Status moves from the branch an add-on lived on to a per-add-on setting in its Gradle build.",
+      "text": "On 2019-04-03 the last pull requests merged into beta (#1973) and alpha (#1974) are both titled \"Build add-ons with Gradle\". The same morning the commit \"Remove Ant build and set up Gradle build\" lands. Status moves from the branch an add-on lived on to a per-add-on setting in its Gradle build.",
       "commits": [
         "commit:zap-extensions:13497793c115e4da8068181e31d7b715658700c4"
       ],

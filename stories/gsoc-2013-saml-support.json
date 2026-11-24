@@ -8,7 +8,7 @@
   "chapters": [
     {
       "title": "September 2013: initial code",
-      "text": "The Student Hall of Fame lists SAML 2.0 support (Pulasthi Mahawithana) as a 2013 Summer GSoC project. The project page says the aim was to\"develop a component for ZAP that will detect and fuzz various elements and attributes of a SAML Assertion\"and lists pre-releases 0.1-alpha, 0.2-alpha and 1.0-alpha from July to September 2013. In zap-extensions,\"Added SAML extension's initial code for alpha release\"is dated 2013-09-05.",
+      "text": "The Student Hall of Fame lists SAML 2.0 support (Pulasthi Mahawithana) as a 2013 Summer GSoC project. The project page says the aim was to \"develop a component for ZAP that will detect and fuzz various elements and attributes of a SAML Assertion\" and lists pre-releases 0.1-alpha, 0.2-alpha and 1.0-alpha from July to September 2013. In zap-extensions, \"Added SAML extension's initial code for alpha release\" is dated 2013-09-05.",
       "entities": [
         "addon:saml"
       ],
@@ -29,7 +29,7 @@
     },
     {
       "title": "Follow-up commits",
-      "text": "Commits in the following weeks include\"Fixed some bugs, and cleaned up the code\"(2013-09-19),\"Did some UI fixes to saml extension and added missing documentation\"(2013-09-21) and\"I18N, Bug and UI fixes, added to ant build\"(2013-09-29).",
+      "text": "Commits in the following weeks include \"Fixed some bugs, and cleaned up the code\" (2013-09-19), \"Did some UI fixes to saml extension and added missing documentation\" (2013-09-21) and \"I18N, Bug and UI fixes, added to ant build\" (2013-09-29).",
       "entities": [
         "addon:saml"
       ],
@@ -48,7 +48,7 @@
     },
     {
       "title": "2018 to now",
-      "text": "\"saml: remove unnecessary library (#1572)\"is dated 2018-05-01 and\"saml: relocate to its own project\"2019-04-03. The add-on is still in zap-extensions; a commit touching it dated 2026-08-28 is titled\"saml: Update settings button title capitalization\".",
+      "text": "\"saml: remove unnecessary library (#1572)\" is dated 2018-05-01 and \"saml: relocate to its own project\" 2019-04-03. The add-on is still in zap-extensions; a commit touching it dated 2026-08-28 is titled \"saml: Update settings button title capitalization\".",
       "entities": [
         "addon:saml"
       ],

@@ -1,5 +1,5 @@
 {
-  "title": "Zest enhancements (Alessandro Secco, 2013 GSoC) in the zest add-on history",
+  "title": "Zest enhancements (Alessandro Secco, 2013 GSoC)",
   "description": "The 2013 Zest enhancements project in the Student Hall of Fame, set beside the 2013 commits and the later history of the zest add-on.",
   "audience": "community",
   "group": "projects",
@@ -8,7 +8,7 @@
   "chapters": [
     {
       "title": "2013: Zest in zap-extensions before and during the project",
-      "text": "The Student Hall of Fame lists Zest enhancements (Alessandro Secco) as a 2013 Summer GSoC project. Zest commits in zap-extensions predate the summer:\"Added zest and mitmConf\"is dated 2013-05-03, and\"Issue 751: Change Zest add-on to plug into script console\"2013-08-02.",
+      "text": "The Student Hall of Fame lists Zest enhancements (Alessandro Secco) as a 2013 Summer GSoC project. Zest commits in zap-extensions predate the summer: \"Added zest and mitmConf\" is dated 2013-05-03, and \"Issue 751: Change Zest add-on to plug into script console\" 2013-08-02.",
       "entities": [
         "addon:zest"
       ],
@@ -26,7 +26,7 @@
     },
     {
       "title": "August 2013: loops in the UI",
-      "text": "\"ZestLoopFile UI + SurroundWith + get/add to Fuzzer Files\"is dated 2013-08-12, followed by\"edited ZestLoop UI\"(2013-08-15) and\"changed ZestLoopIntegerDialog.validateFields plus other changes cause of new ZestLoopCode\"(2013-08-18). The email-style author names on the commits are not repeated here. The student's end-of-project post lists under\"Things Made\":\"Added Loop to Zest as a new Statement;\"and\"Added UI in ZAP for the changes above;\".",
+      "text": "\"ZestLoopFile UI + SurroundWith + get/add to Fuzzer Files\" is dated 2013-08-12, followed by \"edited ZestLoop UI\" (2013-08-15) and \"changed ZestLoopIntegerDialog.validateFields plus other changes cause of new ZestLoopCode\" (2013-08-18). The email-style author names on the commits are not repeated here. The student's end-of-project post lists under \"Things Made\": \"Added Loop to Zest as a new Statement;\" and \"Added UI in ZAP for the changes above;\".",
       "entities": [
         "addon:zest"
       ],
@@ -49,7 +49,7 @@
     },
     {
       "title": "Afterwards: beta, help, relocation",
-      "text": "\"Zest moved to beta\"is dated 2013-09-02 and\"Added basic Zest help\"2013-09-10.\"zest: relocate to its own project\"is dated 2019-04-03. The add-on is still in zap-extensions: the latest commit under addOns/zest is dated 2026-10-23 (\"zest: fix GUI hang when running script with params\") and the directory has 277 commits.",
+      "text": "\"Zest moved to beta\" is dated 2013-09-02 and \"Added basic Zest help\" 2013-09-10. \"zest: relocate to its own project\" is dated 2019-04-03. The add-on is still in zap-extensions: the latest commit under addOns/zest is dated 2026-10-23 (\"zest: fix GUI hang when running script with params\") and the directory has 277 commits.",
       "entities": [
         "addon:zest"
       ],

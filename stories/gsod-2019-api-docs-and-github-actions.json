@@ -8,7 +8,7 @@
   "chapters": [
     {
       "title": "The two entries",
-      "text": "The Student Hall of Fame lists Nirojan Selvanathan for\"ZAP API documentation\", GSoD, 2019 Autumn (blog, docs and repo links) and for\"ZAP GitHub actions\", Direct, 2020 Spring (two blog posts).",
+      "text": "The Student Hall of Fame lists Nirojan Selvanathan for \"ZAP API documentation\", GSoD, 2019 Autumn (blog, docs and repo links) and for \"ZAP GitHub actions\", Direct, 2020 Spring (two blog posts).",
       "entities": [],
       "commits": [],
       "documents": [],
@@ -38,7 +38,7 @@
     },
     {
       "title": "February 2020: one docker commit and the Core Team list",
-      "text": "In zaproxy the only commit under this author name is\"Adding missing check for markdown files (#5870)\", dated 2020-02-21. It changes docker/zap-api-scan.py, docker/zap-baseline.py, docker/zap-full-scan.py and docker/CHANGELOG.md, adding report_md to the check for file-based options. In the credits page history in zap-core-help,\"Promoted Nirojan :)\"is dated 2020-02-28 and adds his entry to the Core Team list;\"Move Nirojan to extended team\"is dated 2021-08-06 and removes it from that list.",
+      "text": "In zaproxy the only commit under this author name is \"Adding missing check for markdown files (#5870)\", dated 2020-02-21. It changes docker/zap-api-scan.py, docker/zap-baseline.py, docker/zap-full-scan.py and docker/CHANGELOG.md, adding report_md to the check for file-based options. In the credits page history in zap-core-help, \"Promoted Nirojan :)\" is dated 2020-02-28 and adds his entry to the Core Team list; \"Move Nirojan to extended team\" is dated 2021-08-06 and removes it from that list.",
       "entities": [
         "repo:zaproxy",
         "repo:zap-core-help"
@@ -58,7 +58,7 @@
     },
     {
       "title": "April and May 2020: the GitHub Actions blog posts",
-      "text": "The blog post dated 2020-04-09, written by Nirojan Selvanathan, describes the ZAP Baseline action (zaproxy/action-baseline): a workflow with a daily cron trigger, issue tracking in GitHub issues, and a rules.tsv file to set rules to WARN, FAIL or IGNORE. The post dated 2020-05-15, also by him, describes the ZAP full scan action, which runs the spider, an optional AJAX spider and an active scan and reports results as GitHub issues. Both posts carry a notice that their content may be outdated. A search of the zaproxy history for\"action-baseline\"and\"action-full-scan\"found no commits, so the actions' own code is outside the analysed repositories.",
+      "text": "The blog post dated 2020-04-09, written by Nirojan Selvanathan, describes the ZAP Baseline action (zaproxy/action-baseline): a workflow with a daily cron trigger, issue tracking in GitHub issues, and a rules.tsv file to set rules to WARN, FAIL or IGNORE. The post dated 2020-05-15, also by him, describes the ZAP full scan action, which runs the spider, an optional AJAX spider and an active scan and reports results as GitHub issues. Both posts carry a notice that their content may be outdated. A search of the zaproxy history for \"action-baseline\" and \"action-full-scan\" found no commits, so the actions' own code is outside the analysed repositories.",
       "entities": [
         "repo:zaproxy"
       ],

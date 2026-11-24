@@ -8,7 +8,7 @@
   "chapters": [
     {
       "title": "2013: the first commit",
-      "text": "The Student Hall of Fame lists BIRT Reporting (Rauf Butt) as a 2013 Summer GSoC project. The OWASP wiki idea page describes\"a reporting module that will be integrated with the existing ZAP implementation\"using BIRT. A zap-extensions commit dated 2013-10-09 is titled\"BIRT Reporting with XML data source and Scripting - GSoC 2013 by Rauf Butt\". On 2013-10-14\"Added birtreports jars to top level lib directory\"is dated.",
+      "text": "The Student Hall of Fame lists BIRT Reporting (Rauf Butt) as a 2013 Summer GSoC project. The OWASP wiki idea page describes \"a reporting module that will be integrated with the existing ZAP implementation\" using BIRT. A zap-extensions commit dated 2013-10-09 is titled \"BIRT Reporting with XML data source and Scripting - GSoC 2013 by Rauf Butt\". On 2013-10-14 \"Added birtreports jars to top level lib directory\" is dated.",
       "entities": [
         "repo:zap-extensions"
       ],
@@ -30,7 +30,7 @@
     },
     {
       "title": "2014 to 2019: maintenance and relocation",
-      "text": "A commit dated 2014-05-08 is titled\"Removed \"birtreports\" runtime dependencies from main \"lib\" directory.\"Later commits include\"birtreports: update ZAP logo\"(2018-06-11) and\"birtreports: stop using BrowserLauncher (#1685)\"(2018-06-26).\"birtreports: relocate to its own project\"is dated 2019-04-03.",
+      "text": "A commit dated 2014-05-08 is titled \"Removed \" birtreports \" runtime dependencies from main \" lib \" directory.\" Later commits include \"birtreports: update ZAP logo\" (2018-06-11) and \"birtreports: stop using BrowserLauncher (#1685)\" (2018-06-26). \"birtreports: relocate to its own project\" is dated 2019-04-03.",
       "entities": [
         "repo:zap-extensions"
       ],
@@ -50,7 +50,7 @@
     },
     {
       "title": "2020 to 2021: merged extensions, then removed",
-      "text": "\"birtreports: merge extensions\"is dated 2020-03-05. On 2021-03-09 a commit titled\"Report Generation - first version\"adds the reports add-on. On 2021-04-06\"Remove superseded report add-ons\"is dated; its message body reads\"Remove `alertReport`, `birtreports`, `customreport`, and `exportreport`.\"There is no birtreports directory at the current head.",
+      "text": "\"birtreports: merge extensions\" is dated 2020-03-05. On 2021-03-09 a commit titled \"Report Generation - first version\" adds the reports add-on. On 2021-04-06 \"Remove superseded report add-ons\" is dated; its message body reads \"Remove `alertReport`, `birtreports`, `customreport`, and `exportreport`.\" There is no birtreports directory at the current head.",
       "entities": [
         "addon:reports"
       ],

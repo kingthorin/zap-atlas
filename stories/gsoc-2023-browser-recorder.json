@@ -8,7 +8,7 @@
   "chapters": [
     {
       "title": "The Hall of Fame entry and the launch post",
-      "text": "The Student Hall of Fame lists Aryan Gupta for\"Browser Recorder\", GSoC, 2023 Summer, with blog and add-on links. The blog post, dated 2023-09-11, says the recorder is a browser extension that records user actions and converts them to a Zest script, that it uses the Client Side Integration add-on to talk to ZAP, and that the Zest add-on gains a\"Client (browser) side script\"record type. The browser extension itself lives in a separate repository that is not analysed here.",
+      "text": "The Student Hall of Fame lists Aryan Gupta for \"Browser Recorder\", GSoC, 2023 Summer, with blog and add-on links. The blog post, dated 2023-09-11, says the recorder is a browser extension that records user actions and converts them to a Zest script, that it uses the Client Side Integration add-on to talk to ZAP, and that the Zest add-on gains a \"Client (browser) side script\" record type. The browser extension itself lives in a separate repository that is not analysed here.",
       "entities": [
         "addon:client",
         "addon:zest"
@@ -34,7 +34,7 @@
     },
     {
       "title": "May to July 2023: the client add-on and Zest dialogs",
-      "text": "The first commit under addOns/client is\"Client: First version\"by Simon Bennetts, dated 2023-05-26; it adds ClientIntegrationAPI.java, ClientMap.java and history and details panels. A commit by Aryan Gupta dated 2023-07-05 is\"zest: add dialogs for new client statements (#4698)\"; it adds dialogs such as ZestClientElementMouseOverDialog and ZestClientWindowResizeDialog under the Zest add-on. Between those two,\"zest: update Zest library\"(2023-06-26) is by thc202.",
+      "text": "The first commit under addOns/client is \"Client: First version\" by Simon Bennetts, dated 2023-05-26; it adds ClientIntegrationAPI.java, ClientMap.java and history and details panels. A commit by Aryan Gupta dated 2023-07-05 is \"zest: add dialogs for new client statements (#4698)\"; it adds dialogs such as ZestClientElementMouseOverDialog and ZestClientWindowResizeDialog under the Zest add-on. Between those two, \"zest: update Zest library\" (2023-06-26) is by thc202.",
       "entities": [
         "addon:client",
         "addon:zest"
@@ -49,7 +49,7 @@
     },
     {
       "title": "August to September 2023: connecting Client and Zest",
-      "text": "\"added support to allow Client to communicate with Zest  (#4730)\"by Aryan Gupta is dated 2023-08-30 and adds ClientZestRecorder.java and ExtensionClientZest.java to the client add-on. Other commits by Aryan Gupta:\"scripts: allow to display a script without focusing (#4768)\"(2023-08-10),\"scripts: allow script node to set focus as optional (#4859)\"(2023-09-06) and\"zest: fixes the focus issue being caused while recording zest scripts (#4809)\"(2023-09-08). The client changelog dates its 0.0.1 release\"First version.\"on 2023-09-11, the same day as the blog post;\"Disable client events only for Zest recording\"by thc202 is dated 2023-09-20.",
+      "text": "\"added support to allow Client to communicate with Zest  (#4730)\" by Aryan Gupta is dated 2023-08-30 and adds ClientZestRecorder.java and ExtensionClientZest.java to the client add-on. Other commits by Aryan Gupta: \"scripts: allow to display a script without focusing (#4768)\" (2023-08-10), \"scripts: allow script node to set focus as optional (#4859)\" (2023-09-06) and \"zest: fixes the focus issue being caused while recording zest scripts (#4809)\" (2023-09-08). The client changelog dates its 0.0.1 release \"First version.\" on 2023-09-11, the same day as the blog post; \"Disable client events only for Zest recording\" by thc202 is dated 2023-09-20.",
       "entities": [
         "addon:client",
         "addon:zest"
@@ -66,7 +66,7 @@
     },
     {
       "title": "Where it stands",
-      "text": "Both add-ons exist at HEAD. The client changelog lists 0.35.0 on 2026-11-18. The Zest changelog lists, for 48.12.0 (2026-02-13),\"Now supports authentication for client side scripts\"and a fix for\"Bug which prevented client side scripts from being recorded in ZAP\". In the dataset, addon:authhelper and addon:quickstart list addon:client as a dependency.",
+      "text": "Both add-ons exist at HEAD. The client changelog lists 0.35.0 on 2026-11-18. The Zest changelog lists, for 48.12.0 (2026-02-13), \"Now supports authentication for client side scripts\" and a fix for \"Bug which prevented client side scripts from being recorded in ZAP\". In the dataset, addon:authhelper and addon:quickstart list addon:client as a dependency.",
       "entities": [
         "addon:client",
         "addon:zest",

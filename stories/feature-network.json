@@ -8,7 +8,7 @@
   "chapters": [
     {
       "title": "A bare add-on on 2021-11-15",
-      "text": "The first commit touching addOns/network is\"Add bare Network add-on\"(2021-11-15), whose body reads\"Add basic structure for the network add-on.\"Within two weeks, commits such as\"network: add API to manage root CA certificate\"(2021-11-24) follow.",
+      "text": "The first commit touching addOns/network is \"Add bare Network add-on\" (2021-11-15), whose body reads \"Add basic structure for the network add-on.\" Within two weeks, commits such as \"network: add API to manage root CA certificate\" (2021-11-24) follow.",
       "entities": [
         "addon:network",
         "module:zap-extensions:addOns/network"
@@ -20,7 +20,7 @@
     },
     {
       "title": "First releases: certificates, then local servers",
-      "text": "The CHANGELOG lists 0.0.1 (2021-12-03) with\"API endpoints to generate, import (Issue 2280), and obtain the root CA certificate\"and server certificate management. 0.1.0 (2022-02-01) adds\"Provide HTTP servers/proxies to other add-ons.\"0.2.0 (2022-04-06) adds\"Management of local servers/proxies, supersedes core functionality;\", configuration of aliases and pass-through connections.",
+      "text": "The CHANGELOG lists 0.0.1 (2021-12-03) with \"API endpoints to generate, import (Issue 2280), and obtain the root CA certificate\" and server certificate management. 0.1.0 (2022-02-01) adds \"Provide HTTP servers/proxies to other add-ons.\" 0.2.0 (2022-04-06) adds \"Management of local servers/proxies, supersedes core functionality;\", configuration of aliases and pass-through connections.",
       "entities": [
         "addon:network"
       ],
@@ -33,7 +33,7 @@
     },
     {
       "title": "Core proxy, connection and certificate code is deprecated",
-      "text": "In zaproxy,\"Deprecate and disable proxy related code\"is dated 2022-02-09 and its body begins\"No longer manage the main nor additional proxies.\"\"Use Network add-on to manage connection options\"(2022-05-20) says\"Deprecate `ConnectionParam` and remove its usage where possible, the network add-on will manage the connection options.\"\"Use Network add-on to manage client certificates\"(2022-05-29) says\"Deprecate `OptionsParamCertificate` and remove its usage, the network add-on will manage the client certificates.\"On 2023-04-28\"Deprecate `Proxy`/`ProxyServer` related methods\"says those classes\"were superseded by the Network add-on.\"",
+      "text": "In zaproxy, \"Deprecate and disable proxy related code\" is dated 2022-02-09 and its body begins \"No longer manage the main nor additional proxies.\" \"Use Network add-on to manage connection options\" (2022-05-20) says \"Deprecate `ConnectionParam` and remove its usage where possible, the network add-on will manage the connection options.\" \"Use Network add-on to manage client certificates\" (2022-05-29) says \"Deprecate `OptionsParamCertificate` and remove its usage, the network add-on will manage the client certificates.\" On 2023-04-28 \"Deprecate `Proxy`/`ProxyServer` related methods\" says those classes \"were superseded by the Network add-on.\"",
       "entities": [
         "repo:zaproxy",
         "addon:network"
@@ -47,7 +47,7 @@
     },
     {
       "title": "A HttpSender implementation based on Apache HttpComponents",
-      "text": "The core commit\"Deprecate HttpSender implementation classes\"(2022-06-07) says those classes\"will be superseded by the Network add-on.\"Three days later, in zap-extensions,\"network: provide HttpSender implementation\"(2022-06-10) has the body\"Add a `HttpSender` implementation based on Apache HttpComponents and set it to core, on newer versions.\"The CHANGELOG for 0.3.0 (2022-10-27) lists\"A newer HTTP client implementation\", client certificate management, connection options and\"Promoted to Beta status.\"",
+      "text": "The core commit \"Deprecate HttpSender implementation classes\" (2022-06-07) says those classes \"will be superseded by the Network add-on.\" Three days later, in zap-extensions, \"network: provide HttpSender implementation\" (2022-06-10) has the body \"Add a `HttpSender` implementation based on Apache HttpComponents and set it to core, on newer versions.\" The CHANGELOG for 0.3.0 (2022-10-27) lists \"A newer HTTP client implementation\", client certificate management, connection options and \"Promoted to Beta status.\"",
       "entities": [
         "repo:zaproxy",
         "addon:network"
@@ -65,7 +65,7 @@
     },
     {
       "title": "Rate limiting and a later HTTP client update",
-      "text": "Release 0.10.0 (2023-07-11) lists\"HTTP/HTTPS rate limiting capability.\"The commit\"network: update HTTP client\"(2026-09-25) has the body\"Update to latest version.\"The CHANGELOG for 0.30.0 is dated 2026-10-08, and later entries refer to a\"HTTP client update in version 0.30.0\": 0.32.0 (2026-10-26) lists\"Restore unbounded HTTP/1 response header size/count, regressed since the HTTP client update in version 0.30.0 (Issue 9509).\"and 0.31.0 (2026-10-16) lists\"Reinstate NTLM authentication (Issue 9498).\"",
+      "text": "Release 0.10.0 (2023-07-11) lists \"HTTP/HTTPS rate limiting capability.\" The commit \"network: update HTTP client\" (2026-09-25) has the body \"Update to latest version.\" The CHANGELOG for 0.30.0 is dated 2026-10-08, and later entries refer to a \"HTTP client update in version 0.30.0\": 0.32.0 (2026-10-26) lists \"Restore unbounded HTTP/1 response header size/count, regressed since the HTTP client update in version 0.30.0 (Issue 9509).\" and 0.31.0 (2026-10-16) lists \"Reinstate NTLM authentication (Issue 9498).\"",
       "entities": [
         "addon:network"
       ],

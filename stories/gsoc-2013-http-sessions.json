@@ -1,5 +1,5 @@
 {
-  "title": "Enhanced HTTP Session Handling (Cosmin Stefan, 2013 GSoC) in the zaproxy history",
+  "title": "Enhanced HTTP Session Handling (Cosmin Stefan, 2013 GSoC)",
   "description": "The 2012 and 2013 session-handling commits in zaproxy next to the Hall of Fame entry and the HTTP Sessions code that is still in core.",
   "audience": "developers",
   "group": "projects",
@@ -8,7 +8,7 @@
   "chapters": [
     {
       "title": "August 2012: an initial version",
-      "text": "The earliest commit titled\"Initial version of http sessions handling.\"is dated 2012-08-03. It is by cosminstefanxp. A follow-up dated 2012-08-04 says it was made\"On the dev_sessions branch.\"",
+      "text": "The earliest commit titled \"Initial version of http sessions handling.\" is dated 2012-08-03. It is by cosminstefanxp. A follow-up dated 2012-08-04 says it was made \"On the dev_sessions branch.\"",
       "entities": [
         "repo:zaproxy"
       ],
@@ -26,7 +26,7 @@
     },
     {
       "title": "2013: users, roles and session management",
-      "text": "The Hall of Fame lists Enhanced HTTP Session Handling (Cosmin Stefan) as a 2013 Summer GSoC project. Its wiki goals include\"allow users to set up and manage users/roles\"and\"allow ZAP to understand users/roles and associate them to HTTP Sessions\". Commits by cosminstefanxp in the HTTP sessions paths include\"Rest of required changes for the extension handling Users, Roles etc.\"(2013-07-02),\"Redefined some Session Management interfaces. Simple implementation for Cookie based session management.\"(2013-08-08) and\"Refactored Users, Authentication and SessionManagement packages with better names.\"(2013-09-19).",
+      "text": "The Hall of Fame lists Enhanced HTTP Session Handling (Cosmin Stefan) as a 2013 Summer GSoC project. Its wiki goals include \"allow users to set up and manage users/roles\" and \"allow ZAP to understand users/roles and associate them to HTTP Sessions\". Commits by cosminstefanxp in the HTTP sessions paths include \"Rest of required changes for the extension handling Users, Roles etc.\" (2013-07-02), \"Redefined some Session Management interfaces. Simple implementation for Cookie based session management.\" (2013-08-08) and \"Refactored Users, Authentication and SessionManagement packages with better names.\" (2013-09-19).",
       "entities": [
         "repo:zaproxy"
       ],
@@ -49,7 +49,7 @@
     },
     {
       "title": "Where it stands now",
-      "text": "The HTTP Sessions extension is still in the zaproxy tree (zap/src/main/java/org/zaproxy/zap/extension/httpsessions/ExtensionHttpSessions.java). The latest commit touching its paths is dated 2026-09-11 and is titled\"Support control-return to submit all dialogs\". The core help has an HTTP Sessions tab page.",
+      "text": "The HTTP Sessions extension is still in the zaproxy tree (zap/src/main/java/org/zaproxy/zap/extension/httpsessions/ExtensionHttpSessions.java). The latest commit touching its paths is dated 2026-09-11 and is titled \"Support control-return to submit all dialogs\". The core help has an HTTP Sessions tab page.",
       "entities": [
         "repo:zaproxy",
         "repo:zap-core-help"

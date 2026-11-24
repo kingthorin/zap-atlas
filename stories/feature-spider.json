@@ -3,12 +3,12 @@
   "description": "How the ZAP Spider (crawler) is recorded in the zaproxy and zap-extensions histories: code in core since 2012, the Ajax Spider as an add-on, and the 2022 migration of the Spider into the spider add-on.",
   "audience": "developers",
   "group": "features",
-  "date": "2010-09-04",
+  "date": "2022-04-27",
   "status": "draft",
   "chapters": [
     {
       "title": "Spider code in core, 2010 to 2012",
-      "text": "The commit\"Version 1.0.0\"(2010-09-04) adds files under src/org/parosproxy/paros/core/spider. On 2012-05-29 the commit\"New SpiderParam in org.zaproxy.zap.spider. Modified extensions to accommodate with change.\"adds src/org/zaproxy/zap/spider/Spider.java and SpiderParam.java, and the commit\"Switched to new Spider. ParosProxy implementations not used anymore.\"is dated the same day. On 2012-07-12 the commit\"Removed old and unused Spider-related Paros Proxy packages.\"follows.",
+      "text": "The commit \"Version 1.0.0\" (2010-09-04) adds files under src/org/parosproxy/paros/core/spider. On 2012-05-29 the commit \"New SpiderParam in org.zaproxy.zap.spider. Modified extensions to accommodate with change.\" adds src/org/zaproxy/zap/spider/Spider.java and SpiderParam.java, and the commit \"Switched to new Spider. ParosProxy implementations not used anymore.\" is dated the same day. On 2012-07-12 the commit \"Removed old and unused Spider-related Paros Proxy packages.\" follows.",
       "entities": [
         "repo:zaproxy"
       ],
@@ -23,7 +23,7 @@
     },
     {
       "title": "The Ajax Spider appears in zap-extensions",
-      "text": "In zap-extensions, the commit\"merged spiderAjax branch into trunk\"is dated 2012-08-07 and adds lib/crawljax-2.1-SNAPSHOT.jar among other files. In zaproxy, the commit\"Issue 1098 - Move AJAX Spider help pages to \"Ajax Spider\" add-on (and update them)\"is dated 2014-03-23. In zap-extensions,\"Issue 1326 - Move Ajax Spider Extension from Beta to Release status\"is dated 2015-01-03.",
+      "text": "In zap-extensions, the commit \"merged spiderAjax branch into trunk\" is dated 2012-08-07 and adds lib/crawljax-2.1-SNAPSHOT.jar among other files. In zaproxy, the commit \"Issue 1098 - Move AJAX Spider help pages to \" Ajax Spider \" add-on (and update them)\" is dated 2014-03-23. In zap-extensions, \"Issue 1326 - Move Ajax Spider Extension from Beta to Release status\" is dated 2015-01-03.",
       "entities": [
         "repo:zap-extensions",
         "addon:spiderAjax"
@@ -43,7 +43,7 @@
     },
     {
       "title": "January 2017: Spider functionality moved within core",
-      "text": "On 2017-01-02 the commit\"Deprecate unused Spider menu items\"is dated; on 2017-01-04 the commit\"Move Spider functionality to Spider extension\"is dated. Both are in zaproxy and the Spider code is still in core at that point.",
+      "text": "On 2017-01-02 the commit \"Deprecate unused Spider menu items\" is dated; on 2017-01-04 the commit \"Move Spider functionality to Spider extension\" is dated. Both are in zaproxy and the Spider code is still in core at that point.",
       "entities": [
         "repo:zaproxy"
       ],
@@ -56,7 +56,7 @@
     },
     {
       "title": "Ajax Spider gets its own project, 2019",
-      "text": "On 2019-04-03 zap-extensions has the commit\"spiderAjax: relocate to its own project\". Before that date the extension code was under src/org/zaproxy/zap/extension/spiderAjax.",
+      "text": "On 2019-04-03 zap-extensions has the commit \"spiderAjax: relocate to its own project\". Before that date the extension code was under src/org/zaproxy/zap/extension/spiderAjax.",
       "entities": [
         "addon:spiderAjax",
         "module:zap-extensions:addOns/spiderAjax"
@@ -69,7 +69,7 @@
     },
     {
       "title": "2022: the spider add-on and the core deprecation",
-      "text": "In zap-extensions,\"feat: spider: Add spider add-on with SVG href parsing\"is dated 2022-01-20 and\"feat: Spider Migration\"is dated 2022-04-27; the latter's message says the migration of the spider from core to zap-extensions is based on an earlier zaproxy commit. About a minute later, also on 2022-04-27, zaproxy has\"chore: Spider Deprecation\", whose diff adds @Deprecated annotations (47 added lines match). The add-on commit\"spider: Promote to Release status\"is dated 2022-06-27, and zaproxy's\"Include spider add-on in weeklies\"is dated 2022-08-22.",
+      "text": "In zap-extensions, \"feat: spider: Add spider add-on with SVG href parsing\" is dated 2022-01-20 and \"feat: Spider Migration\" is dated 2022-04-27; the latter's message says the migration of the spider from core to zap-extensions is based on an earlier zaproxy commit. About a minute later, also on 2022-04-27, zaproxy has \"chore: Spider Deprecation\", whose diff adds @Deprecated annotations (47 added lines match). The add-on commit \"spider: Promote to Release status\" is dated 2022-06-27, and zaproxy's \"Include spider add-on in weeklies\" is dated 2022-08-22.",
       "entities": [
         "addon:spider",
         "module:zap-extensions:addOns/spider",
@@ -92,7 +92,7 @@
     },
     {
       "title": "2026: the deprecated core Spider is removed",
-      "text": "On 2026-01-23 zaproxy has the commit\"Remove deprecated spider\"(68 files changed, 22085 lines deleted). At HEAD the directory zap/src/main/java/org/zaproxy/zap/spider does not exist in zaproxy, while addOns/spider and addOns/spiderAjax both exist in zap-extensions; the spider add-on's changelog lists version 0.20.0 dated 2026-04-02.",
+      "text": "On 2026-01-23 zaproxy has the commit \"Remove deprecated spider\" (68 files changed, 22085 lines deleted). At HEAD the directory zap/src/main/java/org/zaproxy/zap/spider does not exist in zaproxy, while addOns/spider and addOns/spiderAjax both exist in zap-extensions; the spider add-on's changelog lists version 0.20.0 dated 2026-04-02.",
       "entities": [
         "module:zaproxy:zap",
         "addon:spider",

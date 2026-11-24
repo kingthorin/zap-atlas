@@ -8,7 +8,7 @@
   "chapters": [
     {
       "title": "The lightning bolt",
-      "text": "The repository's logo notes (readme_zap_logo.txt) say:\"The original ZAP lightning bolt logo was designed by a.c.neumann at https://github.com/zaproxy/zaproxy/issues/74#issuecomment-108865883\"and that the EPS was updated to larger 1024 and 512 sizes, with colour correction for retina Mac displays, by Benjamin Slack. The file's first commit in the dataset is\"issue 1308\"(2014-09-16).\"Update links to Github instead of code.google\"(2015-06-05) changes it again; the comment it links to was created by the zapbot account on 2015-06-04.",
+      "text": "The repository's logo notes (readme_zap_logo.txt) say: \"The original ZAP lightning bolt logo was designed by a.c.neumann at https://github.com/zaproxy/zaproxy/issues/74#issuecomment-108865883\" and that the EPS was updated to larger 1024 and 512 sizes, with colour correction for retina Mac displays, by Benjamin Slack. The file's first commit in the dataset is \"issue 1308\" (2014-09-16). \"Update links to Github instead of code.google\" (2015-06-05) changes it again; the comment it links to was created by the zapbot account on 2015-06-04.",
       "commits": [
         "commit:zaproxy:ded49871c20845be833694e31f2cb3c70a0fef0e",
         "commit:zaproxy:b3c34f1cec0ccfac25416ba9d4a8c3874b1016a1"
@@ -22,7 +22,7 @@
     },
     {
       "title": "New icons, November 2017",
-      "text": "\"Add the new icons\"(2017-11-10) replaces the ZAP icon files, in sizes from 8x8 to 1024x1024 plus zap.ico, zap48x48.ico, zap-banner-square.png and zap-splash-background.png, and adds this line to the logo notes:\"The new logo was designed by Lisa Raynaud in 2017 as part of the design of the new ZAP website.\"The same day zap-core-help has\"Updated for the new icons\". Later commits are\"New splash screen\"(2017-11-23),\"Use new icon in Debian package\"(2017-12-09),\"Update ZAP logo in HTML report\"(2018-01-19) and, in zap-extensions,\"birtreports: update ZAP logo\"(2018-06-11).",
+      "text": "\"Add the new icons\" (2017-11-10) replaces the ZAP icon files, in sizes from 8x8 to 1024x1024 plus zap.ico, zap48x48.ico, zap-banner-square.png and zap-splash-background.png, and adds this line to the logo notes: \"The new logo was designed by Lisa Raynaud in 2017 as part of the design of the new ZAP website.\" The same day zap-core-help has \"Updated for the new icons\". Later commits are \"New splash screen\" (2017-11-23), \"Use new icon in Debian package\" (2017-12-09), \"Update ZAP logo in HTML report\" (2018-01-19) and, in zap-extensions, \"birtreports: update ZAP logo\" (2018-06-11).",
       "commits": [
         "commit:zaproxy:ae4fac423b2e7fe28f996f0b31bc7f7744a8d4e6",
         "commit:zap-core-help:f2e8ae07933624b91b3e456488f30685d01932f0",
@@ -34,7 +34,7 @@
     },
     {
       "title": "ZAP by Checkmarx, 2024",
-      "text": "\"Rebrand\"(2024-09-24) changes CONTRIBUTING.md and README.md, and was merged through\"Merge pull request #8648 from psiinon/cx/rebrand\".\"branding & support related adjustments\"(2024-11-11, merged in pull request #8701) deletes zap-banner-square.png and adds zap-by-checkmarx.png in the same resources folder. zap-core-help has\"Implement minor rebrand changes\"on 2024-11-26.",
+      "text": "\"Rebrand\" (2024-09-24) changes CONTRIBUTING.md and README.md, and was merged through \"Merge pull request #8648 from psiinon/cx/rebrand\". \"branding & support related adjustments\" (2024-11-11, merged in pull request #8701) deletes zap-banner-square.png and adds zap-by-checkmarx.png in the same resources folder. zap-core-help has \"Implement minor rebrand changes\" on 2024-11-26.",
       "commits": [
         "commit:zaproxy:a2bec8d27c7452fbd57d5d700b4725be866a12b5",
         "commit:zaproxy:c93120b77a492193625fb5dc6630046c497eee5d",

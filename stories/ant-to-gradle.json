@@ -8,23 +8,23 @@
   "chapters": [
     {
       "title": "An Ant build from the 1.0.0 era",
-      "text": "The very first commit in the repository, titled\"Version 1.0.0\"(2010-09-04), adds build/build.xml, an Ant build file that marked the start of ZAP's 1.0 release."
+      "text": "The very first commit in the repository, titled \"Version 1.0.0\" (2010-09-04), adds build/build.xml, an Ant build file that marked the start of ZAP's 1.0 release."
     },
     {
       "title": "Gradle tasks appear alongside Ant",
-      "text": "Fast-forward to 2016-07-21: a commit titled\"Add Gradle tasks to build/publish zap-2.5.0.jar\"adds build.gradle, though the original Ant build file remains alongside it at that point."
+      "text": "Fast-forward to 2016-07-21: a commit titled \"Add Gradle tasks to build/publish zap-2.5.0.jar\" adds build.gradle, though the original Ant build file remains alongside it at that point."
     },
     {
       "title": "zap-core-help sets up Gradle first",
-      "text": "On 2019-02-08, zap-core-help gets its first Gradle build, titled\"Initial set up to build the add-ons\". No Ant build file (build.xml) appears anywhere in that repository's history from that point forward."
+      "text": "On 2019-02-08, zap-core-help gets its first Gradle build, titled \"Initial set up to build the add-ons\". No Ant build file (build.xml) appears anywhere in that repository's history from that point forward."
     },
     {
       "title": "zap-extensions drops Ant on 2019-04-03",
-      "text": "zap-extensions had depended on an Ant build file since its very first commit back in 2011-12-12. On 2019-04-03, the commit\"Remove Ant build and set up Gradle build\"removes it and adds the Gradle build. minutes later, the add-ons are relocated into their own projects, one commit each, starting minutes later."
+      "text": "zap-extensions had depended on an Ant build file since its very first commit back in 2011-12-12. On 2019-04-03, the commit \"Remove Ant build and set up Gradle build\" removes it and adds the Gradle build. minutes later, the add-ons are relocated into their own projects, one commit each, starting minutes later."
     },
     {
       "title": "zaproxy follows on 2019-05-22",
-      "text": "On 2019-05-22, the commit\"Remove Ant build and set up Gradle build\"deletes build/build.xml and adds build.gradle.kts. Shortly afterwards,\"Add zap project\"adds zap/zap.gradle.kts, the module that holds the core sources today."
+      "text": "On 2019-05-22, the commit \"Remove Ant build and set up Gradle build\" deletes build/build.xml and adds build.gradle.kts. Shortly afterwards, \"Add zap project\" adds zap/zap.gradle.kts, the module that holds the core sources today."
     }
   ]
 }

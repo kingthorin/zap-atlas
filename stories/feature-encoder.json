@@ -3,12 +3,12 @@
   "description": "The encode/decode tool as recorded in the zaproxy and zap-extensions histories: a core extension in the first import, an add-on from 2018, and the core classes' deprecation and removal.",
   "audience": "developers",
   "group": "features",
-  "date": "2010-09-04",
+  "date": "2020-05-18",
   "status": "draft",
   "chapters": [
     {
       "title": "Encoder classes in the first core import",
-      "text": "The zaproxy commit titled\"Version 1.0.0\"(2010-09-04) contains org/parosproxy/paros/extension/encoder/ExtensionEncoder.java and Encoder.java, plus org/zaproxy/zap/extension/encoder2/EncodeDecodeDialog.java. Both the older encoder package and the encoder2 package are therefore present from the earliest commit in the clone.",
+      "text": "The zaproxy commit titled \"Version 1.0.0\" (2010-09-04) contains org/parosproxy/paros/extension/encoder/ExtensionEncoder.java and Encoder.java, plus org/zaproxy/zap/extension/encoder2/EncodeDecodeDialog.java. Both the older encoder package and the encoder2 package are therefore present from the earliest commit in the clone.",
       "entities": [
         "repo:zaproxy"
       ],
@@ -18,7 +18,7 @@
     },
     {
       "title": "Core encoder2 keeps changing",
-      "text": "Core commits touching the encode/decode dialog include\"Issue 1012: \tEncode / Decode dialog - support HTML and JavaScript encoding / decoding\"(2014-03-03) and\"Add Base64url to Encoder/Decoder Tool\"(2019-10-28).",
+      "text": "Core commits touching the encode/decode dialog include \"Issue 1012: \tEncode / Decode dialog - support HTML and JavaScript encoding / decoding\" (2014-03-03) and \"Add Base64url to Encoder/Decoder Tool\" (2019-10-28).",
       "entities": [
         "repo:zaproxy"
       ],
@@ -29,7 +29,7 @@
     },
     {
       "title": "An Advanced Encoder Decoder add-on appears in zap-extensions",
-      "text": "On 2018-10-31 the zap-extensions commit\"Implemented new Extension Advanced Encoder Decoder\"adds addOns/advancedencoder with a CHANGELOG.md and advancedencoder.gradle.kts. The commit\"Add reset button, fix title caps, fix JS template\"(2020-05-13) is one of several that continue that add-on before it was renamed.",
+      "text": "On 2018-10-31 the zap-extensions commit \"Implemented new Extension Advanced Encoder Decoder\" adds addOns/advancedencoder with a CHANGELOG.md and advancedencoder.gradle.kts. The commit \"Add reset button, fix title caps, fix JS template\" (2020-05-13) is one of several that continue that add-on before it was renamed.",
       "entities": [
         "repo:zap-extensions"
       ],
@@ -40,7 +40,7 @@
     },
     {
       "title": "Renamed to encoder and released as 0.1.0",
-      "text": "On 2020-05-18 the commit\"New addonID and paths\"moves addOns/advancedencoder to addOns/encoder (CHANGELOG.md is a rename and the Gradle file becomes encoder.gradle.kts). The encoder CHANGELOG records\"## [0.1.0] - 2020-05-20\"with the line\"First version.\", then 0.2.0 (2020-06-01) with\"Base64 character set and line break options, including migration of settings from core component.\"",
+      "text": "On 2020-05-18 the commit \"New addonID and paths\" moves addOns/advancedencoder to addOns/encoder (CHANGELOG.md is a rename and the Gradle file becomes encoder.gradle.kts). The encoder CHANGELOG records \"## [0.1.0] - 2020-05-20\" with the line \"First version.\", then 0.2.0 (2020-06-01) with \"Base64 character set and line break options, including migration of settings from core component.\"",
       "entities": [
         "addon:encoder",
         "module:zap-extensions:addOns/encoder"
@@ -57,7 +57,7 @@
     },
     {
       "title": "Core classes deprecated, then removed",
-      "text": "On 2020-05-27 the zaproxy commit\"encoder2: Deprecate and address dependence\"has a body saying\"CoreFunctionality > Remove encoder2 from core, weekly is now including addon from zap-extensions.\"and touches the encoder and encoder2 classes (3 lines added in Base64 and 2 in Encoder). On 2021-02-02 the commit\"encoder: Remove deprecated classes\"deletes Base64.java, Encoder.java and the encoder2 classes; its body reads\"Remove deprecated code, part of 2.11 milestone.\"",
+      "text": "On 2020-05-27 the zaproxy commit \"encoder2: Deprecate and address dependence\" has a body saying \"CoreFunctionality > Remove encoder2 from core, weekly is now including addon from zap-extensions.\" and touches the encoder and encoder2 classes (3 lines added in Base64 and 2 in Encoder). On 2021-02-02 the commit \"encoder: Remove deprecated classes\" deletes Base64.java, Encoder.java and the encoder2 classes; its body reads \"Remove deprecated code, part of 2.11 milestone.\"",
       "entities": [
         "repo:zaproxy",
         "addon:encoder"
@@ -69,7 +69,7 @@
     },
     {
       "title": "Beta in 2020, release in 2022, current state",
-      "text": "The CHANGELOG records\"Promoted to Beta.\"in 0.4.0 (2020-12-15) and, in 1.0.0 (2022-12-15),\"Add-on promoted to Release status.\"together with a BREAKING CHANGE note about the script process method signature. Later entries include a PowerShell encoder (1.1.0, 2023-03-13), Morse Code processors and ASCify (1.6.0, 2025-01-09) and a resizable input area (1.9.0, 2026-03-02). The add-on status in the dataset is release.",
+      "text": "The CHANGELOG records \"Promoted to Beta.\" in 0.4.0 (2020-12-15) and, in 1.0.0 (2022-12-15), \"Add-on promoted to Release status.\" together with a BREAKING CHANGE note about the script process method signature. Later entries include a PowerShell encoder (1.1.0, 2023-03-13), Morse Code processors and ASCify (1.6.0, 2025-01-09) and a resizable input area (1.9.0, 2026-03-02). The add-on status in the dataset is release.",
       "entities": [
         "addon:encoder"
       ],

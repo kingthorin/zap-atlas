@@ -1,0 +1,80 @@
+{
+  "title": "Scan rules: from core to zap-extensions",
+  "description": "How the active and passive scan rules moved out of the zaproxy core: into zap-extensions in 2012, into their own add-on projects in 2019, with the script scan rules migrating to the scripts add-on in 2023.",
+  "audience": "developers",
+  "group": "features",
+  "date": "2012-12-08",
+  "status": "draft",
+  "chapters": [
+    {
+      "title": "Active and passive rules move to zap-extensions, 2012",
+      "text": "On 2012-12-08 zaproxy has \"Issue 428: Added support for extension specific I18N bundles, and move active and passive scan rules to zap-extensions\", and zap-extensions has \"Issue 428: Added support for extension specific I18N bundles, and moved active and passive scan rules to zap-extensions\".",
+      "entities": [
+        "repo:zaproxy",
+        "repo:zap-extensions"
+      ],
+      "commits": [
+        "commit:zaproxy:981da5929e9da20547a1a36da163b719eccfd482",
+        "commit:zap-extensions:e4b63e66dc9b423959921395b7a19bf389c09ddd"
+      ],
+      "documents": [],
+      "evidence": []
+    },
+    {
+      "title": "Rules relocated to their own projects, 2019-04-03",
+      "text": "On 2019-04-03 zap-extensions has six relocation commits: \"ascanrules: relocate to its own project\", \"pscanrules: relocate to its own project\", \"ascanrulesBeta: relocate to its own project\", \"pscanrulesBeta: relocate to its own project\", \"ascanrulesAlpha: relocate to its own project\" and \"pscanrulesAlpha: relocate to its own project\". The ascanrules message says it moves the files to a project of its own under addOns, removes the add-on manifest (ZapAddOn.xml, which the build now generates) and adds a build file and a CHANGELOG.md.",
+      "entities": [
+        "addon:ascanrules",
+        "addon:ascanrulesBeta",
+        "addon:ascanrulesAlpha",
+        "addon:pscanrules",
+        "addon:pscanrulesBeta",
+        "addon:pscanrulesAlpha"
+      ],
+      "commits": [
+        "commit:zap-extensions:d909c811540912f2b8ebddfbf8121cb7919aa4e3",
+        "commit:zap-extensions:9bde67a8dc83dade0775d447f3138248ea26c941",
+        "commit:zap-extensions:ba2500413501dd4d4c4592a05d59a3a4dbf38475",
+        "commit:zap-extensions:fab42c18537c469d264f0ff816d643fa700b172f",
+        "commit:zap-extensions:147af6169b7b7691757f464afbd7b19c63e1ae8d",
+        "commit:zap-extensions:fcbfa4fb524e624614a8fb2ba3b45087cd5f228a"
+      ],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "Passive scan rules add-on page",
+          "url": "https://www.zaproxy.org/docs/desktop/addons/passive-scan-rules/"
+        }
+      ]
+    },
+    {
+      "title": "Script scan rules migrate to the scripts add-on, 2023",
+      "text": "On 2023-12-27 zaproxy has \"Deprecate Script Scan Rules and related classes\", whose message says \"These will be made available as part of the scripts add-on.\" On 2023-12-30 zap-extensions has \"scripts: Migrate scan rule functionality from core\".",
+      "entities": [
+        "addon:scripts",
+        "repo:zaproxy"
+      ],
+      "commits": [
+        "commit:zaproxy:03af24df7f72887ff2beacbcfe045cf69c8053b2",
+        "commit:zap-extensions:563e33bd706f16cde3541d5c9156176c778b63ad"
+      ],
+      "documents": [],
+      "evidence": []
+    },
+    {
+      "title": "State at HEAD",
+      "text": "At HEAD zap-extensions contains addOns/ascanrules, addOns/ascanrulesBeta, addOns/ascanrulesAlpha, addOns/pscanrules, addOns/pscanrulesBeta and addOns/pscanrulesAlpha.",
+      "entities": [
+        "module:zap-extensions:addOns/ascanrules",
+        "module:zap-extensions:addOns/ascanrulesBeta",
+        "module:zap-extensions:addOns/ascanrulesAlpha",
+        "module:zap-extensions:addOns/pscanrules",
+        "module:zap-extensions:addOns/pscanrulesBeta",
+        "module:zap-extensions:addOns/pscanrulesAlpha"
+      ],
+      "commits": [],
+      "documents": [],
+      "evidence": []
+    }
+  ]
+}

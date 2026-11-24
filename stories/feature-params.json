@@ -3,12 +3,12 @@
   "description": "How the Params tab and extension is recorded in the zaproxy and zap-extensions histories: introduced in core in 2011 and migrated to the params add-on from 2025.",
   "audience": "developers",
   "group": "features",
-  "date": "2011-10-29",
+  "date": "2025-11-11",
   "status": "draft",
   "chapters": [
     {
       "title": "The Parameters tab is added, 2011",
-      "text": "The commit\"Added Parameters tab\"is dated 2011-10-29 in zaproxy. It adds database classes such as RecordParam and TableParam and changes Messages.properties and Control.java.",
+      "text": "The commit \"Added Parameters tab\" is dated 2011-10-29 in zaproxy. It adds database classes such as RecordParam and TableParam and changes Messages.properties and Control.java.",
       "entities": [
         "repo:zaproxy"
       ],
@@ -20,7 +20,7 @@
     },
     {
       "title": "Enhancements in 2018",
-      "text": "Commits to the params extension in zaproxy include\"Fix Issue 4391 - Include MultipartFormPost Params on Params Tab\"(2018-02-13) and\"Params Tab - Add/Remove Param Name as Anti-CSRF Token for Any Param\"(2018-06-05).",
+      "text": "Commits to the params extension in zaproxy include \"Fix Issue 4391 - Include MultipartFormPost Params on Params Tab\" (2018-02-13) and \"Params Tab - Add/Remove Param Name as Anti-CSRF Token for Any Param\" (2018-06-05).",
       "entities": [
         "module:zaproxy:zap"
       ],
@@ -33,7 +33,7 @@
     },
     {
       "title": "The params add-on begins, 2025",
-      "text": "In zap-extensions the earliest commit touching addOns/params is\"Params Initial Relocation\", dated 2025-11-11.",
+      "text": "In zap-extensions the earliest commit touching addOns/params is \"Params Initial Relocation\", dated 2025-11-11.",
       "entities": [
         "addon:params",
         "module:zap-extensions:addOns/params"
@@ -46,7 +46,7 @@
     },
     {
       "title": "Core params extension deprecated, 2026",
-      "text": "On 2026-05-15 zaproxy has\"Deprecate and unhook params extension\"; its diff adds @Deprecated annotations (19 added lines match) to classes such as ExtensionParams, ParamsPanel and database classes for params. On 2026-06-01 zap-extensions has\"Update add-ons to use params add-on (#7385)\".",
+      "text": "On 2026-05-15 zaproxy has \"Deprecate and unhook params extension\"; its diff adds @Deprecated annotations (19 added lines match) to classes such as ExtensionParams, ParamsPanel and database classes for params. On 2026-06-01 zap-extensions has \"Update add-ons to use params add-on (#7385)\".",
       "entities": [
         "repo:zaproxy",
         "addon:params"
@@ -60,7 +60,7 @@
     },
     {
       "title": "State at HEAD",
-      "text": "The params add-on's changelog lists 0.1.0 dated 2026-10-08 with the entry\"Migrated from core.\"At HEAD, addOns/params exists in zap-extensions and zaproxy still contains zap/src/main/java/org/zaproxy/zap/extension/params/ExtensionParams.java.",
+      "text": "The params add-on's changelog lists 0.1.0 dated 2026-10-08 with the entry \"Migrated from core.\" At HEAD, addOns/params exists in zap-extensions and zaproxy still contains zap/src/main/java/org/zaproxy/zap/extension/params/ExtensionParams.java.",
       "entities": [
         "addon:params",
         "module:zaproxy:zap"

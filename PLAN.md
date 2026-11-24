@@ -72,6 +72,15 @@ differs, and what is planned next. Update it with each change that moves an item
 Built with D3 modules for scales, zoom, brush and hierarchy, rendered as SVG by React
 (canvas past about 5,000 shapes).
 
+## Planned: ideas agreed with the maintainer (not started)
+
+In this order.
+
+1. **Timeline: repository checkboxes.** Show or hide each repository's lane. Keep at least one visible; keep the choice in the URL.
+2. **Timeline: select a range to zoom.** Shift+drag selects a range, and a Pan/Select toggle next to the zoom buttons switches the plain drag between panning (today) and selecting (works on touch). A translucent band shows the range; releasing zooms to it with the same transform as "Jump to year".
+3. **Full-width mode.** A header toggle, remembered in the browser, offered only above a minimum screen width. It applies to the data pages (Graph, Timeline, Source, Releases, History); stories and help pages stay narrow for reading. Re-run the phone-width audit afterwards.
+4. **Graph: sweep through time.** A play, pause and scrub control below the graph (keeping the year slider, which fades modules by first and last activity over the whole range, a different job). It steps by month and shows who committed in that window: author names appear near the modules they touched, with a short beam to each, drawn on a canvas overlay (module positions are already fixed). Needs a new data file sharded by year: author, month, module, commits (published names only, never emails). Cap authors per window at the top N by commits. Respect the reduced-motion setting, give a pause control, and provide a table alternative (who touched what in the window). The Timeline would link to it rather than the two pages merging.
+
 ## Planned: page improvements (from review)
 
 - **Repositories:** done. A repository with more than 5 modules folds its module list behind "Modules (N)"; the stats and language bars stay visible.

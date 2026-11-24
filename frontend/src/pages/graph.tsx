@@ -53,7 +53,7 @@ function ramp(t: number): string {
 
 const repoOf = (id: string) => id.split(":")[1];
 const pathOf = (id: string) => id.split(":").slice(2).join(":");
-const short = (id: string) => (repoOf(id) === "zaproxy" ? `${pathOf(id)} (core)` : pathOf(id).replace(/^addOns\//, ""));
+const short = (id: string) => (repoOf(id) === "zaproxy" ? `${pathOf(id)} (core)` : pathOf(id) === "src" ? repoOf(id).replace(/^zap-/, "") : pathOf(id).replace(/^addOns\//, "")); // zap-hud's one module is its src directory
 
 const TYPE_KINDS = new Set(["class", "interface", "enum", "record", "annotation_type"]);
 const CODE_EDGES = new Set(["CALLS", "IMPORTS", "EXTENDS", "IMPLEMENTS"]); // edges that expanding a module replaces with type-level ones

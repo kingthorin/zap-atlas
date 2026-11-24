@@ -8,7 +8,7 @@
   "chapters": [
     {
       "title": "August 2015: the first commit",
-      "text": "The Student Hall of Fame lists DOM XSS Scanner (Aabha Biyani) in 2015 with program\"Direct\"and links the add-on's documentation page. In zap-extensions the first commit under the domxss path is dated 2015-08-21, titled\"DOM XSS Active Scan rule\", and is by psiinon.\"Minor domxss tweeks\"follows on 2015-08-24.",
+      "text": "The Student Hall of Fame lists DOM XSS Scanner (Aabha Biyani) in 2015 with program \"Direct\" and links the add-on's documentation page. In zap-extensions the first commit under the domxss path is dated 2015-08-21, titled \"DOM XSS Active Scan rule\", and is by psiinon. \"Minor domxss tweeks\" follows on 2015-08-24.",
       "entities": [
         "addon:domxss"
       ],
@@ -30,7 +30,7 @@
     },
     {
       "title": "Selenium and browser use",
-      "text": "The add-on page says it launches\"browser windows and sends attack payloads to all of the relevant DOM elements.\"\"Added selenium add-on for DOM XSS add-on\"is dated 2015-08-31, and\"domxss: use Selenium extension and add skip reason\"2017-08-14.",
+      "text": "The add-on page says it launches \"browser windows and sends attack payloads to all of the relevant DOM elements.\" \"Added selenium add-on for DOM XSS add-on\" is dated 2015-08-31, and \"domxss: use Selenium extension and add skip reason\" 2017-08-14.",
       "entities": [
         "addon:domxss"
       ],
@@ -48,7 +48,7 @@
     },
     {
       "title": "Maintenance to now",
-      "text": "\"Prepare release of scanner rules add-ons\"is dated 2019-06-07. The add-on is still in zap-extensions: 130 commits touch addOns/domxss, including\"Update Selenium library\"on 2024-12-06.",
+      "text": "\"Prepare release of scanner rules add-ons\" is dated 2019-06-07. The add-on is still in zap-extensions: 130 commits touch addOns/domxss, including \"Update Selenium library\" on 2024-12-06.",
       "entities": [
         "addon:domxss"
       ],

@@ -8,7 +8,7 @@
   "chapters": [
     {
       "title": "2012: first commits",
-      "text": "The Student Hall of Fame lists Ajax Spider (Guifre Ruiz) as a 2012 Summer GSoC project. A zaproxy commit by guifre dated 2012-06-22 is titled\"modifications needed to run the ajax spider\". On 2012-08-13 another commit by guifre in zaproxy is titled\"Created the AJAX Spider help documents, added it in penetest.html and also in the indexes. Included crawljax and me in the credits.\"",
+      "text": "The Student Hall of Fame lists Ajax Spider (Guifre Ruiz) as a 2012 Summer GSoC project. A zaproxy commit by guifre dated 2012-06-22 is titled \"modifications needed to run the ajax spider\". On 2012-08-13 another commit by guifre in zaproxy is titled \"Created the AJAX Spider help documents, added it in penetest.html and also in the indexes. Included crawljax and me in the credits.\"",
       "entities": [
         "repo:zaproxy"
       ],
@@ -26,7 +26,7 @@
     },
     {
       "title": "August 2012: the add-on in zap-extensions",
-      "text": "A zap-extensions commit dated 2012-08-07 is titled\"merged spiderAjax branch into trunk\". Later commits dated 2012-08-07 to 2012-08-13 include\"Added a gear button in the spiderAjax panel and added a shown message feature\"and\"Added AJAX Spider status scan in the left-bottom of the window, cleaned up and commented code.\".",
+      "text": "A zap-extensions commit dated 2012-08-07 is titled \"merged spiderAjax branch into trunk\". Later commits dated 2012-08-07 to 2012-08-13 include \"Added a gear button in the spiderAjax panel and added a shown message feature\" and \"Added AJAX Spider status scan in the left-bottom of the window, cleaned up and commented code.\".",
       "entities": [
         "addon:spiderAjax"
       ],
@@ -45,7 +45,7 @@
     },
     {
       "title": "2013 to 2014: library updates",
-      "text": "The log shows repeated library-update commits for the add-on:\"Issue 672 - Update Crawljax library and dependencies (\"Ajax Spider\" add-on)\"is dated 2013-06-02,\"Issue 834 - Update Crawljax library and dependencies (\"Ajax Spider\" add-on)\"2013-12-14 and\"Issue 1336 - Update Crawljax library and dependencies (\"Ajax Spider\" add-on)\"2014-09-15. A zaproxy commit dated 2014-03-23 is titled\"Issue 1098 - Move AJAX Spider help pages to \"Ajax Spider\" add-on (and update them)\".",
+      "text": "The log shows repeated library-update commits for the add-on: \"Issue 672 - Update Crawljax library and dependencies (\" Ajax Spider \" add-on)\" is dated 2013-06-02, \"Issue 834 - Update Crawljax library and dependencies (\" Ajax Spider \" add-on)\" 2013-12-14 and \"Issue 1336 - Update Crawljax library and dependencies (\" Ajax Spider \" add-on)\" 2014-09-15. A zaproxy commit dated 2014-03-23 is titled \"Issue 1098 - Move AJAX Spider help pages to \" Ajax Spider \" add-on (and update them)\".",
       "entities": [
         "addon:spiderAjax"
       ],
@@ -65,7 +65,7 @@
     },
     {
       "title": "2019 to now",
-      "text": "A commit titled\"spiderAjax: relocate to its own project\"is dated 2019-04-03. The add-on is still in zap-extensions: its latest commit is dated 2026-10-12 and its directory has 294 commits in history.",
+      "text": "A commit titled \"spiderAjax: relocate to its own project\" is dated 2019-04-03. The add-on is still in zap-extensions: its latest commit is dated 2026-10-12 and its directory has 294 commits in history.",
       "entities": [
         "addon:spiderAjax"
       ],
