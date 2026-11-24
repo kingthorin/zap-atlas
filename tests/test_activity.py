@@ -74,3 +74,16 @@ def test_section_timeline_has_directory_prefixes_and_languages():
     assert out["lang:r:Markdown"] == {"2020-01": [1, 1, 2, 1]}
     assert "path:r:addOns" not in out          # below the 50 commit floor
     assert not any(k.endswith(":top.txt") for k in out)
+
+
+def test_author_modules_counts_commits_per_author_module_and_month():
+    from atlas.activity import build_author_modules
+    commits = [{**c, "author_name": n} for c, n in zip(COMMITS, ("Ann", "Ann", "[email redacted]", "Bob"))]
+    files = [_fc("1", "addOns/a/A.java", 1, 0), _fc("1", "addOns/a/B.java", 1, 0),      # one commit, two files: counted once
+             _fc("2", "addOns/a/A.java", 1, 0), _fc("3", "addOns/a/A.java", 1, 0),      # redacted author: left out
+             _fc("4", "addOns/other/x.md", 1, 0)]
+    out = build_author_modules(MODULES, commits, files)
+    assert out["2020"]["2020-01"] == [["Ann", "module:r:addOns/a", 1]]
+    assert out["2022"]["2022-06"] == [["Ann", "module:r:addOns/a", 1]]
+    assert "2023" not in out
+    assert out["2024"]["2024-04"] == [["Bob", "module:r:addOns", 1]]

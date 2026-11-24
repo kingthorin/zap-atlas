@@ -11,6 +11,8 @@ keeps the history of files that were moved into it.
   for help pages.
 * timeline_sections.json: "path:<repo>:<directory>" and "lang:<repo>:<language>" -> month -> the same row, on current paths,
   for the timeline's focus selector (directories to depth 4 with at least 50 commits).
+* author_modules/<year>.json: "YYYY-MM" -> [[author, module id, commits], ...], on current paths, for the graph's sweep
+  through time. Authors are the published names; names that are redacted email addresses are left out.
 * timeline_modules.json: module id -> "YYYY-MM" -> [commits, distinct authors, lines added, lines deleted], the same shape
   as timeline.json but for one module, for the timeline's focus selector.
 """
@@ -26,6 +28,7 @@ ACTIVITY = "module_activity.json"
 FILE_ACTIVITY = "file_activity.json"
 MODULE_TIMELINE = "timeline_modules.json"
 SECTION_TIMELINE = "timeline_sections.json"
+AUTHOR_DIR = "author_modules"
 SECTION_DEPTH, SECTION_MIN_COMMITS = 4, 50    # directories up to this depth with at least this many commits
 
 
@@ -107,6 +110,28 @@ def build_section_timeline(commits: list[dict], file_changes: list[dict]) -> dic
     return {k: dict(sorted(v.items())) for k, v in sorted(kept.items())}
 
 
+def build_author_modules(modules: list[dict], commits: list[dict], file_changes: list[dict]) -> dict[str, dict[str, list[list]]]:
+    """year -> month -> [[author, module id, commits]]: who committed to which module, per month."""
+    by_repo: dict[str, dict[str, str]] = {}
+    for m in modules:
+        by_repo.setdefault(m["repository"], {})[m["path"]] = m["id"]
+    author_of = {c["id"]: c.get("author_name", "") for c in commits}
+    seen: set[tuple[str, str, str]] = set()
+    counts: dict[tuple[str, str, str], int] = defaultdict(int)
+    for repo, path, commit, day, _added, _deleted in credited_changes(commits, file_changes):
+        mid = _module_of(by_repo.get(repo, {}), path)
+        author = author_of.get(commit, "")
+        if mid is None or not author or "redacted" in author:
+            continue
+        if (commit, author, mid) not in seen:
+            seen.add((commit, author, mid))
+            counts[(day[:7], author, mid)] += 1
+    out: dict[str, dict[str, list[list]]] = {}
+    for (month, author, mid), n in sorted(counts.items()):
+        out.setdefault(month[:4], {}).setdefault(month, []).append([author, mid, n])
+    return out
+
+
 def _add(stats: dict, key, day: str, lines: int, commit: str, touched: dict) -> None:
     s = stats.setdefault(key, {"first": day, "last": day, "commits": 0, "lines": 0})
     s["first"], s["last"] = min(s["first"], day), max(s["last"], day)
@@ -151,7 +176,13 @@ def write_activity(output_dir: Path, modules: list[dict], commits: list[dict], f
     (output_dir / FILE_ACTIVITY).write_text(jsonfmt.dumps(files), encoding="utf-8")
     (output_dir / MODULE_TIMELINE).write_text(jsonfmt.dumps(build_module_timeline(modules, commits, file_changes)), encoding="utf-8")
     (output_dir / SECTION_TIMELINE).write_text(jsonfmt.dumps(build_section_timeline(commits, file_changes)), encoding="utf-8")
-    return [ACTIVITY, FILE_ACTIVITY, MODULE_TIMELINE, SECTION_TIMELINE]
+    (output_dir / AUTHOR_DIR).mkdir(exist_ok=True)
+    years = build_author_modules(modules, commits, file_changes)
+    names = []
+    for year, months in years.items():
+        (output_dir / AUTHOR_DIR / f"{year}.json").write_text(json.dumps(months, separators=(",", ":"), ensure_ascii=False), encoding="utf-8")
+        names.append(f"{AUTHOR_DIR}/{year}.json")
+    return [ACTIVITY, FILE_ACTIVITY, MODULE_TIMELINE, SECTION_TIMELINE, *names]
 
 
 def rebuild_from_shards(dataset: Path) -> list[str]:

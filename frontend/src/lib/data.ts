@@ -222,6 +222,14 @@ export function loadModuleActivity(): Promise<Record<string, ModuleActivity>> {
   return activityCache;
 }
 
+/** "YYYY-MM" -> [[author, module id, commits]] for one year: who committed to which module. */
+export type AuthorMonths = Record<string, [string, string, number][]>;
+const authorCache = new Map<string, Promise<AuthorMonths>>();
+export function loadAuthorModules(year: number): Promise<AuthorMonths> {
+  if (!authorCache.has(String(year))) authorCache.set(String(year), fetchText(`${DATA_DIR}/author_modules/${year}.json`).then(t => JSON.parse(t)).catch(() => ({})));
+  return authorCache.get(String(year))!;
+}
+
 /** Repository -> path -> [first day, last day, commits, lines changed] for files that currently declare symbols. */
 export type FileActivity = Record<string, Record<string, [string, string, number, number]>>;
 let fileActivityCache: Promise<FileActivity> | null = null;

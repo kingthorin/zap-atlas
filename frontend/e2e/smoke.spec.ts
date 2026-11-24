@@ -237,6 +237,28 @@ test("full width is offered on wide screens for data pages only", async ({ page 
   await page.evaluate(() => localStorage.removeItem("atlas-wide"));
 });
 
+test("graph: the sweep shows who committed in a month, and plays and pauses", async ({ page }) => {
+  await page.goto("graph");
+  await page.waitForSelector("canvas");
+  const minYear = +(await page.getByRole("slider").first().getAttribute("min"))!;          // the Year slider starts at the first active year
+  const month = page.getByRole("slider", { name: "Month" });
+  await month.evaluate((el: HTMLInputElement, v) => {
+    Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!.call(el, String(v));
+    el.dispatchEvent(new Event("input", { bubbles: true }));
+  }, (2024 - minYear) * 12 + 5);                                                              // 2024-06
+  await expect(page.getByText(/^2024-06: .+ \(\d+\)/)).toBeVisible();                         // an author with module commit counts
+  const summary = page.locator("p[aria-live]", { hasText: /^2024-06: / });
+  await expect(summary).not.toContainText("zapbot:");                                         // bots are left out by default
+  await page.getByRole("checkbox", { name: "Include bots" }).check();
+  await expect(summary).toContainText("zapbot:");
+  await page.getByRole("checkbox", { name: "Include bots" }).uncheck();
+  await page.getByRole("button", { name: "Play" }).click();
+  await expect(page.getByRole("button", { name: "Pause" })).toBeVisible();
+  await expect(month).toHaveAttribute("aria-valuetext", /^2024-(0[7-9]|1)/, { timeout: 8000 });   // it advanced on its own
+  await page.getByRole("button", { name: "Pause" }).click();
+  await expect(page.getByRole("button", { name: "Play" })).toBeVisible();
+});
+
 // The oracle scans every relationship shard of the repository, so it does not depend on the incoming/ copies
 // that the page uses, and it follows whatever data the build was generated from.
 function edgeCounts(repo: string, id: string): { out: number; inc: number } {

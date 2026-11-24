@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import Graph from "graphology";
 import forceAtlas2 from "graphology-layout-forceatlas2";
@@ -9,6 +9,7 @@ import {
 } from "../lib/data";
 import { Loading, ErrorBox } from "../components/ui";
 import { filePathOf } from "../lib/data";
+import Sweep from "../components/sweep";
 
 const REPO_COLOR: Record<string, string> = { zaproxy: "#4389ff", "zap-extensions": "#e08e00", "zap-core-help": "#2f9e6f", "zap-hud": "#8e5bd0" };
 const EVIDENCE = ["resolved", "inferred", "syntactic"];
@@ -295,6 +296,7 @@ export default function GraphPage() {
   const [year, setYear] = useState<number | null>(null);       // null: every year
   const [activity, setActivity] = useState<Record<string, ModuleActivity>>({});
   const box = useRef<HTMLDivElement>(null);
+  const [host, setHost] = useState<HTMLDivElement | null>(null);   // wraps the canvas; the sweep overlay is drawn in it
   const sigma = useRef<Sigma | null>(null);
   const camera = useRef<any>(null);
   const positions = useRef(new Map<string, { x: number; y: number }>());
@@ -369,6 +371,14 @@ export default function GraphPage() {
     const act = actOf(n);
     return st.year != null && !!act && (yearOf(act.first) > st.year || yearOf(act.last) < st.year);
   };
+  // For the sweep overlay: where a module is drawn now (null if it is not shown), kept stable so the animation is not restarted by renders.
+  const sweepPosition = useCallback((id: string) => {
+    const s = sigma.current, g = s?.getGraph();
+    if (!s || !g || !g.hasNode(id) || !id.startsWith("module:") || styleRef.current.hiddenRepos.has(repoOf(id))) return null;
+    const a = g.getNodeAttributes(id);
+    return s.graphToViewport({ x: a.x, y: a.y });
+  }, []);
+  const sweepColor = useCallback((id: string) => REPO_COLOR[repoOf(id)] ?? "#7e92a4", []);
   /** Size by activity, colour by recency, and fade by year, applied on top of the graph's own attributes. */
   const styleNode = (n: string, d: any) => {
     const st = styleRef.current, kind = st.kinds.get(n), act = actOf(n);
@@ -573,13 +583,16 @@ export default function GraphPage() {
             onSelect={setSel} onToggle={id => (expanded.includes(id) ? collapse(id) : expand(id, "files"))} />
         </div>
         <div className="rounded-xl border border-slate-200 bg-white overflow-hidden">
-          <div ref={box} className="h-[60vh] min-h-[360px] w-full" role="img"
-            aria-label={`Graph of ${graph.order} nodes and ${graph.size} linked pairs. The table beside it lists a selected node's neighbours.`} />
+          <div ref={setHost} className="relative">
+            <div ref={box} className="h-[60vh] min-h-[360px] w-full" role="img"
+              aria-label={`Graph of ${graph.order} nodes and ${graph.size} linked pairs. The table beside it lists a selected node's neighbours.`} />
+          </div>
           <div className="flex flex-wrap gap-3 px-3 py-1.5 text-xs text-slate-600 border-t border-slate-100">
             {Object.entries(REPO_COLOR).filter(([r]) => data.nodes.some(n => repoOf(n) === r)).map(([r, c]) =>
               <span key={r}><span className="inline-block w-2.5 h-2.5 rounded-full mr-1 align-middle" style={{ background: c }} />{r}</span>)}
             <span>{graph.order - typeParent.size} modules{counts.length > 0 && <> + {counts.map(([l, n]) => `${n} ${l}`).join(", ")}</>} · {graph.size} linked pairs</span>
           </div>
+          {years && <Sweep host={host} minYear={years.min} maxYear={years.max} label={short} nodePosition={sweepPosition} colorOf={sweepColor} />}
         </div>
         <aside aria-live="polite" className="rounded-xl border border-slate-200 bg-white p-3 text-sm lg:max-h-[calc(60vh+2.5rem)] overflow-y-auto">
           {!sel ? <p className="text-slate-500 italic">Select a module in the graph or the list to see what it is linked to. Expand a module to see its most connected types, or its files and directories.</p> : (<>
