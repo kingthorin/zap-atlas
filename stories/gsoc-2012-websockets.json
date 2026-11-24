@@ -1,5 +1,5 @@
 {
-  "title": "WebSocket testing (Robert Koch, 2012 GSoC) and the websocket add-on",
+  "title": "WebSocket testing (Robert Koch, 2012 GSoC)",
   "description": "The 2012 WebSocket testing project in the Student Hall of Fame, set beside the commits that moved the code out of core and into the websocket add-on.",
   "audience": "community",
   "group": "projects",
