@@ -1,6 +1,6 @@
 {
   "title": "The network add-on and the core networking it supersedes",
-  "description": "How the network add-on started in zap-extensions in November 2021 and how core zaproxy commits from 2022 and 2023 deprecate proxy, connection, client certificate and HttpSender code in its favour.",
+  "description": "How the network add-on started in zap-extensions in November 2021 and how core zaproxy commits from 2022 and 2023 deprecate proxy, connection, client certificate, and HttpSender code in its favour.",
   "audience": "developers",
   "group": "features",
   "date": "2021-11-15",
@@ -32,7 +32,7 @@
       ]
     },
     {
-      "title": "Core proxy, connection and certificate code is deprecated",
+      "title": "Core proxy, connection, and certificate code is deprecated",
       "text": "In zaproxy, \"Deprecate and disable proxy related code\" is dated 2022-02-09 and its body begins \"No longer manage the main nor additional proxies.\" \"Use Network add-on to manage connection options\" (2022-05-20) says \"Deprecate `ConnectionParam` and remove its usage where possible, the network add-on will manage the connection options.\" \"Use Network add-on to manage client certificates\" (2022-05-29) says \"Deprecate `OptionsParamCertificate` and remove its usage, the network add-on will manage the client certificates.\" On 2023-04-28 \"Deprecate `Proxy`/`ProxyServer` related methods\" says those classes \"were superseded by the Network add-on.\"",
       "entities": [
         "repo:zaproxy",
@@ -47,7 +47,7 @@
     },
     {
       "title": "A HttpSender implementation based on Apache HttpComponents",
-      "text": "The core commit \"Deprecate HttpSender implementation classes\" (2022-06-07) says those classes \"will be superseded by the Network add-on.\" Three days later, in zap-extensions, \"network: provide HttpSender implementation\" (2022-06-10) has the body \"Add a `HttpSender` implementation based on Apache HttpComponents and set it to core, on newer versions.\" The CHANGELOG for 0.3.0 (2022-10-27) lists \"A newer HTTP client implementation\", client certificate management, connection options and \"Promoted to Beta status.\"",
+      "text": "The core commit \"Deprecate HttpSender implementation classes\" (2022-06-07) says those classes \"will be superseded by the Network add-on.\" Three days later, in zap-extensions, \"network: provide HttpSender implementation\" (2022-06-10) has the body \"Add a `HttpSender` implementation based on Apache HttpComponents and set it to core, on newer versions.\" The CHANGELOG for 0.3.0 (2022-10-27) lists \"A newer HTTP client implementation\", client certificate management, connection options, and \"Promoted to Beta status.\"",
       "entities": [
         "repo:zaproxy",
         "addon:network"

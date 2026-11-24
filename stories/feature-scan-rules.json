@@ -22,7 +22,7 @@
     },
     {
       "title": "Rules relocated to their own projects, 2019-04-03",
-      "text": "On 2019-04-03 zap-extensions has six relocation commits: \"ascanrules: relocate to its own project\", \"pscanrules: relocate to its own project\", \"ascanrulesBeta: relocate to its own project\", \"pscanrulesBeta: relocate to its own project\", \"ascanrulesAlpha: relocate to its own project\" and \"pscanrulesAlpha: relocate to its own project\". The ascanrules message says it moves the files to a project of its own under addOns, removes the add-on manifest (ZapAddOn.xml, which the build now generates) and adds a build file and a CHANGELOG.md.",
+      "text": "On 2019-04-03 zap-extensions has six relocation commits: \"ascanrules: relocate to its own project\", \"pscanrules: relocate to its own project\", \"ascanrulesBeta: relocate to its own project\", \"pscanrulesBeta: relocate to its own project\", \"ascanrulesAlpha: relocate to its own project\", and \"pscanrulesAlpha: relocate to its own project\". The ascanrules message says it moves the files to a project of its own under addOns, removes the add-on manifest (ZapAddOn.xml, which the build now generates) and adds a build file and a CHANGELOG.md.",
       "entities": [
         "addon:ascanrules",
         "addon:ascanrulesBeta",
@@ -63,7 +63,7 @@
     },
     {
       "title": "State at HEAD",
-      "text": "At HEAD zap-extensions contains addOns/ascanrules, addOns/ascanrulesBeta, addOns/ascanrulesAlpha, addOns/pscanrules, addOns/pscanrulesBeta and addOns/pscanrulesAlpha.",
+      "text": "At HEAD zap-extensions contains addOns/ascanrules, addOns/ascanrulesBeta, addOns/ascanrulesAlpha, addOns/pscanrules, addOns/pscanrulesBeta, and addOns/pscanrulesAlpha.",
       "entities": [
         "module:zap-extensions:addOns/ascanrules",
         "module:zap-extensions:addOns/ascanrulesBeta",

@@ -46,7 +46,7 @@
     },
     {
       "title": "Core params extension deprecated, 2026",
-      "text": "On 2026-05-15 zaproxy has \"Deprecate and unhook params extension\"; its diff adds @Deprecated annotations (19 added lines match) to classes such as ExtensionParams, ParamsPanel and database classes for params. On 2026-06-01 zap-extensions has \"Update add-ons to use params add-on (#7385)\".",
+      "text": "On 2026-05-15 zaproxy has \"Deprecate and unhook params extension\"; its diff adds @Deprecated annotations (19 added lines match) to classes such as ExtensionParams, ParamsPanel, and database classes for params. On 2026-06-01 zap-extensions has \"Update add-ons to use params add-on (#7385)\".",
       "entities": [
         "repo:zaproxy",
         "addon:params"

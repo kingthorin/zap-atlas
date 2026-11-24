@@ -40,7 +40,7 @@
     },
     {
       "title": "First commits, November 2015",
-      "text": "The earliest commits in the dataset authored as zapbot are dated 2015-11-10 and are both titled \"Latest files from Crowdin\", one in zaproxy and one in zap-extensions. The same day, three merge commits in zap-extensions bring in pull requests #73, #74 and #75 from branches of the zapbot repositories (master, beta and alpha); they are recorded under a different author name for the bot.",
+      "text": "The earliest commits in the dataset authored as zapbot are dated 2015-11-10 and are both titled \"Latest files from Crowdin\", one in zaproxy and one in zap-extensions. The same day, three merge commits in zap-extensions bring in pull requests #73, #74, and #75 from branches of the zapbot repositories (master, beta, and alpha); they are recorded under a different author name for the bot.",
       "entities": [
         "repo:zaproxy",
         "repo:zap-extensions"
@@ -53,7 +53,7 @@
     },
     {
       "title": "Releases and translations, 2021",
-      "text": "\"Release add-on(s)\" and \"Prepare next dev iteration(s)\" commits by zapbot start in zap-extensions on 2021-06-17 and in zap-core-help on 2021-10-06. \"Update localized resources\" starts on 2021-08-12 in zaproxy, zap-core-help and zap-hud, and on 2021-08-13 in zap-extensions. \"Webdriver Update\" starts in zap-extensions on 2022-04-28.",
+      "text": "\"Release add-on(s)\" and \"Prepare next dev iteration(s)\" commits by zapbot start in zap-extensions on 2021-06-17 and in zap-core-help on 2021-10-06. \"Update localized resources\" starts on 2021-08-12 in zaproxy, zap-core-help, and zap-hud, and on 2021-08-13 in zap-extensions. \"Webdriver Update\" starts in zap-extensions on 2022-04-28.",
       "entities": [
         "repo:zaproxy",
         "repo:zap-extensions",

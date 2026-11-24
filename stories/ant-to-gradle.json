@@ -1,6 +1,6 @@
 {
   "title": "From Ant to Gradle across ZAP's repositories",
-  "description": "How the zaproxy, zap-extensions and zap-core-help builds moved from Ant to Gradle in 2019, as recorded in the repository history.",
+  "description": "How the zaproxy, zap-extensions, and zap-core-help builds moved from Ant to Gradle in 2019, as recorded in the repository history.",
   "audience": "developers",
   "group": "history",
   "date": "2010-09-04",

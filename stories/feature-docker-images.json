@@ -49,7 +49,7 @@
     },
     {
       "title": "The docker directory moves to the top level, 2018",
-      "text": "\"Move docker dir to a top level dir\" (2018-03-07) renames the files under build/docker, including Dockerfile-bare, Dockerfile-live, Dockerfile-stable and Dockerfile-weekly, to docker/.",
+      "text": "\"Move docker dir to a top level dir\" (2018-03-07) renames the files under build/docker, including Dockerfile-bare, Dockerfile-live, Dockerfile-stable, and Dockerfile-weekly, to docker/.",
       "entities": [
         "repo:zaproxy"
       ],

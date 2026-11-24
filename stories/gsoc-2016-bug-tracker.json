@@ -65,7 +65,7 @@
       "evidence": []
     },
     {
-      "title": "2020 to now: dependencies, logging and a PAT",
+      "title": "2020 to now: dependencies, logging, and a PAT",
       "text": "Later commits include \"bugtracker: Update Dependency\" (2020-04-05), \"bugtracker: remove options panels when uninstalled\" (2020-06-16), \"bugtracker: Use Log4j 2.x\" (2021-02-11), \"bugtracker: remove usage of custom repository\" (2021-05-31), \"chore: Bugtracker: Address github library deprecations\" (2022-04-09) and \"bugtracker: prevent UI init without view\" (2024-01-10). The add-on changelog for version 4 (2022-09-23) lists \"Updated to use PAT not password\". The add-on still exists at HEAD under addOns/bugtracker; its most recent commit touching the changelog is \"Help content typo fixes\" (2026-11-02).",
       "entities": [
         "addon:bugtracker"

@@ -8,7 +8,7 @@
   "chapters": [
     {
       "title": "The project",
-      "text": "The Student Hall of Fame lists Ryan Wehe, Christopher Laguna and Rian Franey for \"Form handling (team project)\", MWoS, 2016 Winter, with a link to the Mozilla wiki. The wiki page says the three were Arizona State University students working on a senior capstone project, that it aimed to let users \"define default values based on pattern matching\" for spider-filled forms, and that the first pull request was merged into ZAP 2.6 while a second, an add-on in zap-extensions, was in progress when the page was last edited on March 9, 2017.",
+      "text": "The Student Hall of Fame lists Ryan Wehe, Christopher Laguna, and Rian Franey for \"Form handling (team project)\", MWoS, 2016 Winter, with a link to the Mozilla wiki. The wiki page says the three were Arizona State University students working on a senior capstone project, that it aimed to let users \"define default values based on pattern matching\" for spider-filled forms, and that the first pull request was merged into ZAP 2.6 while a second, an add-on in zap-extensions, was in progress when the page was last edited on March 9, 2017.",
       "entities": [
         "repo:zaproxy",
         "repo:zap-extensions"

@@ -1,6 +1,6 @@
 {
   "title": "The Authentication Helper add-on",
-  "description": "The authhelper add-on in zap-extensions from January 2023: browser based, client script, OAuth2 and AI assisted authentication. Earlier authentication work in core is in the Google Summer of Code 2018 story.",
+  "description": "The authhelper add-on in zap-extensions from January 2023: browser based, client script, OAuth2, and AI assisted authentication. Earlier authentication work in core is in the Google Summer of Code 2018 story.",
   "audience": "developers",
   "group": "features",
   "date": "2023-01-10",
@@ -25,8 +25,8 @@
       ]
     },
     {
-      "title": "Auto-detection, beta and the Authentication Tester",
-      "text": "0.4.0 (2023-04-28) lists \"Support for auto-detect authentication.\", \"Support for auto-detect session management.\" and \"Support for auto-detect verification.\" 0.7.0 (2023-05-23) lists \"Authentication tester dialog.\" and \"Promoted to Beta\". 0.9.0 (2023-07-11) adds \"Direct support for handling browser based authentication in the AJAX spider.\"",
+      "title": "Auto-detection, beta, and the Authentication Tester",
+      "text": "0.4.0 (2023-04-28) lists \"Support for auto-detect authentication.\", \"Support for auto-detect session management.\", and \"Support for auto-detect verification.\" 0.7.0 (2023-05-23) lists \"Authentication tester dialog.\" and \"Promoted to Beta\". 0.9.0 (2023-07-11) adds \"Direct support for handling browser based authentication in the AJAX spider.\"",
       "entities": [
         "addon:authhelper",
         "addon:spiderAjax"

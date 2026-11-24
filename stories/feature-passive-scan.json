@@ -71,7 +71,7 @@
     },
     {
       "title": "Statistics move, and the state at HEAD",
-      "text": "On 2025-12-04 zaproxy has \"Remove pscan alerts statistics (migrating to add-on)\". The pscan add-on's changelog lists 0.6.0 dated 2025-12-15 with \"Migrate handling of Alerts raised statistics from the core.\" At HEAD, zaproxy still contains zap/src/main/java/org/zaproxy/zap/extension/pscan/ExtensionPassiveScan.java, and zap-extensions contains addOns/pscan, addOns/pscanrules, addOns/pscanrulesBeta and addOns/pscanrulesAlpha.",
+      "text": "On 2025-12-04 zaproxy has \"Remove pscan alerts statistics (migrating to add-on)\". The pscan add-on's changelog lists 0.6.0 dated 2025-12-15 with \"Migrate handling of Alerts raised statistics from the core.\" At HEAD, zaproxy still contains zap/src/main/java/org/zaproxy/zap/extension/pscan/ExtensionPassiveScan.java, and zap-extensions contains addOns/pscan, addOns/pscanrules, addOns/pscanrulesBeta, and addOns/pscanrulesAlpha.",
       "entities": [
         "addon:pscan",
         "module:zaproxy:zap"

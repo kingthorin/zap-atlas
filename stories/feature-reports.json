@@ -1,6 +1,6 @@
 {
   "title": "Reporting: from core and BIRT to the reports add-on",
-  "description": "Report generation as recorded in the zaproxy and zap-extensions histories: core report classes in the first import, the 2013 BIRT add-on, the reports add-on from March 2021 and the removal of the older code.",
+  "description": "Report generation as recorded in the zaproxy and zap-extensions histories: core report classes in the first import, the 2013 BIRT add-on, the reports add-on from March 2021, and the removal of the older code.",
   "audience": "developers",
   "group": "features",
   "date": "2021-03-09",
@@ -20,7 +20,7 @@
     },
     {
       "title": "BIRT reporting add-on, October 2013",
-      "text": "The zap-extensions commit \"BIRT Reporting with XML data source and Scripting - GSoC 2013 by Rauf Butt\" is dated 2013-10-09. It adds a birtreports extension with classes such as AlertReport, BirtTopMenu and ReportLastScan. \"Added birtreports jars to top level lib directory\" follows on 2013-10-14.",
+      "text": "The zap-extensions commit \"BIRT Reporting with XML data source and Scripting - GSoC 2013 by Rauf Butt\" is dated 2013-10-09. It adds a birtreports extension with classes such as AlertReport, BirtTopMenu, and ReportLastScan. \"Added birtreports jars to top level lib directory\" follows on 2013-10-14.",
       "entities": [
         "repo:zap-extensions"
       ],

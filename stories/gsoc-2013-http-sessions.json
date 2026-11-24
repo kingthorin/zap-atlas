@@ -25,7 +25,7 @@
       ]
     },
     {
-      "title": "2013: users, roles and session management",
+      "title": "2013: users, roles, and session management",
       "text": "The Hall of Fame lists Enhanced HTTP Session Handling (Cosmin Stefan) as a 2013 Summer GSoC project. Its wiki goals include \"allow users to set up and manage users/roles\" and \"allow ZAP to understand users/roles and associate them to HTTP Sessions\". Commits by cosminstefanxp in the HTTP sessions paths include \"Rest of required changes for the extension handling Users, Roles etc.\" (2013-07-02), \"Redefined some Session Management interfaces. Simple implementation for Cookie based session management.\" (2013-08-08) and \"Refactored Users, Authentication and SessionManagement packages with better names.\" (2013-09-19).",
       "entities": [
         "repo:zaproxy"

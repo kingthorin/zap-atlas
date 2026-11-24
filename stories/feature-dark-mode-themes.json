@@ -21,7 +21,7 @@
     },
     {
       "title": "FlatLaf is added, February 2020",
-      "text": "On 2020-02-24 zaproxy has \"Add FlatLaf L&F\". Its message says it adds the FlatLaf dependency, changes ExtensionUiUtils to install the look and feel provided by FlatLaf, and is \"Part of #5542 - Add a dark mode\". The first release tag containing it is the weekly tag w2020-03-02. ExtensionUiUtils at HEAD lists \"Flat Light\", \"Flat Dark\", \"Flat IntelliJ\" and \"Flat Darcula\".",
+      "text": "On 2020-02-24 zaproxy has \"Add FlatLaf L&F\". Its message says it adds the FlatLaf dependency, changes ExtensionUiUtils to install the look and feel provided by FlatLaf, and is \"Part of #5542 - Add a dark mode\". The first release tag containing it is the weekly tag w2020-03-02. ExtensionUiUtils at HEAD lists \"Flat Light\", \"Flat Dark\", \"Flat IntelliJ\", and \"Flat Darcula\".",
       "entities": [
         "repo:zaproxy",
         "module:zaproxy:zap"
@@ -57,7 +57,7 @@
     },
     {
       "title": "Dynamic switching and ZAP 2.10.0",
-      "text": "On 2020-09-29 zaproxy has \"Add support for dynamic Look and Feel switching\"; its diff adds a default look and feel documented as \"Flat Light\" (FlatLightLaf). The release notes for 2.10.0 list \"Dynamic Look and Feel including Dark Mode\", say the UI includes a set of open source look and feels from FlatLaf including 2 dark mode options, and list Issue 5542, Issue 5873 and Issue 6201. The v2.10.0 tag is dated 2020-12-17.",
+      "text": "On 2020-09-29 zaproxy has \"Add support for dynamic Look and Feel switching\"; its diff adds a default look and feel documented as \"Flat Light\" (FlatLightLaf). The release notes for 2.10.0 list \"Dynamic Look and Feel including Dark Mode\", say the UI includes a set of open source look and feels from FlatLaf including 2 dark mode options, and list Issue 5542, Issue 5873, and Issue 6201. The v2.10.0 tag is dated 2020-12-17.",
       "entities": [
         "repo:zaproxy"
       ],

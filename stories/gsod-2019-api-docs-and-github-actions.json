@@ -1,6 +1,6 @@
 {
   "title": "API documentation and GitHub Actions (Nirojan Selvanathan, 2019-2020)",
-  "description": "Two Hall of Fame entries for one contributor. Most of the work lives outside the analysed repositories, so this story relies on the official pages, one commit and the credits history.",
+  "description": "Two Hall of Fame entries for one contributor. Most of the work lives outside the analysed repositories, so this story relies on the official pages, one commit, and the credits history.",
   "audience": "community",
   "group": "projects",
   "date": "2019-10",
@@ -21,7 +21,7 @@
     },
     {
       "title": "API documentation",
-      "text": "The ZAP API documentation page at zaproxy.org/docs/api/ has sections on exploring and attacking an application, getting results, authentication, advanced settings, contributing, troubleshooting and an API catalogue. The zaproxy/zap-api-docs repository README says it holds the source for that documentation, built with Slate. Neither page fetched mentions Season of Docs or names contributors, so the link to the 2019 entry rests on the Hall of Fame listing alone. The repository is not among the clones analysed here.",
+      "text": "The ZAP API documentation page at zaproxy.org/docs/api/ has sections on exploring and attacking an application, getting results, authentication, advanced settings, contributing, troubleshooting, and an API catalogue. The zaproxy/zap-api-docs repository README says it holds the source for that documentation, built with Slate. Neither page fetched mentions Season of Docs or names contributors, so the link to the 2019 entry rests on the Hall of Fame listing alone. The repository is not among the clones analysed here.",
       "entities": [],
       "commits": [],
       "documents": [],
@@ -58,7 +58,7 @@
     },
     {
       "title": "April and May 2020: the GitHub Actions blog posts",
-      "text": "The blog post dated 2020-04-09, written by Nirojan Selvanathan, describes the ZAP Baseline action (zaproxy/action-baseline): a workflow with a daily cron trigger, issue tracking in GitHub issues, and a rules.tsv file to set rules to WARN, FAIL or IGNORE. The post dated 2020-05-15, also by him, describes the ZAP full scan action, which runs the spider, an optional AJAX spider and an active scan and reports results as GitHub issues. Both posts carry a notice that their content may be outdated. A search of the zaproxy history for \"action-baseline\" and \"action-full-scan\" found no commits, so the actions' own code is outside the analysed repositories.",
+      "text": "The blog post dated 2020-04-09, written by Nirojan Selvanathan, describes the ZAP Baseline action (zaproxy/action-baseline): a workflow with a daily cron trigger, issue tracking in GitHub issues, and a rules.tsv file to set rules to WARN, FAIL, or IGNORE. The post dated 2020-05-15, also by him, describes the ZAP full scan action, which runs the spider, an optional AJAX spider, and an active scan and reports results as GitHub issues. Both posts carry a notice that their content may be outdated. A search of the zaproxy history for \"action-baseline\" and \"action-full-scan\" found no commits, so the actions' own code is outside the analysed repositories.",
       "entities": [
         "repo:zaproxy"
       ],

@@ -8,7 +8,7 @@
   "chapters": [
     {
       "title": "2012: the first Core Team list",
-      "text": "On 2012-08-22, the credits page introduces a \"ZAP Core Team\" section. Simon Bennetts (Psiinon), Axel Neumann (Compass Security AG), Cosmin Stefan, Guifre Ruiz Utges, Robert Koch and Colm O'Flaherty (Encription Ireland Ltd) are listed as the founding members. Raul Siles (Taddong) is added in the same sitting, and Simon Bennetts is shown as working for Mozilla. Cosmin Stefan, Guifre Ruiz and Robert Koch are the three students the Hall of Fame lists for 2012 Summer GSoC.",
+      "text": "On 2012-08-22, the credits page introduces a \"ZAP Core Team\" section. Simon Bennetts (Psiinon), Axel Neumann (Compass Security AG), Cosmin Stefan, Guifre Ruiz Utges, Robert Koch, and Colm O'Flaherty (Encription Ireland Ltd) are listed as the founding members. Raul Siles (Taddong) is added in the same sitting, and Simon Bennetts is shown as working for Mozilla. Cosmin Stefan, Guifre Ruiz, and Robert Koch are the three students the Hall of Fame lists for 2012 Summer GSoC.",
       "commits": [
         "commit:zap-core-help:1096cfa9505d687fcbc7da7fd2845f9741e2e744",
         "commit:zap-core-help:aaf58149288472a42f01946c37a4c573361a842d",
@@ -23,7 +23,7 @@
     },
     {
       "title": "2013: students join, others are removed",
-      "text": "In 2013, new entries are added for Martin Walton, Björn Kimminich, Prasad N. Shenoy, Patrick Galley, Andrea Pompili, Mark Goodwin and Amro Alolaqi. On 2013-12-16, the 2013 Summer GSoC students Alessandro Secco, Pulasthi Mahawithana, Rauf Butt and Abdelhadi Azouni appear, together with Kevin Wall, Johanna Curiel and Mennouchi Islam Azeddine, while Axel Neumann, Patrick Galley, Raul Siles and Martin Walton are no longer in the section.",
+      "text": "In 2013, new entries are added for Martin Walton, Björn Kimminich, Prasad N. Shenoy, Patrick Galley, Andrea Pompili, Mark Goodwin, and Amro Alolaqi. On 2013-12-16, the 2013 Summer GSoC students Alessandro Secco, Pulasthi Mahawithana, Rauf Butt, and Abdelhadi Azouni appear, together with Kevin Wall, Johanna Curiel, and Mennouchi Islam Azeddine, while Axel Neumann, Patrick Galley, Raul Siles, and Martin Walton are no longer in the section.",
       "commits": [
         "commit:zap-core-help:affbd79c069d387ed5ff13885d0bd3d705b3a2c1",
         "commit:zap-core-help:84e5cff48efda02d2e72a1ac64e3c7b2ede06c84",
@@ -99,7 +99,7 @@
     },
     {
       "title": "2026: sponsored by Checkmarx",
-      "text": "On 2026-08-26, the section lists Simon Bennetts, Ricardo Pereira and Rick Mitchell as \"Sponsored by Checkmarx\" and Akshath Kothari with \"Sponsor on GitHub\". The entry for thc202 is replaced by Ricardo Pereira, whose link points to the same team page (docs/team/thc202).",
+      "text": "On 2026-08-26, the section lists Simon Bennetts, Ricardo Pereira, and Rick Mitchell as \"Sponsored by Checkmarx\" and Akshath Kothari with \"Sponsor on GitHub\". The entry for thc202 is replaced by Ricardo Pereira, whose link points to the same team page (docs/team/thc202).",
       "commits": [
         "commit:zap-core-help:81399714771ede3ffd37538ac19e9d2da473475d"
       ],
