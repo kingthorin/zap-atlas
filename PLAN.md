@@ -30,23 +30,23 @@ differs, and what is planned next. Update it with each change that moves an item
 - Entities `Revision`, `Package` and `Milestone`; file entities for every tracked file, not only changed ones.
 - Repository landscape (repo, module, package, file hierarchy with size and activity).
 - Source explorer file page with file history.
-- Architecture graph with drill-down: done as the Graph page (modules, expandable into types) and the Source page's module links. Open: files and directories as nodes.
+- Architecture graph with drill-down: done as the Graph page (modules, expandable into types, files and directories) and the Source page's module links.
 - Validation: done in `atlas/integrity.py` (manifest hashes and sizes, unlisted files, schema version and required fields, pinned 40-character SHAs and revision references, relative paths, shard indexes against shard files, story text artefacts). Open: stricter per-field types, and checking quoted text against CHANGELOGs and source files (only commit subjects can be checked from the dataset, and that is a warning).
-- `atlas inspect` is done (`--entity <id>`, `--dataset`, `--limit`: the row, its edges by type and evidence, the shard it came from, add-on dependencies and releases, module languages and links, and citing stories; a bare name means an add-on). `atlas history` is still a stub. Planned: `history --repository <name>` prints commits by year, releases, busiest months and top contributors, with `--year`, `--since` and `--path` (file history).
-- Accessibility audit: first pass done. axe (WCAG 2.1 A and AA) passes on 15 pages in both themes, and no page scrolls sideways at 390 px (both run in `e2e/audit.spec.ts`). Not covered: a keyboard-only walkthrough, screen reader testing, and contrast of the graph canvas labels in dark mode.
+- `atlas inspect` is done (`--entity <id>`, `--dataset`, `--limit`: the row, its edges by type and evidence, the shard it came from, add-on dependencies and releases, module languages and links, and citing stories; a bare name means an add-on). `atlas history --repository <name>` is done too: commits by year, releases, busiest months and top contributors, with `--year`, `--since` and `--path` (file history).
+- Accessibility audit: first pass done. axe (WCAG 2.1 A and AA) passes on 15 pages in both themes, and no page scrolls sideways at 390 px (both run in `e2e/audit.spec.ts`). Not covered: a keyboard-only walkthrough, screen reader testing, and a contrast check of the graph canvas labels in dark mode (they now have an outline in the page colour, but it has not been measured).
 - Licence file and attribution notices for the Atlas repository: done. `LICENSE` is Apache 2.0, and the README says the logo artwork and the upstream-derived data keep their own licences. No copyright holder or per-file headers yet.
-- Performance: symbols and relationships are sharded per module (done); the module graph is `module_graph.json` (24 KB). Remaining: the shard index for zap-extensions is 5 MB raw (0.5 MB gzipped).
+- Performance: symbols and relationships are sharded per module (done); the module graph is `module_graph.json` (about 40 KB). Remaining: the shard index for zap-extensions is 5 MB raw (0.5 MB gzipped).
 - Least privilege: the analyze job no longer overrides to `contents: write` (done, CI passed without it).
 
-## Planned: interactive resources
+## Interactive resources (built)
 
-1. **Zoomable timeline** (first version done: `timeline.json` monthly commits and active authors per repo, weekly bars from the year shards when zoomed in, hover tooltips, core and HUD release lines, story markers, a strip of add-on releases under each lane that opens the Releases page for that repository and period, table alternative; line counts are in: Lines added and Lines deleted per month or week, from each commit's totals; a Focus selector shows one module's own monthly activity (commits, authors, lines) with only that add-on's releases, on current paths so moved files keep their history, with no weekly detail. a Core team lane built from the history of the help credits page (each person is listed from the first version of the page that names them until the first later one that does not; names only, rows with email addresses are skipped, aliases are merged), and story diamonds coloured by group, which marks the student projects. The Focus selector also offers directories (to depth 4, at least 50 commits) and languages, monthly only and without the add-on release strip (`timeline_sections.json`). The Hall of Fame list itself is not in the data, only the projects that have stories). Four repositories stacked. A small precomputed
+1. **Zoomable timeline** (done: `timeline.json` monthly commits and active authors per repo, weekly bars from the year shards when zoomed in, hover tooltips, core and HUD release lines, story markers, a strip of add-on releases under each lane that opens the Releases page for that repository and period, table alternative; line counts are in: Lines added and Lines deleted per month or week, from each commit's totals; a Focus selector shows one module's own monthly activity (commits, authors, lines) with only that add-on's releases, on current paths so moved files keep their history, with no weekly detail; a Core team lane built from the history of the help credits page (each person is listed from the first version of the page that names them until the first later one that does not; names only, rows with email addresses are skipped, aliases are merged), and story diamonds coloured by group, which marks the student projects and are packed into rows by screen position so none sits on another; repository checkboxes (kept in the URL as `?hide=`); and a Select range toggle (or Shift+drag) that zooms to the dragged range. The Focus selector also offers directories (to depth 4, at least 50 commits) and languages, monthly only and without the add-on release strip (`timeline_sections.json`). The Hall of Fame list itself is not in the data, only the projects that have stories). Original design: four repositories stacked. A small precomputed
    monthly aggregate (commits, lines added and removed, active contributors) per repo
    and module or add-on; zooming below a month loads the per-year commit shards.
    Sub-section selector (repo, add-on, language, path prefix). Overlays: release tags,
    story milestones, Hall of Fame projects, core-team changes. Stories can link to a
    range or module.
-2. **Weighted graph explorer (GitNexus-style)** (first version done: module-level graph from `module_graph.json` with Sigma.js, Graphology and ForceAtlas2, edge-type filters, neighbour table and module picker; module expansion into its 40 most connected types, a year slider, recency colouring, size by commits or lines changed, and an evidence filter are done; a module can also be expanded into its 40 most connected files with their directories; activity follows renames, so moved files and modules keep their earlier history; a tree beside the graph lists the modules and the files, directories or types of expanded ones and works by keyboard; a language filter (modules where the language is at least 20% of their lines), colour by main language, a repository filter and a find box are done; help pages are shown as files of a module expanded into files, linked by REFERENCES (the 20 most linked, added to the 40 source files; other non-Java files have no relationships and are not shown); open: a sunburst view). A force-directed knowledge graph of
+2. **Weighted graph explorer (GitNexus-style)** (done: module-level graph from `module_graph.json` with Sigma.js, Graphology and ForceAtlas2, edge-type filters, neighbour table and module picker; module expansion into its 40 most connected types, a year slider, recency colouring, size by commits or lines changed, and an evidence filter are done; a module can also be expanded into its 40 most connected files with their directories; activity follows renames, so moved files and modules keep their earlier history; a tree beside the graph lists the modules and the files, directories or types of expanded ones and works by keyboard; a language filter (modules where the language is at least 20% of their lines), colour by main language, a repository filter and a find box are done; help pages are shown as files of a module expanded into files, linked by REFERENCES (the 20 most linked, added to the 40 source files; other non-Java files have no relationships and are not shown); open: a sunburst view). A force-directed knowledge graph of
    all four repositories together, rendered with WebGL (Sigma.js and Graphology, both
    MIT; GitNexus itself is PolyForm Noncommercial, so we take the idea, not its code).
    - Nodes: repositories, modules and add-ons, directories, files, types, and
@@ -66,28 +66,56 @@ differs, and what is planned next. Update it with each change that moves an item
      neighbours alongside the canvas.
    - Data: a per-module aggregate edge file and per-module node files, so a view loads
      only what it shows (this also motivates per-module shards).
-   A hierarchical sunburst stays an optional second view of the same data.
+   A hierarchical sunburst stays an optional second view of the same data. The Graph page also has the sweep through time (below).
 3. **Add-on dependency network**: done as the Graph page's "Add-on dependencies" view (only `DEPENDS_ON` edges, drawn as arrows from an add-on to what it depends on, modules with no dependency edge dropped, size by how many add-ons depend on a module); the Source page's dependency table links to it. The **core-team swimlane** is done, on the timeline.
 
 Built with D3 modules for scales, zoom, brush and hierarchy, rendered as SVG by React
 (canvas past about 5,000 shapes).
 
-## Planned: ideas agreed with the maintainer (not started)
+## Ideas agreed with the maintainer (all four done)
 
-In this order.
+1. **Timeline: repository checkboxes.** Show or hide each repository's lane; at least one stays visible; the choice is in the URL as `?hide=`.
+2. **Timeline: select a range to zoom.** Shift+drag selects a range, and the Select range toggle next to the zoom buttons makes a plain drag select instead of pan (it works by touch). A translucent band shows the range; releasing zooms to it.
+3. **Full-width mode.** A bold button with an icon above the page content (not in the header, so the navigation does not jump), shown from 1352 px wide on Graph, Timeline, Source, Releases and History; remembered in the browser. Stories and help pages stay narrow for reading.
+4. **Graph: sweep through time.** A Play/Pause control, a month slider (from the first contribution) and speed (0.5x to 4x) under the graph, using `author_modules/<year>.json` (0.6 MB in all). Each month the top 8 people by commits, anyone matching "Always show", and everyone else pooled as "Other" fly in, wait on a ring outside the graph (it zooms out a little on first use to make room), fire pulses inwards at the modules they touched, and leave. A hit module shows its name, and each dot carries its person's name. Pausing keeps the frame. Bots are off unless "Include bots" is ticked. When the card is 820 px wide or more (needs full-width mode) a names column appears beside the graph. The reduced-motion setting turns the animation off and leaves the text summary. Open: the Timeline does not link to it, and author aliases are not merged.
 
-1. **Timeline: repository checkboxes** (done; the choice is in the URL as `?hide=`). Show or hide each repository's lane. Keep at least one visible; keep the choice in the URL.
-2. **Timeline: select a range to zoom** (done). Shift+drag selects a range, and a Pan/Select toggle next to the zoom buttons switches the plain drag between panning (today) and selecting (works on touch). A translucent band shows the range; releasing zooms to it with the same transform as "Jump to year".
-3. **Full-width mode** (done: a link above the page content, from 1352 px wide, on Graph, Timeline, Source, Releases and History; remembered in the browser). A header toggle, remembered in the browser, offered only above a minimum screen width. It applies to the data pages (Graph, Timeline, Source, Releases, History); stories and help pages stay narrow for reading. Re-run the phone-width audit afterwards.
-4. **Graph: sweep through time** (done: a Play/Pause control, month slider (from the first contribution) and speed (0.5x to 4x) under the graph; `author_modules/<year>.json`, 0.6 MB in all; the top 8 people by commits each month, anyone matching the "Always show" text, and the rest pooled as "Other" swoop in, wait on a ring outside the graph (it zooms out a little on first use to make room), pulse inwards to the modules they touched and leave; a hit module shows its name; pausing keeps the frame and names; bots are off unless "Include bots" is ticked; the names move to a column beside the graph when the card is 820 px wide or more, which needs full-width mode; the reduced-motion setting turns the animation off and leaves the text summary; open: the Timeline does not link to it, author aliases are not merged). The sweep idea in the original wording: a play and scrub control below the graph (keeping the year slider), who committed in a month near the modules they touched.
+## Options (not agreed, not started)
 
-## Planned: page improvements (from review)
+Ideas from a Gemini list (written from the project description; it could not open the site), reduced to what is not already built. Order is not priority. "Needs" says what data or work each depends on.
+
+**Graph and code**
+- **Evidence in the line style:** draw resolved edges solid, inferred dashed and syntactic dotted. The evidence filter exists; the style does not. Small.
+- **Pathfinding:** pick two nodes (modules, types, add-ons) and show the shortest or typed path between them, respecting the evidence filter. Medium; the data is there.
+- **Focus mode:** lock a centre node, expand 1 or 2 hops on demand, and hide high-degree utility types and syntactic edges. Expansion into types and files exists; hops and pinning do not.
+- **Extension-point map:** choose a core class or interface (ExtensionAdaptor, AbstractPlugin and so on) and list every add-on that extends or implements it, grouped by add-on status. Cross-repository `EXTENDS` and `IMPLEMENTS` edges are in the data. Medium.
+- **Blast radius:** from an add-on or module, highlight everything that depends on it, and everything it depends on, through all levels. The dependency view shows direct links only. Small to medium.
+- **Help-page graph:** hubs, dead ends and cross-add-on help links, from the help link graph that is in the data but not drawn. Medium.
+
+**Timeline and history**
+- **Spike to graph:** click a burst of activity on the Timeline and open the Graph with the modules touched in that window highlighted. Needs a link format; the activity data exists. Medium.
+- **Core to add-on migration view:** how much code and how many help pages sat in core and in add-ons over the years, as stacked areas; also languages over time as a streamgraph. Needs a new aggregate; the language focus exists but not the stacked view. Medium.
+- **Add-on lifecycle:** alpha, beta, release and retired over time. Needs add-on status per release (changelogs and manifests), which the dataset has only for the current revision. Larger (touches M5).
+- **File lineage:** the rename-aware path history of a file, class or help page, with files that often change together. History follows renames; there is no lineage page. Medium.
+- **Code and docs drift:** align commits to an add-on's code against commits to its help pages, and flag heavy code change with no doc change. Both histories exist. Medium.
+- **Added and removed connections over time:** the Graph's year slider fades by first and last activity only. Showing links as they appear and disappear needs the M5 historical analysis (symbol events and snapshots).
+
+**Stories**
+- **Scrollytelling:** a story reader with a sticky side panel that follows the chapter (the commit, the module, the help page). Medium to large.
+- **Evidence drawer:** click a citation to open a panel with the commit's details, parents and tags, and the GitHub permalink, without leaving the story. Small to medium.
+- **Shareable trails:** pin 3 to 8 entities with notes into a URL-encoded trail to share. Medium.
+
+**Tools**
+- **Search prefixes:** `t:` types, `a:` add-ons, `c:` commits, `h:` help pages, from a Cmd/Ctrl+K palette. Search groups exist; the prefixes and the shortcut do not. Small.
+- **Copy for GitHub:** a button on a type, commit or add-on that copies a Markdown block (name, owner, status, permalink). Small.
+- **SQL console:** DuckDB-Wasm over the shards, loaded only when opened. Heavy download and the shards are large; low priority.
+
+## Page improvements (from review)
 
 - **Repositories:** done. A repository with more than 5 modules folds its module list behind "Modules (N)"; the stats and language bars stay visible.
 - **Stories:** done. One flat list with a group tag on each card (no group headings), a group filter, and a sort by date or title, ascending or descending.
-- **Source and Architecture:** merged into one Source page (done): module and directory tree on the left, tabs for module links (from `module_graph.json`), symbols, relationships and add-on dependencies. Each module loads only its own shards. Open: file-level pages with history, a drawn graph (the graph explorer).
+- **Source and Architecture:** merged into one Source page (done): module and directory tree on the left, tabs for module links (from `module_graph.json`), symbols, relationships and add-on dependencies. Each module loads only its own shards. Open: file-level pages with history (the drawn graph is the Graph page).
 
-## Planned: stories
+## Stories: the plan and what is left
 
 - Per-project stories for every Student Hall of Fame entry (2012 to 2023), each with
   its arc: first commit, enhancements, moves, current state.
@@ -95,7 +123,7 @@ In this order.
   dark mode and themes, Docker images, the Automation Framework, authentication
   (Auth Helper, browser-based and client-script authentication, TOTP, OAuth, assisted auth).
 
-- **Release and tag milestones.** Link releases and tags (zaproxy `v2.x`, weekly tags,
+- **Release and tag milestones** (done: `milestones.jsonl`, the Releases page, history markers, add-on release lists and story references). Link releases and tags (zaproxy `v2.x`, weekly tags,
   zap-extensions per-add-on release tags, zap-core-help) to the history explorer, the
   stories and the timeline: a `Milestone` entity per release with its date, tag, commit
   and release-notes page, shown as markers on the timeline and the history view, and
@@ -118,12 +146,13 @@ against 84 for a full run, output identical for all 673 files; the saving in CI 
 
 ## Next
 
-1. Stories: 24 of 41 are marked `reviewed` (19 projects and 5 history). 17 remain draft: the 11 feature stories, plus BIRT reporting, CMS scanner, bug tracker, Authentication helper and DOM XSS scanner.
+1. Stories: 29 of 47 are marked `reviewed` (20 projects, 6 history, 3 features). 18 remain draft: 12 features, 4 projects and 2 history. Review is done by the maintainer; stories are never regenerated, but a story whose cited entity disappears upstream fails the build.
 2. M3 remainder: a compiler-backed pass for overloads, generics and chained calls (optional).
 3. ~~Release and tag milestones~~ (done: `milestones.jsonl`, Releases page, history markers, add-on release lists, story references).
-4. ~~Timeline~~ (first version done), ~~graph explorer~~ (module level and type expansion done).
+4. ~~Timeline~~, ~~graph explorer~~ and the four agreed ideas (all done).
 5. ~~Per-module shards~~, ~~workflow `ref` and `repo_refs` inputs~~ (now passed to `atlas analyze --ref/--repo-refs`; `checkout_sources.py` removed; CI passed with empty inputs and with `repo_refs` set to zap-hud v0.19.0),  ~~licence~~, ~~validator integrity checks~~, ~~zap-hud as a fourth repository~~, ~~accessibility first pass~~, ~~least-privilege CI~~ (all done).
 6. Open, roughly in order of value:
    - Graph: the plan is done apart from the optional sunburst view (and non-Java files other than help pages).
    - Keyboard-only and screen reader accessibility testing, including the graph canvas.
    - M5 historical analysis and the optional M3 compiler-backed pass.
+   - The options listed above, starting with the small ones.
