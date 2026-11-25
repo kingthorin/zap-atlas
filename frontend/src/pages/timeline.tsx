@@ -10,7 +10,7 @@ import { Loading, ErrorBox } from "../components/ui";
 const TEAM_ROW = 12, TEAM_HEAD = 24;      // the core team lane: one row per concurrent member
 const GROUP_COLOR: Record<string, [string, string]> = { projects: ["#e08e00", "#7a4f00"], features: ["#4389ff", "#00457f"], history: ["#94a3b8", "#475569"] };
 const GROUP_NAME: Record<string, string> = { projects: "student project", features: "feature", history: "project history" };
-const W = 1000, ML = 124, MR = 12, LANE_H = 120, TOP = 18, STORY_H = 44, AXIS_H = 26;
+const W = 1000, ML = 124, MR = 12, LANE_H = 120, TOP = 18, STORY_H = 68, STORY_ROWS = 5, MARK_GAP = 14, AXIS_H = 26;
 const REPO_COLOR: Record<string, string> = { zaproxy: "#4389ff", "zap-extensions": "#e08e00", "zap-core-help": "#2f9e6f", "zap-hud": "#8e5bd0" };
 // Cursor over the chart; "grabbing" shows while dragging. Try "crosshair", "grab" or "pointer".
 const CURSOR = "crosshair";
@@ -212,8 +212,19 @@ export default function TimelinePage() {
   const inView = (a: Date, b: Date = a) => x(b) >= ML && x(a) <= W - MR;
   const releases = milestones.filter(m => m.kind !== "addon-release" && inView(new Date(m.date)));
   const dated = stories.map(s => ({ s, d: storyDate(s.date) })).filter((r): r is { s: Story; d: Date } => !!r.d);
-  const perDay = new Map<string, number>();
-  const levelOf = (s: Story) => { const k = s.date ?? ""; const n = perDay.get(k) ?? 0; perDay.set(k, n + 1); return n % 3; };
+  // Story markers are packed into rows by where they are on screen: a marker goes on the first row that is free
+  // MARK_GAP pixels to its left; if every row is busy it takes the one with most room. Every story is packed, in view
+  // or not, so the rows stay put while panning and only change when zooming.
+  const rowOf = new Map<string, number>();
+  {
+    const ends = Array<number>(STORY_ROWS).fill(-Infinity);
+    for (const { s, d } of [...dated].sort((a, b) => a.d.getTime() - b.d.getTime())) {
+      const cx = x(d);
+      let row = ends.findIndex(e => cx - e >= MARK_GAP);
+      if (row < 0) row = ends.indexOf(Math.min(...ends));
+      ends[row] = cx; rowOf.set(s.id, row);
+    }
+  }
   const ticks = x.ticks(8);
   const fmt = x.tickFormat(8);
   const years = base.ticks(20).map(d => d.getUTCFullYear());
@@ -393,7 +404,7 @@ export default function TimelinePage() {
               );
             }))}
             {dated.filter(r => inView(r.d)).map(({ s, d }) => {
-              const cx = x(d), cy = TOP + 8 + levelOf(s) * 12;
+              const cx = x(d), cy = TOP + 8 + (rowOf.get(s.id) ?? 0) * 12;
               return (
                 <Link key={s.id} to={`/stories/${slugOf(s.id)}`}>
                   <title>{`${s.title} · ${s.date} · ${GROUP_NAME[s.group ?? ""] ?? "story"}`}</title>

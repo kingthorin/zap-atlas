@@ -151,35 +151,52 @@ test("timeline draws the repositories with markers, zooms and has a table", asyn
   await expect(status).toContainText("weekly bars");
   const plot = page.locator("svg[role=group] rect[style*='touch-action']");
   const box = (await plot.boundingBox())!;
-  const scale = box.width / 864;                      // svg units to pixels; lane geometry is fixed in svg units (extensions lane: bars near y=244, release strip near y=290)
-  await page.mouse.move(box.x + box.width * 0.7, box.y + 244 * scale);
+  const scale = box.width / 864;                      // svg units to pixels; lane geometry is fixed in svg units (extensions lane: bars near y=268, release strip near y=314)
+  await page.mouse.move(box.x + box.width * 0.7, box.y + 268 * scale);
   await expect(page.getByRole("tooltip")).toContainText(/ · \d+ commits?/);
   await page.getByLabel("Show").selectOption("added");
-  await page.mouse.move(box.x + box.width * 0.7, box.y + 244 * scale);
+  await page.mouse.move(box.x + box.width * 0.7, box.y + 268 * scale);
   await expect(page.getByRole("tooltip")).toContainText(/ · [\d,]+ lines? added/);
   await page.getByLabel("Show").selectOption("commits");
   await page.getByLabel("Focus").selectOption({ label: "zap-extensions · addOns/automation" });   // one add-on's own activity
-  await page.mouse.move(box.x + box.width * 0.7, box.y + 244 * scale);
+  await page.mouse.move(box.x + box.width * 0.7, box.y + 268 * scale);
   await expect(page.getByRole("tooltip")).toContainText(/^zap-extensions · addOns\/automation · 20\d\d-\d\d · \d+ commits?/);
   await page.getByLabel("Focus").selectOption({ label: "zap-extensions · Java" });                  // a language
-  await page.mouse.move(box.x + box.width * 0.7, box.y + 244 * scale);
+  await page.mouse.move(box.x + box.width * 0.7, box.y + 268 * scale);
   await expect(page.getByRole("tooltip")).toContainText(/^zap-extensions · Java · 20\d\d-\d\d · \d+ commits?/);
   await page.getByLabel("Focus").selectOption({ label: "zap-extensions · addOns/automation/" });  // a directory
-  await page.mouse.move(box.x + box.width * 0.7, box.y + 244 * scale);
+  await page.mouse.move(box.x + box.width * 0.7, box.y + 268 * scale);
   await expect(page.getByRole("tooltip")).toContainText(/^zap-extensions · addOns\/automation · 20\d\d-\d\d · \d+ commits?/);
   await page.getByLabel("Focus").selectOption("");
-  await page.mouse.move(box.x + box.width * 0.9, box.y + 290 * scale); // release strip under the zap-extensions lane
+  await page.mouse.move(box.x + box.width * 0.9, box.y + 314 * scale); // release strip under the zap-extensions lane
   await expect(page.getByRole("tooltip")).toContainText(/\d+ add-on releases?: /);
-  await page.mouse.click(box.x + box.width * 0.9, box.y + 290 * scale);
+  await page.mouse.click(box.x + box.width * 0.9, box.y + 314 * scale);
   await expect(page).toHaveURL(/releases\?kind=addon-release&repo=zap-extensions&from=\d{4}-\d\d-\d\d&to=/);
   await expect(page.getByText(/\d+ releases, newest first · zap-extensions from/)).toBeVisible();
   await page.goBack();
   await page.mouse.move(0, 0);
   await expect(page.getByRole("tooltip")).toHaveCount(0);
-  await page.mouse.move(box.x + box.width * 0.55, box.y + 584 * scale);          // the second row of the core team lane under the four repository lanes, where Simon Bennetts (listed throughout) sits
+  await page.mouse.move(box.x + box.width * 0.55, box.y + 608 * scale);          // the second row of the core team lane under the four repository lanes, where Simon Bennetts (listed throughout) sits
   await expect(page.getByRole("tooltip")).toContainText(/^Simon Bennetts · in the credits' core team from 2010-12-04 to now/);
   await page.getByText("Table: commits per year").click();
   await expect(page.getByRole("table", { name: "Commits per year by repository" })).toBeVisible();
+});
+
+test("timeline: story markers are packed so that none sits on another", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 1100 });
+  await page.goto("timeline");
+  const overlapping = async () => page.evaluate(() => {
+    const pts = [...document.querySelectorAll("svg a[href*='/stories/'] path")].map(p => { const r = p.getBoundingClientRect(); return [r.x + r.width / 2, r.y + r.height / 2]; });
+    let n = 0;
+    for (let i = 0; i < pts.length; i++) for (let j = i + 1; j < pts.length; j++) if (Math.abs(pts[i][0] - pts[j][0]) < 6 && Math.abs(pts[i][1] - pts[j][1]) < 6) n++;
+    return { total: pts.length, n };
+  });
+  await expect(page.locator("svg a[href*='/stories/'] path").first()).toBeVisible();
+  const whole = await overlapping();
+  expect(whole.total).toBeGreaterThan(20);
+  expect(whole.n).toBe(0);                                                                    // fully zoomed out
+  await page.getByRole("combobox", { name: /Jump to/ }).selectOption("2013");
+  expect((await overlapping()).n).toBe(0);                                                    // and in a year with many stories
 });
 
 test("timeline: repositories can be hidden, a dragged range zooms, and the choices survive", async ({ page }) => {
