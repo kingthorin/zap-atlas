@@ -278,6 +278,30 @@ test("add-on releases are grouped by year without listing every row", async ({ p
   expect(await page.locator("section[aria-label] tbody tr").count()).toBe(200);
 });
 
+test("releases: latest line, most released add-ons and a monthly heatmap", async ({ page }) => {
+  await page.goto("releases");
+  await expect(page.getByText(/^Latest ZAP release: ZAP \d.*latest add-on release: /)).toBeVisible();
+  await page.getByRole("tab", { name: /^Add-on releases/ }).click();
+  const total = Number((await page.getByText(/^[\d,]+ releases, newest first/).textContent())!.match(/^([\d,]+)/)![1].replace(/,/g, ""));
+  const chips = page.getByRole("group", { name: "Most released add-ons" }).getByRole("button");
+  await expect(chips).toHaveCount(12);
+  const counts = await chips.allTextContents();
+  const n = (t: string) => +t.match(/\((\d+)\)$/)![1];
+  expect([...counts].map(n)).toEqual([...counts].map(n).sort((a, b) => b - a));
+  await chips.first().click();
+  await expect(page).toHaveURL(/add=/);
+  await expect(page.getByText(new RegExp(`^${n(counts[0])} releases, newest first`))).toBeVisible();
+  await chips.first().click();                                                  // a second click clears it
+  await expect(page.getByText(/^[\d,]+ releases, newest first/)).toContainText(total.toLocaleString());
+  const cells = page.getByRole("group", { name: /Add-on releases per month/ }).getByRole("button");
+  await expect(cells.first()).toBeVisible();
+  const label = await cells.first().getAttribute("aria-label");
+  const [, month, c] = label!.match(/^(\d{4}-\d\d): (\d+) /)!;
+  await cells.first().click();
+  await expect(page).toHaveURL(new RegExp(`from=${month}-01`));
+  await expect(page.getByText(new RegExp(`^${c} releases?, newest first`))).toBeVisible();
+});
+
 test("timeline draws the repositories with markers, zooms and has a table", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 1100 });      // tall enough to hover the core team lane at the bottom of the chart
   await page.goto("timeline");

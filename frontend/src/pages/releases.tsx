@@ -11,6 +11,35 @@ const KINDS: { id: string; label: string }[] = [
   { id: "extensions-release", label: "Early zap-extensions releases" },
 ];
 const day = (iso: string) => iso.slice(0, 10);
+const addonKey = (m: Milestone) => m.tag.replace(/-v\d+(\.\d+)*$/, "");   // the add-on a tag belongs to (the `addon` field is empty for some)
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const nextMonth = (y: number, m: number) => (m === 12 ? `${y + 1}-01-01` : `${y}-${String(m + 1).padStart(2, "0")}-01`);
+
+/** Add-on releases per month, one row per year; a cell filters the list to that month. */
+function Heatmap({ rows, onPick }: { rows: Milestone[]; onPick: (from: string, to: string) => void }) {
+  const counts = new Map<string, number>();
+  rows.forEach(m => counts.set(day(m.date).slice(0, 7), (counts.get(day(m.date).slice(0, 7)) ?? 0) + 1));
+  const years = [...new Set(rows.map(m => +day(m.date).slice(0, 4)))].sort((a, b) => b - a);
+  const max = Math.max(1, ...counts.values());
+  return (
+    <div className="rounded-xl border border-slate-200 bg-white p-3 overflow-x-auto">
+      <div role="group" aria-label="Add-on releases per month; choose a month to list it" className="inline-grid gap-1" style={{ gridTemplateColumns: "3rem repeat(12, 1.75rem)" }}>
+        <span />{MONTHS.map(m => <span key={m} className="text-center text-xs text-slate-500">{m}</span>)}
+        {years.map(y => (
+          <div key={y} className="contents">
+            <span className="text-xs text-slate-500 self-center">{y}</span>
+            {MONTHS.map((_, i) => {
+              const key = `${y}-${String(i + 1).padStart(2, "0")}`, n = counts.get(key) ?? 0;
+              return n ? <button key={key} aria-label={`${key}: ${n} ${n === 1 ? "release" : "releases"}`} title={`${key}: ${n}`} onClick={() => onPick(`${key}-01`, nextMonth(y, i + 1))}
+                className="h-6 rounded-sm border border-indigo-300 hover:ring-2 hover:ring-indigo-500" style={{ background: `rgb(67 137 255 / ${0.15 + 0.85 * (n / max)})` }} />
+                : <span key={key} className="h-6 rounded-sm bg-slate-100" aria-hidden="true" />;
+            })}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 function useReleases() {
   const [data, setData] = useState<{ ms: Milestone[]; repos: Repo[]; windows: CoreWindows } | null>(null);
@@ -113,9 +142,10 @@ export default function Releases() {
   const [params, setParams] = useSearchParams();
   const kind = params.get("kind") ?? "core-release";
   const q = (params.get("q") ?? "").toLowerCase();
+  const addon = params.get("add") ?? "";
   const repoFilter = params.get("repo") ?? "", from = params.get("from") ?? "", to = params.get("to") ?? ""; // `to` is exclusive
   const [shown, setShown] = useState(100);
-  useEffect(() => setShown(100), [kind, q]);
+  useEffect(() => setShown(100), [kind, q, addon]);
   const [picked, setPicked] = useState("");                       // the ZAP release chosen on the strip
   useEffect(() => {                                               // keep sticky year headings under the site header
     const set = () => document.documentElement.style.setProperty("--hdr", `${document.querySelector("header")?.getBoundingClientRect().height ?? 64}px`);
@@ -130,13 +160,21 @@ export default function Releases() {
 
   const rows = useMemo(() => (data?.ms ?? [])
     .filter(m => m.kind === kind && (!q || m.title.toLowerCase().includes(q) || m.tag.toLowerCase().includes(q))
-      && (!repoFilter || m.repository === repoFilter) && (!from || day(m.date) >= from) && (!to || day(m.date) < to))
-    .sort((a, b) => b.date.localeCompare(a.date)), [data, kind, q, repoFilter, from, to]);
+      && (!addon || addonKey(m) === addon) && (!repoFilter || m.repository === repoFilter) && (!from || day(m.date) >= from) && (!to || day(m.date) < to))
+    .sort((a, b) => b.date.localeCompare(a.date)), [data, kind, q, addon, repoFilter, from, to]);
+  const top = useMemo(() => {
+    const by = new Map<string, { name: string; n: number }>();
+    (data?.ms ?? []).filter(m => m.kind === "addon-release").forEach(m => { const k = addonKey(m), e = by.get(k); e ? e.n++ : by.set(k, { name: m.title.replace(/ \d+(\.\d+)*$/, ""), n: 1 }); });
+    return [...by.entries()].sort((a, b) => b[1].n - a[1].n || a[1].name.localeCompare(b[1].name)).slice(0, 12);
+  }, [data]);
   if (error) return <ErrorBox message={error} />;
   if (!data) return <Loading />;
   const repoOf = (name: string) => data.repos.find(r => r.name === name);
   const core = data.ms.filter(m => m.kind === "core-release").sort((a, b) => a.date.localeCompare(b.date));
   const prevOf = new Map(core.map((m, i) => [m.id, core[i - 1]]));
+  const addonAll = data.ms.filter(m => m.kind === "addon-release");
+  const latest = (list: Milestone[]) => list.reduce<Milestone | undefined>((a, m) => (!a || m.date > a.date ? m : a), undefined);
+  const latestCore = latest(core), latestAddon = latest(addonAll);
   const withNotes = core.filter(m => m.release_notes).length;
   const years: { year: string; all: number; rows: Milestone[] }[] = [];
   const perYear = new Map<string, number>();
@@ -162,6 +200,10 @@ export default function Releases() {
         core help. Weekly tags are not listed. Dates are tag dates (the tagged commit's date for lightweight tags), which for
         some early releases is later than the actual release.
       </p>
+      {latestCore && (
+        <p className="text-sm text-slate-700">Latest ZAP release: <Link className="text-indigo-600 hover:underline font-semibold" to={`/release/${encodeURIComponent(latestCore.id)}`}>{latestCore.title}</Link> ({day(latestCore.date)})
+          {latestAddon && <> · latest add-on release: <Link className="text-indigo-600 hover:underline font-semibold" to={`/release/${encodeURIComponent(latestAddon.id)}`}>{latestAddon.title}</Link> ({day(latestAddon.date)})</>}</p>
+      )}
       <div className="flex flex-wrap gap-2" role="tablist">
         {KINDS.map(k => (
           <button key={k.id} role="tab" aria-selected={kind === k.id} onClick={() => set("kind", k.id === "core-release" ? "" : k.id)}
@@ -174,9 +216,21 @@ export default function Releases() {
         className="w-full md:w-80 rounded border border-slate-200 bg-white px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" />
       <p className="text-sm text-slate-500" aria-live="polite">
         {rows.length.toLocaleString()} releases, newest first
-        {(repoFilter || from || to) && <> · {repoFilter}{from && <> from {from}</>}{to && <> to {to} (not including)</>}{" "}
-          <button className="text-indigo-600 hover:underline" onClick={() => { const n = new URLSearchParams(params); ["repo", "from", "to"].forEach(k => n.delete(k)); setParams(n, { replace: true }); }}>Clear</button></>}
+        {(repoFilter || from || to || addon) && <> · {addon}{repoFilter}{from && <> from {from}</>}{to && <> to {to} (not including)</>}{" "}
+          <button className="text-indigo-600 hover:underline" onClick={() => { const n = new URLSearchParams(params); ["repo", "from", "to", "add"].forEach(k => n.delete(k)); setParams(n, { replace: true }); }}>Clear</button></>}
       </p>
+      {kind === "addon-release" && (
+        <>
+          <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Most released add-ons">
+            <span className="text-sm text-slate-600">Most released:</span>
+            {top.map(([k, e]) => (
+              <button key={k} aria-pressed={addon === k} onClick={() => set("add", addon === k ? "" : k)}
+                className={`px-2 py-0.5 rounded text-xs border ${addon === k ? "bg-indigo-600 text-white border-indigo-600" : "bg-white text-slate-700 border-slate-300"}`}>{e.name} ({e.n})</button>
+            ))}
+          </div>
+          <Heatmap rows={addonAll} onPick={(f, t) => { const n = new URLSearchParams(params); n.set("from", f); n.set("to", t); setParams(n, { replace: true }); }} />
+        </>
+      )}
       {kind === "core-release" && core.length > 0 && <ReleaseStrip core={core} selected={core.find(m => cardId(m) === picked)?.id ?? ""} onPick={pick} />}
       {kind === "core-release" && <p className="text-sm text-slate-500">{withNotes} of {core.length} ZAP releases have release notes in the core help; the others say so.</p>}
       {kind === "core-release" ? years.map(y => (

@@ -4,7 +4,7 @@ import { expect, test } from "@playwright/test";
 // WCAG 2.1 A and AA checks (axe) on every kind of page, in both themes. Fails on any violation.
 
 const ROUTES = ["", "repositories", "source", "source?repo=zap-extensions&mod=addOns/automation&tab=symbols",
-  "source?repo=zap-extensions&mod=addOns/automation&tab=rels", "source?tab=deps", "graph", "timeline", "history", "releases",
+  "source?repo=zap-extensions&mod=addOns/automation&tab=rels", "source?tab=deps", "graph", "timeline", "history", "releases", "releases?kind=addon-release",
   "stories", "stories/feature-auth-helper", "search?q=spider", "addon/addon%3Aspider", "symbol/symbol%3Azap-extensions%3Aorg.zaproxy.addon.automation.AutomationJob"];
 
 for (const scheme of ["light", "dark"] as const) {
