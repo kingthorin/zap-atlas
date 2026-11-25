@@ -201,6 +201,13 @@ export interface Milestone { id: string; repository: string; title: string; date
 export async function loadMilestones(): Promise<Milestone[]> {
   return loadChunk("milestones.jsonl") as Promise<Milestone[]>;
 }
+/** milestone id -> commits between the previous ZAP release and this one, and the top contributors (published names). */
+export type CoreWindows = Record<string, { n: number; top: [string, number][] }>;
+let coreWindowsCache: Promise<CoreWindows> | null = null;
+export function loadCoreWindows(): Promise<CoreWindows> {
+  if (!coreWindowsCache) coreWindowsCache = fetchText(`${DATA_DIR}/core_release_windows.json`).then(t => JSON.parse(t));
+  return coreWindowsCache;
+}
 /** GitHub source tree at a release tag. */
 export function githubTag(repo: Repo, tag: string): string {
   return `${repo.url.replace(/\.git$/, "")}/tree/${tag}`;

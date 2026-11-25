@@ -83,8 +83,9 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if args.command == "timeline":
         from atlas.activity import rebuild_from_shards as rebuild_activity
+        from atlas.release_windows import rebuild_from_shards as rebuild_windows
         from atlas.timeline import rebuild_from_shards
-        print(f"[atlas] wrote {rebuild_from_shards(args.dataset)} and {', '.join(rebuild_activity(args.dataset))}")
+        print(f"[atlas] wrote {rebuild_from_shards(args.dataset)}, {rebuild_windows(args.dataset)} and {', '.join(rebuild_activity(args.dataset))}")
         return 0
     if args.command == "report":
         from atlas.report import build_report

@@ -127,7 +127,7 @@ Ideas from a Gemini list (written from the project description; it could not ope
   dark mode and themes, Docker images, the Automation Framework, authentication
   (Auth Helper, browser-based and client-script authentication, TOTP, OAuth, assisted auth).
 
-- **Release and tag milestones** (done: `milestones.jsonl`, the Releases page, history markers, add-on release lists and story references). Link releases and tags (zaproxy `v2.x`, weekly tags,
+- **Release and tag milestones** (done: `milestones.jsonl`, the Releases page, history markers, add-on release lists and story references). The Releases page: a strip with one keyboard-reachable tick per ZAP release spaced by date (hover or focus for version and date, click or Enter scrolls to the card); lists grouped by year with sticky headings and a per-year count (add-on lists still page 100 rows at a time); ZAP releases as cards with the version, date, days since the previous release, commits in the window, top three contributors (published names, bots left out) from `core_release_windows.json`, and links to the release notes (34 of 35 have them; the card says so when missing), the commit and the source at the tag. Commits in the window are commits dated after the previous release's tag date up to this one's, across all branches in the dataset. Link releases and tags (zaproxy `v2.x`, weekly tags,
   zap-extensions per-add-on release tags, zap-core-help) to the history explorer, the
   stories and the timeline: a `Milestone` entity per release with its date, tag, commit
   and release-notes page, shown as markers on the timeline and the history view, and

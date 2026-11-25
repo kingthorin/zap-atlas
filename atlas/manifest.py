@@ -27,6 +27,7 @@ from atlas.sharding import write_module_shards
 from atlas import fingerprint
 from atlas.activity import write_activity
 from atlas.credits import CORE_TEAM, core_team
+from atlas.release_windows import write_core_windows
 from atlas.timeline import write_timeline
 from atlas.java_parser import JavaParser
 from atlas.schema import (
@@ -221,6 +222,7 @@ class AtlasGenerator:
         (output_dir / HISTORY_INDEX).write_text(jsonfmt.dumps(index), encoding="utf-8")
         names.append(HISTORY_INDEX)
         names.append(write_timeline(output_dir, self.rows[CHUNK_COMMITS]))
+        names.append(write_core_windows(output_dir, self.rows[CHUNK_MILESTONES], self.rows[CHUNK_COMMITS]))
         if self.core_team:
             (output_dir / CORE_TEAM).write_text(jsonfmt.dumps(self.core_team, ensure_ascii=False), encoding="utf-8")
             names.append(CORE_TEAM)

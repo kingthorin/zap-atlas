@@ -243,6 +243,41 @@ test("releases list, a release page, and release markers in history", async ({ p
   await noError(page);
 });
 
+test("ZAP releases: a strip of ticks, year groups and richer cards", async ({ page }) => {
+  await page.goto("releases");
+  const ticks = page.getByRole("group", { name: /ZAP releases over time/ }).getByRole("button");
+  await expect(ticks).toHaveCount(35);
+  await ticks.nth(20).hover();
+  await expect(page.getByRole("tooltip")).toContainText(/^ZAP \d+\.\d+(\.\d+)? · \d{4}-\d\d-\d\d$/);
+  const years = page.locator("section[aria-label] > h2");
+  const counts = (await years.allTextContents()).map(t => +t.match(/(\d+) releases?/)![1]);
+  expect(counts.reduce((a, b) => a + b, 0)).toBe(35);
+  expect((await years.first().textContent())!).toMatch(/^2\d{3}/);
+  const cards = page.locator("section[aria-label] li");
+  await expect(cards).toHaveCount(35);
+  await expect(page.getByText(/^\d+ of 35 ZAP releases have release notes/)).toBeVisible();
+  expect(await page.getByText("No release notes in the core help").count()).toBe(35 - Number((await page.getByText(/ZAP releases have release notes/).textContent())!.match(/^(\d+)/)![1]));
+  const first = cards.last();                                                   // the oldest release, far below the fold
+  await expect(first).toContainText(/days after|first release/);
+  await expect(cards.nth(1)).toContainText(/\d+ days? after .* · [\d,]+ commits? in this window/);
+  await expect(cards.nth(1)).toContainText("Top contributors:");
+  await expect(cards.nth(1)).not.toContainText("@");                            // names only
+  const oldest = ticks.first();
+  await oldest.focus();
+  await page.keyboard.press("Enter");                                           // reachable and operable from the keyboard
+  await expect(first).toBeFocused();
+  await expect(first).toBeInViewport();
+});
+
+test("add-on releases are grouped by year without listing every row", async ({ page }) => {
+  await page.goto("releases?kind=addon-release");
+  await expect(page.locator("section[aria-label] > h2").first()).toContainText(/\d+ releases?/);
+  await expect(page.locator("section[aria-label] tbody tr").first()).toBeVisible();
+  expect(await page.locator("section[aria-label] tbody tr").count()).toBe(100);
+  await page.getByRole("button", { name: /^Show more/ }).click();
+  expect(await page.locator("section[aria-label] tbody tr").count()).toBe(200);
+});
+
 test("timeline draws the repositories with markers, zooms and has a table", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 1100 });      // tall enough to hover the core team lane at the bottom of the chart
   await page.goto("timeline");
