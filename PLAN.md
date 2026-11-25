@@ -84,8 +84,6 @@ Built with D3 modules for scales, zoom, brush and hierarchy, rendered as SVG by 
 Ideas from a Gemini list (written from the project description; it could not open the site), reduced to what is not already built. Order is not priority. "Needs" says what data or work each depends on.
 
 **Graph and code**
-- **Evidence in the line style:** draw resolved edges solid, inferred dashed and syntactic dotted. The evidence filter exists; the style does not. Sigma has no dashed edges built in, so this needs a custom WebGL edge program (medium), or a cheaper stand-in: shade each link by the share of resolved edges behind it (small).
-- **Pathfinding:** pick two nodes (modules, types, add-ons) and show the shortest or typed path between them, respecting the evidence filter. Medium; the data is there.
 - **Focus mode:** lock a centre node, expand 1 or 2 hops on demand, and hide high-degree utility types and syntactic edges. Expansion into types and files exists; hops and pinning do not.
 - **Extension-point map:** choose a core class or interface (ExtensionAdaptor, AbstractPlugin and so on) and list every add-on that extends or implements it, grouped by add-on status. Cross-repository `EXTENDS` and `IMPLEMENTS` edges are in the data. Medium.
 - **Blast radius:** from an add-on or module, highlight everything that depends on it, and everything it depends on, through all levels. The dependency view shows direct links only. Small to medium.
@@ -101,7 +99,7 @@ Ideas from a Gemini list (written from the project description; it could not ope
 
 **Stories**
 - **Scrollytelling:** a story reader with a sticky side panel that follows the chapter (the commit, the module, the help page). Medium to large.
-- **Evidence drawer:** click a citation to open a panel with the commit's details, parents and tags, and the GitHub permalink, without leaving the story. Small to medium.
+- **Evidence drawer** (done): a citation to a commit, release, help page, add-on, module or repository opens a panel beside the story with the verified details (for a commit: SHA, GitHub permalink, author, parents, branches, tags and changed files), a link to the full page and Copy for GitHub. Escape closes it.
 - **Shareable trails:** pin 3 to 8 entities with notes into a URL-encoded trail to share. Medium.
 
 **Tools**
@@ -109,6 +107,11 @@ Ideas from a Gemini list (written from the project description; it could not ope
 - **Copy for GitHub** (done): a button on the symbol, commit and add-on pages that copies a Markdown block with a link pinned to the analysed commit.
 - **Export as video** (done as WebM only): a Record WebM button on the sweep plays from the chosen month to the end and saves a clip of the graph area. The tab must stay visible and the window must not be resized (it stops if it is, and the width toggle is disabled meanwhile). Real time only. MP4 and animated WebP were left out (MP4 works only in some browsers; WebP needs an encoder library and frame-by-frame rendering).
 - **SQL console:** DuckDB-Wasm over the shards, loaded only when opened. Heavy download and the shards are large; low priority.
+
+### Considered and ruled out
+
+- **Graph pathfinding** (shortest or typed path between two nodes). The maintainer doubted it fits ZAP, and the data agrees: `zap (core)` is linked to almost every module, so most shortest paths are just "A, core, B" and say nothing. The add-on dependency graph is small enough to read directly; "blast radius" above covers the useful part.
+- **Evidence in the line style** (solid, dashed and dotted by resolved, inferred and syntactic, or shading by the share of resolved edges). Not practical at the default zoom: a link between two modules combines many calls and imports, so nearly every link mixes evidence and comes out the same tone. It would only show something when a module is expanded into types, where each link is one edge, and Sigma has no dashed edges without a custom WebGL program. The evidence filter already does the job.
 
 ## Page improvements (from review)
 

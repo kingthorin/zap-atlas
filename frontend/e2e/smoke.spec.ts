@@ -147,6 +147,24 @@ test("stories are one flat list tagged by group, sortable and filterable", async
   expect(await cards.count()).toBeLessThan(asc.length);
 });
 
+test("a story's citations open an evidence panel beside the story", async ({ page, context }) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+  await page.setViewportSize({ width: 1400, height: 900 });
+  await page.goto("stories/feature-scan-rules");
+  await page.getByRole("button", { name: /^commit [0-9a-f]{10}$/ }).first().click();
+  const panel = page.getByRole("dialog", { name: "Evidence" });
+  await expect(panel.getByRole("heading")).toContainText(/\w/);
+  await expect(panel.getByText("permalink to the commit")).toBeVisible();
+  await expect(panel.getByText("Parents")).toBeVisible();
+  await expect(panel.getByRole("link", { name: "Open the full page" })).toHaveAttribute("href", /\/commit\//);
+  await expect(page).toHaveURL(/\/stories\/feature-scan-rules$/);                              // the reader has not left the story
+  await panel.getByRole("button", { name: "Copy for GitHub" }).click();
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toMatch(/- Commit: \[`[0-9a-f]{40}`\]\(https:\/\/github\.com\//);
+  await page.getByRole("button", { name: /^addon:|^ascanrules$/ }).first().click().catch(() => {});   // another kind replaces the panel
+  await page.keyboard.press("Escape");
+  await expect(panel).toHaveCount(0);
+});
+
 test("stories list and a story open, labelled draft", async ({ page }) => {
   await page.goto("stories");
   // Reviewed stories carry no badge, so open one that is still a draft.
@@ -255,11 +273,10 @@ test("timeline: story markers are packed so that none sits on another", async ({
 test("timeline: repositories can be hidden, a dragged range zooms, and the choices survive", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 1100 });
   await page.goto("timeline");
-  const lanes = () => page.locator("svg[role=group] text[font-weight='bold']");
-  await expect(lanes().first()).toBeVisible();                       // wait for the chart before counting
-  const before = await lanes().count();
+  const lanes = () => page.locator("svg[role=group] text[font-weight='bold']", { hasText: /^zap/ });   // the repository lanes only: "Stories" and "Core team" are also bold, and the team lane loads late
+  await expect(lanes()).toHaveCount(4);                              // wait for the chart before counting
   await page.getByRole("checkbox", { name: /zap-hud/ }).uncheck();
-  await expect(lanes()).toHaveCount(before - 1);
+  await expect(lanes()).toHaveCount(3);
   await expect(page).toHaveURL(/hide=zap-hud/);
   for (const r of ["zap-core-help", "zap-extensions"]) await page.getByRole("checkbox", { name: new RegExp(r) }).uncheck();
   await expect(page.getByRole("checkbox", { name: /zaproxy$/ })).toBeDisabled();          // the last one stays

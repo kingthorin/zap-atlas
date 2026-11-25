@@ -3,6 +3,7 @@ import { Link, useParams, useSearchParams } from "react-router-dom";
 import { Story, loadStories } from "../lib/data";
 import { routeForEntity, safeHttps } from "../lib/routes";
 import { Loading, ErrorBox } from "../components/ui";
+import Evidence from "../components/evidence";
 
 const slugOf = (id: string) => id.split(":").pop()!;
 
@@ -12,10 +13,16 @@ function Badge({ status }: { status?: string }) {
   );
 }
 
-function RefLink({ id }: { id: string }) {
+const DRAWER_KINDS = new Set(["commit", "milestone", "doc", "addon", "module", "repo"]);
+
+/** A citation: it opens the evidence panel beside the story (the panel links on to the full page). */
+function RefLink({ id, open, onOpen }: { id: string; open: boolean; onOpen: (id: string) => void }) {
   const to = routeForEntity(id);
   const label = id.startsWith("commit:") ? `commit ${id.split(":").pop()!.slice(0, 10)}`
     : id.startsWith("milestone:") ? `release ${id.split(":").slice(2).join(":")}` : id.replace(/^[a-z]+:/, "");
+  if (DRAWER_KINDS.has(id.split(":")[0]))
+    return <button type="button" aria-expanded={open} onClick={() => onOpen(id)} title="Show the evidence beside the story"
+      className={`text-left text-indigo-600 hover:underline break-all ${open ? "font-semibold underline" : ""}`}>{label}</button>;
   return to ? <Link className="text-indigo-600 hover:underline break-all" to={to}>{label}</Link> : <span>{label}</span>;
 }
 
@@ -29,6 +36,8 @@ function useStories() {
 export function StoryDetail() {
   const { slug = "" } = useParams();
   const { stories, error } = useStories();
+  const [shown, setShown] = useState("");                       // the cited id whose evidence is open
+  useEffect(() => setShown(""), [slug]);
   if (error) return <ErrorBox message={error} />;
   if (!stories) return <Loading />;
   const story: any = stories.find(s => slugOf(s.id) === slug);
@@ -47,7 +56,7 @@ export function StoryDetail() {
             <p className="mt-1">{ch.text}</p>
             {[...(ch.entities ?? []), ...(ch.commits ?? []), ...(ch.documents ?? []), ...(ch.milestones ?? [])].length > 0 && (
               <ul className="mt-2 text-sm flex flex-wrap gap-x-4 gap-y-1">
-                {[...(ch.entities ?? []), ...(ch.commits ?? []), ...(ch.documents ?? []), ...(ch.milestones ?? [])].map((id: string) => <li key={id}><RefLink id={id} /></li>)}
+                {[...(ch.entities ?? []), ...(ch.commits ?? []), ...(ch.documents ?? []), ...(ch.milestones ?? [])].map((id: string) => <li key={id}><RefLink id={id} open={shown === id} onOpen={x => setShown(s => (s === x ? "" : x))} /></li>)}
               </ul>
             )}
             {(ch.evidence ?? []).map((e: any) => {
@@ -57,6 +66,7 @@ export function StoryDetail() {
           </li>
         ))}
       </ol>
+      {shown && <Evidence id={shown} onClose={() => setShown("")} />}
     </article>
   );
 }
