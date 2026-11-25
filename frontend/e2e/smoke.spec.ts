@@ -327,9 +327,19 @@ test("graph: the sweep shows who committed in a month, and plays and pauses", as
   await expect(summary).toContainText("zapbot:");
   await page.getByRole("checkbox", { name: "Include bots" }).uncheck();
   await expect(summary).toContainText(/\d+ others? \(\d+ commits?\)/);                       // everyone beyond the top 8
-  await page.getByRole("textbox", { name: "Always show" }).fill("thc202");
+  await page.getByRole("textbox", { name: "Name or username" }).fill("thc202");
   await expect(summary).toContainText("plus anyone matching the text above");
-  await page.getByRole("textbox", { name: "Always show" }).fill("");
+  await page.getByLabel("How to use the name text").selectOption("only");
+  await expect(summary).toContainText("thc202:");
+  await expect(summary).not.toContainText("kingthorin:");                                      // only the matching person
+  await expect(summary).not.toContainText(/\d+ others? \(/);                                  // and nobody pooled as Other
+  await expect(summary).toContainText("but only people matching the text above are shown");
+  await page.getByRole("textbox", { name: "Name or username" }).fill("thc202, kingthorin, nobody-by-this-name");   // several names, separated by commas
+  await expect(summary).toContainText("thc202:");
+  await expect(summary).toContainText("kingthorin:");
+  await expect(summary).not.toContainText("Simon Bennetts:");
+  await page.getByLabel("How to use the name text").selectOption("always");
+  await page.getByRole("textbox", { name: "Name or username" }).fill("");
   await page.getByRole("button", { name: "Play" }).click();
   await expect(page.getByRole("button", { name: "Pause" })).toBeVisible();
   await expect(month).toHaveAttribute("aria-valuetext", /^2024-(0[7-9]|1)/, { timeout: 8000 });   // it advanced on its own
@@ -339,6 +349,81 @@ test("graph: the sweep shows who committed in a month, and plays and pauses", as
   await page.getByRole("button", { name: "Full width" }).click();
   await expect(page.getByRole("complementary", { name: /Contributors in 20/ })).toBeVisible();
   await page.evaluate(() => localStorage.removeItem("atlas-wide"));
+});
+
+test("graph: pressing Record first on a wide screen is not cut short by the names column appearing", async ({ page }) => {
+  test.setTimeout(60_000);
+  await page.setViewportSize({ width: 1800, height: 1000 });
+  await page.goto("graph");
+  await page.waitForSelector("canvas");
+  await page.getByRole("button", { name: "Full width" }).click();
+  const download = page.waitForEvent("download", { timeout: 30_000 });
+  await page.getByRole("button", { name: "Export WebM" }).click();                            // nothing else used yet
+  const overlay = page.getByRole("alertdialog", { name: "Recording in progress" });
+  await expect(overlay).toBeVisible();
+  await page.waitForTimeout(2500);
+  await expect(overlay).toBeVisible();                                                       // still going
+  await overlay.getByRole("button", { name: "Stop and save" }).click();
+  const file = await download;
+  const path = await file.path();
+  expect((await import("fs")).statSync(path!).size).toBeGreaterThan(10_000);
+  await page.evaluate(() => localStorage.removeItem("atlas-wide"));
+});
+
+test("graph: the sweep shows the time left and records a WebM clip", async ({ page }) => {
+  test.setTimeout(60_000);
+  await page.setViewportSize({ width: 1800, height: 1000 });                                  // wide: using the sweep adds the names column
+  await page.goto("graph");
+  await page.waitForSelector("canvas");
+  await page.getByRole("button", { name: "Full width" }).click();
+  const month = page.getByRole("slider", { name: "Month" });
+  const max = +(await month.getAttribute("max"))!;
+  const left = page.getByTitle("Time left to play to the end at the chosen speed");
+  await expect(left).toContainText(/^\d+:\d\d left$/);
+  await page.getByLabel("Speed").selectOption("4");
+  const quick = await left.textContent();
+  await page.getByLabel("Speed").selectOption("0.5");
+  expect(await left.textContent()).not.toBe(quick);                                          // slower, so longer to go
+  await month.evaluate((el: HTMLInputElement, v: number) => {                                  // two months from the end
+    Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!.call(el, String(v));
+    el.dispatchEvent(new Event("input", { bubbles: true }));
+  }, max - 1);
+  await page.getByLabel("Speed").selectOption("4");
+  const download = page.waitForEvent("download", { timeout: 30_000 });
+  await page.getByRole("button", { name: "Export WebM" }).click();
+  const overlay = page.getByRole("alertdialog", { name: "Recording in progress" });
+  await expect(overlay).toBeVisible();
+  await expect(overlay).toContainText("Changing controls or the window size");
+  await expect(page.getByRole("button", { name: "Export WebM" })).toHaveCount(0);            // not while one is running
+  const file = await download;                                                               // it ends by itself at the last month
+  expect(file.suggestedFilename()).toMatch(/^zap-atlas-sweep-\d{4}-\d\d-to-\d{4}-\d\d\.webm$/);
+  const path = await file.path();
+  const bytes = (await import("fs")).readFileSync(path!);
+  expect(bytes.length).toBeGreaterThan(10_000);
+  expect(bytes.subarray(0, 4).toString("hex")).toBe("1a45dfa3");                              // a WebM (EBML) header
+  await expect(page.getByText(/Saved zap-atlas-sweep-/)).toBeVisible();
+  await expect(page.getByRole("link", { name: "Download again" })).toBeVisible();
+  await page.getByRole("button", { name: "Dismiss" }).click();
+  await expect(page.getByRole("link", { name: "Download again" })).toHaveCount(0);
+  await expect(page.getByText(/Recording stopped/)).toHaveCount(0);                          // not cut short by the layout changing
+  await page.evaluate(() => localStorage.removeItem("atlas-wide"));
+});
+
+test("graph: Cancel during an export discards the clip", async ({ page }) => {
+  await page.setViewportSize({ width: 1300, height: 1000 });
+  await page.goto("graph");
+  await page.waitForSelector("canvas");
+  let downloaded = false;
+  page.on("download", () => { downloaded = true; });
+  await page.getByRole("button", { name: "Export WebM" }).click();
+  const overlay = page.getByRole("alertdialog", { name: "Recording in progress" });
+  await expect(overlay).toBeVisible();
+  await page.waitForTimeout(800);
+  await overlay.getByRole("button", { name: "Cancel" }).click();
+  await expect(page.getByText("Recording cancelled; nothing was saved.")).toBeVisible();
+  await page.waitForTimeout(500);
+  expect(downloaded).toBe(false);
+  await expect(page.getByRole("button", { name: "Export WebM" })).toBeVisible();
 });
 
 // The oracle scans every relationship shard of the repository, so it does not depend on the incoming/ copies

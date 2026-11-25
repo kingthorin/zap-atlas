@@ -169,7 +169,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <main className={`p-4 md:p-6 max-w-6xl mx-auto ${wide && canWiden ? "min-[1352px]:max-w-none" : ""}`}>
         {canWiden && (
           <div className="hidden min-[1352px]:flex justify-end -mt-2 mb-2">
-            <button className="flex items-center gap-1.5 px-2.5 py-1 rounded border border-indigo-300 bg-white text-sm font-semibold text-indigo-700 hover:border-indigo-500 hover:bg-indigo-50"
+            <button className="width-toggle flex items-center gap-1.5 px-2.5 py-1 rounded border border-indigo-300 bg-white text-sm font-semibold text-indigo-700 hover:border-indigo-500 hover:bg-indigo-50"
               aria-pressed={wide} onClick={toggleWide}>
               {wide ? <ShrinkIcon /> : <ExpandIcon />}
               {wide ? "Standard width" : "Full width"}

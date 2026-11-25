@@ -3,7 +3,7 @@ import { createPortal } from "react-dom";
 import { AuthorMonths, loadAuthorModules } from "../lib/data";
 
 const TOP_AUTHORS = 8;          // people shown per month, by commits; everyone else is pooled as "Other"
-const MAX_PINNED = 4;           // extra people shown because the viewer asked for them
+const MAX_PINNED = 20;          // the most people shown because the viewer asked for them (a long list would be unreadable)
 const STEP_MS = 1800;           // one month at 1x
 const SIDE_MIN_ROW = 820;       // the names go in a column beside the graph when the graph card is at least this wide
 const PALETTE = ["#e11d74", "#14b8a6", "#6366f1", "#84cc16", "#d946ef", "#06b6d4", "#f97316", "#eab308", "#8b5cf6", "#22c55e", "#ec4899", "#0ea5e9"];
@@ -22,6 +22,7 @@ export interface SweepProps {
   host: HTMLElement | null;                                       // the element that holds the graph canvas; the overlay goes into it
   side: HTMLElement | null;                                       // beside the graph: the names go here when there is room
   fit: () => void;                                                // resize the graph to its container and zoom out enough to leave a margin round it for the contributors
+  snapshot: () => Promise<HTMLCanvasElement | null>;               // a canvas holding the graph's layers, kept up to date while recording
   onView: (cb: () => void) => () => void;                         // calls back whenever the graph is panned, zoomed or resized; returns an unsubscribe
   bounds: () => { cx: number; cy: number; rx: number; ry: number } | null;   // the drawn nodes' extent in viewport pixels: centre and half-width, half-height
   nodePosition: (id: string) => { x: number; y: number } | null;  // viewport position of a module, null when it is not drawn
@@ -31,7 +32,7 @@ export interface SweepProps {
 }
 
 /** Plays through the months: the people who committed in a month swoop in, send pulses to the modules they touched, and leave. */
-export default function Sweep({ host, side, fit, onView, bounds, nodePosition, label, minYear, maxYear }: SweepProps) {
+export default function Sweep({ host, side, fit, onView, snapshot, bounds, nodePosition, label, minYear, maxYear }: SweepProps) {
   const now = new Date();
   const last = Math.min((maxYear - minYear) * 12 + 11, (now.getUTCFullYear() - minYear) * 12 + now.getUTCMonth());
   const [first, setFirst] = useState(0);                       // the first month that has any contribution
@@ -40,7 +41,12 @@ export default function Sweep({ host, side, fit, onView, bounds, nodePosition, l
   const [engaged, setEngaged] = useState(false);               // the viewer has used the sweep: only then does the names column take space
   const [speed, setSpeed] = useState(1);
   const [bots, setBots] = useState(false);
+  const [recording, setRecording] = useState(false);
+  const [note, setNote] = useState("");
+  const recorder = useRef<{ stop: (why?: string, discard?: boolean) => void } | null>(null);
+  const [saved, setSaved] = useState<{ name: string; url: string; size: number; seconds: number; why: string } | null>(null);   // the last clip, kept until dismissed
   const [pin, setPin] = useState("");
+  const [pinMode, setPinMode] = useState<"always" | "only">("always");   // add the matching people to the top 8, or show only them
   const [data, setData] = useState<AuthorMonths>({});
   const [rowW, setRowW] = useState(0);
   const [view, setView] = useState(0);                      // bumped when the graph moves, so a paused frame is drawn again
@@ -93,12 +99,19 @@ export default function Sweep({ host, side, fit, onView, bounds, nodePosition, l
       a.total += n; a.mods.push({ id, n });
     }
     const sorted = [...by.values()].sort((a, b) => b.total - a.total || a.name.localeCompare(b.name));
-    const q = pin.trim().toLowerCase();
+    // The text is a comma separated list: a person matches if their name contains any of the parts (ignoring case).
+    const terms = pin.split(",").map(t => t.trim().toLowerCase()).filter(Boolean), q = terms.length > 0;
+    const matches = (a: Actor) => terms.some(t => a.name.toLowerCase().includes(t));
+    if (q && pinMode === "only") {                                   // only the people who match, nobody pooled as Other
+      const found: Actor[] = sorted.filter(matches).slice(0, MAX_PINNED).map(a => ({ ...a, pinned: true }));
+      found.forEach((a, i) => { a.color = PALETTE[i % PALETTE.length]; });
+      return found;
+    }
     const top = sorted.slice(0, TOP_AUTHORS);
-    const pinned = q ? sorted.slice(TOP_AUTHORS).filter(a => a.name.toLowerCase().includes(q)).slice(0, MAX_PINNED) : [];
+    const pinned = q ? sorted.slice(TOP_AUTHORS).filter(matches).slice(0, MAX_PINNED) : [];
     const rest = sorted.slice(TOP_AUTHORS).filter(a => !pinned.includes(a));
     const out: Actor[] = [...top, ...pinned.map(a => ({ ...a, pinned: true }))];
-    if (q) top.forEach(a => { if (a.name.toLowerCase().includes(q)) a.pinned = true; });
+    if (q) top.forEach(a => { if (matches(a)) a.pinned = true; });
     out.forEach((a, i) => { a.color = PALETTE[i % PALETTE.length]; });
     if (rest.length) {
       const mods = new Map<string, number>();
@@ -107,7 +120,7 @@ export default function Sweep({ host, side, fit, onView, bounds, nodePosition, l
         mods: [...mods].map(([id, n]) => ({ id, n })).sort((a, b) => b.n - a.n).slice(0, 12) });
     }
     return out;
-  }, [data, month, bots, pin]);
+  }, [data, month, bots, pin, pinMode]);
   const touched = useMemo(() => actors.map(a => ({ ...a, mods: a.mods.filter(m => nodePosition(m.id)) })).filter(a => a.mods.length), [actors, nodePosition]);
 
   useEffect(() => {
@@ -212,6 +225,68 @@ export default function Sweep({ host, side, fit, onView, bounds, nodePosition, l
     return () => { done = true; cancelAnimationFrame(raf); window.clearTimeout(timer); };
   }, [touched, playing, speed, host, idx, last, nodePosition, bounds, label, outside, month, playing ? 0 : view]);
 
+  // -- recording to WebM ---------------------------------------------------------------------------------
+  // The page keeps playing as usual; each frame the graph's layers and the dot overlay are copied into one canvas that a
+  // MediaRecorder captures. The video has the size the graph area had when recording began, so a resize would distort it:
+  // the recording stops if the area changes size, and the width toggle is disabled meanwhile.
+  const monthRef = useRef(month);
+  monthRef.current = month;
+  const canRecord = typeof MediaRecorder !== "undefined" && MediaRecorder.isTypeSupported("video/webm") && !reduceMotion();
+  const startRecording = async () => {
+    if (!host || recorder.current) return;
+    document.documentElement.dataset.recording = "1";
+    if (!engaged) {                       // the first use can add the names column and zoom the graph out: let that finish before measuring
+      setEngaged(true);
+      await new Promise(r => setTimeout(r, 700));
+    }
+    const snap = await snapshot();
+    if (!snap) { delete document.documentElement.dataset.recording; setNote("Could not read the graph to record it."); return; }
+    const w = host.clientWidth, h = host.clientHeight, startMonth = monthRef.current;
+    const out = document.createElement("canvas");
+    out.width = w; out.height = h;
+    const octx = out.getContext("2d")!, dark = isDark();
+    const mime = ["video/webm;codecs=vp9", "video/webm;codecs=vp8", "video/webm"].find(t => MediaRecorder.isTypeSupported(t))!;
+    const mr = new MediaRecorder(out.captureStream(30), { mimeType: mime, videoBitsPerSecond: 4_000_000 });
+    const chunks: Blob[] = [];
+    let raf = 0, why = "", live = true, discard = false;
+    const began = performance.now();
+    mr.ondataavailable = e => { if (e.data.size) chunks.push(e.data); };
+    const paint = () => {
+      octx.fillStyle = dark ? "#1e293b" : "#ffffff"; octx.fillRect(0, 0, w, h);
+      octx.drawImage(snap, 0, 0, w, h);
+      if (canvas.current && canvas.current.width) octx.drawImage(canvas.current, 0, 0, w, h);
+      octx.font = "600 22px system-ui, sans-serif"; octx.textBaseline = "top";
+      octx.fillStyle = dark ? "#e2e8f0" : "#1e293b"; octx.fillText(monthRef.current, 14, 12);
+      octx.font = "12px system-ui, sans-serif"; octx.textAlign = "right"; octx.fillStyle = dark ? "#94a3b8" : "#64748b";
+      octx.fillText("ZAP Atlas · who committed to which module", w - 12, h - 20); octx.textAlign = "left";
+      if (live) raf = requestAnimationFrame(paint);
+    };
+    const watch = new ResizeObserver(() => { if (Math.abs(host.clientWidth - w) > 2 || Math.abs(host.clientHeight - h) > 2) recorder.current?.stop("Recording stopped: the graph area changed size."); });
+    watch.observe(host);
+    const hidden = () => { if (document.hidden) recorder.current?.stop("Recording stopped: the tab was hidden, which makes the browser slow the animation."); };
+    document.addEventListener("visibilitychange", hidden);
+    mr.onstop = () => {
+      live = false; cancelAnimationFrame(raf); watch.disconnect(); document.removeEventListener("visibilitychange", hidden);
+      delete document.documentElement.dataset.recording; recorder.current = null; setRecording(false);
+      if (discard) { setNote("Recording cancelled; nothing was saved."); return; }
+      const name = `zap-atlas-sweep-${startMonth}-to-${monthRef.current}.webm`;
+      const blob = new Blob(chunks, { type: "video/webm" }), url = URL.createObjectURL(blob);
+      const a = document.createElement("a"); a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+      setSaved(old => { if (old) URL.revokeObjectURL(old.url); return { name, url, size: blob.size, seconds: Math.round((performance.now() - began) / 1000), why }; });
+    };
+    recorder.current = { stop: (reason = "", drop = false) => { why = reason; discard = drop; if (mr.state !== "inactive") mr.stop(); } };
+    paint(); mr.start(1000);
+    setNote(""); setSaved(old => { if (old) URL.revokeObjectURL(old.url); return null; }); setRecording(true);
+    if (idx >= last) setIdx(first);
+    setPlaying(true);
+  };
+  useEffect(() => { if (recording && !playing) recorder.current?.stop(); }, [recording, playing]);   // pausing, scrubbing or reaching the end ends the clip
+  useEffect(() => () => recorder.current?.stop("", true), []);
+
+  // Whole months still to play (this one included) at the chosen speed; reduced motion steps faster, with no animation.
+  const secondsLeft = Math.round((last - idx + 1) * (STEP_MS / speed) * (reduceMotion() ? 0.6 : 1) / 1000);
+  const timeLeft = `${Math.floor(secondsLeft / 60)}:${String(secondsLeft % 60).padStart(2, "0")} left`;
+
   const people = actors.filter(a => !a.people), other = actors.find(a => a.people);
   const summary = actors.length
     ? `${people.map(a => `${a.name}: ${[...a.mods].sort((x, y) => y.n - x.n).slice(0, 3).map(m => `${label(m.id)} (${m.n})`).join(", ")}${a.mods.length > 3 ? ` and ${a.mods.length - 3} more` : ""}`).join("; ")}${other ? `; ${other.people} other${other.people === 1 ? "" : "s"} (${other.total} commit${other.total === 1 ? "" : "s"})` : ""}`
@@ -232,7 +307,18 @@ export default function Sweep({ host, side, fit, onView, bounds, nodePosition, l
     </aside>
   );
   return (
-    <div className="px-3 py-2 border-t border-slate-100 text-xs text-slate-600 space-y-1">
+    <div className="relative px-3 py-2 border-t border-slate-100 text-xs text-slate-600 space-y-1">
+      {recording && host && createPortal(<div className="absolute inset-0 z-10" aria-hidden="true" />, host)}   {/* keeps the graph from being panned or clicked during a recording */}
+      {recording && (
+        <div role="alertdialog" aria-label="Recording in progress" className="absolute inset-0 z-10 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 recording-overlay px-3 text-center text-slate-800">
+          <span className="font-semibold text-red-600">● Recording in progress</span>
+          <span>{timeLeft}. Changing controls or the window size, or hiding this tab, will spoil or stop the clip.</span>
+          <span className="flex gap-2">
+            <button type="button" onClick={() => recorder.current?.stop()} className="px-2.5 py-1 rounded border border-indigo-700 bg-indigo-600 text-white font-semibold hover:bg-indigo-700">Stop and save</button>
+            <button type="button" onClick={() => recorder.current?.stop("", true)} className="px-2.5 py-1 rounded border border-slate-400 bg-white text-slate-800 hover:border-red-500">Cancel</button>
+          </span>
+        </div>
+      )}
       {host && createPortal(<canvas ref={canvas} aria-hidden="true" className="absolute inset-0 pointer-events-none" />, host)}
       {outside && side && createPortal(names, side)}
       <div className="flex flex-wrap items-center gap-2">
@@ -247,18 +333,40 @@ export default function Sweep({ host, side, fit, onView, bounds, nodePosition, l
         <input type="range" min={first} max={last} value={idx} className="flex-1 min-w-[10rem]" aria-label="Month" aria-valuetext={month}
           onChange={e => { setEngaged(true); setPlaying(false); setIdx(+e.target.value); }} />
         <span className="w-16 tabular-nums">{month}</span>
+        <span className="w-24 tabular-nums text-slate-500" title="Time left to play to the end at the chosen speed">{timeLeft}</span>
         <label>Speed{" "}
           <select className="border border-slate-300 rounded px-1 py-0.5 bg-white" value={speed} onChange={e => setSpeed(+e.target.value)}>
             {[0.5, 1, 1.5, 2, 4].map(s => <option key={s} value={s}>{s}x</option>)}
           </select>
         </label>
+        {canRecord && !recording && (
+          <button type="button" onClick={startRecording} title="Play from this month to the end and save the graph as a WebM video"
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded border border-slate-300 bg-white text-sm text-slate-700 hover:border-indigo-400">
+            <span className="inline-block w-2.5 h-2.5 rounded-full bg-red-600" aria-hidden="true" />Export WebM
+          </button>
+        )}
         <label className="flex items-center gap-1"><input type="checkbox" checked={bots} onChange={e => setBots(e.target.checked)} />Include bots</label>
-        <label>Always show{" "}
-          <input value={pin} onChange={e => { setEngaged(true); setPin(e.target.value); }} placeholder="a name or username" className="border border-slate-300 rounded px-1.5 py-0.5 bg-white w-36" />
-        </label>
+        <span className="flex items-center gap-1">
+          <select aria-label="How to use the name text" value={pinMode} onChange={e => setPinMode(e.target.value as "always" | "only")}
+            className="border border-slate-300 rounded px-1 py-0.5 bg-white">
+            <option value="always">Always show</option>
+            <option value="only">Only show</option>
+          </select>
+          <input aria-label="Name or username" value={pin} onChange={e => { setEngaged(true); setPin(e.target.value); }} placeholder="names, separated by commas"
+            className="border border-slate-300 rounded px-1.5 py-0.5 bg-white w-48" />
+        </span>
       </div>
+      {!recording && note && <p role="status">{note}</p>}
+      {saved && !recording && (
+        <div role="status" className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded border border-green-600/50 bg-green-50 px-3 py-1.5 text-slate-800">
+          <span><b>Saved {saved.name}</b> ({(saved.size / 1e6).toFixed(1)} MB, {saved.seconds} s). Your browser put it in its download folder: check its download list if you cannot find it.
+            {saved.why && <> {saved.why}</>}</span>
+          <a href={saved.url} download={saved.name} className="font-semibold text-indigo-600 hover:underline">Download again</a>
+          <button type="button" onClick={() => { URL.revokeObjectURL(saved.url); setSaved(null); }} className="text-slate-600 hover:underline">Dismiss</button>
+        </div>
+      )}
       <p aria-live={playing ? "off" : "polite"}>
-        {month}: {summary}. These are the names on commits: the top {TOP_AUTHORS} by commits each month{pin.trim() ? ", plus anyone matching the text above" : ""}, with everyone else pooled as Other{bots ? "" : " (bots left out: zapbot, dependabot, GitHub Actions)"}, credited to a file's current module.
+        {month}: {summary}. These are the names on commits: the top {TOP_AUTHORS} by commits each month{pin.trim() ? (pinMode === "only" ? ", but only people matching the text above are shown" : ", plus anyone matching the text above") : ""}, with everyone else pooled as Other{bots ? "" : " (bots left out: zapbot, dependabot, GitHub Actions)"}, credited to a file's current module.
       </p>
     </div>
   );

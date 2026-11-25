@@ -318,6 +318,26 @@ export default function GraphPage() {
     g.forEachNode((_, a) => { const p = s.graphToViewport({ x: a.x, y: a.y }); x0 = Math.min(x0, p.x); x1 = Math.max(x1, p.x); y0 = Math.min(y0, p.y); y1 = Math.max(y1, p.y); });
     return { cx: (x0 + x1) / 2, cy: (y0 + y1) / 2, rx: Math.max(20, (x1 - x0) / 2), ry: Math.max(20, (y1 - y0) / 2) };
   }, []);
+  // A copy of Sigma's layers for the sweep's WebM recording. WebGL canvases are cleared once drawn to the screen, so the
+  // copy is made straight after each render, and only while a recording is running.
+  const snap = useRef<HTMLCanvasElement | null>(null);
+  const copyLayers = (s: Sigma) => {
+    const layers = s.getCanvases();
+    const base = layers.nodes;
+    if (!base) return;
+    const c = snap.current ?? (snap.current = document.createElement("canvas"));
+    if (c.width !== base.width || c.height !== base.height) { c.width = base.width; c.height = base.height; }
+    const ctx = c.getContext("2d")!;
+    ctx.clearRect(0, 0, c.width, c.height);
+    for (const k of ["edges", "nodes", "labels", "hovers"]) if (layers[k]) ctx.drawImage(layers[k], 0, 0, c.width, c.height);
+  };
+  const sweepSnapshot = useCallback(() => new Promise<HTMLCanvasElement | null>(resolve => {
+    const s = sigma.current;
+    if (!s) return resolve(null);
+    const once = () => { s.off("afterRender", once); resolve(snap.current); };
+    s.on("afterRender", once);                                  // runs after the handler that copies the layers
+    s.refresh();
+  }), []);
   const [sigmaKey, setSigmaKey] = useState(0);                 // bumped when a new Sigma is made, so listeners on its camera are set again
   const onView = useCallback((cb: () => void) => {
     const cam = sigma.current?.getCamera();
@@ -459,8 +479,13 @@ export default function GraphPage() {
     s.on("leaveNode", () => { if (box.current) box.current.style.cursor = ""; });
     const theme = new MutationObserver(() => { s.setSetting("labelColor", { color: isDark() ? "#e2e8f0" : "#334155" }); });
     theme.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+    s.on("afterRender", () => { if (document.documentElement.dataset.recording) copyLayers(s); });
     sigma.current = s; setSigmaKey(k => k + 1);
-    return () => { camera.current = s.getCamera().getState(); theme.disconnect(); s.kill(); sigma.current = null; };
+    // Sigma only notices a window resize. The container also changes size with the full-width toggle and the names column,
+    // so watch it and let Sigma fit itself to the new size (the graph stays centred).
+    const watch = new ResizeObserver(() => { s.resize(); s.refresh(); });
+    watch.observe(box.current);
+    return () => { camera.current = s.getCamera().getState(); watch.disconnect(); theme.disconnect(); s.kill(); sigma.current = null; };
   }, [graph]);
 
   useEffect(() => { sigma.current?.refresh(); }, [sel, sizeBy, colourBy, year, activity, fileActivity, lang, hiddenRepos, langs]);
@@ -632,7 +657,7 @@ export default function GraphPage() {
               <span key={r}><span className="inline-block w-2.5 h-2.5 rounded-full mr-1 align-middle" style={{ background: c }} />{r}</span>)}
             <span>{graph.order - typeParent.size} modules{counts.length > 0 && <> + {counts.map(([l, n]) => `${n} ${l}`).join(", ")}</>} · {graph.size} linked pairs</span>
           </div>
-          {years && <Sweep host={host} side={side} fit={fitSweep} onView={onView} bounds={nodeBounds} minYear={years.min} maxYear={years.max} label={short} nodePosition={sweepPosition} colorOf={sweepColor} />}
+          {years && <Sweep host={host} side={side} fit={fitSweep} onView={onView} snapshot={sweepSnapshot} bounds={nodeBounds} minYear={years.min} maxYear={years.max} label={short} nodePosition={sweepPosition} colorOf={sweepColor} />}
         </div>
         <aside aria-live="polite" className="rounded-xl border border-slate-200 bg-white p-3 text-sm lg:max-h-[calc(60vh+2.5rem)] overflow-y-auto">
           {!sel ? <p className="text-slate-500 italic">Select a module in the graph or the list to see what it is linked to. Expand a module to see its most connected types, or its files and directories.</p> : (<>

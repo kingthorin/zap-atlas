@@ -59,3 +59,12 @@
 .dark .bg-zap-lightest { background-color: #0f172a; }
 .dark .text-zap-dark { color: #bbdefb; }
 .dark .text-zap-orange-dark { color: #ffa400; }
+
+/* The width toggle changes the graph area, which would distort a recording in progress. */
+html[data-recording] .width-toggle { opacity: .45; pointer-events: none; }
+.recording-overlay { background-color: rgb(241 245 249 / 0.98); }
+.dark .recording-overlay { background-color: rgb(15 23 42 / 0.98); color: #e2e8f0; }
+.dark [role="alertdialog"] .text-slate-800 { color: #e2e8f0; }
+.dark .bg-green-50 { background-color: rgb(22 101 52 / 0.3); }
+.dark .text-slate-800 { color: #e2e8f0; }
+.dark .text-red-600 { color: #fca5a5; }

@@ -107,6 +107,7 @@ Ideas from a Gemini list (written from the project description; it could not ope
 **Tools**
 - **Search prefixes** (done): `t:` types, `a:` add-ons, `c:` commits, `h:` help pages, `m:` modules, `s:` stories, `r:` releases; Cmd or Ctrl + K goes to the search box. A pop-up palette opens over the current page, with results as you type, arrow keys, Enter, Ctrl or Cmd + Enter for the full results page, and Escape.
 - **Copy for GitHub** (done): a button on the symbol, commit and add-on pages that copies a Markdown block with a link pinned to the analysed commit.
+- **Export as video** (done as WebM only): a Record WebM button on the sweep plays from the chosen month to the end and saves a clip of the graph area. The tab must stay visible and the window must not be resized (it stops if it is, and the width toggle is disabled meanwhile). Real time only. MP4 and animated WebP were left out (MP4 works only in some browsers; WebP needs an encoder library and frame-by-frame rendering).
 - **SQL console:** DuckDB-Wasm over the shards, loaded only when opened. Heavy download and the shards are large; low priority.
 
 ## Page improvements (from review)
