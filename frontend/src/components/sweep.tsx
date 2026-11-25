@@ -187,9 +187,7 @@ export default function Sweep({ host, side, fit, onView, bounds, nodePosition, l
         ctx.fillStyle = a.color; ctx.strokeStyle = paper; ctx.lineWidth = 2.5;
         ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
         if (a.pinned) { ctx.strokeStyle = a.color; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, r + 5, 0, Math.PI * 2); ctx.stroke(); }
-        if (!outside) {                                                                   // with no names column, the name goes on the outer side of the dot
-          if (ux >= 0) pill(a.name, x + r + 5, y, a.color, !!a.pinned); else pill(a.name, x - r - 5, y, a.color, !!a.pinned, "right");
-        }
+        if (ux >= 0) pill(a.name, x + r + 5, y, a.color, !!a.pinned); else pill(a.name, x - r - 5, y, a.color, !!a.pinned, "right");   // the name rides on the outer side of the dot
       });
       // A module that is being hit shows its name for a moment.
       const seen = new Set<string>();
