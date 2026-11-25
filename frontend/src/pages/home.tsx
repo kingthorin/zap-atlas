@@ -60,22 +60,17 @@ export default function Home() {
         <StatCard label="Help topics" value={docs.length} />
       </div>
 
+      <Card>
+        <CardContent className="!p-3 text-sm text-center">
+          <span className="font-bold">Generated at</span>{" "}
+          {manifest?.generated_at ? <span className="text-slate-600">{new Date(manifest.generated_at).toUTCString()}</span> : <span className="text-slate-400 italic">n/a</span>}
+        </CardContent>
+      </Card>
+
       {extra && <Explore repos={repos.length} addons={addons.length} extra={extra} />}
       {extra && <div className="grid grid-cols-1 lg:grid-cols-2 gap-6"><Activity tl={extra.tl} /><Latest extra={extra} newest={newest} /></div>}
       {extra && <Featured stories={extra.stories} />}
 
-      <div>
-        <Card>
-          <CardHeader><CardTitle>Generated at</CardTitle></CardHeader>
-          <CardContent className="text-sm">
-            {manifest?.generated_at ? (
-              <div className="text-slate-500">{new Date(manifest.generated_at).toUTCString()}</div>
-            ) : (
-              <span className="text-slate-400 italic">n/a</span>
-            )}
-          </CardContent>
-        </Card>
-      </div>
     </div>
   );
 }
@@ -110,7 +105,7 @@ function Explore({ extra, addons }: { repos: number; addons: number; extra: Extr
       <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {tiles.map(([to, title, text]) => (
           <li key={to}><Link to={to} className="block h-full rounded-xl border border-slate-200 bg-white p-4 shadow-sm hover:border-indigo-400">
-            <span className="flex items-center gap-2 text-lg font-bold text-indigo-600">{(() => { const Icon: any = NAV.find(n => n.to === to)?.icon; return Icon && <Icon />; })()}{title}</span>
+            <span className="flex items-center gap-2 text-lg font-bold text-indigo-600">{(() => { const Icon: any = NAV.find(n => n.to === to)?.icon; return Icon && <span className="text-zap-orange-dark"><Icon /></span>; })()}{title}</span>
             <span className="mt-1 block text-sm text-slate-600">{text}</span>
           </Link></li>
         ))}
@@ -137,7 +132,7 @@ function Activity({ tl }: { tl: Timeline }) {
     <Card>
       <CardHeader><CardTitle>Activity</CardTitle></CardHeader>
       <CardContent>
-        <Link to="/timeline" className="block text-indigo-600" aria-label={`Commits per month, ${pts[0][0]} to ${pts[pts.length - 1][0]}, ${nf(total)} in all, peak ${nf(max)} in a month. Open the Timeline.`}>
+        <Link to="/timeline" className="block text-zap-orange-dark" aria-label={`Commits per month, ${pts[0][0]} to ${pts[pts.length - 1][0]}, ${nf(total)} in all, peak ${nf(max)} in a month. Open the Timeline.`}>
           <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto" role="img" aria-hidden="true">
             <polygon points={`${x(pts[0][0])},${H - 16} ${line} ${x(pts[pts.length - 1][0])},${H - 16}`} fill="currentColor" fillOpacity={0.2} />
             <polyline points={line} fill="none" stroke="currentColor" strokeWidth={1.5} />

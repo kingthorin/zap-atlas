@@ -14,7 +14,7 @@ const EVIDENCE = ["resolved", "inferred", "syntactic"];
 const PAGE = 100;
 
 const chip = (on: boolean) =>
-  `px-2 py-0.5 rounded text-xs border ${on ? "bg-indigo-600 text-white border-indigo-600" : "bg-white text-slate-700 border-slate-300"}`;
+  `px-2 py-0.5 rounded text-xs border ${on ? "bg-zap-orange-deep text-white border-zap-orange-deep" : "bg-white text-slate-700 border-slate-300"}`;
 
 function label(id: string): string {
   const p = id.split(":");

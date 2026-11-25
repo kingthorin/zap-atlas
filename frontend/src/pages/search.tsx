@@ -66,7 +66,7 @@ export default function Search() {
         <p className="text-sm text-slate-500">
           <span className="italic">Type to search. Indexes load on first use.</span>{" "}
           Start with a letter and a colon to search one kind:{" "}
-          {Object.entries(PREFIXES).map(([k, v]) => <span key={k} className="mr-2"><code className="px-1 rounded bg-slate-100">{k}:</code> {v.label}</span>)}
+          {Object.entries(PREFIXES).map(([k, v]) => <span key={k} className="mr-2"><code className="px-1.5 py-0.5 rounded border border-slate-300 bg-slate-200 text-slate-900 font-semibold">{k}:</code> {v.label}</span>)}
         </p>
       )}
       {only && term.trim() && <p className="text-xs text-slate-500">Searching {only.label} only.</p>}

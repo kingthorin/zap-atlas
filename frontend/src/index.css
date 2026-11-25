@@ -36,6 +36,7 @@
 .dark .border-slate-300 { border-color: #334155; }
 .dark .divide-slate-100 > :not([hidden]) ~ :not([hidden]),
 .dark .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-color: #334155; }
+.dark code.bg-slate-200 { background-color: #334155; border-color: #7b8ba3; color: #f1f5f9; }
 .dark .bg-indigo-100 { background-color: rgb(67 137 255 / 0.2); }
 /* Controls (buttons, selects, text boxes) stand out from the page and from cards in the dark theme: a lighter border and fill,
    a visible hover, and a clearly lighter "on" state for toggles. Cards keep the quieter slate-200 border. */
@@ -59,6 +60,7 @@
 .dark .bg-zap-lightest { background-color: #0f172a; }
 .dark .text-zap-dark { color: #bbdefb; }
 .dark .text-zap-orange-dark { color: #ffa400; }
+.dark .bg-zap-orange-deep { background-color: #8a5a00; border-color: #ffa400; }
 
 /* The width toggle changes the graph area, which would distort a recording in progress. */
 html[data-recording] .width-toggle { opacity: .45; pointer-events: none; }

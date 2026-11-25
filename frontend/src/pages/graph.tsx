@@ -228,7 +228,7 @@ function buildGraph(nodes: string[], pairs: Pair[], typeParent: Map<string, stri
 }
 
 const chip = (on: boolean) =>
-  `px-2 py-0.5 rounded text-xs border ${on ? "bg-indigo-600 text-white border-indigo-600" : "bg-white text-slate-700 border-slate-300"}`;
+  `px-2 py-0.5 rounded text-xs border ${on ? "bg-zap-orange-deep text-white border-zap-orange-deep" : "bg-white text-slate-700 border-slate-300"}`;
 
 interface TreeProps {
   modules: string[]; expanded: string[]; modes: Record<string, Mode>; detail: Map<string, Detail>;

@@ -112,7 +112,7 @@ function CoreCard({ m, prev, win, repo, hasNotes, selected }: { m: Milestone; pr
     <li id={cardId(m)} tabIndex={-1} style={{ scrollMarginTop: "calc(var(--hdr, 64px) + 3rem)" }}
       className={`rounded-xl border bg-white p-4 shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${selected ? "border-amber-600 ring-2 ring-amber-600" : "border-slate-200"}`}>
       <div className="flex items-baseline justify-between gap-2">
-        <Link className="text-3xl font-bold text-indigo-600 hover:underline" to={`/release/${encodeURIComponent(m.id)}`} aria-label={m.title}>{m.version}</Link>
+        <Link className={`text-3xl font-bold hover:underline ${m.date.slice(0, 4) === String(new Date().getFullYear()) ? "text-zap-orange-dark" : "text-indigo-600"}`} to={`/release/${encodeURIComponent(m.id)}`} aria-label={m.title}>{m.version}</Link>
         <span className="font-mono text-xs text-slate-500">{day(m.date)}</span>
       </div>
       <p className="mt-1 text-sm text-slate-600">
@@ -207,7 +207,7 @@ export default function Releases() {
       <div className="flex flex-wrap gap-2" role="tablist">
         {KINDS.map(k => (
           <button key={k.id} role="tab" aria-selected={kind === k.id} onClick={() => set("kind", k.id === "core-release" ? "" : k.id)}
-            className={`px-3 py-1 rounded text-sm border ${kind === k.id ? "bg-indigo-600 text-white border-indigo-600" : "bg-white text-slate-700 border-slate-300"}`}>
+            className={`px-3 py-1 rounded text-sm border ${kind === k.id ? "bg-zap-orange-deep text-white border-zap-orange-deep" : "bg-white text-slate-700 border-slate-300"}`}>
             {k.label} ({(data.ms.filter(m => m.kind === k.id)).length})
           </button>
         ))}
@@ -225,7 +225,7 @@ export default function Releases() {
             <span className="text-sm text-slate-600">Most released:</span>
             {top.map(([k, e]) => (
               <button key={k} aria-pressed={addon === k} onClick={() => set("add", addon === k ? "" : k)}
-                className={`px-2 py-0.5 rounded text-xs border ${addon === k ? "bg-indigo-600 text-white border-indigo-600" : "bg-white text-slate-700 border-slate-300"}`}>{e.name} ({e.n})</button>
+                className={`px-2 py-0.5 rounded text-xs border ${addon === k ? "bg-zap-orange-deep text-white border-zap-orange-deep" : "bg-white text-slate-700 border-slate-300"}`}>{e.name} ({e.n})</button>
             ))}
           </div>
           <Heatmap rows={addonAll} onPick={(f, t) => { const n = new URLSearchParams(params); n.set("from", f); n.set("to", t); setParams(n, { replace: true }); }} />

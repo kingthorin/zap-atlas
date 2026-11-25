@@ -339,7 +339,7 @@ export default function TimelinePage() {
         <button className={btn} onClick={() => zoomBy(1.5)} aria-label="Zoom in">+</button>
         <button className={btn} onClick={() => zoomBy(1 / 1.5)} aria-label="Zoom out">−</button>
         <button className={btn} onClick={reset}>Reset</button>
-        <button className={`${btn} ${selectMode ? "!bg-indigo-600 !text-white !border-indigo-600" : ""}`} aria-pressed={selectMode} onClick={() => setSelectMode(m => !m)}
+        <button className={`${btn} ${selectMode ? "!bg-zap-orange-deep !text-white !border-zap-orange-deep" : ""}`} aria-pressed={selectMode} onClick={() => setSelectMode(m => !m)}
           title="When on, dragging selects a range to zoom to. Shift+drag does the same when off.">Select range</button>
         <span className="text-slate-500">
           {d0.toISOString().slice(0, 10)} to {d1.toISOString().slice(0, 10)} · {weekly ? "weekly" : "monthly"} bars{focus && weekly ? " (the focused module, directory or language is monthly only)" : ""}

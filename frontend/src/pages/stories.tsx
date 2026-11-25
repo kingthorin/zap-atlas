@@ -101,7 +101,7 @@ const GROUPS: { id: string; label: string; short: string; blurb: string }[] = [
 ];
 
 const chip = (on: boolean) =>
-  `px-3 py-1 rounded text-sm border ${on ? "bg-indigo-600 text-white border-indigo-600" : "bg-white text-slate-700 border-slate-300"}`;
+  `px-3 py-1 rounded text-sm border ${on ? "bg-zap-orange-deep text-white border-zap-orange-deep" : "bg-white text-slate-700 border-slate-300"}`;
 
 export default function Stories() {
   const { stories, error } = useStories();
