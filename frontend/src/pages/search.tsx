@@ -29,6 +29,21 @@ function routeFor(r: SearchRecord): string | null {
   }
 }
 
+/** `t:Scanner`, `a:pscan`, `c:abc123`, `h:spider`, `m:zest`, `s:logo`: search one kind of thing. */
+const PREFIXES: Record<string, { group: SearchGroup; label: string; kinds?: string[]; not?: string[] }> = {
+  t: { group: "symbols", label: "types" },
+  a: { group: "ecosystem", label: "add-ons", kinds: ["addon"] },
+  c: { group: "commits", label: "commits" },
+  h: { group: "ecosystem", label: "help pages", kinds: ["doc"] },
+  m: { group: "ecosystem", label: "modules", kinds: ["module"] },
+  s: { group: "ecosystem", label: "stories", kinds: ["story"] },
+  r: { group: "ecosystem", label: "releases", kinds: ["release"] },
+};
+function parseQuery(q: string): { prefix: string; term: string } {
+  const m = /^([a-z]):\s*(.*)$/s.exec(q.trimStart());
+  return m && PREFIXES[m[1]] ? { prefix: m[1], term: m[2] } : { prefix: "", term: q };
+}
+
 const engines = new Map<SearchGroup, MiniSearch<SearchRecord>>();
 async function engine(group: SearchGroup): Promise<MiniSearch<SearchRecord>> {
   const cached = engines.get(group);
@@ -51,22 +66,27 @@ export default function Search() {
   const [error, setError] = useState("");
   const seq = useRef(0);
 
+  const { prefix, term } = parseQuery(q);
+  const only = prefix ? PREFIXES[prefix] : null;
+  const groups = only ? [only.group] : [...enabled];       // a prefix searches its own group, whatever is ticked
   useEffect(() => {
     const run = ++seq.current;
-    if (!q.trim()) { setResults({}); return; }
+    if (!term.trim()) { setResults({}); return; }
     (async () => {
       const out: Record<string, SearchRecord[]> = {};
-      for (const g of enabled) {
+      for (const g of groups) {
         setLoading(l => new Set(l).add(g));
         try {
           const ms = await engine(g);
-          out[g] = ms.search(q).slice(0, 50) as unknown as SearchRecord[];
+          let hits = ms.search(term) as unknown as SearchRecord[];
+          if (only?.kinds) hits = hits.filter(h => only.kinds!.includes(h.k));
+          out[g] = hits.slice(0, 50);
         } catch (e: any) { setError(`${g}: ${e.message}`); }
         finally { setLoading(l => { const n = new Set(l); n.delete(g); return n; }); }
       }
       if (run === seq.current) setResults(out);
     })();
-  }, [q, enabled]);
+  }, [q, enabled]);   // groups and term follow from these two
 
   const toggle = (g: SearchGroup) => setEnabled(prev => {
     const n = new Set(prev); n.has(g) ? n.delete(g) : n.add(g); return n;
@@ -75,7 +95,7 @@ export default function Search() {
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold">Search</h1>
-      <input type="search" autoFocus placeholder="Search…" aria-label="Search" value={q}
+      <input type="search" autoFocus placeholder="Search…  (t: types, a: add-ons, c: commits, h: help pages)" data-search-input aria-label="Search" value={q}
         onChange={e => setParams(e.target.value ? { q: e.target.value } : {}, { replace: true })}
         className="w-full md:w-96 rounded border border-slate-200 bg-white px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none" />
       <fieldset className="flex flex-wrap gap-x-6 gap-y-1 text-sm">
@@ -89,8 +109,15 @@ export default function Search() {
         ))}
       </fieldset>
       {error && <ErrorBox message={error} />}
-      {!q.trim() && <p className="text-sm text-slate-500 italic">Type to search. Indexes load on first use.</p>}
-      {GROUPS.filter(g => enabled.has(g.id) && results[g.id]).map(g => (
+      {!q.trim() && (
+        <p className="text-sm text-slate-500">
+          <span className="italic">Type to search. Indexes load on first use.</span>{" "}
+          Start with a letter and a colon to search one kind:{" "}
+          {Object.entries(PREFIXES).map(([k, v]) => <span key={k} className="mr-2"><code className="px-1 rounded bg-slate-100">{k}:</code> {v.label}</span>)}
+        </p>
+      )}
+      {only && term.trim() && <p className="text-xs text-slate-500">Searching {only.label} only.</p>}
+      {GROUPS.filter(g => groups.includes(g.id) && results[g.id]).map(g => (
         <section key={g.id}>
           <h2 className="font-semibold mb-1">{g.label} <span className="text-xs text-slate-400">({results[g.id].length}{results[g.id].length === 50 ? "+" : ""})</span></h2>
           {results[g.id].length === 0 ? <p className="text-sm text-slate-400 italic">No matches.</p> : (

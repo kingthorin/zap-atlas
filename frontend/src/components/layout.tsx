@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const MenuIcon = () => (
   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
@@ -129,7 +129,7 @@ function NavLinks({ pathname }: { pathname: string }) {
         const Icon: any = n.icon;
         const active = pathname === n.to;
         return (
-          <Link key={n.to} to={n.to} className="site-nav-link" aria-current={active ? "page" : undefined}>
+          <Link key={n.to} to={n.to} className="site-nav-link" title={n.to === "/search" ? "Search (Ctrl or Cmd + K)" : undefined} aria-current={active ? "page" : undefined}>
             <Icon /> {n.label}
           </Link>
         );
@@ -149,6 +149,18 @@ function useWide(): [boolean, () => void] {
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const [wide, toggleWide] = useWide();
+  const navigate = useNavigate();
+  // Cmd or Ctrl + K goes to Search, or focuses the box when already there.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (!(e.metaKey || e.ctrlKey) || e.key.toLowerCase() !== "k") return;
+      e.preventDefault();
+      const box = document.querySelector<HTMLInputElement>("[data-search-input]");
+      if (box) { box.focus(); box.select(); } else navigate("/search");
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [navigate]);
   const canWiden = WIDE_PAGES.includes(useLocation().pathname);
   return (
     <div className="min-h-screen bg-zap-lightest text-slate-900 font-sans">

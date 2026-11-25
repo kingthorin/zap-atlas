@@ -68,6 +68,36 @@ test("search finds an add-on and, once enabled, a commit", async ({ page }) => {
   await expect(page.locator("a[href*='/commit/']").first()).toBeVisible({ timeout: 30_000 });
 });
 
+test("search prefixes pick one kind, and Ctrl+K goes to the search box", async ({ page }) => {
+  await page.goto("search?q=" + encodeURIComponent("a:graphql"));
+  await expect(page.getByText("Searching add-ons only.")).toBeVisible();
+  const kinds = page.locator("li > span.w-16");
+  await expect(kinds.first()).toHaveText("add-on");
+  expect(await kinds.allTextContents()).toEqual(expect.arrayContaining(["add-on"]));
+  expect((await kinds.allTextContents()).every(k => k === "add-on")).toBe(true);
+  await page.goto("search?q=" + encodeURIComponent("t:ExtensionScript"));
+  await expect(page.getByText("Searching types only.")).toBeVisible();
+  await expect(page.locator("a[href*='/symbol/']").first()).toBeVisible({ timeout: 30_000 });
+  await page.goto("timeline");
+  await page.keyboard.press("Control+k");
+  await expect(page).toHaveURL(/\/search$/);
+  await expect(page.getByLabel("Search", { exact: true })).toBeFocused();
+});
+
+test("Copy for GitHub puts a Markdown summary on the clipboard", async ({ page, context }) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+  await page.goto("addon/addon%3Aascanrules");
+  await page.getByRole("button", { name: "Copy for GitHub" }).click();
+  await expect(page.getByRole("status").filter({ hasText: "Copied" })).toBeVisible();
+  const text = await page.evaluate(() => navigator.clipboard.readText());
+  expect(text).toMatch(/^\*\*Active scanner rules\*\* \(`ascanrules`\)/);
+  expect(text).toMatch(/- Source: \[addOns\/ascanrules\]\(https:\/\/github\.com\/zaproxy\/zap-extensions\/tree\/[0-9a-f]{40}\/addOns\/ascanrules\)/);
+  await page.goto("history");
+  await page.locator("a[href*='/commit/']").first().click();
+  await page.getByRole("button", { name: "Copy for GitHub" }).click();
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toMatch(/- Commit: \[`[0-9a-f]{40}`\]\(https:\/\/github\.com\//);
+});
+
 test("stories are one flat list tagged by group, sortable and filterable", async ({ page }) => {
   await page.goto("stories");
   await expect(page.getByRole("heading", { level: 2 })).toHaveCount(0); // no group headings

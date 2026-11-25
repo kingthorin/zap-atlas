@@ -84,7 +84,7 @@ Built with D3 modules for scales, zoom, brush and hierarchy, rendered as SVG by 
 Ideas from a Gemini list (written from the project description; it could not open the site), reduced to what is not already built. Order is not priority. "Needs" says what data or work each depends on.
 
 **Graph and code**
-- **Evidence in the line style:** draw resolved edges solid, inferred dashed and syntactic dotted. The evidence filter exists; the style does not. Small.
+- **Evidence in the line style:** draw resolved edges solid, inferred dashed and syntactic dotted. The evidence filter exists; the style does not. Sigma has no dashed edges built in, so this needs a custom WebGL edge program (medium), or a cheaper stand-in: shade each link by the share of resolved edges behind it (small).
 - **Pathfinding:** pick two nodes (modules, types, add-ons) and show the shortest or typed path between them, respecting the evidence filter. Medium; the data is there.
 - **Focus mode:** lock a centre node, expand 1 or 2 hops on demand, and hide high-degree utility types and syntactic edges. Expansion into types and files exists; hops and pinning do not.
 - **Extension-point map:** choose a core class or interface (ExtensionAdaptor, AbstractPlugin and so on) and list every add-on that extends or implements it, grouped by add-on status. Cross-repository `EXTENDS` and `IMPLEMENTS` edges are in the data. Medium.
@@ -105,8 +105,8 @@ Ideas from a Gemini list (written from the project description; it could not ope
 - **Shareable trails:** pin 3 to 8 entities with notes into a URL-encoded trail to share. Medium.
 
 **Tools**
-- **Search prefixes:** `t:` types, `a:` add-ons, `c:` commits, `h:` help pages, from a Cmd/Ctrl+K palette. Search groups exist; the prefixes and the shortcut do not. Small.
-- **Copy for GitHub:** a button on a type, commit or add-on that copies a Markdown block (name, owner, status, permalink). Small.
+- **Search prefixes** (done): `t:` types, `a:` add-ons, `c:` commits, `h:` help pages, `m:` modules, `s:` stories, `r:` releases; Cmd or Ctrl + K goes to the search box. Not a pop-up palette: it opens the Search page.
+- **Copy for GitHub** (done): a button on the symbol, commit and add-on pages that copies a Markdown block with a link pinned to the analysed commit.
 - **SQL console:** DuckDB-Wasm over the shards, loaded only when opened. Heavy download and the shards are large; low priority.
 
 ## Page improvements (from review)

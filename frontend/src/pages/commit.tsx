@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { Commit, FileChange, Repo, findCommit, loadFileChanges, loadRepos, shaOf } from "../lib/data";
-import { Loading, ErrorBox } from "../components/ui";
+import { Loading, ErrorBox, CopyForGitHub } from "../components/ui";
 
 export default function CommitPage() {
   const { repo = "", sha = "" } = useParams();
@@ -29,7 +29,17 @@ export default function CommitPage() {
   return (
     <div className="space-y-6">
       <div className="text-sm"><Link to="/history" className="text-indigo-600 hover:underline">← History</Link></div>
-      <h1 className="text-2xl font-bold">{c.subject || <em>(no subject)</em>}</h1>
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <h1 className="text-2xl font-bold">{c.subject || <em>(no subject)</em>}</h1>
+        <CopyForGitHub text={[
+          `**${c.subject || "(no subject)"}**`, "",
+          `- Repository: ${repo}`,
+          base ? `- Commit: [\`${c.sha}\`](${base}/commit/${c.sha})` : `- Commit: \`${c.sha}\``,
+          `- Author: ${c.author_name}, ${new Date(c.author_date).toISOString().slice(0, 10)}`,
+          ...(c.tags.length ? [`- Tags: ${c.tags.join(", ")}`] : []),
+          `- Files changed: ${files.length}`,
+        ].join("\n")} />
+      </div>
       <dl className="grid grid-cols-[6rem_minmax(0,1fr)] sm:grid-cols-[8rem_minmax(0,1fr)] gap-y-1 text-sm">
         <dt className="text-slate-500">Repository</dt><dd>{repo}</dd>
         <dt className="text-slate-500">SHA</dt>

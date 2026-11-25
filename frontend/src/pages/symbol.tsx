@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Relationship, Repo, Symbol, filePathOf, githubBlob, isDeprecated, loadRepos, loadShardIndex, loadSymbolShard } from "../lib/data";
-import { Loading, ErrorBox } from "../components/ui";
+import { Loading, ErrorBox, CopyForGitHub } from "../components/ui";
 
 export default function SymbolPage() {
   const { id = "" } = useParams();
@@ -40,7 +40,16 @@ export default function SymbolPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold break-all">{sym.signature}</h1>
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <h1 className="text-2xl font-bold break-all">{sym.signature}</h1>
+        <CopyForGitHub text={[
+          `**\`${sym.qualified_name}\`** (${sym.kind}${isDeprecated(sym) ? ", deprecated" : ""})`, "",
+          `- Resolution: ${sym.resolution}`,
+          `- Repository: ${repoName}`,
+          `- Outgoing links: ${out.length}, incoming: ${inc.length}`,
+          data.repo ? `- Source: [${path}:${sym.start_line}-${sym.end_line}](${githubBlob(data.repo, path, sym.start_line, sym.end_line)}) (pinned to the commit analysed)` : `- Source: ${path}:${sym.start_line}-${sym.end_line}`,
+        ].join("\n")} />
+      </div>
       <dl className="grid grid-cols-[6rem_minmax(0,1fr)] sm:grid-cols-[8rem_minmax(0,1fr)] gap-y-1 text-sm">
         <dt className="text-slate-500">Kind</dt><dd>{sym.kind}</dd>
         <dt className="text-slate-500">Qualified name</dt><dd className="font-mono text-xs break-all">{sym.qualified_name}</dd>

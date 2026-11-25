@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { AddOn, Doc, Milestone, Repo, loadAddons, loadDocs, loadMilestones, loadModules, loadRepos } from "../lib/data";
-import { Loading, ErrorBox } from "../components/ui";
+import { Loading, ErrorBox, CopyForGitHub } from "../components/ui";
+import { githubBlob } from "../lib/data";
 
 const safeUrl = (u: string) => (/^https?:\/\//i.test(u) ? u : undefined);
 
@@ -33,7 +34,17 @@ export default function AddOnPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">{addon.name}</h1>
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <h1 className="text-2xl font-bold">{addon.name}</h1>
+        <CopyForGitHub text={[
+          `**${addon.name}** (\`${addon.id.replace("addon:", "")}\`)`, "",
+          `- Status: ${addon.status || "not declared"}`,
+          ...(releases[0] ? [`- Latest release tag: ${releases[0].version} (${releases[0].date.slice(0, 10)})`] : []),
+          ...(mod && data.repos.find(r => r.name === mod.repository) ? [`- Source: [${mod.path}](${githubBlob(data.repos.find(r => r.name === mod.repository)!, mod.path).replace("/blob/", "/tree/")}) (pinned to the commit analysed)`] : []),
+          ...(addon.dependencies.length ? [`- Depends on: ${addon.dependencies.map(d => d.replace("addon:", "")).join(", ")}`] : []),
+          ...(url ? [`- Website: ${url}`] : []),
+        ].join("\n")} />
+      </div>
       <dl className="grid grid-cols-[6rem_minmax(0,1fr)] sm:grid-cols-[8rem_minmax(0,1fr)] gap-y-1 text-sm">
         <dt className="text-slate-500">Id</dt><dd className="font-mono text-xs break-all">{addon.id}</dd>
         <dt className="text-slate-500">Status</dt><dd>{addon.status || "not declared"}</dd>
