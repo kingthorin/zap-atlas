@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import Palette from "./palette";
 
 const MenuIcon = () => (
   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
@@ -149,22 +150,22 @@ function useWide(): [boolean, () => void] {
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const [wide, toggleWide] = useWide();
-  const navigate = useNavigate();
-  // Cmd or Ctrl + K goes to Search, or focuses the box when already there.
+  const [palette, setPalette] = useState(false);
+  // Cmd or Ctrl + K opens the search palette over whatever page this is.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (!(e.metaKey || e.ctrlKey) || e.key.toLowerCase() !== "k") return;
       e.preventDefault();
-      const box = document.querySelector<HTMLInputElement>("[data-search-input]");
-      if (box) { box.focus(); box.select(); } else navigate("/search");
+      setPalette(p => !p);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [navigate]);
+  }, []);
   const canWiden = WIDE_PAGES.includes(useLocation().pathname);
   return (
     <div className="min-h-screen bg-zap-lightest text-slate-900 font-sans">
       <Nav />
+      <Palette open={palette} onClose={() => setPalette(false)} />
       <main className={`p-4 md:p-6 max-w-6xl mx-auto ${wide && canWiden ? "min-[1352px]:max-w-none" : ""}`}>
         {canWiden && (
           <div className="hidden min-[1352px]:flex justify-end -mt-2 mb-2">

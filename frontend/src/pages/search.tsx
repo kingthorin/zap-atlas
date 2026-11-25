@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import MiniSearch from "minisearch";
-import { SearchGroup, SearchRecord, loadSearchGroup } from "../lib/data";
+import { SearchGroup, SearchRecord } from "../lib/data";
+import { KIND_LABEL, PREFIXES, engine, parseQuery, routeFor } from "../lib/search";
 import { ErrorBox } from "../components/ui";
 
 const GROUPS: { id: SearchGroup; label: string; hint: string }[] = [
@@ -9,53 +9,6 @@ const GROUPS: { id: SearchGroup; label: string; hint: string }[] = [
   { id: "symbols", label: "Types (classes, interfaces, enums)", hint: "larger download" },
   { id: "commits", label: "Commits", hint: "larger download" },
 ];
-
-const KIND_LABEL: Record<string, string> = {
-  repository: "repo", module: "module", addon: "add-on", doc: "doc", story: "story", commit: "commit", release: "release",
-};
-
-/** Internal route for a record, or null when it links outside (docs open GitHub at the pinned SHA). */
-function routeFor(r: SearchRecord): string | null {
-  const [, a, b] = r.i.split(/:(.*?):(.*)/s);
-  switch (r.k) {
-    case "repository": return "/repositories";
-    case "module": return `/module/${a}/${b}`;
-    case "addon": return `/addon/${encodeURIComponent(r.i)}`;
-    case "release": return `/release/${encodeURIComponent(r.i)}`;
-    case "story": return `/stories/${r.i.split(":").pop()}`;
-    case "doc": return `/doc/${encodeURIComponent(r.i)}`;
-    case "commit": return `/commit/${a}/${b}${r.y ? `?y=${r.y}` : ""}`;
-    default: return `/symbol/${encodeURIComponent(r.i)}`; // class, interface, enum, ...
-  }
-}
-
-/** `t:Scanner`, `a:pscan`, `c:abc123`, `h:spider`, `m:zest`, `s:logo`: search one kind of thing. */
-const PREFIXES: Record<string, { group: SearchGroup; label: string; kinds?: string[]; not?: string[] }> = {
-  t: { group: "symbols", label: "types" },
-  a: { group: "ecosystem", label: "add-ons", kinds: ["addon"] },
-  c: { group: "commits", label: "commits" },
-  h: { group: "ecosystem", label: "help pages", kinds: ["doc"] },
-  m: { group: "ecosystem", label: "modules", kinds: ["module"] },
-  s: { group: "ecosystem", label: "stories", kinds: ["story"] },
-  r: { group: "ecosystem", label: "releases", kinds: ["release"] },
-};
-function parseQuery(q: string): { prefix: string; term: string } {
-  const m = /^([a-z]):\s*(.*)$/s.exec(q.trimStart());
-  return m && PREFIXES[m[1]] ? { prefix: m[1], term: m[2] } : { prefix: "", term: q };
-}
-
-const engines = new Map<SearchGroup, MiniSearch<SearchRecord>>();
-async function engine(group: SearchGroup): Promise<MiniSearch<SearchRecord>> {
-  const cached = engines.get(group);
-  if (cached) return cached;
-  const ms = new MiniSearch<SearchRecord>({
-    idField: "i", fields: ["t", "x"], storeFields: ["k", "i", "t", "u", "y"],
-    searchOptions: { prefix: true, combineWith: "AND", boost: { t: 2 } },
-  });
-  ms.addAll(await loadSearchGroup(group));
-  engines.set(group, ms);
-  return ms;
-}
 
 export default function Search() {
   const [params, setParams] = useSearchParams();
@@ -95,7 +48,7 @@ export default function Search() {
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold">Search</h1>
-      <input type="search" autoFocus placeholder="Search…  (t: types, a: add-ons, c: commits, h: help pages)" data-search-input aria-label="Search" value={q}
+      <input type="search" autoFocus placeholder="Search…  (t: types, a: add-ons, c: commits, h: help pages)" aria-label="Search" value={q}
         onChange={e => setParams(e.target.value ? { q: e.target.value } : {}, { replace: true })}
         className="w-full md:w-96 rounded border border-slate-200 bg-white px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none" />
       <fieldset className="flex flex-wrap gap-x-6 gap-y-1 text-sm">

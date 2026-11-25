@@ -37,6 +37,16 @@
 .dark .divide-slate-100 > :not([hidden]) ~ :not([hidden]),
 .dark .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-color: #334155; }
 .dark .bg-indigo-100 { background-color: rgb(67 137 255 / 0.2); }
+/* Controls (buttons, selects, text boxes) stand out from the page and from cards in the dark theme: a lighter border and fill,
+   a visible hover, and a clearly lighter "on" state for toggles. Cards keep the quieter slate-200 border. */
+.dark button.border-slate-300, .dark select.border-slate-300, .dark input.border-slate-300 { border-color: #7b8ba3; }
+.dark button.bg-white:not(.border-indigo-300), .dark select.bg-white, .dark input.bg-white { background-color: #2b3a52; }
+.dark button.bg-white:hover:not(.border-indigo-300) { background-color: #34465f; }
+.dark .hover\:border-indigo-400:hover { border-color: #8fbdf5; }
+.dark button.border-indigo-300 { border-color: #8fbdf5; background-color: #2b3a52; }
+.dark .bg-indigo-600 { background-color: #1d63c8; border-color: #8fbdf5; }
+.dark input[type="checkbox"], .dark input[type="range"] { accent-color: #60a5fa; }
+.dark input::placeholder { color: #94a3b8; }
 .dark .text-indigo-700,
 .dark .text-indigo-600 { color: #8fbdf5; }
 .dark h1, .dark h2, .dark h3 { color: #8fbdf5; }

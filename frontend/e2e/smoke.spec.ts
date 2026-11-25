@@ -78,10 +78,33 @@ test("search prefixes pick one kind, and Ctrl+K goes to the search box", async (
   await page.goto("search?q=" + encodeURIComponent("t:ExtensionScript"));
   await expect(page.getByText("Searching types only.")).toBeVisible();
   await expect(page.locator("a[href*='/symbol/']").first()).toBeVisible({ timeout: 30_000 });
+});
+
+test("Ctrl+K opens a search palette over the page: results, arrow keys, Enter, Escape", async ({ page }) => {
   await page.goto("timeline");
+  await expect(page.getByRole("heading", { name: "Timeline" })).toBeVisible();      // the app is up, so the shortcut is listening
   await page.keyboard.press("Control+k");
-  await expect(page).toHaveURL(/\/search$/);
-  await expect(page.getByLabel("Search", { exact: true })).toBeFocused();
+  const dialog = page.getByRole("dialog", { name: "Search" });
+  const box = dialog.getByRole("combobox");
+  await expect(box).toBeFocused();
+  await box.fill("a:pscan");
+  const options = dialog.getByRole("option");
+  await expect(options.first()).toContainText("add-on");
+  await expect(options.first()).toHaveAttribute("aria-selected", "true");
+  await page.keyboard.press("ArrowDown");
+  await expect(options.nth(1)).toHaveAttribute("aria-selected", "true");
+  await page.keyboard.press("ArrowUp");
+  await page.keyboard.press("Enter");                                  // opens the add-on and closes the palette
+  await expect(dialog).toHaveCount(0);
+  await expect(page).toHaveURL(/\/addon\//);
+  await page.keyboard.press("Control+k");                              // Escape closes it and puts focus back
+  await expect(dialog).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(dialog).toHaveCount(0);
+  await page.keyboard.press("Control+k");                              // Ctrl+Enter goes to the full results
+  await dialog.getByRole("combobox").fill("t:ExtensionScript");
+  await page.keyboard.press("Control+Enter");
+  await expect(page).toHaveURL(/\/search\?q=t%3AExtensionScript/);
 });
 
 test("Copy for GitHub puts a Markdown summary on the clipboard", async ({ page, context }) => {

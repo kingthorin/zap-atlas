@@ -105,7 +105,7 @@ Ideas from a Gemini list (written from the project description; it could not ope
 - **Shareable trails:** pin 3 to 8 entities with notes into a URL-encoded trail to share. Medium.
 
 **Tools**
-- **Search prefixes** (done): `t:` types, `a:` add-ons, `c:` commits, `h:` help pages, `m:` modules, `s:` stories, `r:` releases; Cmd or Ctrl + K goes to the search box. Not a pop-up palette: it opens the Search page.
+- **Search prefixes** (done): `t:` types, `a:` add-ons, `c:` commits, `h:` help pages, `m:` modules, `s:` stories, `r:` releases; Cmd or Ctrl + K goes to the search box. A pop-up palette opens over the current page, with results as you type, arrow keys, Enter, Ctrl or Cmd + Enter for the full results page, and Escape.
 - **Copy for GitHub** (done): a button on the symbol, commit and add-on pages that copies a Markdown block with a link pinned to the analysed commit.
 - **SQL console:** DuckDB-Wasm over the shards, loaded only when opened. Heavy download and the shards are large; low priority.
 
