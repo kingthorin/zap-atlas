@@ -60,9 +60,9 @@ def test_calls_resolve_through_declared_types_and_supertypes():
 def test_chained_and_var_receivers_are_counted_not_guessed():
     _, _, results = _run(FILES)
     svc = next(r for r in results if r.path == "b/Svc.java")
-    # .x() on a call result and v.dup(3) on a `var`; param.chain() has a known receiver type and is
-    # counted by the cross-file pass as "type known, method not found".
-    assert svc.unresolved_calls == 2
+    # v.dup(3) on a `var`; param.chain().x() starts at a typed parameter, so it goes to the cross-file pass,
+    # which follows the chain (chain() does not exist on Base, so it is counted as not followed)
+    assert svc.unresolved_calls == 1
 
 
 def test_ambiguous_overloads_are_inferred():
@@ -90,3 +90,46 @@ def test_statically_imported_members_resolve_or_count_as_external():
     assert {(e.target.split("fix:")[-1], e.evidence_type) for e in edges} == {("u.Util#helper(int)", "resolved")}
     assert stats["receiver_type_outside_dataset"] == 1   # assertThat -> org.junit.Assert is not in the dataset
     assert stats["type_in_dataset_method_not_found"] == 0
+
+
+CHAIN = {
+    "a/Model.java": "package a;\npublic class Model { static Model s; public static Model getSingleton() { return s; } public Opts getOpts() { return null; } }\n",
+    "a/Opts.java": "package a;\npublic class Opts { public Cfg getCfg() { return null; } public java.util.List<Cfg> all() { return null; } public void save() {} }\n",
+    "a/Cfg.java": "package a;\npublic class Cfg { public void apply() {} public <T> T gen() { return null; } }\n",
+    "a/Over.java": "package a;\npublic class Over { public Cfg f(int x) { return null; } public Opts f(long x) { return null; } }\n",
+    "b/Use.java": '''package b;
+import a.Model;
+import a.Opts;
+import a.Over;
+public class Use {
+  Opts opts;
+  Over over;
+  void run() {
+    Model.getSingleton().getOpts().save();   // static singleton, then two more steps
+    opts.getCfg().apply();                   // one step from a field
+    this.opts.getCfg().apply();              // this.field
+    opts.all().size();                       // generic return type: not followed
+    opts.getCfg().gen().apply();             // type-variable return type: not followed
+    over.f(1).apply();                       // overloads with different return types: not followed
+    java.util.Map.of().keySet().size();      // library: not followed
+  }
+}
+''',
+}
+
+
+def test_chained_calls_follow_declared_return_types():
+    edges, stats, _ = _run(CHAIN)
+    got = _calls(edges)
+    run = "run()"
+    assert (run, "a.Opts#save()", "resolved") in got
+    assert (run, "a.Cfg#apply()", "resolved") in got
+    # opts.getCfg().apply() and this.opts.getCfg().apply() give one edge (same caller and target)
+    assert sum(1 for e in edges if e.target.endswith("Cfg#apply()")) == 1
+    # followed: getOpts() and save() on the singleton chain, the two apply() chains, gen() after getCfg(), and size() after
+    # all() (that chain ends on java.util.List, which is outside the dataset)
+    assert stats["chain_followed"] == 6
+    # not followed: apply() after gen() (a type variable), apply() after the overloads, and keySet() and size() on a library
+    assert stats["chain_not_followed"] == 4
+    assert not any(e.target.endswith("size()") for e in edges)
+    assert not any(e.target.endswith("Over#f(int)") or e.target.endswith("Over#f(long)") for e in edges if "apply" in e.target)

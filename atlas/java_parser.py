@@ -12,9 +12,14 @@ Evidence levels:
   *declared* type is a type in the dataset with exactly one such method.
 * ``inferred``: several same-arity overloads match.
 
-Not resolved (counted, never emitted as edges): chained calls, ``var`` and
-lambda-typed receivers, generics, receivers of types outside the dataset, and
-anything needing overload resolution beyond name and arity. Call sites whose
+A chained call ``a().b()`` is followed through the declared return types of the
+methods in the chain (``atlas.call_resolution``); a method's return type is recorded
+for that, erased of generics.
+
+Not resolved (counted, never emitted as edges): ``var`` and lambda-typed receivers,
+generics, receivers of types outside the dataset, chains that leave the dataset or go
+through a generic return type, and anything needing overload resolution beyond name
+and arity. Call sites whose
 receiver type is known are returned in ``JavaFileResult.call_sites`` for the
 cross-file pass.
 """
@@ -56,6 +61,7 @@ class _Call:
     recv_kind: str = "self"      # self | super | name | field | qualified | type | other
     recv_text: str = ""
     locals: dict | None = None   # variable name -> set of erased declared types in the enclosing method
+    chain: tuple = ()            # for recv_kind "chain:<kind>": the calls before this one, innermost first, as (name, arity)
 
 
 @dataclass
@@ -70,8 +76,10 @@ class CallSite:
     line: int
     start_at_supers: bool = False
     fallbacks: tuple = ()   # classes from `import static` to try when the receiver type has no such method
+    chain: tuple = ()       # (name, arity) of each call between the receiver and this call, innermost first
 
 
+_PRIMITIVES = {"void", "boolean", "byte", "char", "short", "int", "long", "float", "double"}
 _JAVA_LANG = {"Override", "Deprecated", "SuppressWarnings", "FunctionalInterface", "SafeVarargs"}
 _LOCAL_DECLS = ("local_variable_declaration", "enhanced_for_statement", "resource",
                 "catch_formal_parameter", "formal_parameter", "spread_parameter")
@@ -89,7 +97,7 @@ class JavaFileResult:
     calls_resolved_same_type: int = 0
     calls_inferred_same_type: int = 0
     call_sites: list[CallSite] = field(default_factory=list)
-    # qualified type name -> {"id", "supers": [qualified names], "methods": {name: [(arity, id)]}}
+    # qualified type name -> {"id", "supers": [qualified names], "methods": {name: [(arity, id)]}, "rets": {method id: qualified return type}}
     types: dict = field(default_factory=dict)
 
 
@@ -123,7 +131,8 @@ class JavaParser:
         self._resolve_calls(ctx)
         for qual, raw in ctx.type_supers.items():
             r.types[qual] = {"id": ctx.type_ids[qual], "supers": [self._fqn(t, ctx) for t in raw],
-                             "methods": {n: v for (tq, n), v in ctx.methods.items() if tq == qual}}
+                             "methods": {n: v for (tq, n), v in ctx.methods.items() if tq == qual},
+                             "rets": {sid: self._fqn(t, ctx) for sid, t in ctx.rets.get(qual, {}).items()}}
         return r
 
     def _fqn(self, name: str, ctx: "_Ctx") -> str:
@@ -248,6 +257,12 @@ class JavaParser:
         s = self._symbol(ctx, sid, f"{type_qual}#{sig}", "constructor" if is_ctor else "method", sig, node)
         self._rel(ctx, type_sid, sid, "CONTAINS", "resolved", s.start_line)
         ctx.methods.setdefault((type_qual, name), []).append((len(ptypes), sid))
+        rt = node.child_by_field_name("type")
+        if rt is not None and not is_ctor:
+            rtype = _erase(_text(rt))
+            # primitives, arrays and type variables (T, E, K, V) never name a type in the dataset
+            if rtype not in _PRIMITIVES and not rtype.endswith("]") and not re.fullmatch(r"[A-Z][A-Z0-9]?", rtype):
+                ctx.rets.setdefault(type_qual, {})[sid] = rtype
         body = node.child_by_field_name("body")
         if body is not None:
             self._collect_calls(body, sid, type_qual, ctx, self._locals(node))
@@ -330,10 +345,17 @@ class JavaParser:
                 continue  # nested/local types are visited as members, not as part of this method
             if n.type == "method_invocation":
                 args = n.child_by_field_name("arguments")
-                kind, text = self._receiver(n.child_by_field_name("object"))
+                obj, chain = n.child_by_field_name("object"), []
+                while obj is not None and obj.type == "method_invocation":     # a().b().c(): walk down to the first receiver
+                    a = obj.child_by_field_name("arguments")
+                    chain.append((_text(obj.child_by_field_name("name")), len(a.named_children) if a is not None else 0))
+                    obj = obj.child_by_field_name("object")
+                kind, text = self._receiver(obj)
+                if chain:
+                    kind = f"chain:{kind}"
                 ctx.calls.append(_Call(caller, type_qual, _text(n.child_by_field_name("name")),
                                        len(args.named_children) if args is not None else 0,
-                                       n.start_point[0] + 1, kind, text, locals_))
+                                       n.start_point[0] + 1, kind, text, locals_, tuple(reversed(chain))))
             stack.extend(n.children)
 
     def _field_type(self, type_qual: str, name: str, ctx: "_Ctx") -> str | None:
@@ -370,23 +392,28 @@ class JavaParser:
                     r.call_sites.append(CallSite(ctx.repo, ctx.path, c.caller, c.type_qual, c.name, c.arity,
                                                  c.line, start_at_supers=True, fallbacks=static))
                 continue
+            kind, chain = c.recv_kind, ()
+            if kind.startswith("chain:"):
+                kind, chain = kind[len("chain:"):], c.chain
             recv_type = None
-            if c.recv_kind == "name":
+            if kind == "self" and chain:
+                recv_type = c.type_qual                 # this.a().b(): the chain starts at the enclosing type
+            elif kind == "name":
                 declared = (c.locals or {}).get(c.recv_text)
                 if declared is not None:
                     recv_type = next(iter(declared)) if len(declared) == 1 and not next(iter(declared)).startswith("?") else None
                 else:
                     recv_type = self._field_type(c.type_qual, c.recv_text, ctx) or \
                         (c.recv_text if c.recv_text[:1].isupper() else None)   # static call on a type name
-            elif c.recv_kind == "field":
+            elif kind == "field":
                 recv_type = self._field_type(c.type_qual, c.recv_text, ctx)
-            elif c.recv_kind in ("type", "qualified"):
+            elif kind in ("type", "qualified"):
                 recv_type = c.recv_text
             if recv_type is None:
                 r.unresolved_calls += 1
             else:
                 r.call_sites.append(CallSite(ctx.repo, ctx.path, c.caller, self._fqn(recv_type, ctx), c.name,
-                                             c.arity, c.line))
+                                             c.arity, c.line, chain=chain))
 
 
 class _Ctx:
@@ -394,6 +421,7 @@ class _Ctx:
         self.repo, self.fid, self.path, self.result = repo, fid, path, result
         self.methods: dict[tuple[str, str], list[tuple[int, str]]] = {}
         self.calls: list[_Call] = []
+        self.rets: dict[str, dict[str, str]] = {}      # type -> {method id: erased return type}
         self.top_level: list[tuple[str, str]] = []
         self.declared: dict[str, str] = {}      # simple name -> qualified name, types declared in this file
         self.type_ids: dict[str, str] = {}

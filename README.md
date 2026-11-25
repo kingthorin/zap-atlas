@@ -141,8 +141,12 @@ their own licences.
   its receiver's declared type (local, parameter, field, `new`, static type name,
   `super`, or a statically imported member) is a type in the dataset with exactly
   one method of that name and arity, searching supertypes in the dataset;
-  `inferred` when several match. There is no overload resolution beyond arity, no
-  generics, no `var`, and chained calls are not followed. Calls into libraries
+  `inferred` when several match. A chained call `a().b()` is followed through the
+  declared return types of the methods in the chain (each step must be a method in
+  the dataset, and overloads are followed only if they declare the same return type);
+  it is `resolved` only when every step had one candidate. There is no overload
+  resolution beyond arity, no generics (a generic or type-variable return type ends
+  the chain), and no `var`. Calls into libraries
   outside the dataset (JDK, Swing, JUnit), methods inherited from them, and
   unresolvable receivers are counted in the manifest, not emitted. A type name
   declared twice is never resolved.

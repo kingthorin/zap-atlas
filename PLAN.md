@@ -20,7 +20,7 @@ differs, and what is planned next. Update it with each change that moves an item
 | M0 Reconnaissance | Done | Layout, history volume, Gradle and help locations are reflected in the generator and README. |
 | M1 Static foundation | Done | Schema, CLI, validator, frontend shell, Pages deployment, CI with tests and browser smoke tests. |
 | M2 Git history | Done | Full DAG, refs, tags, file changes, renames, year shards, timeline-ready data. |
-| M3 Code intelligence | Mostly done | Types, members, annotations, imports, inheritance, calls resolved by declared type and arity (including supertypes and static imports), `USES_API`. Open: overload resolution beyond arity, generics, `var` and chained calls (a compiler-backed pass), Javadoc `@deprecated`. |
+| M3 Code intelligence | Mostly done | Types, members, annotations, imports, inheritance, calls resolved by declared type and arity (including supertypes and static imports), `USES_API`. Chained calls are followed through declared return types (done: CALLS edges up from 95,946 to 111,957 on the same sources, receivers that could not be typed down from 62,791 to 13,392). Open: overload resolution beyond arity, generics, `var`, lambda parameters, wildcard imports, Javadoc `@deprecated`. |
 | M4 Ecosystem | Mostly done | Modules, add-ons, dependencies, help pages, help link graph, per-page history, languages. Open: JavaHelp navigation (`toc.xml`, `index.xml`, `map.jhm`), core API links. |
 | M5 Historical analysis | Not started | Symbol events, snapshots, `MODIFIED_BY`, `INTRODUCED_BY`, `PART_OF`, automated milestone suggestions. Current structure only today. |
 | M6 Polish | Mostly done | Search, stories, README, smoke tests, Apache 2.0 licence, per-module shards and a first accessibility pass (axe in both themes, phone width) are done. Open: keyboard-only and screen reader testing, licence headers in source files if wanted. |
@@ -147,7 +147,7 @@ against 84 for a full run, output identical for all 673 files; the saving in CI 
 ## Next
 
 1. Stories: 29 of 47 are marked `reviewed` (20 projects, 6 history, 3 features). 18 remain draft: 12 features, 4 projects and 2 history. Review is done by the maintainer; stories are never regenerated, but a story whose cited entity disappears upstream fails the build.
-2. M3 remainder: a compiler-backed pass for overloads, generics and chained calls (optional).
+2. M3 remainder: chained calls are done in Python (no compiler needed). What is left is small by measurement: lambda parameters and inherited fields (6,800 calls), `var` (700), and overloads by argument type. A compiler-backed pass is no longer worth its cost.
 3. ~~Release and tag milestones~~ (done: `milestones.jsonl`, Releases page, history markers, add-on release lists, story references).
 4. ~~Timeline~~, ~~graph explorer~~ and the four agreed ideas (all done).
 5. ~~Per-module shards~~, ~~workflow `ref` and `repo_refs` inputs~~ (now passed to `atlas analyze --ref/--repo-refs`; `checkout_sources.py` removed; CI passed with empty inputs and with `repo_refs` set to zap-hud v0.19.0),  ~~licence~~, ~~validator integrity checks~~, ~~zap-hud as a fourth repository~~, ~~accessibility first pass~~, ~~least-privilege CI~~ (all done).
