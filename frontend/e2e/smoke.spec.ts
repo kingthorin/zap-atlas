@@ -20,6 +20,28 @@ test("overview shows non-zero totals", async ({ page }) => {
   for (const s of await stats.allTextContents()) expect(Number(s)).toBeGreaterThan(0);
 });
 
+test("overview: tiles, activity chart, latest panel and featured stories", async ({ page }) => {
+  await page.goto("");
+  const explore = page.getByRole("region", { name: "Explore" });
+  await expect(explore.getByRole("link")).toHaveCount(6);
+  await expect(explore.getByRole("link", { name: /^Releases \d+ ZAP releases/ })).toBeVisible();
+  await expect(page.getByRole("link", { name: /^Commits per month, \d{4}-\d\d to \d{4}-\d\d/ })).toBeVisible();
+  const latest = page.getByRole("heading", { name: "Latest" }).locator("xpath=../..");
+  await expect(latest.getByRole("link", { name: /^ZAP \d/ })).toBeVisible();
+  await expect(latest.getByText("Newest commit")).toBeVisible();                 // loads after the rest
+  await expect(latest.locator("a[href*='/commit/']")).toBeVisible();
+  const featured = page.getByRole("region", { name: "Featured stories" });
+  const n = await featured.locator("li").count();
+  expect(n).toBeGreaterThanOrEqual(3);
+  expect(n).toBeLessThanOrEqual(4);
+  expect(await featured.getByText("draft").count()).toBe(0);                     // reviewed stories only
+  await featured.locator("li a").first().click();
+  await expect(page).toHaveURL(/\/stories\//);
+  await page.goBack();
+  await page.getByRole("region", { name: "Explore" }).getByRole("link", { name: /^Timeline/ }).click();
+  await expect(page).toHaveURL(/\/timeline$/);
+});
+
 test("repositories list modules and languages, and a module page opens", async ({ page }) => {
   await page.goto("repositories");
   await expect(page.getByRole("table", { name: "Lines of code by language" }).first()).toBeVisible();
