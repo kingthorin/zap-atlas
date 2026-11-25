@@ -84,6 +84,40 @@ class RepoDelta:
     core_team: dict | None
 
 
+GENERATED_DIRS = ("commits", "files", "symbols", "relationships", "incoming", "shards", "author_modules")
+
+
+def _previous_chunks(output_dir: Path) -> set[str]:
+    """The files the previous run listed in its manifest (empty if there was none)."""
+    try:
+        return set(json.loads((output_dir / CHUNK_MANIFEST).read_text(encoding="utf-8")).get("chunks", []))
+    except (OSError, ValueError):
+        return set()
+
+
+def _remove_stale(output_dir: Path, current: set[str], previous: set[str]) -> int:
+    """Delete files an earlier run wrote that this run did not, so a rebuilt dataset has no leftovers.
+
+    Only generator-owned files go: those the previous manifest listed, and anything under the generated data
+    directories. Hidden files and anything else in the output directory are left alone. (search/ is written after
+    this step and is rebuilt by ``atlas analyze``.)
+    """
+    gone = {n for n in previous if n not in current}
+    for d in GENERATED_DIRS:
+        base = output_dir / d
+        if base.is_dir():
+            gone |= {p.relative_to(output_dir).as_posix() for p in base.rglob("*")
+                     if p.is_file() and not p.name.startswith(".") and p.relative_to(output_dir).as_posix() not in current}
+    for n in gone:
+        (output_dir / n).unlink(missing_ok=True)
+    for d in GENERATED_DIRS:                                  # empty directories left behind
+        base = output_dir / d
+        for p in sorted((q for q in base.rglob("*") if q.is_dir()), reverse=True) if base.is_dir() else []:
+            if not any(p.iterdir()):
+                p.rmdir()
+    return len(gone)
+
+
 class AtlasGenerator:
     """Orchestrates analysis + generation for the configured source repos."""
 
@@ -147,6 +181,7 @@ class AtlasGenerator:
         self._resolve_cross_file()
         self._resolve_calls_and_api()
         self._link_milestones()
+        previous = _previous_chunks(output_dir)
         chunk_names = self._write_history_shards(output_dir)
         chunk_names += write_module_shards(
             output_dir, [r["name"] for r in self.rows[CHUNK_REPOS]], self.rows[CHUNK_MODULES], self.rows[CHUNK_ADDONS],
@@ -163,7 +198,8 @@ class AtlasGenerator:
             jsonfmt.dumps(asdict(manifest), ensure_ascii=False),
             encoding="utf-8",
         )
-        print(f"[atlas] wrote {len(chunk_names)} chunks + manifest to {output_dir}")
+        removed = _remove_stale(output_dir, set(chunk_names), previous)
+        print(f"[atlas] wrote {len(chunk_names)} chunks + manifest to {output_dir}" + (f"; removed {removed} stale files" if removed else ""))
         return manifest
 
     def _write_history_shards(self, output_dir: Path) -> list[str]:

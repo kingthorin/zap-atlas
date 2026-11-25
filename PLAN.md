@@ -142,7 +142,7 @@ and `zap-website` (domain registered 2015-11-04, the Hugo site, January 2020). T
 `atlas analyze` skips unchanged work: the whole run when the upstream commits, generator code and stories match the output
 dataset, and per repository when only some moved (`sources/.atlas-cache`, one entry per repository, keyed by commit and
 generator code). CI restores that cache with `actions/cache`. Measured locally with only zap-extensions moved: 70 seconds
-against 84 for a full run, output identical for all 673 files; the saving in CI is mostly the clones of the three quiet repositories.
+against 84 for a full run, output identical for all 673 files; a run that writes the dataset also removes files left by earlier runs (they used to make `validate` fail with duplicate ids after a shard layout changed); the saving in CI is mostly the clones of the three quiet repositories.
 
 ## Next
 

@@ -65,7 +65,7 @@ Runs are incremental. `atlas analyze` reads each repository's commit with `git l
 If every commit, the generator code and the stories match the dataset already in the output
 directory, it stops (about 8 seconds). Otherwise a repository whose commit was parsed before is
 replayed from `sources/.atlas-cache` without being cloned or parsed, and only repositories that
-moved are processed. `--force` rebuilds everything. The CI workflow keeps that cache between runs. `ATLAS_JAVA_MAX=100` limits Java files per repository for quick trials.
+moved are processed. `--force` rebuilds everything. A run that writes a dataset also deletes the files an earlier run left in the generated data directories (`commits/`, `files/`, `symbols/`, `relationships/`, `incoming/`, `shards/`, `author_modules/`) or listed in the previous manifest; other files in the output directory are not touched. The CI workflow keeps that cache between runs. `ATLAS_JAVA_MAX=100` limits Java files per repository for quick trials.
 
 To run the site against the generated data:
 

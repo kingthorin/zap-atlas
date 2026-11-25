@@ -68,3 +68,18 @@ def test_a_changed_story_or_a_damaged_file_means_not_current(gitrepo, stories, t
     assert AtlasGenerator(_config(str(gitrepo), stories)).run(sources, out) is not None      # stories are an input
     (out / "repos.jsonl").write_text("{}\n")
     assert AtlasGenerator(_config(str(gitrepo), stories)).run(sources, out) is not None      # a damaged dataset is rebuilt
+
+
+def test_files_from_an_earlier_run_are_removed_but_other_files_are_left(gitrepo, stories, tmp_path):
+    sources, out = tmp_path / "sources", tmp_path / "out"
+    AtlasGenerator(_config(str(gitrepo), stories)).run(sources, out)
+    (out / "shards").mkdir(exist_ok=True)
+    (out / "shards" / "old-layout.json").write_text("{}")             # under a generated directory, not in the manifest
+    (out / "relationships" / "fix").mkdir(parents=True, exist_ok=True)
+    (out / "relationships" / "fix" / "stale-shard.jsonl").write_text("{}\n")
+    (out / "notes.txt").write_text("mine")                            # not generated
+    (out / ".keep").write_text("")
+    AtlasGenerator(_config(str(gitrepo), stories)).run(sources, out, force=True)
+    assert not (out / "shards" / "old-layout.json").exists()
+    assert not (out / "relationships" / "fix" / "stale-shard.jsonl").exists()
+    assert (out / "notes.txt").exists() and (out / ".keep").exists()
