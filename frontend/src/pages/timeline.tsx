@@ -4,14 +4,14 @@ import { scaleUtc } from "d3-scale";
 import { select } from "d3-selection";
 import { zoom as d3zoom, zoomIdentity, ZoomBehavior, ZoomTransform } from "d3-zoom";
 import { utcMonday } from "d3-time";
-import { CoreTeam, Milestone, ModuleTimeline, Story, Timeline, loadCommits, loadCoreTeam, loadMilestones, loadModuleTimeline, loadSectionTimeline, loadStories, loadTimeline } from "../lib/data";
+import { CoreTeam, Milestone, ModuleTimeline, Story, Timeline, loadCommits, loadCoreTeam, loadMilestones, loadModuleTimeline, loadRepos, loadSectionTimeline, loadStories, loadTimeline } from "../lib/data";
 import { Loading, ErrorBox } from "../components/ui";
 
 const TEAM_ROW = 12, TEAM_HEAD = 24;      // the core team lane: one row per concurrent member
 const GROUP_COLOR: Record<string, [string, string]> = { projects: ["#e08e00", "#7a4f00"], features: ["#4389ff", "#00457f"], history: ["#94a3b8", "#475569"] };
 const GROUP_NAME: Record<string, string> = { projects: "student project", features: "feature", history: "project history" };
 const W = 1000, ML = 124, MR = 12, LANE_H = 120, TOP = 18, STORY_H = 68, STORY_ROWS = 5, MARK_GAP = 14, AXIS_H = 26;
-const REPO_COLOR: Record<string, string> = { zaproxy: "#4389ff", "zap-extensions": "#e08e00", "zap-core-help": "#2f9e6f", "zap-hud": "#8e5bd0" };
+const REPO_COLOR: Record<string, string> = { zaproxy: "#4389ff", "zap-extensions": "#e08e00", "zap-core-help": "#2f9e6f", "zap-hud": "#8e5bd0", zest: "#d94f70", "browser-extension": "#14a3b8" };
 // Cursor over the chart; "grabbing" shows while dragging. Try "crosshair", "grab" or "pointer".
 const CURSOR = "crosshair";
 const DETAIL_MONTHS = 30; // at or below this visible span, weekly bars come from the commit shards
@@ -79,7 +79,9 @@ export default function TimelinePage() {
     }
     return { rows, count: ends.length };
   }, [team]);
-  const allRepos = useMemo(() => Object.keys(tl ?? {}), [tl]);
+  const [repoOrder, setRepoOrder] = useState<string[]>([]);       // the order of the Repositories page
+  useEffect(() => { loadRepos().then(r => setRepoOrder(r.map(x => x.name))).catch(() => {}); }, []);
+  const allRepos = useMemo(() => Object.keys(tl ?? {}).sort((a, b) => (repoOrder.indexOf(a) + 1 || 99) - (repoOrder.indexOf(b) + 1 || 99)), [tl, repoOrder]);
   // Repositories hidden with the checkboxes, kept in the URL as ?hide=a,b; at least one stays visible.
   const [params, setParams] = useSearchParams();
   const hidden = useMemo(() => new Set((params.get("hide") ?? "").split(",").filter(r => allRepos.includes(r))), [params, allRepos]);
@@ -295,7 +297,7 @@ export default function TimelinePage() {
     <div className="space-y-4">
       <h1 className="text-2xl font-bold">Timeline</h1>
       <p className="text-slate-600">
-        Activity in each repository, stacked on one time axis. Diamonds are stories (orange: student projects, blue: features, grey: project history), vertical lines are core and HUD release tags, and the small blocks under a lane count its add-on releases. Click a release block to list those releases. Zoom in to see weekly bars; zoom out for monthly totals.
+        Activity in each repository, stacked on one time axis. Diamonds are stories (orange: student projects, blue: features, grey: project history), vertical lines are release tags (ZAP, HUD, Zest and Browser Extension), and the small blocks under a lane count its add-on releases. Click a release block to list those releases. Zoom in to see weekly bars; zoom out for monthly totals.
       </p>
       <div className="flex flex-wrap gap-2 items-center text-sm">
         <label>Show{" "}

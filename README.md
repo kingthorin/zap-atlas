@@ -1,12 +1,14 @@
 # ZAP Atlas
 
 A static website for exploring the history, architecture, code and ecosystem of
-ZAP. It is generated from four upstream repositories:
+ZAP. It is generated from six upstream repositories:
 
 | Repository | Role |
 |---|---|
 | [zaproxy/zaproxy](https://github.com/zaproxy/zaproxy) | ZAP core |
 | [zaproxy/zap-extensions](https://github.com/zaproxy/zap-extensions) | Add-ons |
+| [zaproxy/zest](https://github.com/zaproxy/zest) | Zest, the graphical scripting language (Java) |
+| [zaproxy/browser-extension](https://github.com/zaproxy/browser-extension) | Browser extension and Browser Recorder (TypeScript, history only) |
 | [zaproxy/zap-core-help](https://github.com/zaproxy/zap-core-help) | Core help |
 | [zaproxy/zap-hud](https://github.com/zaproxy/zap-hud) | Heads Up Display add-on |
 
@@ -59,7 +61,7 @@ python -m atlas index ./data                                  # rebuild only the
 python -m pytest tests
 ```
 
-A full run over four repositories with complete history takes about a minute once
+A full run over six repositories with complete history takes about a minute once
 they are cloned (the first clone takes longer).
 Runs are incremental. `atlas analyze` reads each repository's commit with `git ls-remote` first.
 If every commit, the generator code and the stories match the dataset already in the output

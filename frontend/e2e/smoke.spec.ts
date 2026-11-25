@@ -303,7 +303,7 @@ test("add-on releases are grouped by year without listing every row", async ({ p
 test("releases: latest line, most released add-ons and a monthly heatmap", async ({ page }) => {
   await page.goto("releases");
   await expect(page.getByText(/^Latest ZAP release: ZAP \d.*latest add-on release: /)).toBeVisible();
-  await page.getByRole("tab", { name: /^Add-on releases/ }).click();
+  await page.getByRole("tab", { name: /^Add-ons/ }).click();
   const total = Number((await page.getByText(/^[\d,]+ releases, newest first/).textContent())!.match(/^([\d,]+)/)![1].replace(/,/g, ""));
   const chips = page.getByRole("group", { name: "Most released add-ons" }).getByRole("button");
   await expect(chips).toHaveCount(12);
@@ -324,8 +324,25 @@ test("releases: latest line, most released add-ons and a monthly heatmap", async
   await expect(page.getByText(new RegExp(`^${c} releases?, newest first`))).toBeVisible();
 });
 
+test("zest and browser-extension are listed after the core repositories and have their own release tabs", async ({ page }) => {
+  await page.goto("repositories");
+  const names = page.locator("div.mb-3 > span.font-semibold");
+  await expect(names).toHaveCount(6);
+  expect(await names.allTextContents()).toEqual(["zaproxy", "zap-extensions", "zest", "browser-extension", "zap-core-help", "zap-hud"]);
+  await page.goto("releases");
+  const tabs = page.getByRole("tablist").getByRole("tab");
+  await expect(tabs).toHaveCount(6);
+  expect((await tabs.allTextContents()).some(t => /releases/i.test(t))).toBe(false);          // the page is already Releases
+  await page.getByRole("tab", { name: /^Zest \(\d+\)/ }).click();
+  await expect(page).toHaveURL(/kind=zest-release/);
+  await expect(page.getByRole("link", { name: /^Zest \d+\.\d+/ }).first()).toBeVisible();
+  await page.getByRole("tab", { name: /^Browser extension \(\d+\)/ }).click();
+  await expect(page.getByRole("link", { name: /^Browser Extension \d+\.\d+\.\d+$/ }).first()).toBeVisible();
+  await expect(page.getByRole("link", { name: /^Browser Recorder \d+/ }).first()).toBeVisible();
+});
+
 test("timeline draws the repositories with markers, zooms and has a table", async ({ page }) => {
-  await page.setViewportSize({ width: 1280, height: 1100 });      // tall enough to hover the core team lane at the bottom of the chart
+  await page.setViewportSize({ width: 1280, height: 1500 });      // tall enough to hover the core team lane at the bottom of the chart
   await page.goto("timeline");
   await noError(page);
   await expect(page.getByRole("group", { name: /Commits per repository/ })).toBeVisible();
@@ -362,7 +379,7 @@ test("timeline draws the repositories with markers, zooms and has a table", asyn
   await page.goBack();
   await page.mouse.move(0, 0);
   await expect(page.getByRole("tooltip")).toHaveCount(0);
-  await page.mouse.move(box.x + box.width * 0.55, box.y + 608 * scale);          // the second row of the core team lane under the four repository lanes, where Simon Bennetts (listed throughout) sits
+  await page.mouse.move(box.x + box.width * 0.55, box.y + 848 * scale);          // the second row of the core team lane under the six repository lanes, where Simon Bennetts (listed throughout) sits
   await expect(page.getByRole("tooltip")).toContainText(/^Simon Bennetts · in the credits' core team from 2010-12-04 to now/);
   await page.getByText("Table: commits per year").click();
   await expect(page.getByRole("table", { name: "Commits per year by repository" })).toBeVisible();
@@ -388,16 +405,16 @@ test("timeline: story markers are packed so that none sits on another", async ({
 test("timeline: repositories can be hidden, a dragged range zooms, and the choices survive", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 1100 });
   await page.goto("timeline");
-  const lanes = () => page.locator("svg[role=group] text[font-weight='bold']", { hasText: /^zap/ });   // the repository lanes only: "Stories" and "Core team" are also bold, and the team lane loads late
-  await expect(lanes()).toHaveCount(4);                              // wait for the chart before counting
+  const lanes = () => page.locator("svg[role=group] text[font-weight='bold']", { hasText: /^(zap|zest|browser)/ });   // the repository lanes only: "Stories" and "Core team" are also bold, and the team lane loads late
+  await expect(lanes()).toHaveCount(6);                              // wait for the chart before counting
   await page.getByRole("checkbox", { name: /zap-hud/ }).uncheck();
-  await expect(lanes()).toHaveCount(3);
+  await expect(lanes()).toHaveCount(5);
   await expect(page).toHaveURL(/hide=zap-hud/);
-  for (const r of ["zap-core-help", "zap-extensions"]) await page.getByRole("checkbox", { name: new RegExp(r) }).uncheck();
+  for (const r of ["zap-core-help", "zap-extensions", "zest", "browser-extension"]) await page.getByRole("checkbox", { name: new RegExp(r) }).uncheck();
   await expect(page.getByRole("checkbox", { name: /zaproxy$/ })).toBeDisabled();          // the last one stays
   await page.reload();
   await expect(page.getByRole("checkbox", { name: /zap-hud/ })).not.toBeChecked();         // the URL keeps the choice
-  for (const r of ["zap-hud", "zap-core-help", "zap-extensions"]) await page.getByRole("checkbox", { name: new RegExp(r) }).check();
+  for (const r of ["zap-hud", "zap-core-help", "zap-extensions", "zest", "browser-extension"]) await page.getByRole("checkbox", { name: new RegExp(r) }).check();
   const status = page.locator("span.text-slate-500", { hasText: " bars" });
   const span = async () => (await status.textContent())!.match(/(\d{4}-\d\d-\d\d) to (\d{4}-\d\d-\d\d)/)!.slice(1).map(d => Date.parse(d));
   const [a0, a1] = await span();

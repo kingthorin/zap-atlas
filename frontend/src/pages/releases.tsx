@@ -5,10 +5,12 @@ import { CoreWindows, Milestone, Repo, githubTag, loadCoreWindows, loadMilestone
 import { Loading, ErrorBox } from "../components/ui";
 
 const KINDS: { id: string; label: string }[] = [
-  { id: "core-release", label: "ZAP releases" },
-  { id: "addon-release", label: "Add-on releases" },
-  { id: "hud-release", label: "HUD releases" },
-  { id: "extensions-release", label: "Early zap-extensions releases" },
+  { id: "core-release", label: "ZAP" },
+  { id: "addon-release", label: "Add-ons" },
+  { id: "extensions-release", label: "Early zap-extensions" },
+  { id: "zest-release", label: "Zest" },
+  { id: "browser-extension-release", label: "Browser extension" },
+  { id: "hud-release", label: "HUD" },
 ];
 const day = (iso: string) => iso.slice(0, 10);
 const addonKey = (m: Milestone) => m.tag.replace(/-v\d+(\.\d+)*$/, "");   // the add-on a tag belongs to (the `addon` field is empty for some)

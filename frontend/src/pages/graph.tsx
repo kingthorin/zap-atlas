@@ -11,7 +11,7 @@ import { Loading, ErrorBox } from "../components/ui";
 import { filePathOf } from "../lib/data";
 import Sweep from "../components/sweep";
 
-const REPO_COLOR: Record<string, string> = { zaproxy: "#4389ff", "zap-extensions": "#e08e00", "zap-core-help": "#2f9e6f", "zap-hud": "#8e5bd0" };
+const REPO_COLOR: Record<string, string> = { zaproxy: "#4389ff", "zap-extensions": "#e08e00", "zap-core-help": "#2f9e6f", "zap-hud": "#8e5bd0", zest: "#d94f70", "browser-extension": "#14a3b8" };
 const EVIDENCE = ["resolved", "inferred", "syntactic"];
 const TYPES = ["CALLS", "IMPORTS", "EXTENDS", "IMPLEMENTS", "USES_API", "DEPENDS_ON", "REFERENCES"];
 const reduceMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;

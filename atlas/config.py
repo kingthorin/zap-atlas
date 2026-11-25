@@ -34,6 +34,14 @@ class AtlasConfig:
                 url="https://github.com/zaproxy/zap-extensions.git",
             ),
             SourceRepo(
+                name="zest",
+                url="https://github.com/zaproxy/zest.git",
+            ),
+            SourceRepo(
+                name="browser-extension",
+                url="https://github.com/zaproxy/browser-extension.git",
+            ),
+            SourceRepo(
                 name="zap-core-help",
                 url="https://github.com/zaproxy/zap-core-help.git",
             ),

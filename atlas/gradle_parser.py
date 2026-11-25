@@ -97,15 +97,15 @@ def discover_modules(repo_path: Path) -> list[GradleModule]:
 
 
 def _root_project(repo_path: Path) -> list[GradleModule]:
-    """A single-project repository (build.gradle.kts and src/ at the root), such as zap-hud.
+    """A single-project repository (build.gradle.kts or build.gradle and src/ at the root), such as zap-hud or zest.
 
     Its one module is the ``src`` directory, named after its add-on id when it declares one."""
-    build = repo_path / "build.gradle.kts"
-    if not build.is_file() or not (repo_path / "src").is_dir():
+    build = next((b for b in (repo_path / "build.gradle.kts", repo_path / "build.gradle") if b.is_file()), None)
+    if build is None or not (repo_path / "src").is_dir():
         return []
     info = parse_addon_block(build.read_text(errors="replace"))
     return [GradleModule(
-        name="src", path="src", build_file="build.gradle.kts", is_addon=info["has_block"],
+        name="src", path="src", build_file=build.name, is_addon=info["has_block"],
         addon_name=info["addon_name"], addon_status=info["addon_status"], addon_author=info["addon_author"],
         addon_url=info["addon_url"], addon_dependencies=info["dependencies"],
         slug=info["addon_id"] or repo_path.name, base="")]

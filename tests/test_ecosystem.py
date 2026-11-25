@@ -75,3 +75,10 @@ def test_single_project_repo_becomes_one_add_on_module(tmp_path):
 def test_repo_without_gradle_project_has_no_modules(tmp_path):
     (tmp_path / "docs").mkdir()
     assert discover_ecosystem("r", tmp_path).modules == []
+
+
+def test_groovy_root_build_is_one_module(tmp_path):
+    (tmp_path / "src/main/java").mkdir(parents=True)
+    (tmp_path / "build.gradle").write_text("plugins { id 'java' }")
+    eco = discover_ecosystem("zest", tmp_path)
+    assert [(m["id"], m["path"], m["addon"]) for m in eco.modules] == [("module:zest:src", "src", False)]

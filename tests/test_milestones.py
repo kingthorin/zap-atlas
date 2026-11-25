@@ -32,6 +32,19 @@ def test_core_release_tags_only(tmp_path):
     assert all(x["commits"] == [f"commit:zaproxy:{sha}"] for x in rows)   # annotated tags are peeled to the commit
 
 
+def test_zest_and_browser_extension_releases(tmp_path):
+    r, sha = _repo(tmp_path, [("0.37.0", False), ("0.12", False), ("untagged", False)])
+    rows, cov = build_milestones("zest", r, {sha}, {})
+    assert {x["tag"]: (x["kind"], x["title"]) for x in rows} == {"0.37.0": ("zest-release", "Zest 0.37.0"), "0.12": ("zest-release", "Zest 0.12")}
+    assert cov["zest_releases"] == 2
+    (tmp_path / "b").mkdir()
+    r2, sha2 = _repo(tmp_path / "b", [("v0.3.0", False), ("rec-v0.2.1", False), ("v1", False)])
+    rows, cov = build_milestones("browser-extension", r2, {sha2}, {})
+    assert {x["tag"]: (x["kind"], x["title"]) for x in rows} == {
+        "v0.3.0": ("browser-extension-release", "Browser Extension 0.3.0"), "rec-v0.2.1": ("browser-extension-release", "Browser Recorder 0.2.1")}
+    assert cov["browser_extension_releases"] == 2
+
+
 def test_addon_release_tags_link_known_addons(tmp_path):
     r, sha = _repo(tmp_path, [("retire-v70", False), ("gone-v1.2.3", False), ("2.4", False), ("rc-1", False)])
     rows, cov = build_milestones("zap-extensions", r, {sha}, {"retire": "Retire.js"})

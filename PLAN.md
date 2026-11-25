@@ -10,7 +10,7 @@ differs, and what is planned next. Update it with each change that moves an item
 |---|---|---|
 | Publish a generated site to a `gh-pages` branch | Deploy a GitHub Pages artifact | `files.jsonl` exceeded GitHub's 100 MB file limit; Pages artifacts have no per-file limit. Decided with the maintainer. |
 | Data chunked by repository, module and time | Commits and file changes by repo and year; symbols and relationships by module (modules over 3 MB split by directory); small chunks flat | Done: largest data file is about 3 MB. |
-| Three source repositories | Four: `zap-hud` is added | The HUD lives in its own repository. It is a single-project Gradle repo, so its `src` directory is its one module. |
+| Three source repositories | Six: `zap-hud`, `zest` and `browser-extension` are added | The HUD lives in its own repository. It is a single-project Gradle repo, so its `src` directory is its one module. `zest` is the same shape with a Groovy `build.gradle`, so it also has one `src` module (Java is parsed; its tags are Zest releases). `browser-extension` is TypeScript, which the generator does not parse: it has history, languages and releases (`v0.3.0` Browser Extension, `rec-v0.3.0` Browser Recorder) but no modules or code graph. |
 | Stories are curated | Curated JSON, status `draft` or `reviewed`; drafts are labelled | Only maintainer-reviewed stories should read as authoritative. |
 
 ## Milestones

@@ -140,7 +140,7 @@ function Activity({ tl }: { tl: Timeline }) {
             <g className="text-slate-500" fill="currentColor" fontSize="11"><text x={P} y={H - 3}>{pts[0][0].slice(0, 4)}</text><text x={W - P} y={H - 3} textAnchor="end">{pts[pts.length - 1][0].slice(0, 4)}</text></g>
           </svg>
         </Link>
-        <p className="mt-1 text-sm text-slate-600">Commits per month in all four repositories: {nf(total)} in all, peaking at {nf(max)} in a month. <Link to="/timeline" className="text-indigo-600 hover:underline">Open the Timeline</Link></p>
+        <p className="mt-1 text-sm text-slate-600">Commits per month in all repositories: {nf(total)} in all, peaking at {nf(max)} in a month. <Link to="/timeline" className="text-indigo-600 hover:underline">Open the Timeline</Link></p>
       </CardContent>
     </Card>
   );
