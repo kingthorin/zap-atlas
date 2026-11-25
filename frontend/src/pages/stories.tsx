@@ -1,11 +1,25 @@
 import { useEffect, useState } from "react";
-import { Link, useParams, useSearchParams } from "react-router-dom";
+import { Link, useLocation, useParams, useSearchParams } from "react-router-dom";
 import { Story, loadStories } from "../lib/data";
 import { routeForEntity, safeHttps } from "../lib/routes";
 import { Loading, ErrorBox } from "../components/ui";
 import Evidence from "../components/evidence";
 
 const slugOf = (id: string) => id.split(":").pop()!;
+
+const COMPARE: Record<string, (a: Story, b: Story) => number> = {
+  "date-asc": (a, b) => (a.date ?? "").localeCompare(b.date ?? "") || a.title.localeCompare(b.title),
+  "date-desc": (a, b) => (b.date ?? "").localeCompare(a.date ?? "") || a.title.localeCompare(b.title),
+  "az": (a, b) => a.title.localeCompare(b.title),
+  "za": (a, b) => b.title.localeCompare(a.title),
+};
+const isDraft = (s: Story) => s.status !== "reviewed";
+/** The stories a list shows for these group, status and sort parameters. */
+function filtered(stories: Story[], p: URLSearchParams) {
+  const group = p.get("group") ?? "", status = p.get("status") ?? "";
+  return stories.filter(s => (!group || s.group === group) && (!status || (status === "draft") === isDraft(s)))
+    .sort(COMPARE[p.get("sort") ?? ""] ?? COMPARE["date-asc"]);
+}
 
 function Badge({ status }: { status?: string }) {
   return status === "reviewed" ? null : (
@@ -35,6 +49,8 @@ function useStories() {
 
 export function StoryDetail() {
   const { slug = "" } = useParams();
+  const [params] = useSearchParams();
+  const fromList = !!(useLocation().state as any)?.fromList;      // reached from the list (not by a direct link)
   const { stories, error } = useStories();
   const [shown, setShown] = useState("");                       // the cited id whose evidence is open
   useEffect(() => setShown(""), [slug]);
@@ -42,9 +58,16 @@ export function StoryDetail() {
   if (!stories) return <Loading />;
   const story: any = stories.find(s => slugOf(s.id) === slug);
   if (!story) return <ErrorBox message={`Unknown story ${slug}.`} />;
+  const qs = ["group", "status", "sort"].filter(k => params.get(k)).map(k => `${k}=${encodeURIComponent(params.get(k)!)}`).join("&");
+  const list = filtered(stories, params);
+  const at = list.findIndex(s => s.id === story.id);
+  const next = (qs || fromList) && at >= 0 ? list[at + 1] : undefined;      // only when reached from a filtered or sorted list
   return (
     <article className="space-y-6 max-w-3xl">
-      <div className="text-sm"><Link to="/stories" className="text-indigo-600 hover:underline">← Stories</Link></div>
+      <div className="text-sm flex justify-between gap-4">
+        <Link to={qs ? `/stories?${qs}` : "/stories"} className="text-indigo-600 hover:underline">← Stories</Link>
+        {next && <Link to={`/stories/${slugOf(next.id)}${qs ? `?${qs}` : ""}`} state={{ fromList: true }} className="text-indigo-600 hover:underline">{params.get("status") === "draft" ? "Next draft" : "Next story"} →</Link>}
+      </div>
       <header>
         <h1 className="text-2xl font-bold">{story.title}<Badge status={story.status} /></h1>
         <p className="mt-2 text-slate-600">{story.description}</p>
@@ -87,18 +110,15 @@ export default function Stories() {
   if (error) return <ErrorBox message={error} />;
   if (!stories) return <Loading />;
   const sort = params.get("sort") ?? "date-asc";
-  const compare: Record<string, (a: Story, b: Story) => number> = {
-    "date-asc": (a, b) => (a.date ?? "").localeCompare(b.date ?? "") || a.title.localeCompare(b.title),
-    "date-desc": (a, b) => (b.date ?? "").localeCompare(a.date ?? "") || a.title.localeCompare(b.title),
-    "az": (a, b) => a.title.localeCompare(b.title),
-    "za": (a, b) => b.title.localeCompare(a.title),
-  };
+  const status = params.get("status") ?? "";
   const setParam = (k: string, v: string) => {
     const next = new URLSearchParams(params);
     v ? next.set(k, v) : next.delete(k);
     setParams(next, { replace: true });
   };
-  const items = stories.filter(s => !group || s.group === group).sort(compare[sort] ?? compare["date-asc"]);
+  const items = filtered(stories, params);
+  const inGroup = stories.filter(s => !group || s.group === group);
+  const qs = ["group", "status", "sort"].filter(k => params.get(k)).map(k => `${k}=${encodeURIComponent(params.get(k)!)}`).join("&");
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold">Curated stories</h1>
@@ -122,10 +142,16 @@ export default function Stories() {
           </select>
         </label>
       </div>
+      <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Story status">
+        <span className="text-sm text-slate-600">Status:</span>
+        {([["", "All", inGroup.length], ["reviewed", "Reviewed", inGroup.filter(s => !isDraft(s)).length], ["draft", "Draft", inGroup.filter(isDraft).length]] as const).map(([id, label, n]) => (
+          <button key={id} aria-pressed={status === id} className={chip(status === id)} onClick={() => setParam("status", id)}>{label} ({n})</button>
+        ))}
+      </div>
       {stories.length === 0 && <p className="text-sm italic text-slate-500">No stories yet.</p>}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {items.map((story: any) => (
-          <Link key={story.id} to={`/stories/${slugOf(story.id)}`} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm hover:border-indigo-400">
+          <Link key={story.id} to={`/stories/${slugOf(story.id)}${qs ? `?${qs}` : ""}`} state={{ fromList: true }} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm hover:border-indigo-400">
             <div className="text-xs text-slate-400 mb-1">
               <span className="px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-700 mr-2">{GROUPS.find(g => g.id === story.group)?.short ?? story.group}</span>
               {story.date} · {story.chapters.length} chapters

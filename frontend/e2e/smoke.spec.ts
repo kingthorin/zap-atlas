@@ -147,6 +147,40 @@ test("stories are one flat list tagged by group, sortable and filterable", async
   expect(await cards.count()).toBeLessThan(asc.length);
 });
 
+test("stories filter by status, keep it in the URL and step to the next draft", async ({ page }) => {
+  await page.goto("stories");
+  const cards = page.locator("a[href*='/stories/']");
+  await expect(cards.first()).toBeVisible();
+  const all = await cards.count();
+  const status = page.getByRole("group", { name: "Story status" });
+  const n = async (name: string) => Number((await status.getByRole("button", { name: new RegExp(`^${name} \\(`) }).textContent())!.match(/\((\d+)\)/)![1]);
+  const [drafts, reviewed] = [await n("Draft"), await n("Reviewed")];
+  expect(drafts + reviewed).toBe(all);
+  await status.getByRole("button", { name: /^Draft/ }).click();
+  await expect(page).toHaveURL(/status=draft/);
+  await expect(cards).toHaveCount(drafts);
+  expect(await page.locator("a[href*='/stories/'] h3", { hasText: "draft" }).count()).toBe(drafts);
+  await page.getByRole("button", { name: /^Features and add-ons/ }).click();   // counts follow the group
+  const featureDrafts = await cards.count();
+  expect(await n("Draft")).toBe(featureDrafts);
+  await page.goto("stories?status=draft");                                      // a bookmarked queue
+  await expect(cards).toHaveCount(drafts);
+  const first = await page.locator("a[href*='/stories/'] h3").first().textContent();
+  await cards.first().click();
+  await expect(page.getByRole("heading", { level: 1 })).toContainText(first!.replace(/draft$/, ""));
+  await page.getByRole("link", { name: /^Next draft/ }).click();
+  await expect(page.getByRole("heading", { level: 1 })).not.toContainText(first!.replace(/draft$/, ""));
+  await expect(page.getByText("draft").first()).toBeVisible();
+  await page.getByRole("link", { name: "← Stories" }).click();
+  await expect(page).toHaveURL(/status=draft/);
+  await page.goto("stories");                                                   // unfiltered list: Next story
+  await cards.first().click();
+  await expect(page.getByRole("link", { name: /^Next story/ })).toBeVisible();
+  await page.goto("stories/feature-scan-rules");                                // a direct link: no next link
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  await expect(page.getByRole("link", { name: /^Next/ })).toHaveCount(0);
+});
+
 test("a story's citations open an evidence panel beside the story", async ({ page, context }) => {
   await context.grantPermissions(["clipboard-read", "clipboard-write"]);
   await page.setViewportSize({ width: 1400, height: 900 });

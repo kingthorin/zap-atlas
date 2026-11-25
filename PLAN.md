@@ -116,7 +116,7 @@ Ideas from a Gemini list (written from the project description; it could not ope
 ## Page improvements (from review)
 
 - **Repositories:** done. A repository with more than 5 modules folds its module list behind "Modules (N)"; the stats and language bars stay visible.
-- **Stories:** done. One flat list with a group tag on each card (no group headings), a group filter, and a sort by date or title, ascending or descending.
+- **Stories:** done. One flat list with a group tag on each card (no group headings), a group filter, and a sort by date or title, ascending or descending. A Status row (All, Reviewed, Draft, with counts that follow the group filter) combines with the group and sort and is kept in the URL (`?status=draft`), so a review queue can be bookmarked. A story opened from a filtered or sorted list links back to that list and shows Next draft (Next story when the status is not draft) in the same order, also from the unfiltered list; a direct link shows neither.
 - **Source and Architecture:** merged into one Source page (done): module and directory tree on the left, tabs for module links (from `module_graph.json`), symbols, relationships and add-on dependencies. Each module loads only its own shards. Open: file-level pages with history (the drawn graph is the Graph page).
 
 ## Stories: the plan and what is left
