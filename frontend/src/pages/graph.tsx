@@ -310,7 +310,30 @@ export default function GraphPage() {
   const box = useRef<HTMLDivElement>(null);
   const [host, setHost] = useState<HTMLDivElement | null>(null);   // wraps the canvas; the sweep overlay is drawn in it
   const [side, setSide] = useState<HTMLDivElement | null>(null);   // beside it: the sweep's contributor names go here when there is room
-  const relayout = useCallback(() => { sigma.current?.resize(); sigma.current?.refresh(); }, []);
+  /** Extent of the drawn nodes in viewport pixels: centre and half-width, half-height. */
+  const nodeBounds = useCallback(() => {
+    const s = sigma.current, g = s?.getGraph();
+    if (!s || !g || !g.order) return null;
+    let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+    g.forEachNode((_, a) => { const p = s.graphToViewport({ x: a.x, y: a.y }); x0 = Math.min(x0, p.x); x1 = Math.max(x1, p.x); y0 = Math.min(y0, p.y); y1 = Math.max(y1, p.y); });
+    return { cx: (x0 + x1) / 2, cy: (y0 + y1) / 2, rx: Math.max(20, (x1 - x0) / 2), ry: Math.max(20, (y1 - y0) / 2) };
+  }, []);
+  const [sigmaKey, setSigmaKey] = useState(0);                 // bumped when a new Sigma is made, so listeners on its camera are set again
+  const onView = useCallback((cb: () => void) => {
+    const cam = sigma.current?.getCamera();
+    cam?.on("updated", cb);
+    return () => { cam?.off("updated", cb); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sigmaKey]);
+  /** Resize to the container, then zoom out just enough to leave a margin round the nodes for the sweep's contributors. */
+  const fitSweep = useCallback(() => {
+    const s = sigma.current;
+    if (!s) return;
+    s.resize();
+    const b = nodeBounds(), { width, height } = s.getDimensions();
+    const k = b ? Math.min((width / 2 - 80) / b.rx, (height / 2 - 50) / b.ry, 1) : 1;
+    if (k < 1) s.getCamera().animate({ ratio: s.getCamera().ratio / k }, { duration: reduceMotion() ? 0 : 300 }); else s.refresh();
+  }, [nodeBounds]);
   const sigma = useRef<Sigma | null>(null);
   const camera = useRef<any>(null);
   const positions = useRef(new Map<string, { x: number; y: number }>());
@@ -436,7 +459,7 @@ export default function GraphPage() {
     s.on("leaveNode", () => { if (box.current) box.current.style.cursor = ""; });
     const theme = new MutationObserver(() => { s.setSetting("labelColor", { color: isDark() ? "#e2e8f0" : "#334155" }); });
     theme.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
-    sigma.current = s;
+    sigma.current = s; setSigmaKey(k => k + 1);
     return () => { camera.current = s.getCamera().getState(); theme.disconnect(); s.kill(); sigma.current = null; };
   }, [graph]);
 
@@ -609,7 +632,7 @@ export default function GraphPage() {
               <span key={r}><span className="inline-block w-2.5 h-2.5 rounded-full mr-1 align-middle" style={{ background: c }} />{r}</span>)}
             <span>{graph.order - typeParent.size} modules{counts.length > 0 && <> + {counts.map(([l, n]) => `${n} ${l}`).join(", ")}</>} · {graph.size} linked pairs</span>
           </div>
-          {years && <Sweep host={host} side={side} onLayout={relayout} minYear={years.min} maxYear={years.max} label={short} nodePosition={sweepPosition} colorOf={sweepColor} />}
+          {years && <Sweep host={host} side={side} fit={fitSweep} onView={onView} bounds={nodeBounds} minYear={years.min} maxYear={years.max} label={short} nodePosition={sweepPosition} colorOf={sweepColor} />}
         </div>
         <aside aria-live="polite" className="rounded-xl border border-slate-200 bg-white p-3 text-sm lg:max-h-[calc(60vh+2.5rem)] overflow-y-auto">
           {!sel ? <p className="text-slate-500 italic">Select a module in the graph or the list to see what it is linked to. Expand a module to see its most connected types, or its files and directories.</p> : (<>

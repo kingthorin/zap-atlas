@@ -16,13 +16,14 @@ const easeOut = (t: number) => 1 - (1 - t) ** 3;
 const easeIn = (t: number) => t ** 3;
 /** Accounts that commit automatically: zapbot (all its display names), dependabot and GitHub Actions. */
 const isBot = (name: string) => /^zapbot\b|\[bot\]$|^github-actions/i.test(name);
-const hash = (s: string) => { let h = 7; for (const c of s) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h; };
 
 interface Actor { name: string; total: number; mods: { id: string; n: number }[]; color: string; people?: number; pinned?: boolean }
 export interface SweepProps {
   host: HTMLElement | null;                                       // the element that holds the graph canvas; the overlay goes into it
   side: HTMLElement | null;                                       // beside the graph: the names go here when there is room
-  onLayout: () => void;                                           // called after the graph's width changes, so it can resize itself
+  fit: () => void;                                                // resize the graph to its container and zoom out enough to leave a margin round it for the contributors
+  onView: (cb: () => void) => () => void;                         // calls back whenever the graph is panned, zoomed or resized; returns an unsubscribe
+  bounds: () => { cx: number; cy: number; rx: number; ry: number } | null;   // the drawn nodes' extent in viewport pixels: centre and half-width, half-height
   nodePosition: (id: string) => { x: number; y: number } | null;  // viewport position of a module, null when it is not drawn
   colorOf: (id: string) => string;
   label: (id: string) => string;
@@ -30,7 +31,7 @@ export interface SweepProps {
 }
 
 /** Plays through the months: the people who committed in a month swoop in, send pulses to the modules they touched, and leave. */
-export default function Sweep({ host, side, onLayout, nodePosition, label, minYear, maxYear }: SweepProps) {
+export default function Sweep({ host, side, fit, onView, bounds, nodePosition, label, minYear, maxYear }: SweepProps) {
   const now = new Date();
   const last = Math.min((maxYear - minYear) * 12 + 11, (now.getUTCFullYear() - minYear) * 12 + now.getUTCMonth());
   const [first, setFirst] = useState(0);                       // the first month that has any contribution
@@ -42,9 +43,11 @@ export default function Sweep({ host, side, onLayout, nodePosition, label, minYe
   const [pin, setPin] = useState("");
   const [data, setData] = useState<AuthorMonths>({});
   const [rowW, setRowW] = useState(0);
+  const [view, setView] = useState(0);                      // bumped when the graph moves, so a paused frame is drawn again
   const canvas = useRef<HTMLCanvasElement>(null);
   const progress = useRef(0);                              // how far through the month's animation we are, kept across pause and play
   const shownMonth = useRef("");
+  const held = useRef(false);                              // the paused frame is the generic still frame, not a moment of a run
   const month = `${minYear + Math.floor(idx / 12)}-${String(idx % 12 + 1).padStart(2, "0")}`;
   const year = +month.slice(0, 4);
 
@@ -74,7 +77,12 @@ export default function Sweep({ host, side, onLayout, nodePosition, label, minYe
     return () => ro.disconnect();
   }, [row]);
   const outside = engaged && !!side && rowW >= SIDE_MIN_ROW;
-  useEffect(() => { const id = requestAnimationFrame(onLayout); return () => cancelAnimationFrame(id); }, [outside, onLayout]);
+  useEffect(() => { if (!engaged) return; const id = requestAnimationFrame(() => { fit(); setView(v => v + 1); }); return () => cancelAnimationFrame(id); }, [outside, engaged, fit]);
+  useEffect(() => {
+    let raf = 0;
+    const off = onView(() => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => setView(v => v + 1)); });
+    return () => { off(); cancelAnimationFrame(raf); };
+  }, [onView]);
 
   /** The month's people: the most active ones, anyone the viewer asked for, and everyone else pooled as "Other". */
   const actors = useMemo(() => {
@@ -111,7 +119,8 @@ export default function Sweep({ host, side, onLayout, nodePosition, label, minYe
       if (idx < last) setIdx(i => i + 1); else { progress.current = 0.5; setPlaying(false); }
     };
     // Same month: carry on from where it stopped. A new month starts at the beginning when playing, or as a still frame (everyone hovering) when paused.
-    const resume = shownMonth.current === month ? progress.current : playing ? 0 : 0.5;
+    const resume = shownMonth.current === month ? (playing && held.current ? 0 : progress.current) : playing ? 0 : 0.5;
+    held.current = playing ? false : shownMonth.current !== month || held.current;
     shownMonth.current = month;
     if (!cv || !ctx || reduceMotion() || !host) { if (playing) timer = window.setTimeout(advance, step * 0.6); return () => window.clearTimeout(timer); }
     const dpr = window.devicePixelRatio || 1, w = host.clientWidth, h = host.clientHeight;
@@ -119,9 +128,9 @@ export default function Sweep({ host, side, onLayout, nodePosition, label, minYe
     const dark = isDark();
     const ink = dark ? "#e2e8f0" : "#1e293b", paper = dark ? "#0f172a" : "#ffffff";
 
-    const pill = (text: string, x: number, y: number, color: string, bold = false, align: "left" | "center" = "left") => {
+    const pill = (text: string, x: number, y: number, color: string, bold = false, align: "left" | "center" | "right" = "left") => {
       ctx.font = `${bold ? "600 " : ""}12px system-ui, sans-serif`; ctx.textBaseline = "middle";
-      const tw = ctx.measureText(text).width, lx = clamp(align === "center" ? x - tw / 2 : x, 3, w - tw - 9);
+      const tw = ctx.measureText(text).width, lx = clamp(align === "center" ? x - tw / 2 : align === "right" ? x - tw : x, 5, w - tw - 9);
       ctx.fillStyle = paper; ctx.strokeStyle = color; ctx.lineWidth = 1.5;
       ctx.beginPath(); ctx.roundRect(lx - 4, y - 9, tw + 8, 18, 4); ctx.fill(); ctx.stroke();
       ctx.fillStyle = ink; ctx.fillText(text, lx, y);
@@ -131,13 +140,21 @@ export default function Sweep({ host, side, onLayout, nodePosition, label, minYe
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.clearRect(0, 0, w, h);
       const reached: { id: string; x: number; y: number; color: string; a: number }[] = [];
+      // The contributors wait on a ring outside the graph, each at the angle of the modules it touched, and fire inwards.
+      const b = bounds() ?? { cx: w / 2, cy: h / 2, rx: w * 0.3, ry: h * 0.3 };
+      const rx = clamp(b.rx + 40, 40, w / 2 - 14), ry = clamp(b.ry + 40, 40, h / 2 - 14);
+      const where = touched.map(a => a.mods.map(m => ({ ...m, ...nodePosition(m.id)! })));
+      const order = where.map((ps, i) => ({ i, th: Math.atan2((ps.reduce((s, m) => s + m.y, 0) / ps.length - b.cy) / b.ry, (ps.reduce((s, m) => s + m.x, 0) / ps.length - b.cx) / b.rx) }))
+        .sort((u, v) => u.th - v.th);
+      const gap = 0.32;                                              // keep neighbours on the ring apart, so the dots and names do not pile up
+      for (let k = 1; k < order.length; k++) if (order[k].th - order[k - 1].th < gap) order[k].th = order[k - 1].th + gap;
+      const over = order.length ? order[order.length - 1].th - (order[0].th + Math.PI * 2 - gap) : 0;
+      if (over > 0) order.forEach(o => { o.th -= over / 2; });
+      const angleOf = new Map(order.map(o => [o.i, o.th]));
       touched.forEach((a, i) => {
-        const pts = a.mods.map(m => ({ ...m, ...nodePosition(m.id)! }));
-        const cx = pts.reduce((s, m) => s + m.x, 0) / pts.length, cy = pts.reduce((s, m) => s + m.y, 0) / pts.length;
-        const ang = (hash(a.name) % 3600) / 3600 * Math.PI * 2, R = Math.max(w, h) * 0.55;
-        const sx = w / 2 + Math.cos(ang) * R, sy = h / 2 + Math.sin(ang) * R;
-        const dx = sx - cx, dy = sy - cy, d = Math.hypot(dx, dy) || 1;
-        const hx = clamp(cx + dx / d * 80, 14, w - 14), hy = clamp(cy + dy / d * 80, 14, h - 14);   // where the person hovers
+        const pts = where[i], th = angleOf.get(i)!, ux = Math.cos(th), uy = Math.sin(th), far = Math.hypot(w, h) / 2 + 40;
+        const hx = clamp(b.cx + ux * rx, 12, w - 12), hy = clamp(b.cy + uy * ry, 12, h - 12);       // where the person hovers
+        const sx = b.cx + ux * far, sy = b.cy + uy * far;
         const q = clamp((p - i * 0.03) / 0.7);
         let x = hx, y = hy, alpha = 1;
         if (q < 0.25) { const e = easeOut(q / 0.25); x = lerp(sx, hx, e); y = lerp(sy, hy, e); alpha = e; }
@@ -170,7 +187,9 @@ export default function Sweep({ host, side, onLayout, nodePosition, label, minYe
         ctx.fillStyle = a.color; ctx.strokeStyle = paper; ctx.lineWidth = 2.5;
         ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
         if (a.pinned) { ctx.strokeStyle = a.color; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, r + 5, 0, Math.PI * 2); ctx.stroke(); }
-        if (!outside) pill(a.name, x + r + 5, y, a.color, !!a.pinned);                    // with no names column, the name goes next to the dot
+        if (!outside) {                                                                   // with no names column, the name goes on the outer side of the dot
+          if (ux >= 0) pill(a.name, x + r + 5, y, a.color, !!a.pinned); else pill(a.name, x - r - 5, y, a.color, !!a.pinned, "right");
+        }
       });
       // A module that is being hit shows its name for a moment.
       const seen = new Set<string>();
@@ -193,7 +212,7 @@ export default function Sweep({ host, side, onLayout, nodePosition, label, minYe
     };
     raf = requestAnimationFrame(run);
     return () => { done = true; cancelAnimationFrame(raf); window.clearTimeout(timer); };
-  }, [touched, playing, speed, host, idx, last, nodePosition, label, outside, month]);
+  }, [touched, playing, speed, host, idx, last, nodePosition, bounds, label, outside, month, playing ? 0 : view]);
 
   const people = actors.filter(a => !a.people), other = actors.find(a => a.people);
   const summary = actors.length
