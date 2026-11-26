@@ -15,6 +15,7 @@ for (const scheme of ["light", "dark"] as const) {
     for (const r of ROUTES) {
       await page.goto(r);
       await page.waitForLoadState("networkidle");
+      if (r === "") await page.getByText("Newest commit").waitFor();          // the Overview panels load after the page: audit them, not the loading state
       await page.waitForTimeout(500);
       const res = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"]).analyze();
       for (const v of res.violations) out.push(`${scheme} /${r} ${v.id} (${v.impact}) x${v.nodes.length}: ${v.nodes[0].target.join(" ")} :: ${(v.nodes[0].failureSummary ?? "").split("\n")[1] ?? ""}`);

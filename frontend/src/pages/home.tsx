@@ -137,9 +137,9 @@ function Activity({ tl }: { tl: Timeline }) {
             <polygon points={`${x(pts[0][0])},${H - 16} ${line} ${x(pts[pts.length - 1][0])},${H - 16}`} fill="currentColor" fillOpacity={0.2} />
             <polyline points={line} fill="none" stroke="currentColor" strokeWidth={1.5} />
             <line x1={P} x2={W - P} y1={H - 16} y2={H - 16} stroke="currentColor" strokeOpacity={0.3} />
-            <g className="text-slate-500" fill="currentColor" fontSize="11"><text x={P} y={H - 3}>{pts[0][0].slice(0, 4)}</text><text x={W - P} y={H - 3} textAnchor="end">{pts[pts.length - 1][0].slice(0, 4)}</text></g>
           </svg>
         </Link>
+        <div className="flex justify-between text-xs text-slate-500" aria-hidden="true"><span>{pts[0][0].slice(0, 4)}</span><span>{pts[pts.length - 1][0].slice(0, 4)}</span></div>
         <p className="mt-1 text-sm text-slate-600">Commits per month in all repositories: {nf(total)} in all, peaking at {nf(max)} in a month. <Link to="/timeline" className="text-indigo-600 hover:underline">Open the Timeline</Link></p>
       </CardContent>
     </Card>
