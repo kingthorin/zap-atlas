@@ -1,13 +1,13 @@
 {
   "title": "The Authentication Helper add-on",
-  "description": "The authhelper add-on in zap-extensions from January 2023: browser based, client script, OAuth2, and AI assisted authentication. Earlier authentication work in core is in the Google Summer of Code 2018 story.",
+  "description": "The authhelper add-on in zap-extensions from January 2023, with the blog posts that explained each step: browser based, client script, OAuth2, and AI assisted authentication. Earlier authentication work in core is in the Google Summer of Code 2018 story.",
   "group": "features",
   "date": "2023-01-10",
   "status": "draft",
   "chapters": [
     {
       "title": "authhelper starts in January 2023",
-      "text": "\"Authhelper - first version\" (2023-01-10) is the first commit under addOns/authhelper. The CHANGELOG lists 0.1.0 (2023-01-17) with \"Support of authentication request identification and configuration.\", 0.2.0 (2023-02-08) with \"Support for header based session management.\" and 0.3.0 (2023-03-13) with \"Support for browser based authentication.\" The related commit \"Authhelper: browser based authentication\" is dated 2023-03-01.",
+      "text": "\"Authhelper - first version\" (2023-01-10) is the first commit under addOns/authhelper. The CHANGELOG lists 0.1.0 (2023-01-17) with \"Support of authentication request identification and configuration.\", 0.2.0 (2023-02-08) with \"Support for header based session management.\" and 0.3.0 (2023-03-13) with \"Support for browser based authentication.\" The related commit \"Authhelper: browser based authentication\" is dated 2023-03-01. Two days after 0.1.0, the post \"Authentication Help\" (2023-01-19) says \"There is a new Authentication Helper add-on - this is available right now on the ZAP Marketplace\" and that, by default, it \"will raise an information level alert if an authentication request is identified\". It starts from the problem, that automating a scan of an app behind a login is hard and \"If you configure any of it slightly wrong then authentication will fail\", and asks for help: \"We _can_ make it much easier to configure authentication in ZAP, but only with your help!\" It lists what is coming, tagged with add-on versions: header based session handling in 0.2.0 and session handling and verification detection in 0.4.0. The CHANGELOG entries above show both arriving, on 2023-02-08 and 2023-04-28.",
       "entities": [
         "addon:authhelper",
         "module:zap-extensions:addOns/authhelper"
@@ -20,12 +20,34 @@
         {
           "label": "authhelper CHANGELOG.md",
           "url": "https://github.com/zaproxy/zap-extensions/blob/main/addOns/authhelper/CHANGELOG.md"
+        },
+        {
+          "label": "Authentication Help",
+          "url": "https://www.zaproxy.org/blog/2023-01-19-authentication-help/"
+        }
+      ]
+    },
+    {
+      "title": "Two weeks later: a Selenium recipe",
+      "text": "On 2023-02-01 the post \"Authenticating Using Selenium\" describes a way to handle an app with a multi-step, client side login (OWASP Juice Shop is the example) using the Automation Framework, the Selenium add-on and a set of scripts kept in the community-scripts repository. It explains that ZAP has to authenticate in two ways, direct requests (used by the standard spider and most active scan rules) and browser requests (used by the AJAX Spider and the DOM XSS rule), and that the recipe logs browsers in as they launch. The post says \"As you will see we plan to make this process easier\", and the page now carries the notice \"This approach has been superseded\", pointing to the authentication decision tree.",
+      "entities": [
+        "addon:authhelper",
+        "addon:selenium",
+        "addon:automation",
+        "addon:spiderAjax"
+      ],
+      "commits": [],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "Authenticating Using Selenium",
+          "url": "https://www.zaproxy.org/blog/2023-02-01-authenticating-using-selenium/"
         }
       ]
     },
     {
       "title": "Auto-detection, beta, and the Authentication Tester",
-      "text": "0.4.0 (2023-04-28) lists \"Support for auto-detect authentication.\", \"Support for auto-detect session management.\", and \"Support for auto-detect verification.\" 0.7.0 (2023-05-23) lists \"Authentication tester dialog.\" and \"Promoted to Beta\". 0.9.0 (2023-07-11) adds \"Direct support for handling browser based authentication in the AJAX spider.\"",
+      "text": "0.4.0 (2023-04-28) lists \"Support for auto-detect authentication.\", \"Support for auto-detect session management.\", and \"Support for auto-detect verification.\" 0.7.0 (2023-05-23) lists \"Authentication tester dialog.\" and \"Promoted to Beta\". 0.9.0 (2023-07-11) adds \"Direct support for handling browser based authentication in the AJAX spider.\" The post \"Authentication Auto-Detection\" (2023-05-02) announces that \"ZAP can now automatically detect common authentication mechanisms and configure itself\", mainly for the Automation Framework, and says \"Authentication is a complete pain. So many sites work in so many subtly different ways.\" It notes that login pages with the username and password on separate steps were not supported at the time of writing. The post \"Authentication Tester Dialog\" (2023-05-23, the date of 0.7.0) describes the dialog: it opens from the Tools menu, needs a login URL, username and password, launches a browser, tries to fill in the form, then checks that session handling and a verification URL are found. When it fails, a Diagnostics tab produces a sanitised summary of the requests and responses, with host names and key values replaced by safe tokens, for sharing. The post thanks Platinum sponsor Jit for sponsoring this and other recent authentication work.",
       "entities": [
         "addon:authhelper",
         "addon:spiderAjax"
@@ -38,12 +60,20 @@
         {
           "label": "Authentication Helper add-on page",
           "url": "https://www.zaproxy.org/docs/desktop/addons/authentication-helper/"
+        },
+        {
+          "label": "Authentication Auto-Detection",
+          "url": "https://www.zaproxy.org/blog/2023-05-02-authentication-auto-detection/"
+        },
+        {
+          "label": "Authentication Tester Dialog",
+          "url": "https://www.zaproxy.org/blog/2023-05-23-authentication-tester/"
         }
       ]
     },
     {
       "title": "Client script authentication and TOTP, 2024 to 2025",
-      "text": "The commit \"Client Script Based Auth (Ajax Spider)\" is dated 2024-07-02, and \"authhelper: Add Client Script Auth support for the Client Spider\" 2025-01-29. The CHANGELOG for 0.19.0 (2025-02-04) lists \"Added support for Client Script Authentication when used in conjunction with the Ajax Spider add-on or the Client Spider via the Client Side Integration add-on.\" and \"Add support for custom authentication steps in Browser Based Authentication.\" 0.22.0 (2025-02-12) lists \"Initial authentication report (JSON).\" The commit \"Use TOTP from credentials\" is dated 2025-03-21, and 0.25.0 (2025-03-25) lists \"Use TOTP data defined under user credentials for Client Script and Browser Based Authentication, when available.\"",
+      "text": "The commit \"Client Script Based Auth (Ajax Spider)\" is dated 2024-07-02, and \"authhelper: Add Client Script Auth support for the Client Spider\" 2025-01-29. The CHANGELOG for 0.19.0 (2025-02-04) lists \"Added support for Client Script Authentication when used in conjunction with the Ajax Spider add-on or the Client Spider via the Client Side Integration add-on.\" and \"Add support for custom authentication steps in Browser Based Authentication.\" 0.22.0 (2025-02-12) lists \"Initial authentication report (JSON).\" The commit \"Use TOTP from credentials\" is dated 2025-03-21, and 0.25.0 (2025-03-25) lists \"Use TOTP data defined under user credentials for Client Script and Browser Based Authentication, when available.\" The post \"Authentication Improvements\" (2025-07-03) presents these as a set rather than one feature: \"There's no 'one big change', just a series of significant changes that are all working together\". It says the older form based, JSON based and script based methods are not recommended going forward (\"We do NOT recommend using these options going forwards!\"), because the AJAX Spider and Client Spider need \"the browsers launched by the modern spiders to be logged in\". It describes Browser Based Authentication, the same with manual steps, Client Script Authentication, a Logout Avoidance option on the spiders, and the JSON Authentication Report.",
       "entities": [
         "addon:authhelper",
         "addon:client"
@@ -52,11 +82,17 @@
         "commit:zap-extensions:d17875aa9d8f6580f9d1737141dd587ba2267e14",
         "commit:zap-extensions:0df11fa7c1fc1c0d90eb89f66feeaf56674f4f28",
         "commit:zap-extensions:dc543d58df3901162d83488380c52a0b4e433159"
+      ],
+      "evidence": [
+        {
+          "label": "Authentication Improvements",
+          "url": "https://www.zaproxy.org/blog/2025-07-03-authentication-improvements/"
+        }
       ]
     },
     {
       "title": "OAuth2 and AI assisted authentication, 2026",
-      "text": "\"authhelper: Support LLM assisted auth, phase 1\" is dated 2026-07-15 and \"authhelper: OAuth2.0 Support\" 2026-08-19. The CHANGELOG for 0.43.0 (2026-10-08) lists \"OAuth2 Authentication method, supporting the `client_credentials` and `password` grant types.\" and 0.44.0 (2026-11-03) lists \"AI Assisted Authentication\" and \"Support for the Authentication Report with OAuth2.\" The LLM Support add-on has its own history that begins with \"llm: New LLM Add-on\" (2024-10-24), and the dataset lists addon:llm as a dependency of authhelper. The Automation Framework 0.62.0 entry (2026-11-03) lists \"Support for AI assisted authentication.\"",
+      "text": "\"authhelper: Support LLM assisted auth, phase 1\" is dated 2026-07-15 and \"authhelper: OAuth2.0 Support\" 2026-08-19. The CHANGELOG for 0.43.0 (2026-10-08) lists \"OAuth2 Authentication method, supporting the `client_credentials` and `password` grant types.\" and 0.44.0 (2026-11-03) lists \"AI Assisted Authentication\" and \"Support for the Authentication Report with OAuth2.\" The LLM Support add-on has its own history that begins with \"llm: New LLM Add-on\" (2024-10-24), and the dataset lists addon:llm as a dependency of authhelper. The Automation Framework 0.62.0 entry (2026-11-03) lists \"Support for AI assisted authentication.\" The post \"Initial OAuth2.0 support\" (2026-10-08, the date of 0.43.0) covers the client_credentials and password grants and recommends the method \"only for authenticating to APIs\"; it lists what is not supported yet, including the interactive Authorization Code grant, PKCE and proactive token refresh. The post \"AI Assisted Authentication\" (2026-11-03, the date of 0.44.0) describes an LLM that drives the browser step by step. It is \"only meant to be used once, to work out how to log in\": ZAP records each successful action, builds a Zest script and switches the context to Client Script Authentication, so later logins do not use the LLM. The post says \"ZAP does not send your credentials to the LLM\" (it sends placeholders, and ZAP fills in the real values locally), and that TOTP is not yet supported.",
       "entities": [
         "addon:authhelper",
         "addon:llm",
@@ -66,6 +102,16 @@
         "commit:zap-extensions:dea4db8c7281599a6255f66f2fb8d68b987488e4",
         "commit:zap-extensions:7af3f86961e1f89e7d08b886123363b653113f99",
         "commit:zap-extensions:95f4ad45aa89a12defde6b9e987ce458eba904bf"
+      ],
+      "evidence": [
+        {
+          "label": "Initial OAuth2.0 support",
+          "url": "https://www.zaproxy.org/blog/2026-10-08-oauth2-support/"
+        },
+        {
+          "label": "AI Assisted Authentication",
+          "url": "https://www.zaproxy.org/blog/2026-11-03-ai-assisted-authentication/"
+        }
       ]
     }
   ]

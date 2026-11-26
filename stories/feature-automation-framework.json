@@ -66,6 +66,24 @@
       ]
     },
     {
+      "title": "ZAP 2.11.0 and the blog, October 2021",
+      "text": "The post \"ZAP 2.11.0\" (2021-10-07, \"the OWASP 20th anniversary release\") lists the Automation Framework as new: \"The Automation Framework is a new way to automate ZAP and is expected to become the default option for most automation use cases.\" It says it can be used from the command line and that the desktop can generate and test plans. In the same release the Docker stable and bare images \"will now be updated monthly, typically around the start of the month\", and the post says the packaged scans are being migrated to the Automation Framework, which matches the commits above.",
+      "entities": [
+        "addon:automation"
+      ],
+      "commits": [],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "ZAP 2.11.0",
+          "url": "https://www.zaproxy.org/blog/2021-10-07-zap-2-11-0/"
+        }
+      ],
+      "milestones": [
+        "milestone:zaproxy:v2.11.0"
+      ]
+    },
+    {
       "title": "GUI, authentication, and beta status",
       "text": "The CHANGELOG records \"First phase of GUI\" in 0.4.0 (2021-08-05), \"User and HTTP authentication support\" and \"Set ZAP exit code when \"-cmd \" and \"-autorun \" options used\" in 0.8.0 (2021-11-02), and, in 0.11.0 (2022-01-19), \"Form and JSON-based authentication support\" and \"Promoted to beta\". Script authentication support appears in 0.12.0 (2022-02-01).",
       "entities": [

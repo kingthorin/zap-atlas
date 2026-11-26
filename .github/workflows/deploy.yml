@@ -27,11 +27,29 @@ jobs:
   analyze:
     name: Analyze sources & validate data
     runs-on: ubuntu-latest
+    outputs:
+      sha: ${{ steps.atlas.outputs.sha }}
+      title: ${{ steps.atlas.outputs.title }}
     steps:
       - name: Checkout Atlas repo
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
+
+      # The commit of this repository (the generator, frontend and stories) that the run built, at the top of the run summary.
+      - name: Record the Atlas commit
+        id: atlas
+        run: |
+          sha="$(git rev-parse HEAD)"
+          title="$(git log -1 --format=%s)"
+          { echo "sha=$sha"; echo "title=$title"; } >> "$GITHUB_OUTPUT"
+          {
+            echo "### ZAP Atlas commit"
+            echo
+            echo "- Commit: [\`${sha:0:12}\`]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/commit/$sha)"
+            echo "- Title: $title"
+            echo "- Trigger: $GITHUB_EVENT_NAME on $GITHUB_REF_NAME"
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Set up Python
         uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
@@ -142,3 +160,17 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
+
+      - name: Deployment summary
+        env:
+          ATLAS_SHA: ${{ needs.analyze.outputs.sha }}
+          ATLAS_TITLE: ${{ needs.analyze.outputs.title }}
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          {
+            echo "### Deployed"
+            echo
+            echo "- Site: $PAGE_URL"
+            echo "- ZAP Atlas commit: [\`${ATLAS_SHA:0:12}\`]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/commit/$ATLAS_SHA)"
+            echo "- Title: $ATLAS_TITLE"
+          } >> "$GITHUB_STEP_SUMMARY"

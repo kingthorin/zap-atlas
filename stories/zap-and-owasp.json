@@ -6,12 +6,38 @@
   "status": "reviewed",
   "chapters": [
     {
+      "title": "Leaving OWASP for the Software Security Project, August 2023",
+      "text": "The post \"ZAP is Joining the Software Security Project\" (2023-08-01, Simon Bennetts) announces that ZAP is joining the SSP, \"a brand new initiative of the Linux Foundation\", as a founding project, and that \"ZAP can only be in one foundation, so regretfully ZAP will be leaving OWASP.\" It says Simon applied for ZAP to join OWASP shortly after its launch in 2010, that leaving was first floated in 2015, that he raised the concern in his 2022 Global AppSec keynote, and that the ZAP team signed the Open Letter to the OWASP Board in February 2023. The practical changes it lists: the name loses its OWASP prefix and the project is \"known as just \"ZAP\"\", Docker Hub images move to a new organisation, and the GitHub Container Registry images are not affected. It also says SSP would support Simon and Ricardo (thc202) full time: \"For the first time ever we have two people working on ZAP full-time and that will increase over time.\" The page now carries a banner saying ZAP is supported by Checkmarx and is not part of any foundation.",
+      "entities": [],
+      "commits": [],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "ZAP is Joining the Software Security Project",
+          "url": "https://www.zaproxy.org/blog/2023-08-01-zap-is-joining-the-software-security-project/"
+        }
+      ]
+    },
+    {
       "title": "No longer an OWASP project",
       "text": "The ZAP project states that \"ZAP is no longer an OWASP project, and has not been one since August 2023\", and that the correct name is \"ZAP\" or \"ZAP by Checkmarx\".",
       "evidence": [
         {
           "label": "ZAP: no longer an OWASP project",
           "url": "https://www.zaproxy.org/docs/nowaspzap/"
+        }
+      ]
+    },
+    {
+      "title": "Checkmarx, September 2024",
+      "text": "The post \"ZAP Has Joined Forces With Checkmarx\" (2024-09-24) says Checkmarx will employ all three ZAP project leaders (Simon, Ricardo and Rick), working on ZAP and on Checkmarx's DAST solution built on it, and that ZAP will be known as \"ZAP by Checkmarx\". It states what stays the same: \"ZAP will stay under the control of the ZAP Core Team, remain open source, and stay licensed under Apache v2.\" It gives as the most important change \"proper backing - for the first time in its history\", and thanks CrashOverride, who \"stepped up and supported us\" earlier: \"Without their help and support the ZAP project may not have survived.\"",
+      "entities": [],
+      "commits": [],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "ZAP Has Joined Forces With Checkmarx",
+          "url": "https://www.zaproxy.org/blog/2024-09-24-zap-has-joined-forces-with-checkmarx/"
         }
       ]
     },

@@ -45,6 +45,21 @@
       ]
     },
     {
+      "title": "The announcement, February 2022",
+      "text": "The day after core's \"Deprecate and disable proxy related code\", the post \"New ZAP Networking Layer\" (2022-02-10) tells users that the Weekly and Live releases use \"a completely different networking stack\". It describes the old one as Paros Proxy code on an old and out of date Apache Commons HttpClient, and the new one as living in the network add-on: \"All client-side comms (e.g. browser to ZAP) use the Netty library while server-side comms still use HttpClient.\" The options screens move (Options / Local Proxies becomes Options / Network / Local Servers/Proxies) and a Pass-through tab lists addresses that should not be decrypted. The reasons it gives are support for HTTP/2 and HTTP/3, Host header manipulation, lower resource use, and updating the networking code without waiting for a full release. It adds \"There is currently no ETA for these changes but they are a priority for us.\"",
+      "entities": [
+        "addon:network"
+      ],
+      "commits": [],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "New ZAP Networking Layer",
+          "url": "https://www.zaproxy.org/blog/2022-02-10-new-zap-networking-layer/"
+        }
+      ]
+    },
+    {
       "title": "A HttpSender implementation based on Apache HttpComponents",
       "text": "The core commit \"Deprecate HttpSender implementation classes\" (2022-06-07) says those classes \"will be superseded by the Network add-on.\" Three days later, in zap-extensions, \"network: provide HttpSender implementation\" (2022-06-10) has the body \"Add a `HttpSender` implementation based on Apache HttpComponents and set it to core, on newer versions.\" The CHANGELOG for 0.3.0 (2022-10-27) lists \"A newer HTTP client implementation\", client certificate management, connection options, and \"Promoted to Beta status.\"",
       "entities": [

@@ -1,6 +1,6 @@
 {
   "title": "Look and feel, FlatLaf, and dark mode",
-  "description": "How look-and-feel selection and dark mode appear in the zaproxy history: selectable look and feel in 2018, the FlatLaf dependency in 2020, dynamic switching, and later fixes.",
+  "description": "How look-and-feel selection and dark mode appear in the zaproxy history: selectable look and feel in 2018, the FlatLaf dependency in 2020, the blog post that introduced dark mode as an early, rough first step, dynamic switching, and later fixes.",
   "group": "features",
   "date": "2016-11-02",
   "status": "draft",
@@ -38,7 +38,7 @@
     },
     {
       "title": "Dark mode in the weekly release",
-      "text": "A ZAP blog post dated 2020-03-04, \"Dark Mode in the Weekly Release\", says the week's release includes first steps towards a dark mode for the Desktop UI, to be enabled by selecting \"Flat Dark\" or \"Flat Darcula\" on the Display options screen and restarting. In zaproxy, \"Set RSyntaxTextArea dark mode is dark LookAndFeel used\" is dated 2020-02-27 and \"Handle dark mode in splash screen\" is dated 2020-03-23.",
+      "text": "Two days after that weekly tag, Simon Bennetts published \"Dark Mode in the Weekly Release\" (2020-03-04). It announces \"first steps towards an all new dark mode for the ZAP Desktop UI\" and is candid about how far along it is: \"It's early days - not all screens use suitable colours, but it should be mostly usable.\" To try it, readers open Options, choose the Display screen, select \"Flat Dark\" or \"Flat Darcula\" and restart ZAP. The post sends progress and further problems to issue 5542, the issue the FlatLaf commit says it is part of, and thanks @JFormDesigner for the FlatLaf look and feel \"which adds this feature to ZAP\". The commits around it fit that description of unfinished work: \"Set RSyntaxTextArea dark mode is dark LookAndFeel used\" is dated 2020-02-27, before the post, and \"Handle dark mode in splash screen\" is dated 2020-03-23, after it.",
       "entities": [
         "repo:zaproxy"
       ],
@@ -51,12 +51,16 @@
         {
           "label": "Dark Mode in the Weekly Release",
           "url": "https://www.zaproxy.org/blog/2020-03-04-dark-mode-in-the-weekly-release/"
+        },
+        {
+          "label": "zaproxy issue 5542",
+          "url": "https://github.com/zaproxy/zaproxy/issues/5542"
         }
       ]
     },
     {
-      "title": "Dynamic switching and ZAP 2.10.0",
-      "text": "On 2020-09-29 zaproxy has \"Add support for dynamic Look and Feel switching\"; its diff adds a default look and feel documented as \"Flat Light\" (FlatLightLaf). The release notes for 2.10.0 list \"Dynamic Look and Feel including Dark Mode\", say the UI includes a set of open source look and feels from FlatLaf including 2 dark mode options, and list Issue 5542, Issue 5873, and Issue 6201. The v2.10.0 tag is dated 2020-12-17.",
+      "title": "Six months later: dynamic switching and ZAP 2.10.0",
+      "text": "The early version needed a restart to change theme. On 2020-09-29 zaproxy has \"Add support for dynamic Look and Feel switching\"; its diff adds a default look and feel documented as \"Flat Light\" (FlatLightLaf). The release notes for 2.10.0 list \"Dynamic Look and Feel including Dark Mode\", say the UI includes a set of open source look and feels from FlatLaf including 2 dark mode options, and list Issue 5542, Issue 5873, and Issue 6201. The v2.10.0 tag is dated 2020-12-17.",
       "entities": [
         "repo:zaproxy"
       ],

@@ -46,6 +46,25 @@
       ]
     },
     {
+      "title": "The report competition, March 2021",
+      "text": "Three days after the first commit under addOns/reports, the post \"ZAP Report Competition\" (2021-03-12) offers $100 for each HTML or PDF report template that is submitted and included with ZAP, and is frank about why: \"Lets be honest - creating stylish reports is probably not one of the ZAP core team's strengths\". The page now reports the result: three templates were accepted, the pull requests numbered 2876 ($200, for the number of themes), 2896 ($100) and 3188 ($150, \"now the ZAP default template!\"). The post says the new add-on uses Thymeleaf for templates and lists planned work, including data from any add-on, custom fields, report sections and translated reports. It also reports what a questionnaire answered: configuring the report format and adding custom information were rated most important. The 2.11.0 release post of 2021-10-07 says the previous reporting add-ons were removed from the marketplace and lists the templates that shipped.",
+      "entities": [
+        "addon:reports"
+      ],
+      "commits": [],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "ZAP Report Competition",
+          "url": "https://www.zaproxy.org/blog/2021-03-12-report-competition/"
+        },
+        {
+          "label": "ZAP 2.11.0",
+          "url": "https://www.zaproxy.org/blog/2021-10-07-zap-2-11-0/"
+        }
+      ]
+    },
+    {
       "title": "Older report add-ons and core reports removed in 2021",
       "text": "On 2021-04-06 the commit \"Remove superseded report add-ons\" says \"Remove `alertReport`, `birtreports`, `customreport`, and `exportreport`.\" In zaproxy, \"Redirect core API reports to report add-on\" is dated 2021-06-23 and \"Remove Paros Reports\" is dated 2021-07-22; the latter deletes ReportGeneratorUnitTest among 1064 removed lines.",
       "entities": [

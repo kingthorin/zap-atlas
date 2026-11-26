@@ -73,7 +73,7 @@
     },
     {
       "title": "Registries, 2023 and 2024",
-      "text": "\"Push Docker images to GHCR\" (2023-06-07) adds a docker/CHANGELOG.md entry dated 2023-06-08 saying images are published to the GitHub Container Registry with tags instead of image names, for example \"ghcr.io/zaproxy/zaproxy:weekly\" instead of the old name \"owasp/zap2docker-weekly:latest\". A ZAP blog post dated 2023-06-13 lists the matching images on both registries. \"Publish Docker images to SSP DockerHub organization\" is dated 2023-08-02. \"Docker: No longer push to OWASP Docker Hub\" (2024-03-05) adds a docker/CHANGELOG.md entry dated 2024-03-05.",
+      "text": "\"Push Docker images to GHCR\" (2023-06-07) adds a docker/CHANGELOG.md entry dated 2023-06-08 saying images are published to the GitHub Container Registry with tags instead of image names, for example \"ghcr.io/zaproxy/zaproxy:weekly\" instead of the old name \"owasp/zap2docker-weekly:latest\". A ZAP blog post dated 2023-06-13 lists the matching images on both registries. \"Publish Docker images to SSP DockerHub organization\" is dated 2023-08-02. \"Docker: No longer push to OWASP Docker Hub\" (2024-03-05) adds a docker/CHANGELOG.md entry dated 2024-03-05. The post \"ZAP is Joining the Software Security Project\" (2023-08-01) says the Docker Hub images were under the OWASP organisation account and would move to a new organisation, changing the pull URLs, while \"The GitHub Container Registry images will not be affected.\" The 2.11.0 post (2021-10-07) had announced a different rhythm: \"The Docker stable and bare images will now be updated monthly, typically around the start of the month.\"",
       "entities": [
         "repo:zaproxy"
       ],
@@ -87,6 +87,14 @@
         {
           "label": "ZAP Docker Images in GitHub Container Registry",
           "url": "https://www.zaproxy.org/blog/2023-06-13-ghcr-docker-images/"
+        },
+        {
+          "label": "ZAP is Joining the Software Security Project",
+          "url": "https://www.zaproxy.org/blog/2023-08-01-zap-is-joining-the-software-security-project/"
+        },
+        {
+          "label": "ZAP 2.11.0",
+          "url": "https://www.zaproxy.org/blog/2021-10-07-zap-2-11-0/"
         }
       ]
     }

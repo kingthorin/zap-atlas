@@ -29,6 +29,21 @@
         "commit:zaproxy:013c2ba8fa7fb4ce76743ec75893f729365024cd",
         "commit:zaproxy:348a01ecbaf93a650f05184e0be5aee4b80b4847"
       ]
+    },
+    {
+      "title": "Ten years on, in Simon Bennetts' words",
+      "text": "On ZAP's tenth birthday the post \"ZAP is Ten Years Old\" (2020-09-06) says that on 2010-09-06 Simon Bennetts posted the first ZAP announcement, for version 1.0.0, to Bugtraq, two days after the \"Version 1.0.0\" commit. He describes how it began: \"I started hacking on the Paros code to help me learn more about web security.\" (the early commits are under org/parosproxy). He wanted a community project to join and found none: \"I ended up releasing ZAP in an attempt to create the community project that I wanted to join.\" The post lists what ZAP had done early (websockets, launching browsers, browser automation for crawling, an add-on marketplace, Zest scripting and the Heads Up Display), credits contributors and the students from Google Summer of Code and Mozilla Winter of Security, and says ZAP 2.10.0 \"is going to be released fairly soon\".",
+      "entities": [
+        "repo:zaproxy"
+      ],
+      "commits": [],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "ZAP is Ten Years Old",
+          "url": "https://www.zaproxy.org/blog/2020-09-06-zap-is-ten-years-old/"
+        }
+      ]
     }
   ]
 }

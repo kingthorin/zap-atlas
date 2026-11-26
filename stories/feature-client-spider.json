@@ -1,0 +1,109 @@
+{
+  "title": "From the Ajax Spider to the Client Spider",
+  "description": "Three ways ZAP has crawled modern web apps with a browser: the Crawljax based Ajax Spider from 2012, the Client Side Integration add-on that let ZAP see inside the browser in 2023, and the Client Spider that is now the recommended crawler.",
+  "group": "features",
+  "date": "2012-08-07",
+  "status": "draft",
+  "chapters": [
+    {
+      "title": "A browser in the loop, 2012 to 2015",
+      "text": "In zap-extensions, \"merged spiderAjax branch into trunk\" is dated 2012-08-07 and adds a Crawljax jar. The post \"ZAP 2.0.0 and the Google Summer of Code 2012 Projects\" (2012-12-10) explains what it was for. The spider ZAP inherited from Paros \"only managed to discover 10% of the links in the wivet test application\", and Guifre Ruiz's Ajax Spider drives Crawljax, which uses Selenium to drive a browser that proxies through ZAP. It was an add-on, downloaded from the ZAP Marketplace. In zaproxy, \"Issue 1098 - Move AJAX Spider help pages to \" Ajax Spider \" add-on (and update them)\" is dated 2014-03-23, and in zap-extensions \"Issue 1326 - Move Ajax Spider Extension from Beta to Release status\" 2015-01-03.",
+      "entities": [
+        "addon:spiderAjax",
+        "repo:zap-extensions"
+      ],
+      "commits": [
+        "commit:zap-extensions:eafa4a7e620a0f9ad6def860b9ae80c689e7e6f0",
+        "commit:zaproxy:d99efcb5a30b1e85faa41fe7eb22d28d77b0c1ce",
+        "commit:zap-extensions:81b8fd8f17c4803fa140af2fad63d203803cb115"
+      ],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "ZAP 2.0.0 and the Google Summer of Code 2012 Projects",
+          "url": "https://www.zaproxy.org/blog/2012-12-10-zap-2-0-0-and-the-google-summer-of-code-2012-projects/"
+        },
+        {
+          "label": "Ajax Spider add-on page",
+          "url": "https://www.zaproxy.org/docs/desktop/addons/ajax-spider/"
+        }
+      ]
+    },
+    {
+      "title": "Its own project, 2019",
+      "text": "On 2019-04-03 zap-extensions has the commit \"spiderAjax: relocate to its own project\". Before that date the extension code was under src/org/zaproxy/zap/extension/spiderAjax.",
+      "entities": [
+        "addon:spiderAjax",
+        "module:zap-extensions:addOns/spiderAjax"
+      ],
+      "commits": [
+        "commit:zap-extensions:c19d195c7205ca00385c2a1f00ccfc8860a26d48"
+      ],
+      "documents": [],
+      "evidence": []
+    },
+    {
+      "title": "A proxy that cannot see the browser, 2023",
+      "text": "\"Client: First version\" (2023-05-26) is the first commit under addOns/client. The post \"Handling Modern Web Apps Better - Part 1\" (2023-11-03) says ZAP has historically been a man in the middle proxy and \"has not been able to see what is going on in the browser\", and introduces \"a brand new Client Side Integration add-on (also called the Client add-on for short)\". It adds a Client Map, which includes URLs found in the page that have not been visited, a Client Details tab and a Client History tab fed by a browser extension. It also changes the Ajax Spider: \"it will directly request those URLs\" it has not reached, which matches the commit \"Client: AJAX spider enhancement\" (2023-10-04). The post lists planned work: client side passive and active scanning and storing client data in the session.",
+      "entities": [
+        "addon:client",
+        "addon:spiderAjax"
+      ],
+      "commits": [
+        "commit:zap-extensions:3b44c5d43975d921ee9bb27e5c9d0c89919e3a3a",
+        "commit:zap-extensions:7220084e2808212f8ceccdf4dc9db41a95c9e2b8"
+      ],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "Handling Modern Web Apps Better - Part 1",
+          "url": "https://www.zaproxy.org/blog/2023-11-03-handling-modern-web-apps-better-part1/"
+        }
+      ]
+    },
+    {
+      "title": "A spider of its own, 2024 to 2025",
+      "text": "\"Add Browser Based Authentication to Client Spider\" is dated 2024-12-06, \"Client: Initial Client Spider tab\" 2024-12-18 and, in zaproxy, \"Weekly: add client\" 2024-12-23. ZAP 2.16.0 was tagged on 2025-01-10, and the post \"The Client Spider\" (2025-01-31) says \"In ZAP 2.16.0 we introduced a new Client Spider\". It gives the reason that the Ajax Spider is built on Crawljax, which is maintained intermittently, and \"we no longer believe that it is the best option for us going forwards\". Like the Ajax Spider it launches browsers, clicks links and fills in forms, but it works from the Client Map. The post is open about limits: \"the spider only clicks on links and buttons, it does not currently click on divs\", and \"the key measure of success is how well it runs against real world apps\".",
+      "entities": [
+        "addon:client",
+        "addon:spiderAjax"
+      ],
+      "commits": [
+        "commit:zap-extensions:274d56bd04e32f9b080dfc047b8b6ef979c1ce60",
+        "commit:zap-extensions:d0ae67802d31771ef2c3395d8fd95b2f2c44e344",
+        "commit:zaproxy:3bde62e251d5ef6c34921bb461f618a754250cce"
+      ],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "The Client Spider",
+          "url": "https://www.zaproxy.org/blog/2025-01-31-client-spider/"
+        }
+      ],
+      "milestones": [
+        "milestone:zaproxy:v2.16.0"
+      ]
+    },
+    {
+      "title": "The recommended crawler, July 2026",
+      "text": "On 2026-07-06 zap-extensions has \"client: Changed to recommend Client Spider\" and zaproxy \"Docker: Default to Client Spider for modern crawling\"; \"quickstart: Add client spider option\" is dated 2026-06-24. The post \"Use the Client Spider for Modern Web Apps\" (2026-07-06) says \"We now recommend everyone use the Client Spider when crawling modern web applications.\" Its reasons: the Ajax Spider's \"performance degrades rapidly as the target grows\" while the Client Spider's \"workload scales linearly\", and on the Crawlground and Crawl Maze benchmarks \"The Client Spider consistently scores higher across both benchmarks\". It lists what changes: the Quick Start tab uses it by default, the Automation Framework job is spiderClient instead of spiderAjax, and the packaged Docker scans offer a --client-spider option. It keeps one caution: \"we recommend using the traditional spider when crawling apps, even if they are modern\", because it finds a different set of endpoints.",
+      "entities": [
+        "addon:client",
+        "addon:spiderAjax",
+        "addon:spider"
+      ],
+      "commits": [
+        "commit:zap-extensions:805070c5eb7865d4eb79a1a1c9e50168401ca1db",
+        "commit:zap-extensions:10eda10b44a5687fdaa8ef0ae2af0baa605f3627",
+        "commit:zaproxy:d4ccc5801f34107a213fccd548139d191135b8e5"
+      ],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "Use the Client Spider for Modern Web Apps",
+          "url": "https://www.zaproxy.org/blog/2026-07-06-client-spider-now-recommended/"
+        }
+      ]
+    }
+  ]
+}

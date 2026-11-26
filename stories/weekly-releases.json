@@ -1,0 +1,74 @@
+{
+  "title": "Weekly releases",
+  "description": "How ZAP began publishing weekly builds in October 2012, what the announcement said they were for, and how later features were first tried in the weeklies.",
+  "group": "history",
+  "date": "2012-10-15",
+  "status": "draft",
+  "chapters": [
+    {
+      "title": "October 2012: a weekly build",
+      "text": "In zaproxy the commit \"Issue 397: Support weekly builds\" is dated 2012-10-15, and zap-extensions has a commit with the same subject on 2012-10-16 and \"Scripts and Ajax Spider -> weekly and a new version of tokengen\" on 2012-10-22. The post \"ZAP Weekly Releases\" (2012-10-22, Simon Bennetts) explains the decision. He had \"been struggling with the question of ZAP releases\": many enhancements were ready, he wanted them available to a wide audience, but he also wanted the full releases to stay robust and 2.0.0 \"out of the door asap\". After discussing it with the other developers, weekly releases would be built from the main branch, \"every Monday morning\".",
+      "entities": [
+        "repo:zaproxy",
+        "repo:zap-extensions"
+      ],
+      "commits": [
+        "commit:zaproxy:cee1036d0ddd8163139fe60d90d36c2a1aad326b",
+        "commit:zap-extensions:77d46a6c63c1b729128261431e3c753ba8e212a1",
+        "commit:zap-extensions:84e85c191614711eb63bba132a3205cb51117fa0"
+      ],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "ZAP Weekly Releases",
+          "url": "https://www.zaproxy.org/blog/2012-10-22-zap-weekly-releases/"
+        }
+      ]
+    },
+    {
+      "title": "What a weekly was, and was not",
+      "text": "The post lists the differences from a full release: one cross-platform ZIP and no installers, no release notes (it points to a commit comparison instead), \"No specific testing - they will be 'bleeding edge' - stuff may be broken\", no promise that the help is current, a different default home directory, and a version number based on the date, for example D-2012-10-15. They include selected add-ons listed in a file in the repository, and builds check for new weekly builds while full builds check only for full releases. The audience it names is people who want features added since 1.4 without building from source, and testers; not first time users. Its list of significant changes is the 2012 student work: the rewritten spider, the Ajax Spider and WebSockets support. In zap-extensions, \"Re-added quickstart, scripts and spiderAjax addons to the weekly build\" is dated 2012-12-19, and in zaproxy \"Issue 451: Manual check for updates doesn't work correctly in the newest weekly releases\" 2013-01-15.",
+      "entities": [
+        "repo:zaproxy",
+        "repo:zap-extensions"
+      ],
+      "commits": [
+        "commit:zap-extensions:b2f0bf70a1b682a389e54084a055aa298fe5468f",
+        "commit:zaproxy:21a6d030429f8b7e74fb5f3edd4e65485fde3952"
+      ],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "ZAP Weekly Releases",
+          "url": "https://www.zaproxy.org/blog/2012-10-22-zap-weekly-releases/"
+        }
+      ]
+    },
+    {
+      "title": "Where features were tried first",
+      "text": "The zaproxy repository has weekly tags named w<year>-<month>-<day>, the earliest in the dataset w2015-07-14; the dataset counts 569 of them. Releases do not list them: weekly tags are left out of the Releases page. Three stories mention a weekly as the first place a change appeared. The FlatLaf look and feel commit of 2020-02-24 first appears in the tag w2020-03-02, and the blog post two days later introduces dark mode \"in the weekly release\". \"Include spider add-on in weeklies\" is dated 2022-08-22, and the \"Spider News\" post of 2022-08-30 asks readers to test the changes in the weekly releases ahead of 2.12. \"Weekly: add client\" is dated 2024-12-23, about two weeks before the Client Spider shipped in 2.16.0.",
+      "entities": [
+        "repo:zaproxy"
+      ],
+      "commits": [
+        "commit:zaproxy:fc3ac09dad86d5256a64dff905d6a4fd6fca29cb",
+        "commit:zaproxy:21b28d096091eae5491f939fc3f81aced97683a6",
+        "commit:zaproxy:3bde62e251d5ef6c34921bb461f618a754250cce"
+      ],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "Dark Mode in the Weekly Release",
+          "url": "https://www.zaproxy.org/blog/2020-03-04-dark-mode-in-the-weekly-release/"
+        },
+        {
+          "label": "Spider News",
+          "url": "https://www.zaproxy.org/blog/2022-08-30-spider-move/"
+        }
+      ],
+      "milestones": [
+        "milestone:zaproxy:v2.16.0"
+      ]
+    }
+  ]
+}

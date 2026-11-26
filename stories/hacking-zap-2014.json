@@ -1,0 +1,73 @@
+{
+  "title": "Hacking ZAP, 2014",
+  "description": "A four part blog series from March to April 2014 that invited people to change the ZAP source: why, how to start, and how to write passive and active scan rules.",
+  "group": "history",
+  "date": "2014-03-10",
+  "status": "draft",
+  "chapters": [
+    {
+      "title": "Why hack ZAP?",
+      "text": "The first post, \"Hacking ZAP #1 - Why should you?\" (2014-03-10, Simon Bennetts), is addressed to people who might change the source. It describes ZAP as \"the most active OWASP project\" with, according to the post, more contributors than any other web application security tool, and translations into over 25 languages, and gives reasons under six headings, among them helping others, learning (\"I started ZAP as a way to teach myself about security, and I'm a big fan of learning by doing\"), making ZAP work your way, and exposure for your own project through add-ons. It says ZAP \"was the first security tool to support WebSockets, something few commercial tools support, even now\", and that \"We have no 'secret sauce'\" and \"You will never have to pay for a 'pro' version.\"",
+      "entities": [
+        "repo:zaproxy"
+      ],
+      "commits": [],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "Hacking ZAP #1 - Why should you?",
+          "url": "https://www.zaproxy.org/blog/2014-03-10-hacking-zap-1-why-should-you/"
+        }
+      ]
+    },
+    {
+      "title": "Getting started",
+      "text": "\"Hacking ZAP #2 - Getting Started\" (2014-03-20) names two projects, zaproxy (the core) and zap-extensions, and the two Java packages in the core, org.parosproxy, inherited from Paros, and org.zaproxy, new ZAP code. It explains why most new features go into add-ons: \"Core changes can only be delivered via 'full' ZAP releases. We typically only do these a few times a year\", while add-ons can be updated often and moved from alpha to beta to release status as they mature. It sets a rule that comes from the licence Paros was released under: changes to Paros files need a header comment of the form \"// ZAP: yyyy/mm/dd Issue xyz: Description of the changes\". The page carries a notice that its content may be outdated, and parts of it, such as the mention of Gradle, were clearly updated after 2014.",
+      "entities": [
+        "repo:zaproxy",
+        "repo:zap-extensions"
+      ],
+      "commits": [],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "Hacking ZAP #2 - Getting Started",
+          "url": "https://www.zaproxy.org/blog/2014-03-20-hacking-zap-2-getting-started/"
+        }
+      ]
+    },
+    {
+      "title": "Alpha, beta and release add-ons",
+      "text": "The status levels the series describes were already in zap-extensions. \"Branch for alpha level extensions\" is dated 2012-12-11 and \"alpha - beta changes\" 2013-02-11. The scan rule posts send readers to the add-ons that grew out of this, such as pscanrulesAlpha for passive rules, and say new rules start there and move up after review.",
+      "entities": [
+        "repo:zap-extensions",
+        "addon:pscanrulesAlpha"
+      ],
+      "commits": [
+        "commit:zap-extensions:96c13a2a3b331ef90c4feb8760b892848a3efc84",
+        "commit:zap-extensions:2bc6b5dea69c2a90e10b4d9896c0377fab0bf563"
+      ],
+      "documents": [],
+      "evidence": []
+    },
+    {
+      "title": "Writing scan rules",
+      "text": "\"Hacking ZAP #3 - Passive scan rules\" (2014-04-03) calls passive rules \"one of the easiest ways to enhance ZAP\". They \"are not allowed to make any new requests or manipulate the requests or responses in any way\" and run on a background thread \"so that they have as little effect on performance as possible\". \"Hacking ZAP #4 - Active scan rules\" (2014-04-30) says the opposite: \"Active scan rules attack the server, and therefore are only run when explicitly invoked by the user.\" It describes attack strengths (at the lowest, \"Limit to around 6 requests per scan call\") and that rules reporting higher risks run before those reporting lower ones. The post ends with \"The next post in this series will be: Hacking ZAP #5: Extensions\"; the blog index lists four posts in the series.",
+      "entities": [
+        "repo:zap-extensions"
+      ],
+      "commits": [],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "Hacking ZAP #3 - Passive scan rules",
+          "url": "https://www.zaproxy.org/blog/2014-04-03-hacking-zap-3-passive-scan-rules/"
+        },
+        {
+          "label": "Hacking ZAP #4 - Active scan rules",
+          "url": "https://www.zaproxy.org/blog/2014-04-30-hacking-zap-4-active-scan-rules/"
+        }
+      ]
+    }
+  ]
+}

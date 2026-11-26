@@ -1,0 +1,101 @@
+{
+  "title": "ZAP and AI",
+  "description": "The LLM Support add-on, the MCP server, scanning MCP servers, AI assisted authentication, and the project's own rules for LLM written contributions, with the blog posts that announced each.",
+  "group": "features",
+  "date": "2024-10-24",
+  "status": "draft",
+  "chapters": [
+    {
+      "title": "An LLM add-on, 2024 to 2026",
+      "text": "\"llm: New LLM Add-on\" was authored on 2024-10-24 (committed 2025-07-03). In 2026 it grows quickly: \"llm: Add Gemini support\" (2026-01-02), \"llm: Add chat panel\" (2026-01-08), \"llm: Support multiple model providers\" (2026-01-19), \"llm: Prompt injection countermeasures\" (2026-01-30) and \"llm: Support Claude\" (2026-07-15). The post \"The ZAP LLM Support Add-on\" (2026-08-07) describes the result. It is opt-in: \"ZAP will not share any data with an LLM unless you explicitly install this add-on\". Providers include Azure OpenAI, Claude, Gemini, Ollama and OpenAI compatible services, each marked trusted or not: \"Untrusted providers only ever receive the minimum data needed for the feature in use\". It is honest about prompt injection, which delimiters and system prompts \"reduce ... it doesn't remove it\". The OpenAPI add-on and Alert Filters use it for an AI importer and for reviewing an alert.",
+      "entities": [
+        "addon:llm",
+        "addon:openapi",
+        "addon:alertFilters"
+      ],
+      "commits": [
+        "commit:zap-extensions:95f4ad45aa89a12defde6b9e987ce458eba904bf",
+        "commit:zap-extensions:6fd4537717209b1246634f607caff49e52f2abc2",
+        "commit:zap-extensions:786d272ba33c8cc5b391f44bff71082498b252b5",
+        "commit:zap-extensions:58caab7c0cf658f37eb3c74fde5dccd840687f6a",
+        "commit:zap-extensions:bb97618e4163149e8c606a0c8460c393c4fe0654",
+        "commit:zap-extensions:80abba2c40e4e2b4fbda28e95bd6c8ccbff7232e"
+      ],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "The ZAP LLM Support Add-on",
+          "url": "https://www.zaproxy.org/blog/2026-08-07-zap-llm-support/"
+        }
+      ]
+    },
+    {
+      "title": "An MCP server, spring 2026",
+      "text": "\"mcp: First version of server\" was authored on 2026-03-20. The post \"The ZAP MCP Server\" (2026-04-02) introduces the MCP Integration add-on, which lets AI assistants drive ZAP through the Model Context Protocol, with the warning \"Please note that this is definitely an alpha release!\" It exposes tools to start and monitor the spiders and the active scan and to generate a report, resources such as the alerts and the sites tree, and two prompts, for a baseline and a full scan. The server is secure only by default and uses a security key. The post says \"We have deliberately kept the ZAP MCP Server functionality limited at this stage\", and that it \"does not directly support authenticating to target apps\".",
+      "entities": [
+        "addon:mcp"
+      ],
+      "commits": [
+        "commit:zap-extensions:cb1eebfb0b4f3fdd10cedf751da9063c16ab8192"
+      ],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "The ZAP MCP Server",
+          "url": "https://www.zaproxy.org/blog/2026-04-02-zap-mcp-server/"
+        }
+      ]
+    },
+    {
+      "title": "Scanning MCP servers, May 2026",
+      "text": "\"mcp: MCP Import\" was authored on 2026-05-08, and the post \"Scanning MCP Servers with ZAP\" (2026-05-21) follows with \"So we've taught ZAP to scan them.\" The add-on imports an MCP server's tools, resources and prompts so that ZAP can passive scan, active scan and fuzz them as it would an API, and an Automation Framework job, mcp-import, does the import. The post warns \"Active scans send mutating `tools/call` requests.\" and says ZAP uses its existing rules for now, with MCP specific rules planned for a future release.",
+      "entities": [
+        "addon:mcp",
+        "addon:automation"
+      ],
+      "commits": [
+        "commit:zap-extensions:1c3e29607fb1ff9c59533576380a34a6820832da"
+      ],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "Scanning MCP Servers with ZAP",
+          "url": "https://www.zaproxy.org/blog/2026-05-21-scanning-mcp-servers-with-zap/"
+        }
+      ]
+    },
+    {
+      "title": "Logging in with an LLM, autumn 2026",
+      "text": "The authhelper add-on gets \"authhelper: Support LLM assisted auth, phase 1\" (2026-07-15), and its changelog lists AI Assisted Authentication in 0.44.0 on 2026-11-03, the date of the post \"AI Assisted Authentication\". The post says the LLM is used once, to work out how to log in; ZAP then records the steps as a Zest script and later logins use that script. It says \"ZAP does not send your credentials to the LLM.\" The feature builds on the LLM Support add-on.",
+      "entities": [
+        "addon:authhelper",
+        "addon:llm"
+      ],
+      "commits": [
+        "commit:zap-extensions:dea4db8c7281599a6255f66f2fb8d68b987488e4"
+      ],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "AI Assisted Authentication",
+          "url": "https://www.zaproxy.org/blog/2026-11-03-ai-assisted-authentication/"
+        }
+      ]
+    },
+    {
+      "title": "Contributing in the LLM age, October 2026",
+      "text": "In \"Developing ZAP in the LLM Age\" (2026-10-13) Simon Bennetts says many Core Team members use LLM assistants daily and that their use in community contributions is growing, and sets out the project's position. It is not restricting contributions: \"We're not going to start gating contributions on who you are, how much experience you have, or what tools you used.\" It puts the weight on the author: \"the pull request submitter is responsible for the code they propose.\" The post asks for smaller pull requests with full unit tests and, where possible, Automation Framework plans that reviewers can run, and says non trivial changes will first be run through an LLM review before a human reads them. It closes with a test for contributors: \"would I want to review this?\" The post notes that an LLM helped to write it and that the author checked it.",
+      "entities": [
+        "repo:zaproxy"
+      ],
+      "commits": [],
+      "documents": [],
+      "evidence": [
+        {
+          "label": "Developing ZAP in the LLM Age",
+          "url": "https://www.zaproxy.org/blog/2026-10-13-developing-zap-in-the-llm-age/"
+        }
+      ]
+    }
+  ]
+}
