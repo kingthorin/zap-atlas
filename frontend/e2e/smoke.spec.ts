@@ -204,25 +204,6 @@ test("stories filter by status, keep it in the URL and step to the next draft", 
   await expect(page.getByRole("link", { name: /^Next/ })).toHaveCount(0);
 });
 
-// Pending decision: the chapters, and with them the citation buttons and evidence panel, are hidden on every story that has a narrative, so this test has nothing to click.
-test.skip("a story's citations open an evidence panel beside the story", async ({ page, context }) => {
-  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
-  await page.setViewportSize({ width: 1400, height: 900 });
-  await page.goto("stories/feature-scan-rules");
-  await page.getByRole("button", { name: /^commit [0-9a-f]{10}$/ }).first().click();
-  const panel = page.getByRole("dialog", { name: "Evidence" });
-  await expect(panel.getByRole("heading")).toContainText(/\w/);
-  await expect(panel.getByText("permalink to the commit")).toBeVisible();
-  await expect(panel.getByText("Parents")).toBeVisible();
-  await expect(panel.getByRole("link", { name: "Open the full page" })).toHaveAttribute("href", /\/commit\//);
-  await expect(page).toHaveURL(/\/stories\/feature-scan-rules$/);                              // the reader has not left the story
-  await panel.getByRole("button", { name: "Copy for GitHub" }).click();
-  expect(await page.evaluate(() => navigator.clipboard.readText())).toMatch(/- Commit: \[`[0-9a-f]{40}`\]\(https:\/\/github\.com\//);
-  await page.getByRole("button", { name: /^addon:|^ascanrules$/ }).first().click().catch(() => {});   // another kind replaces the panel
-  await page.keyboard.press("Escape");
-  await expect(panel).toHaveCount(0);
-});
-
 test("stories list and a story open, labelled draft", async ({ page }) => {
   await page.goto("stories");
   // Reviewed stories carry no badge, so open one that is still a draft.

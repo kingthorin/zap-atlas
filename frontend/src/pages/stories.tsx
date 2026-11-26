@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useParams, useSearchParams } from "react-router-dom";
 import { Story, loadStories } from "../lib/data";
-import { routeForEntity, safeHttps } from "../lib/routes";
+import { safeHttps } from "../lib/routes";
 import { Loading, ErrorBox } from "../components/ui";
-import Evidence from "../components/evidence";
 
 const slugOf = (id: string) => id.split(":").pop()!;
 
@@ -27,19 +26,6 @@ function Badge({ status }: { status?: string }) {
   );
 }
 
-const DRAWER_KINDS = new Set(["commit", "milestone", "doc", "addon", "module", "repo"]);
-
-/** A citation: it opens the evidence panel beside the story (the panel links on to the full page). */
-function RefLink({ id, open, onOpen }: { id: string; open: boolean; onOpen: (id: string) => void }) {
-  const to = routeForEntity(id);
-  const label = id.startsWith("commit:") ? `commit ${id.split(":").pop()!.slice(0, 10)}`
-    : id.startsWith("milestone:") ? `release ${id.split(":").slice(2).join(":")}` : id.replace(/^[a-z]+:/, "");
-  if (DRAWER_KINDS.has(id.split(":")[0]))
-    return <button type="button" aria-expanded={open} onClick={() => onOpen(id)} title="Show the evidence beside the story"
-      className={`text-left text-indigo-600 hover:underline break-all ${open ? "font-semibold underline" : ""}`}>{label}</button>;
-  return to ? <Link className="text-indigo-600 hover:underline break-all" to={to}>{label}</Link> : <span>{label}</span>;
-}
-
 function useStories() {
   const [stories, setStories] = useState<Story[] | null>(null);
   const [error, setError] = useState("");
@@ -52,8 +38,6 @@ export function StoryDetail() {
   const [params] = useSearchParams();
   const fromList = !!(useLocation().state as any)?.fromList;      // reached from the list (not by a direct link)
   const { stories, error } = useStories();
-  const [shown, setShown] = useState("");                       // the cited id whose evidence is open
-  useEffect(() => setShown(""), [slug]);
   if (error) return <ErrorBox message={error} />;
   if (!stories) return <Loading />;
   const story: any = stories.find(s => slugOf(s.id) === slug);
@@ -72,7 +56,7 @@ export function StoryDetail() {
         <h1 className="text-2xl font-bold">{story.title}<Badge status={story.status} /></h1>
         <p className="mt-2 text-slate-600">{story.description}</p>
       </header>
-      {story.narrative && (
+      {story.narrative ? (
         <section aria-labelledby="short-version" className="space-y-3 max-w-prose">
           <h2 id="short-version" className="text-lg font-semibold">The short version</h2>
           {story.narrative.split(/\n\s*\n/).map((para: string, i: number) => <p key={i} className="leading-relaxed">{para}</p>)}
@@ -88,26 +72,7 @@ export function StoryDetail() {
             </div>
           )}
         </section>
-      )}
-      {/* The chapters stay in the data, and show for a story that has no narrative yet. */}
-      {!story.narrative && <ol className="space-y-6">
-        {story.chapters.map((ch: any, i: number) => (
-          <li key={i}>
-            <h2 className="text-lg font-semibold">{i + 1}. {ch.title}</h2>
-            <p className="mt-1">{ch.text}</p>
-            {[...(ch.entities ?? []), ...(ch.commits ?? []), ...(ch.documents ?? []), ...(ch.milestones ?? [])].length > 0 && (
-              <ul className="mt-2 text-sm flex flex-wrap gap-x-4 gap-y-1">
-                {[...(ch.entities ?? []), ...(ch.commits ?? []), ...(ch.documents ?? []), ...(ch.milestones ?? [])].map((id: string) => <li key={id}><RefLink id={id} open={shown === id} onOpen={x => setShown(s => (s === x ? "" : x))} /></li>)}
-              </ul>
-            )}
-            {(ch.evidence ?? []).map((e: any) => {
-              const href = safeHttps(e.url);
-              return href && <p key={e.url} className="mt-1 text-sm">Source: <a className="text-indigo-600 hover:underline" href={href} rel="noopener noreferrer">{e.label}</a></p>;
-            })}
-          </li>
-        ))}
-      </ol>}
-      {!story.narrative && shown && <Evidence id={shown} onClose={() => setShown("")} />}
+      ) : null}
     </article>
   );
 }
