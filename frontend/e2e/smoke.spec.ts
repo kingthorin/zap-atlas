@@ -235,7 +235,7 @@ test("a story with a narrative shows it instead of the chapters", async ({ page 
   await expect(page.getByRole("heading", { name: "The short version" })).toBeVisible();
   const paras = page.locator("section[aria-labelledby=short-version] p");
   await expect(paras).toHaveCount(4);
-  await expect(paras.first()).toContainText("whatever look-and-feel the JVM supplied");
+  await expect(paras.first()).toContainText("whatever look and feel the Java runtime supplied");
   await expect(page.getByRole("heading", { level: 2, name: /^\d+\./ })).toHaveCount(0);        // the numbered chapters are not shown
   await page.goto("stories/feature-spider");                                                    // no narrative yet: chapters as before
   await expect(page.getByRole("heading", { level: 2, name: /^1\./ })).toBeVisible();

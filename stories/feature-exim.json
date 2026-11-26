@@ -1,6 +1,13 @@
 {
   "title": "Import/Export: exim and the add-ons it superseded",
   "description": "From the 2014 importurls and importLogFiles add-ons, through the exim add-on that began in April 2021, to its HAR, URL, log, PCAP, and Automation Framework features.",
+  "narrative": "Bringing captured traffic or server logs into ZAP once meant finding the right small add-on for each format. In March 2014 zap-extensions gained an import URLs add-on, and work on ModSecurity log import followed in September 2014. For a tool used mostly by testers working from recorded traffic, one place for every import format probably made the workflow easier to learn.\n\nThe exim add-on began in April 2021, and its starting commit has a body reading \"Initial add-on with migration of saveraw and savexml.\" HAR support followed that month. URL and log importers were added in September 2021, and the CHANGELOG lists a 0.0.1 release in December 2021. In February 2022 a cleanup commit removed the older importLogFiles and importurls add-ons, along with two save add-ons that exim had replaced.\n\nIn May 2022 core ZAP deprecated URL export menu items that were being moved to exim. In August 2022 the core HAR API endpoints were deprecated, and the exim CHANGELOG for 0.3.0, dated October 2022, lists HAR related API endpoints being migrated from core. A December 2024 commit aimed to discourage third-party add-ons from using HarUtils.\n\nExim later also took on the Automation Framework (February 2022) and initial PCAP import (May 2024). The latest entry cited, from March 2026, lists \"Support for plugable exporters and importers.\" In 2022 the core export items were marked for moving into exim, and older import and save add-ons were superseded by it. That probably suits users who move data between tools.",
+  "narrative_sources": [
+    {
+      "label": "exim CHANGELOG.md",
+      "url": "https://github.com/zaproxy/zap-extensions/blob/main/addOns/exim/CHANGELOG.md"
+    }
+  ],
   "group": "features",
   "date": "2021-04-09",
   "status": "draft",

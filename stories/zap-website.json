@@ -1,6 +1,25 @@
 {
   "title": "The ZAP website: zaproxy.org",
   "description": "Dated facts about the zaproxy.org domain, the repositories behind the site, and the January 2020 commits that point ZAP's own files at it.",
+  "narrative": "A user who follows a link from ZAP's own files probably expects it to reach the project's current website. The zaproxy.org domain was registered in November 2015, according to its RDAP record. In the weeks after, the zaproxy GitHub organisation gained a repository for ZAP swag artwork, and in December 2015 another repository described as the ZAP website.\n\nThe first commit in the zaproxy-website repository, dated July 2016, is titled \"Basic setup - gulp + webpack + hugo\". The earliest Internet Archive capture of www.zaproxy.org dates from June 2016. The zaproxy logo notes say the 2017 logo was designed as part of the design of the new ZAP website.\n\nZAP's own files began pointing at the new site in January 2020. On 14 January zap-extensions had a commit updating the Getting Started Guide's website links, and the next day zap-core-help had Update for new website, merged as pull request #293. The zaproxy commit that changed to zaproxy.org landed on 16 January, the day before the 2.9.0 release tag. GitHub lists the zaproxy-website repository as created in January 2020, described as the source of the ZAP website, although its first commit is from 2016.\n\nToday GitHub lists the repository's homepage as zaproxy.org and its licence as MIT. The website's code began in 2016, so it predates the repository that holds it.",
+  "narrative_sources": [
+    {
+      "label": "RDAP record for zaproxy.org (Public Interest Registry)",
+      "url": "https://rdap.publicinterestregistry.org/rdap/domain/zaproxy.org"
+    },
+    {
+      "label": "Earliest Internet Archive capture of www.zaproxy.org",
+      "url": "https://web.archive.org/web/20160608061609/http://www.zaproxy.org/"
+    },
+    {
+      "label": "zaproxy-website",
+      "url": "https://github.com/zaproxy/zaproxy-website"
+    },
+    {
+      "label": "zaproxy/zaproxy.github.io",
+      "url": "https://github.com/zaproxy/zaproxy.github.io"
+    }
+  ],
   "group": "history",
   "date": "2015-11-04",
   "status": "draft",

@@ -1,6 +1,17 @@
 {
   "title": "The CMS add-on (GSoC 2013)",
   "description": "The 2013 CMS add-on from the Student Hall of Fame, which the zap-extensions history shows as the cmss add-on (also named wafp), from September 2013 to its removal in December 2020.",
+  "narrative": "For a tool like ZAP, used mostly by security testers, knowing which content management system a site runs is probably a useful first step in a test. The Student Hall of Fame lists a CMS add-on (Abdelhadi Azouni) as a 2013 Summer GSoC project, and the linked idea page calls the project \"ZAP CMSS\".\n\nIn September 2013 the cmss directory first appeared in zap-extensions, in four commits with empty subject lines. The last commit to change CMSFingerprinter.java before removal, dated May 2019, still carries a commented-out method whose comment reads \"Use BlindElephant DB to fingerprint webapp\". The commented-out method probably hints at the fingerprinting approach the project was meant to take. Maintenance followed, including a March 2014 change to the add-on's directory structure and a June 2018 commit that removed an unnecessary call to finalize.\n\nThe add-on was relocated to its own project in April 2019 and removed in December 2020, when a commit with the subject wafp: Remove described the change as removing the wafp (cmss) project.\n\nNo cmss add-on remains in the current dataset or tree, so the 2013 GSoC project ends with its removal.",
+  "narrative_sources": [
+    {
+      "label": "ZAP Student Hall of Fame",
+      "url": "https://www.zaproxy.org/student-hall-of-fame/"
+    },
+    {
+      "label": "CMS scanner idea page",
+      "url": "https://wiki.owasp.org/index.php/GSoC2013_Ideas/OWASP_ZAP_CMS_SCANNER"
+    }
+  ],
   "group": "projects",
   "date": "2013-06",
   "status": "reviewed",

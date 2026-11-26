@@ -1,6 +1,25 @@
 {
   "title": "From the Ajax Spider to the Client Spider",
   "description": "Three ways ZAP has crawled modern web apps with a browser: the Crawljax based Ajax Spider from 2012, the Client Side Integration add-on that let ZAP see inside the browser in 2023, and the Client Spider that is now the recommended crawler.",
+  "narrative": "Easy to see why a spider that reads only raw HTML struggles with modern web apps, which build their pages in the browser. An announcement in December 2012 indicates that the spider ZAP inherited from Paros only managed to discover 10% of the links in the wivet test application. The Ajax Spider drove a browser through Crawljax and Selenium, with traffic passing through ZAP.\n\nAn announcement in November 2023 indicates that ZAP, as a proxy, has not been able to see what is going on in the browser. The first commit in the Client add-on is dated May 2023. The post introducing the add-on describes a Client Map of URLs found in pages that had not been visited. The post said the Ajax Spider would then directly request those URLs.\n\nBrowser based authentication reached the Client Spider in December 2024. The post said ZAP 2.16.0 introduced the new Client Spider. It gave the reason that the Ajax Spider is built on Crawljax, which is maintained intermittently. It said the team no longer believed the Ajax Spider was the best option going forwards. The post was open about limits: the spider only clicks on links and buttons.\n\nA July 2026 post recommended the Client Spider for crawling modern web applications. It said the Ajax Spider's performance degrades rapidly as the target grows. It kept one caution: the traditional spider is still recommended for crawling apps, even if they are modern. Where things stand: the Quick Start tab now uses the Client Spider by default.",
+  "narrative_sources": [
+    {
+      "label": "ZAP 2.0.0 and the Google Summer of Code 2012 Projects",
+      "url": "https://www.zaproxy.org/blog/2012-12-10-zap-2-0-0-and-the-google-summer-of-code-2012-projects/"
+    },
+    {
+      "label": "Handling Modern Web Apps Better - Part 1",
+      "url": "https://www.zaproxy.org/blog/2023-11-03-handling-modern-web-apps-better-part1/"
+    },
+    {
+      "label": "The Client Spider",
+      "url": "https://www.zaproxy.org/blog/2025-01-31-client-spider/"
+    },
+    {
+      "label": "Use the Client Spider for Modern Web Apps",
+      "url": "https://www.zaproxy.org/blog/2026-07-06-client-spider-now-recommended/"
+    }
+  ],
   "group": "features",
   "date": "2012-08-07",
   "status": "draft",

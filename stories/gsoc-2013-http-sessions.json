@@ -1,6 +1,17 @@
 {
   "title": "Enhanced HTTP Session Handling (Cosmin Stefan, 2013 GSoC)",
   "description": "The 2012 and 2013 session-handling commits in zaproxy next to the Hall of Fame entry and the HTTP Sessions code that is still in core.",
+  "narrative": "A tester who moves between user accounts probably needs each account's session kept apart. The earliest commit, dated August 2012, is titled \"Initial version of http sessions handling.\", and it is by the account cosminstefanxp. A follow-up the next day says it was made on the dev_sessions branch.\n\nThe Student Hall of Fame lists Enhanced HTTP Session Handling (Cosmin Stefan) as a 2013 Summer GSoC project. Its wiki goals include letting users set up and manage users and roles, and letting ZAP associate them with HTTP sessions. Commits in 2013 show the pieces arriving: in July, the remaining changes for the extension handling users and roles; in August, a simple cookie-based session management; and in September, packages refactored with better names.\n\nThe latest commit touching the HTTP Sessions code, dated September 2026, added control-return to submit all dialogs. Today the extension is still in the zaproxy tree, and the core help has an HTTP Sessions tab page.",
+  "narrative_sources": [
+    {
+      "label": "ZAP Student Hall of Fame",
+      "url": "https://www.zaproxy.org/student-hall-of-fame/"
+    },
+    {
+      "label": "Enhanced HTTP Session Handling wiki",
+      "url": "https://github.com/zaproxy/zaproxy/wiki/Gsoc2013_Enhancing_HTTP_Sessions"
+    }
+  ],
   "group": "projects",
   "date": "2013-06",
   "status": "reviewed",

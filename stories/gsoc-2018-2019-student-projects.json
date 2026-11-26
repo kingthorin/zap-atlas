@@ -1,6 +1,17 @@
 {
   "title": "2018 and 2019: Scanning WebSockets",
   "description": "Student Hall of Fame entries for WebSocket scanning phases in 2018 and 2019 Summer GSoC",
+  "narrative": "Testing WebSocket traffic probably needs a scanner that understands the protocol, which ordinary request-based tools do not always handle. The Student Hall of Fame lists Manos Kirtas for scanning WebSockets in phase 1, a 2018 Summer project. In 2019 the same student is listed for phase 2.\n\nThe phase 1 entry is tied to an April 2018 commit that added regex and non-regex filters for WebSockets. The phase 2 entry is tied to a July 2019 commit that set up passive scanning infrastructure and a passive script plugin.\n\nNirojan Selvanathan is also listed in 2019 for the ZAP API documentation, a Season of Docs item. That documentation is kept in a separate repository, zap-api-docs, rather than in the add-on code. For a tool with a large API, documentation work probably matters as much as the scanners do. This entry records three credits. The two Manos Kirtas entries cite commits, and the later history of WebSocket scanning is in the separate WebSocket story.",
+  "narrative_sources": [
+    {
+      "label": "ZAP Student Hall of Fame",
+      "url": "https://www.zaproxy.org/student-hall-of-fame/"
+    },
+    {
+      "label": "Phase 2 wiki",
+      "url": "https://github.com/zaproxy/zaproxy/wiki/GSoC2019_WebSocketScanning"
+    }
+  ],
   "group": "projects",
   "date": "2018",
   "status": "draft",

@@ -1,6 +1,17 @@
 {
   "title": "2014: Advanced fuzzing, SOAP scanning, and Access Control",
   "description": "Student Hall of Fame entries for 2014 Summer GSoC: Advanced fuzzing, SOAP scanning, and Advanced Access Control testing",
+  "narrative": "The Student Hall of Fame lists 2014 Summer GSoC projects, starting with advanced fuzzing by Sebastian Schulze. Alberto Verza is credited with SOAP scanning. Cosmin Stefan is credited with advanced access control testing. For a tool used mostly by testers who write their own checks, a list like this probably shows where several later ZAP features began.\n\nThe fuzzing entry cites a June 2014 commit for multi-fuzzing packages. The SOAP entry cites an April 2014 commit that imported WSDL files. The SOAP entry also links a project blog post, whose address dates it to September 2014.\n\nThe index records only these 2014 entries, so each project's later history sits in its own story. Each entry is short, so the index is probably best read as a pointer rather than a history. A list like this probably helps anyone asking where a ZAP feature came from, which is a common question for a tool that has grown for many years.",
+  "narrative_sources": [
+    {
+      "label": "ZAP Student Hall of Fame",
+      "url": "https://www.zaproxy.org/student-hall-of-fame/"
+    },
+    {
+      "label": "SOAP scanner blog post",
+      "url": "https://www.zaproxy.org/blog/2014-09-03-alberto-s-gsoc-2014-project-for-zap-soap-scanner-add-on/"
+    }
+  ],
   "group": "projects",
   "date": "2014",
   "status": "draft",

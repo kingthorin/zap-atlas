@@ -1,6 +1,25 @@
 {
   "title": "Three branches to one in zap-extensions",
   "description": "How zap-extensions went from alpha, beta, and master branches to a single main line, and a change in commit SHAs that predates it. Based on the repository and GitHub's pull request records.",
+  "narrative": "A contributor to an add-on repository probably needed to know which branch a change should target. GitHub's records show pull requests aimed at three branches from mid-2015: #6 into beta in June 2015, #7 into master later that month and #9 into alpha in July. Merge commits from July and August 2015, such as the merge of origin/alpha into alpha, are part of the history today.\n\nThe early history has a gap. The record for pull request #100 names a merge commit that GitHub reports no longer exists, and the repository holds a commit with the same subject and date but a different SHA. Every pull request checked up to #292 (merged 22 March 2016) names a merge commit missing from the repository, while those from #293 onward are present. The pattern is consistent with history before that date having been rewritten, though the records do not say why.\n\nIn April 2019 the last pull requests into beta and alpha, #1973 and #1974, were both titled Build add-ons with Gradle. That morning a commit removed the Ant build and set up Gradle, and status moved from the branch an add-on lived on to a per-add-on setting in its Gradle build. For a project with many add-ons, that probably made status easier to change without moving code between branches.\n\nPull requests into master continued until #2979, merged in June 2021. The default branch today is main.",
+  "narrative_sources": [
+    {
+      "label": "PR #6 (beta)",
+      "url": "https://github.com/zaproxy/zap-extensions/pull/6"
+    },
+    {
+      "label": "PR #292",
+      "url": "https://github.com/zaproxy/zap-extensions/pull/292"
+    },
+    {
+      "label": "PR #1973 (beta)",
+      "url": "https://github.com/zaproxy/zap-extensions/pull/1973"
+    },
+    {
+      "label": "PR #2979 (master)",
+      "url": "https://github.com/zaproxy/zap-extensions/pull/2979"
+    }
+  ],
   "group": "history",
   "date": "2015-06",
   "status": "reviewed",

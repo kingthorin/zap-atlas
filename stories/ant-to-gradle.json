@@ -1,6 +1,7 @@
 {
   "title": "From Ant to Gradle across ZAP's repositories",
   "description": "How the zaproxy, zap-extensions, and zap-core-help builds moved from Ant to Gradle in 2019, as recorded in the repository history.",
+  "narrative": "The zaproxy commit of 22 May 2019 deletes the Ant build and adds build.gradle.kts. The history starts somewhere else, though: the first commit adds an Ant build file, build/build.xml, which marked the start of ZAP's 1.0 release. A Gradle file, build.gradle, was added in July 2016, while the Ant build file remained. The Ant file was still there at that point.\n\nzap-core-help got its first Gradle build on 8 February 2019. No Ant build file appears anywhere in that repository's history from then on. zap-extensions had depended on an Ant build file since its first commit in December 2011. It removed that Ant build in April 2019, in the commit that set up Gradle.\n\nzaproxy followed in May 2019. That commit deleted build/build.xml and added build.gradle.kts. Shortly afterwards a commit added zap/zap.gradle.kts, the module that holds the core sources today.\n\nFor a project whose code sits in several repositories, one build tool probably made it simpler for contributors to move between them. Each of the three repositories in this story has its own 2019 Gradle commit. The Ant build from the 1.0 era was deleted from zaproxy on 22 May 2019.",
   "group": "history",
   "date": "2010-09-04",
   "status": "reviewed",

@@ -1,6 +1,17 @@
 {
   "title": "2015: DOM XSS Scanner",
   "description": "Student Hall of Fame entry for 2015 Summer GSoC: DOM XSS Scanner by Aabha Biyani",
+  "narrative": "For a tool used mostly by web testers, a scanner for DOM based cross-site scripting probably fills a gap that server-side checks can miss. The Student Hall of Fame credits Aabha Biyani with the DOM XSS Scanner, a 2015 Summer project that was directly mentored. Being directly mentored probably meant the student had a core contributor to check the work against.\n\nThe add-on's first commit in zap-extensions, \"DOM XSS Active Scan rule\", is dated August 2015. That commit was made by psiinon (Simon Bennetts). For a small team, routing an outside contribution through a core member probably kept the shared codebase consistent.\n\nThe add-on has its own documentation page, which this record cites. Readers who want its current behaviour would need that page rather than this record. This record stops at that first commit, so later changes to the add-on are not covered here.",
+  "narrative_sources": [
+    {
+      "label": "ZAP Student Hall of Fame",
+      "url": "https://www.zaproxy.org/student-hall-of-fame/"
+    },
+    {
+      "label": "DOM XSS add-on page",
+      "url": "https://www.zaproxy.org/docs/desktop/addons/dom-xss-active-scan-rule/"
+    }
+  ],
   "group": "projects",
   "date": "2015",
   "status": "draft",
