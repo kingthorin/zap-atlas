@@ -5,7 +5,7 @@ import { expect, test } from "@playwright/test";
 
 const ROUTES = ["", "repositories", "source", "source?repo=zap-extensions&mod=addOns/automation&tab=symbols",
   "source?repo=zap-extensions&mod=addOns/automation&tab=rels", "source?tab=deps", "graph", "timeline", "history", "releases", "releases?kind=addon-release",
-  "stories", "stories/feature-auth-helper", "search?q=spider", "addon/addon%3Aspider", "symbol/symbol%3Azap-extensions%3Aorg.zaproxy.addon.automation.AutomationJob"];
+  "stories", "stories/feature-auth-helper", "stories/feature-dark-mode-themes", "search?q=spider", "addon/addon%3Aspider", "symbol/symbol%3Azap-extensions%3Aorg.zaproxy.addon.automation.AutomationJob"];
 
 for (const scheme of ["light", "dark"] as const) {
   test(`axe ${scheme}`, async ({ page }) => {

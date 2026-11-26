@@ -95,3 +95,32 @@ def test_repo_stories_have_group_and_date_and_dates_sort_within_groups():
     rows = load_stories(Path(__file__).parent.parent / "stories")
     assert {r["group"] for r in rows} == {"projects", "features", "history"}
     assert all(len(r["date"]) in (4, 7, 10) for r in rows)
+
+
+def test_narrative_is_optional_and_checked(tmp_path):
+    d = tmp_path / "stories"; d.mkdir()
+    base = {"title": "T", "description": "D", "group": "history", "date": "2023", "status": "draft", "chapters": [{"title": "c", "text": "x"}]}
+    (d / "a.json").write_text(json.dumps(base))
+    (d / "b.json").write_text(json.dumps({**base, "narrative": "  First.\n\nSecond.  "}))
+    a, b = load_stories(d)
+    assert "narrative" not in a and b["narrative"] == "First.\n\nSecond."
+    for bad in ("", "   ", 5, "x" * 2501):
+        (d / "b.json").write_text(json.dumps({**base, "narrative": bad}))
+        with pytest.raises(ValueError, match="narrative"):
+            load_stories(d)
+
+
+def test_narrative_sources_are_labelled_https_links(tmp_path):
+    d = tmp_path / "stories"; d.mkdir()
+    base = {"title": "T", "description": "D", "group": "history", "date": "2023", "status": "draft", "chapters": [{"title": "c", "text": "x"}]}
+    good = [{"label": "Announcement", "url": "https://www.zaproxy.org/blog/x/"}]
+    (d / "a.json").write_text(json.dumps({**base, "narrative": "Text.", "narrative_sources": good}))
+    (row,) = load_stories(d)
+    assert row["narrative_sources"] == good
+    for bad in ([{"label": "", "url": "https://x.org/"}], [{"label": "L", "url": "http://x.org/"}], [], "x"):
+        (d / "a.json").write_text(json.dumps({**base, "narrative": "Text.", "narrative_sources": bad}))
+        with pytest.raises(ValueError, match="narrative_sources"):
+            load_stories(d)
+    (d / "a.json").write_text(json.dumps({**base, "narrative_sources": good}))
+    with pytest.raises(ValueError, match="needs a narrative"):
+        load_stories(d)

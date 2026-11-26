@@ -1,9 +1,10 @@
 {
   "title": "Look and feel, FlatLaf, and dark mode",
   "description": "How look-and-feel selection and dark mode appear in the zaproxy history: selectable look and feel in 2018, the FlatLaf dependency in 2020, the blog post that introduced dark mode as an early, rough first step, dynamic switching, and later fixes.",
+  "narrative": "For years the ZAP desktop sat under whatever look-and-feel the JVM supplied. For people who spend long stretches in that UI, dark themes had become common in the tools they used all day; a bright window during a long session is easy to find tiring.\n\nSelection arrived first, then a proper modern set of themes. In February 2020 FlatLaf was added, bringing light and dark options into the weekly builds. A few days later a short post described the work as \"first steps towards an all new dark mode for the ZAP Desktop UI\" and admitted it was early: not every screen had suitable colours yet, but it was mostly usable. The post thanked @JFormDesigner for the FlatLaf look and feel that made the feature possible. Users still had to restart after changing theme.\n\nLater that year dynamic switching removed the restart. The 2.10.0 release notes list the open-source FlatLaf themes and the two dark options among the changes. For a small open-source team, reusing a solid library rather than building one was the practical path; the work could ship in weekly builds and keep improving without blocking the main release cycle.\n\nTheme support has continued quietly ever since. Fonts, splash screens, tree updates and SwingX panels have all been adjusted for dark look-and-feels, and FlatLaf itself is updated regularly. Dark mode is no longer an experiment; it is simply part of how ZAP looks for the people who live in it.",
   "group": "features",
   "date": "2016-11-02",
-  "status": "draft",
+  "status": "reviewed",
   "chapters": [
     {
       "title": "Selecting the look and feel, 2016 and 2018",

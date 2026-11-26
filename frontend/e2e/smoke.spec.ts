@@ -147,6 +147,7 @@ test("stories are one flat list tagged by group, sortable and filterable", async
   await page.goto("stories");
   await expect(page.getByRole("heading", { level: 2 })).toHaveCount(0); // no group headings
   const cards = page.locator("a[href*='/stories/']");
+  await expect(cards.first()).toBeVisible();                                    // wait for the list before reading it
   const meta = page.locator("a[href*='/stories/'] div.text-xs");
   const dates = async () => (await meta.allTextContents()).map(t => t.match(/\d{4}(-\d\d){0,2}/)![0]);
   const titles = async () => (await page.locator("a[href*='/stories/'] h3").allTextContents()).map(t => t.replace(/draft$/i, ""));
@@ -227,6 +228,18 @@ test("stories list and a story open, labelled draft", async ({ page }) => {
   await page.locator("a[href*='/stories/']", { hasText: "draft" }).first().click();
   await expect(page.getByText("draft").first()).toBeVisible();
   await noError(page);
+});
+
+test("a story with a narrative shows it instead of the chapters", async ({ page }) => {
+  await page.goto("stories/feature-dark-mode-themes");
+  await expect(page.getByRole("heading", { name: "The short version" })).toBeVisible();
+  const paras = page.locator("section[aria-labelledby=short-version] p");
+  await expect(paras).toHaveCount(4);
+  await expect(paras.first()).toContainText("whatever look-and-feel the JVM supplied");
+  await expect(page.getByRole("heading", { level: 2, name: /^\d+\./ })).toHaveCount(0);        // the numbered chapters are not shown
+  await page.goto("stories/feature-spider");                                                    // no narrative yet: chapters as before
+  await expect(page.getByRole("heading", { level: 2, name: /^1\./ })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "The short version" })).toHaveCount(0);
 });
 
 test("a help page and an add-on page open", async ({ page }) => {

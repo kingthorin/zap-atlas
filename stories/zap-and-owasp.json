@@ -1,6 +1,7 @@
 {
   "title": "ZAP, OWASP, and Checkmarx",
   "description": "What the ZAP project's own pages say about leaving OWASP in 2023 and about current ownership.",
+  "narrative": "In August 2023 a post announced that ZAP was joining the Software Security Project, \"a brand new initiative of the Linux Foundation\", as a founding project. Because a project can sit in only one foundation, it would leave OWASP. The same post noted that Simon had applied to join OWASP shortly after the 2010 launch, that leaving had first been floated in 2015, and that the team had signed an open letter to the OWASP Board earlier that year.\n\nPractical changes followed at once: the name became simply \"ZAP\", Docker Hub images moved to a new organisation, and for the first time two people—Simon and Ricardo—would be supported full-time. The page later carried a banner stating that ZAP is supported by Checkmarx and is not part of any foundation.\n\nA year later, in September 2024, another post recorded that Checkmarx would employ all three project leaders and that the project would be known as \"ZAP by Checkmarx\". What stayed the same was explicit: control remained with the ZAP Core Team, the code stayed open source under Apache v2, and the change was described as \"proper backing - for the first time in its history\". The ownership page now calls ZAP \"an independent Open Source project controlled by the ZAP Core Team and supported by Checkmarx\".",
   "group": "history",
   "date": "2023-08",
   "status": "reviewed",

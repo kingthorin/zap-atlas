@@ -11,7 +11,7 @@ export interface AddOn { id: string; module: string; name: string; status: strin
 export interface Symbol { id: string; repository: string; file: string; qualified_name: string; kind: string; signature: string; start_line: number; end_line: number; resolution: string; annotations?: string[] }
 export interface Relationship { source: string; target: string; type: string; repository: string; evidence_type: string; source_file?: string; source_line?: number }
 export interface Doc { id: string; repository: string; module?: string; commit_count?: number; last_changed?: string | null; commits?: string[]; path: string; title: string; headings: string[]; anchors: string[] }
-export interface Story { id: string; status?: string; group?: string; date?: string; title: string; description: string; chapters: any[]; entities: string[]; commits: string[]; documents: string[] }
+export interface Story { id: string; status?: string; group?: string; date?: string; title: string; description: string; narrative?: string; narrative_sources?: { label: string; url: string }[]; chapters: any[]; entities: string[]; commits: string[]; documents: string[] }
 export interface Manifest { schema_version: string; generator_version: string; generated_at: string; sources: any[]; inventory: any[]; coverage: any; chunks: string[] }
 
 const DATA_DIR = import.meta.env.DEV ? "/data" : (import.meta.env.BASE_URL || "/") + "data";

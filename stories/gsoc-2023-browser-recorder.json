@@ -1,6 +1,7 @@
 {
   "title": "Browser Recorder (Aryan Gupta, 2023 GSoC)",
   "description": "How the Client Side Integration add-on and Zest's client statements appear in zap-extensions around the 2023 Browser Recorder project.",
+  "narrative": "Recording the clicks and keystrokes that set up a session has always been tedious work for anyone using ZAP. In the summer of 2023 a Google Summer of Code project set out to make that step almost automatic: a browser extension that captures user actions and turns them into a Zest script, talking to ZAP through a new Client Side Integration add-on.\n\nThe client add-on appeared first, in May, as a thin layer that could receive events from the browser. Over the following months the Zest side gained dialogs for the new client statements, then the wiring that let the two add-ons talk to each other. By early September focus and display issues in the script tree had been cleaned up, and on the same day the blog post went out the client add-on published its first release.\n\nThe Hall of Fame entry lists Aryan Gupta for the work. Both add-ons are still under active maintenance; the client add-on has reached 0.35.0 and the Zest changelog records authentication support for client-side scripts together with a fix for a bug that once blocked recording. Other add-ons, including authhelper and quickstart, now list the client add-on as a dependency, so the bridge built that summer has become part of the ordinary path into a modern ZAP session.",
   "group": "projects",
   "date": "2023-06",
   "status": "reviewed",

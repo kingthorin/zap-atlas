@@ -72,7 +72,25 @@ export function StoryDetail() {
         <h1 className="text-2xl font-bold">{story.title}<Badge status={story.status} /></h1>
         <p className="mt-2 text-slate-600">{story.description}</p>
       </header>
-      <ol className="space-y-6">
+      {story.narrative && (
+        <section aria-labelledby="short-version" className="space-y-3 max-w-prose">
+          <h2 id="short-version" className="text-lg font-semibold">The short version</h2>
+          {story.narrative.split(/\n\s*\n/).map((para: string, i: number) => <p key={i} className="leading-relaxed">{para}</p>)}
+          {story.narrative_sources?.length > 0 && (
+            <div>
+              <h3 id="sources-h" className="font-semibold">Sources</h3>
+              <ul className="mt-1 list-disc pl-5 text-sm" aria-labelledby="sources-h">
+                {story.narrative_sources.map((src: { label: string; url: string }) => {
+                  const href = safeHttps(src.url);
+                  return <li key={src.url}>{href ? <a className="text-indigo-600 hover:underline" href={href} rel="noopener noreferrer">{src.label}</a> : src.label}</li>;
+                })}
+              </ul>
+            </div>
+          )}
+        </section>
+      )}
+      {/* The chapters stay in the data, and show for a story that has no narrative yet. */}
+      {!story.narrative && <ol className="space-y-6">
         {story.chapters.map((ch: any, i: number) => (
           <li key={i}>
             <h2 className="text-lg font-semibold">{i + 1}. {ch.title}</h2>
@@ -88,8 +106,8 @@ export function StoryDetail() {
             })}
           </li>
         ))}
-      </ol>
-      {shown && <Evidence id={shown} onClose={() => setShown("")} />}
+      </ol>}
+      {!story.narrative && shown && <Evidence id={shown} onClose={() => setShown("")} />}
     </article>
   );
 }
