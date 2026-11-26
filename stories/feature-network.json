@@ -1,6 +1,21 @@
 {
   "title": "The network add-on and the core networking it supersedes",
   "description": "How the network add-on started in zap-extensions in November 2021 and how core zaproxy commits from 2022 and 2023 deprecate proxy, connection, client certificate, and HttpSender code in its favour.",
+  "narrative": "ZAP's older networking was Paros Proxy code on an old and out of date Apache Commons HttpClient, as a February 2022 announcement put it. The network add-on started as a bare structure in November 2021. Its first releases added certificate management in December 2021, HTTP servers and proxies for other add-ons in February 2022, and management of local servers and proxies in April 2022.\n\nAn announcement in February 2022 said the Weekly and Live releases were on \"a completely different networking stack\". The post cited support for HTTP/2 and HTTP/3, Host header manipulation and lower resource use as reasons, and said there was no ETA for the changes, although they were a priority. Core had already deprecated proxy code in February 2022, and connection and client certificate options in May 2022, in favour of the network add-on.\n\nIn June 2022 a core commit deprecated the HttpSender implementation classes, saying they \"will be superseded by the Network add-on.\" Three days later the add-on gained an HttpSender based on Apache HttpComponents, and by October 2022 it had been promoted to Beta. Having those settings in one add-on probably made them easier to find.\n\nLater entries refer to an HTTP client update in version 0.30.0, and 0.32.0 restored unbounded HTTP/1 response header size and count, which had regressed since that update. The most recent entries cited date from October 2026. That probably means the HTTP client is still being adjusted.",
+  "narrative_sources": [
+    {
+      "label": "network CHANGELOG.md",
+      "url": "https://github.com/zaproxy/zap-extensions/blob/main/addOns/network/CHANGELOG.md"
+    },
+    {
+      "label": "New ZAP Networking Layer",
+      "url": "https://www.zaproxy.org/blog/2022-02-10-new-zap-networking-layer/"
+    },
+    {
+      "label": "Network add-on page",
+      "url": "https://www.zaproxy.org/docs/desktop/addons/network/"
+    }
+  ],
   "group": "features",
   "date": "2021-11-15",
   "status": "draft",

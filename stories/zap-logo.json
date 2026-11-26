@@ -1,6 +1,13 @@
 {
   "title": "The ZAP logo: the bolt, the 2017 icons, and the 2024 rebrand",
   "description": "What the zaproxy repository and its help record about the ZAP logo and icon files, from the credits in its logo notes to the 2024 ZAP by Checkmarx banner.",
+  "narrative": "A reader who wants to know who drew the ZAP logo, or which file to use, probably turns to the logo notes in the zaproxy repository. The notes say the original lightning bolt was designed by a.c.neumann and link to a comment on a GitHub issue. In June 2015 a commit updated the links to GitHub instead of code.google, and the comment it pointed to had been created by the zapbot account the day before.\n\nIn November 2017 a commit titled Add the new icons replaced the ZAP icon files, in sizes from 8x8 to 1024x1024. The notes gained a line saying the new logo was designed by Lisa Raynaud in 2017 as part of the design of the new ZAP website. Related changes followed: a new splash screen in November 2017, a Debian package using the new icon in December 2017, and the logo in the HTML report in January 2018.\n\nThe banner files changed again with the 2024 rebrand. A commit titled Rebrand, dated September 2024, changed the contributing and readme files, and was merged through pull request #8648. In November 2024 a branding commit deleted zap-banner-square.png and added zap-by-checkmarx.png to the same resources folder. The zap-core-help repository followed on 26 November 2024 with a commit titled Implement minor rebrand changes.\n\nThe logo notes name both the bolt designer and the 2017 designer, and the 2024 banner file now sits in the same resources folder.",
+  "narrative_sources": [
+    {
+      "label": "readme_zap_logo.txt at the pinned zaproxy commit",
+      "url": "https://github.com/zaproxy/zaproxy/blob/42d1450e6cedc921dae6b4b7103cbe40f8cd98df/zap/src/main/resources/resource/readme_zap_logo.txt"
+    }
+  ],
   "group": "history",
   "date": "2014-09-16",
   "status": "draft",

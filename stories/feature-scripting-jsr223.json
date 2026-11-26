@@ -1,6 +1,13 @@
 {
   "title": "Scripting in ZAP: from the Script Console add-on to JSR 223 in core",
   "description": "How script support appears in the zap-extensions and zaproxy histories: a Script Console extension in 2012, script support moved into the core in 2013 on javax.script, and the scripts add-on from 2019.",
+  "narrative": "A tester who wants to automate checks in ZAP can write them as scripts, and the way ZAP supports scripting has changed several times. A ScriptConsole extension was added to zap-extensions in June 2012.\n\nIn July 2013 script support moved into the core, and its new classes import javax.script types such as ScriptEngine and Invocable. In August 2013 the script console was upgraded for languages that are not text based. In February 2014 Custom Input Vector scripting was added.\n\nAn announcement in March 2016 indicates that ZAP supported ECMAScript and Zest by default, and that add-ons would extend support to Jython and JRuby. It also said \"ZAP will be able to support any language that supports JSR 223\".\n\nThe scripts add-on was relocated into its own project in April 2019. Its changelog lists moving script types from core under Issue 8027 as unreleased work. The sources cited still show ExtensionScript.java in zaproxy at HEAD. That probably means the split is still in progress.",
+  "narrative_sources": [
+    {
+      "label": "ZAP Newsletter, 2016 March",
+      "url": "https://www.zaproxy.org/blog/2016-03-29-zap-newsletter-2016-march/"
+    }
+  ],
   "group": "features",
   "date": "2012-06-25",
   "status": "reviewed",

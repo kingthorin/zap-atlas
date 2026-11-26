@@ -1,6 +1,17 @@
 {
   "title": "Bug tracker support (Sanchit Kapoor, 2016 GSoC)",
   "description": "The Hall of Fame project \"Bug tracker support\" and what the history shows: a first commit in 2016, a relocation into its own project in 2019, and maintenance since.",
+  "narrative": "A bug tracker lets a tester file a finding from inside ZAP, rather than copying details into a separate system, which probably made it a natural student project. The Student Hall of Fame lists Sanchit Kapoor for \"Bug tracker support\", a 2016 Summer GSoC project. Its add-on page is the Bug Tracker page in the ZAP user guide.\n\nCode for the add-on arrived in zap-extensions in May 2016 as a first phase. Its files include classes for Bugzilla and GitHub, plus the library jars github-api-1.75.jar and j2bugzilla-2.2.1.jar. In zaproxy, a July 2016 commit added an abstract class, PopupMenuItemAlert, for PopupSemiAutoIssue to extend. It was merged in August 2016 as pull request #2645. Help for the add-on followed in August 2016.\n\nA commit of April 2017 fixed build warnings. One of May 2017 added a task to generate the wiki. In April 2019 a commit moved the add-on into a project of its own, adding a Gradle build file and a changelog.\n\nFrom 2020 on, commits updated its dependencies. A June 2020 commit removed its options panels when the add-on is uninstalled. Logging moved to Log4j 2.x in February 2021. Version 4 of the add-on, dated September 2022, changed it to use a PAT rather than a password. The add-on still exists at HEAD under addOns/bugtracker. Its most recent changelog-touching commit, from November 2026, fixed typos in its help content.",
+  "narrative_sources": [
+    {
+      "label": "ZAP Student Hall of Fame",
+      "url": "https://www.zaproxy.org/student-hall-of-fame/"
+    },
+    {
+      "label": "Bug Tracker add-on page",
+      "url": "https://www.zaproxy.org/docs/desktop/addons/bug-tracker/"
+    }
+  ],
   "group": "projects",
   "date": "2016-06",
   "status": "draft",

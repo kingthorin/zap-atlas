@@ -1,6 +1,17 @@
 {
   "title": "SOAP scanning (Alberto Verza, 2014 GSoC)",
   "description": "The 2014 SOAP scanning project in the Student Hall of Fame and the history of the soap add-on, which began as an importWSDL extension.",
+  "narrative": "A tester facing a SOAP web service probably needs its service description before anything else, and a tool that reads that description would save a lot of manual work. The Student Hall of Fame lists SOAP scanning (Alberto Verza) as a 2014 Summer GSoC project.\n\nAn April 2014 commit introduced a WSDL file import add-on. A May 2014 commit renamed the importWSDL extension to soap. Later commits gave the SOAPAction spoofing scanner real checks in place of its test ones. A passive scanner for WSDL files was added in June 2014. Another June 2014 commit added an option to import a single WSDL file from a URL.\n\nAn announcement in September 2014 indicates that the SOAP-specific scanners simulate attacks such as SOAP Action Spoofing and XML Injection. The same announcement says the add-on had passed GSoC final evaluations while in alpha state.\n\nThe add-on was moved into a project of its own in April 2019. The add-on is still in zap-extensions. The add-on's history contains 198 commits. Recent work includes a limit on how many messages are imported, from July 2026. A GUI and API for the maximum number of messages followed in August 2026.",
+  "narrative_sources": [
+    {
+      "label": "ZAP Student Hall of Fame",
+      "url": "https://www.zaproxy.org/student-hall-of-fame/"
+    },
+    {
+      "label": "SOAP scanner blog post",
+      "url": "https://www.zaproxy.org/blog/2014-09-03-alberto-s-gsoc-2014-project-for-zap-soap-scanner-add-on/"
+    }
+  ],
   "group": "projects",
   "date": "2014-06",
   "status": "reviewed",

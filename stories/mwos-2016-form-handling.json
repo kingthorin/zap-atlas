@@ -1,6 +1,21 @@
 {
   "title": "Form handling (Ryan Wehe, Christopher Laguna, Rian Franey, Mozilla Winter of Security)",
   "description": "A team project that let users define the values the spider puts into forms: core changes in March 2017, an add-on the same month, and its later rename to Value Generator.",
+  "narrative": "A tester probably wants control over the values a spider puts into forms. Three Arizona State University students, according to the wiki page, took that on as a senior capstone project. Their aim, the page says, was to let users \"define default values based on pattern matching\" for spider-filled forms. The Student Hall of Fame lists Ryan Wehe, Christopher Laguna and Rian Franey for the project, from the 2016 Winter term of Mozilla Winter of Security.\n\nIn zaproxy, a core commit by Ryan Wehe from March 2017 created ValueGenerator and DefaultValueGenerator. Later that month a zap-extensions commit added a Form Handler extension, whose subject said it would let users custom define the values the Value Generator used for the Spider.\n\nAn October 2018 commit integrated its params tab, and in April 2019 it was relocated out of the monolithic tree into its own project. It was promoted to beta in October 2020. From 2022 commits exposed the value generator, removed the core spider, allowed regex matching and added datafaker generated defaults. In May 2023 it was renamed Value Generator, which the 6.3.0 changelog said was to more clearly identify what the add-on does. In 2024 the core ValueGenerator was deprecated, and a November commit moved it out of core and renamed it.\n\nWhere things stand: the add-on still exists in zap-extensions under addOns/formhandler, with the name Value Generator and beta status. Its changelog entry for 6.9.0, dated October 2026, says it now depends on the params add-on.",
+  "narrative_sources": [
+    {
+      "label": "ZAP Student Hall of Fame",
+      "url": "https://www.zaproxy.org/student-hall-of-fame/"
+    },
+    {
+      "label": "Mozilla Winter of Security 2016: ZAP Form Handling",
+      "url": "https://wiki.mozilla.org/Security/Automation/Winter_Of_Security_2016/ZAP_Form_Handling"
+    },
+    {
+      "label": "Value Generator add-on page",
+      "url": "https://www.zaproxy.org/docs/desktop/addons/value-generator/"
+    }
+  ],
   "group": "projects",
   "date": "2016",
   "status": "reviewed",

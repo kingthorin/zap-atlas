@@ -1,6 +1,21 @@
 {
   "title": "Reporting: from core and BIRT to the reports add-on",
   "description": "Report generation as recorded in the zaproxy and zap-extensions histories: core report classes in the first import, the 2013 BIRT add-on, the reports add-on from March 2021, and the removal of the older code.",
+  "narrative": "Report generation in ZAP began in core. The commit for version 1.0.0, dated September 2010, already included report classes such as ExtensionReport and ReportGenerator, and later core commits added Markdown and JSON formats.\n\nIn October 2013 a zap-extensions commit added a BIRT reporting add-on, a GSoC 2013 project by Rauf Butt. A new reports add-on began in March 2021, and in April 2021 the older report add-ons were removed.\n\nAn announcement in March 2021 ran a report competition, offering $100 for each HTML or PDF template included with ZAP, and was frank that \"creating stylish reports is probably not one of the ZAP core team's strengths\". The later post records three accepted templates, including the one that became the default. The post says the add-on uses Thymeleaf for templates.\n\nIn June and July 2021 core redirected its report API to the add-on and removed Paros Reports. An announcement in October 2021 indicates that the previous reporting add-ons were removed from the marketplace. The latest entry cited, from November 2022, adds SARIF reporting, so report generation now sits in the reports add-on.",
+  "narrative_sources": [
+    {
+      "label": "ZAP Report Competition",
+      "url": "https://www.zaproxy.org/blog/2021-03-12-report-competition/"
+    },
+    {
+      "label": "ZAP 2.11.0",
+      "url": "https://www.zaproxy.org/blog/2021-10-07-zap-2-11-0/"
+    },
+    {
+      "label": "reports CHANGELOG.md",
+      "url": "https://github.com/zaproxy/zap-extensions/blob/main/addOns/reports/CHANGELOG.md"
+    }
+  ],
   "group": "features",
   "date": "2021-03-09",
   "status": "draft",

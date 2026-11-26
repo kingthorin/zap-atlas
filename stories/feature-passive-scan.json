@@ -1,6 +1,17 @@
 {
   "title": "The passive scanner: core to the pscan add-on",
   "description": "How the passive scanner engine is recorded in the zaproxy and zap-extensions histories: a core extension from 2011, and the pscan add-on from 2024. The scan rules are in a separate story.",
+  "narrative": "Many ZAP users probably never think about the passive scanner, which checks traffic as it passes through. The scanner started in core, when a commit from January 2011 moved passive scanning onto a background thread. In March 2014 Issue 1086 allowed passive scanners to be added and removed dynamically.\n\nIn June 2024 a core commit deprecated and disabled the pscan API, saying the add-on would provide it, and zap-extensions began the pscan add-on the same month. The work was part of zaproxy issue 7959. Core deprecation followed in late 2024. Commits in November 2024 deprecated unused passive scan methods and options, and a December 2024 commit said the passive scanner is no longer added or used because the pscan add-on will do it. The extension stays for now because other core extensions still use it. Such a staged removal probably suits a project where other code still depends on the old classes.\n\nStatistics moved in December 2025, when a core commit removed pscan alert statistics marked as migrating to the add-on, and the add-on's 0.6.0 release migrated their handling from core. As of the sources cited, the passive scanning API is to be provided by the add-on, which also handles alert statistics, while core keeps the extension because other core extensions still use it.",
+  "narrative_sources": [
+    {
+      "label": "zaproxy issue 7959",
+      "url": "https://github.com/zaproxy/zaproxy/issues/7959"
+    },
+    {
+      "label": "Passive Scanner add-on page",
+      "url": "https://www.zaproxy.org/docs/desktop/addons/passive-scanner/"
+    }
+  ],
   "group": "features",
   "date": "2024-06-25",
   "status": "draft",

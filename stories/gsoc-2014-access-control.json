@@ -1,6 +1,17 @@
 {
   "title": "Advanced Access Control testing (Cosmin Stefan, 2014 GSoC)",
   "description": "The 2014 access control project in the Student Hall of Fame and the history of the accessControl add-on in zap-extensions.",
+  "narrative": "Checking whether one user can reach pages meant for another is tedious by hand, so a tool that tries the URLs automatically probably looked useful to testers. The 2013 HTTP sessions wiki has a goal to \"allow users to test access control with a tool that tries to access the URLs\". The Student Hall of Fame lists Advanced Access Control testing (Cosmin Stefan) as a 2014 Summer GSoC project.\n\nThe code began in zap-extensions in June 2014, when one commit added the initial structure for the extension. Days later another commit temporarily removed it so it could move to a separate branch. A November 2014 commit merged a 2.4alpha branch into one called alpha. Commits of October 2015 fixed the add-on help for the wiki. An April 2018 commit dealt with dynamically unloading the add-on.\n\nThe add-on was moved into a project of its own in April 2019. A June 2019 commit by mbonino implemented an Access Control API. A commit of October 2020 prepared release v6 of the add-on.\n\nThe add-on is still in zap-extensions. Its directory has 137 commits. The most recent commit touching it, from November 2026, updates localized resources. The 2014 work therefore probably survives inside a maintained add-on.",
+  "narrative_sources": [
+    {
+      "label": "ZAP Student Hall of Fame",
+      "url": "https://www.zaproxy.org/student-hall-of-fame/"
+    },
+    {
+      "label": "2013 sessions wiki",
+      "url": "https://github.com/zaproxy/zaproxy/wiki/Gsoc2013_Enhancing_HTTP_Sessions"
+    }
+  ],
   "group": "projects",
   "date": "2014-06",
   "status": "reviewed",

@@ -1,6 +1,25 @@
 {
   "title": "2016 to 2018: Bug tracker, form handling, the HUD, and authentication helper",
   "description": "Student Hall of Fame entries and add-on developments from 2016-2018: Bug tracker, form handling, ZAP HUD, and authentication helper",
+  "narrative": "Logging in to an application and filling in its forms by hand is probably tedious for testers working through a large site, so help for both was an obvious area for student work. The Student Hall of Fame includes Sanchit Kapoor's bug tracker support, a 2016 Summer GSoC project. Form handling is credited to three students, Ryan Wehe, Christopher Laguna and Rian Franey, under Mozilla Winter of Security 2016.\n\nThe bug tracker work shows in this record as a commit of August 2016, \"Added help for Bug Tracker add-on\". A Form Handler Extension commit by Ryan Wehe is dated March 2017. A Mozilla wiki page on the form handling work is cited as evidence.\n\nDavid Scrobonia's ZAP HUD, directly mentored from 2016 to 2018, lives in its own repository, zap-hud. A zaproxy commit of December 2018 included the HUD in the live Docker image. A June 2019 commit removed that step. A June 2019 commit, the same month as release 2.8.0, lists the HUD at version 0.4.0 among the add-ons bundled with ZAP. It is still in the main add-ons list in release 2.17.1, and at the current head it is at version 0.19.0.\n\nKajan Mohanagandhirasa's authentication helper, a 2018 Summer project, is listed. The zaproxy history has pull requests from the GitHub user KajanM merged between May and August 2018, including one for dynamic token authentication. A commit by kajan of May 2018 added support for an ACSRF token in post-based authentication.",
+  "narrative_sources": [
+    {
+      "label": "ZAP Student Hall of Fame",
+      "url": "https://www.zaproxy.org/student-hall-of-fame/"
+    },
+    {
+      "label": "zap-hud repository",
+      "url": "https://github.com/zaproxy/zap-hud"
+    },
+    {
+      "label": "Form handling (MWoS) page",
+      "url": "https://wiki.mozilla.org/Security/Automation/Winter_Of_Security_2016/ZAP_Form_Handling"
+    },
+    {
+      "label": "Authentication helper wiki",
+      "url": "https://github.com/zaproxy/zaproxy/wiki/GSoC2018AuthenticationhelperAddOn"
+    }
+  ],
   "group": "projects",
   "date": "2016",
   "status": "draft",

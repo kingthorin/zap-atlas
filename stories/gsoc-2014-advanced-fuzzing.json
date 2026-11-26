@@ -1,6 +1,21 @@
 {
   "title": "Advanced fuzzing (Sebastian Schulze, 2014 GSoC)",
   "description": "The 2014 advanced fuzzing project in the Student Hall of Fame next to the multi-fuzz commits, the 2015 merge into the fuzz add-on, and where it stands now.",
+  "narrative": "A tester who wants to try many values in one request field is probably glad of a tool that sends them automatically. The Student Hall of Fame lists Advanced fuzzing (Sebastian Schulze) as a 2014 Summer GSoC project. The project wiki's goals include \"Development of a stable HTTP - multifuzzing add-on\".\n\nIn June 2014 a core commit added packages for multi-fuzzing. A zap-extensions commit of the same day updated the multi-fuzz add-on. Later that month a commit added a new dialog layout, script payloads and regular expression payloads, and made the single-fuzzing package permanently available.\n\nIn April 2015 a commit removed the multi-fuzz add-on. Commits of April 2015 for issue 1434 merged the fuzzer with MultiFuzz and moved the result into an add-on.\n\nThe fuzz add-on was moved into a project of its own in April 2019. The fuzz add-on is still in zap-extensions. A commit of August 2026 fixed breadth-first handling. The CHANGELOG for version 13.17.0, dated August 2026, lists a fix to breadth-first Pitchfork payload replacement when fuzzing multiple locations. It also renames the strategies to Cluster Bomb and Pitchfork, which were previously Depth First and Breadth First. Those names probably match the terms testers meet in other fuzzing tools.",
+  "narrative_sources": [
+    {
+      "label": "ZAP Student Hall of Fame",
+      "url": "https://www.zaproxy.org/student-hall-of-fame/"
+    },
+    {
+      "label": "Advanced Fuzzing wiki",
+      "url": "https://github.com/zaproxy/zaproxy/wiki/GSoC_2014_Advanced_Fuzzing"
+    },
+    {
+      "label": "fuzz CHANGELOG.md",
+      "url": "https://github.com/zaproxy/zap-extensions/blob/main/addOns/fuzz/CHANGELOG.md"
+    }
+  ],
   "group": "projects",
   "date": "2014-06",
   "status": "reviewed",

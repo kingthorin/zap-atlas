@@ -1,6 +1,21 @@
 {
   "title": "Authentication helper (Kajan Mohanagandhirasa, 2018 GSoC)",
   "description": "The core changes that the 2018 Authentication helper project left in zaproxy, and how the later authhelper add-on appears in zap-extensions.",
+  "narrative": "For a tool used mostly by people testing live applications, logging in during a scan is probably hard when a session expires or a login form uses anti-CSRF tokens. The Student Hall of Fame lists Kajan Mohanagandhirasa for an Authentication helper project in GSoC 2018. The project wiki describes three features: automated configuration, guided configuration, and authentication status scanning.\n\nThe wiki says the add-on code was in a fork of zap-extensions, and that the core changes were submitted to zaproxy as PR #4898, with a reauthentication fix as PR #4682. A zaproxy commit by kajan in May 2018 added anti-CSRF token support to post-based authentication, and the body of PR #4682 says \"support reauthentication in the presence of an anti-CSRF token for post based authentication method type\". Related changes followed in August 2018, when PR #4898 was merged.\n\nA commit adding a way to specify the URI of the login page is dated August 2018, and its merge, PR #4963, is dated October 2019.\n\nThe authhelper add-on in zap-extensions is a different add-on, whose history begins with a first version by Simon Bennetts in January 2023. The history analysed here does not state a link between this add-on and the 2018 project. Its changelog lists 0.44.0 in November 2026. So the 2018 core changes are in the zaproxy history, while the 2018 add-on code is not in the zap-extensions history analysed here.",
+  "narrative_sources": [
+    {
+      "label": "ZAP Student Hall of Fame",
+      "url": "https://www.zaproxy.org/student-hall-of-fame/"
+    },
+    {
+      "label": "GSoC 2018 Authentication helper add-on (wiki)",
+      "url": "https://github.com/zaproxy/zaproxy/wiki/GSoC2018AuthenticationhelperAddOn"
+    },
+    {
+      "label": "Authentication Helper add-on page",
+      "url": "https://www.zaproxy.org/docs/desktop/addons/authentication-helper/"
+    }
+  ],
   "group": "projects",
   "date": "2018-06",
   "status": "draft",

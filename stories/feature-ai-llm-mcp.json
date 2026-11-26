@@ -1,6 +1,25 @@
 {
   "title": "ZAP and AI",
   "description": "The LLM Support add-on, the MCP server, scanning MCP servers, AI assisted authentication, and the project's own rules for LLM written contributions, with the blog posts that announced each.",
+  "narrative": "Sending data to a language model worries many people who use security tools, and it is easy to see why. The LLM Support add-on was authored in October 2024 and committed in July 2025. An announcement in August 2026 indicates that ZAP will not share any data with an LLM unless users explicitly install the add-on. In 2026 the add-on grew quickly.\n\nAn announcement in April 2026 indicates that the MCP Integration add-on lets AI assistants drive ZAP through the Model Context Protocol. The post warned that this was an alpha release. It exposes tools to start and monitor the spiders and the active scan and to generate a report. The post said the team had deliberately kept the server limited. It does not directly support authenticating to target apps.\n\nAI assisted authentication arrived in the authhelper add-on, which builds on the LLM Support add-on. The post says the LLM is used once, to work out how to log in. Later logins use that script rather than the model. The post says ZAP does not send credentials to the LLM.\n\nIn October 2026 Simon Bennetts wrote that many Core Team members use LLM assistants daily. The post says it is not restricting contributions. It puts the weight on the author, who is responsible for the code they propose. It asks for smaller pull requests with full unit tests. The newest dated item in this story is AI assisted authentication, in version 0.44.0 from November 2026.",
+  "narrative_sources": [
+    {
+      "label": "The ZAP LLM Support Add-on",
+      "url": "https://www.zaproxy.org/blog/2026-08-07-zap-llm-support/"
+    },
+    {
+      "label": "The ZAP MCP Server",
+      "url": "https://www.zaproxy.org/blog/2026-04-02-zap-mcp-server/"
+    },
+    {
+      "label": "AI Assisted Authentication",
+      "url": "https://www.zaproxy.org/blog/2026-11-03-ai-assisted-authentication/"
+    },
+    {
+      "label": "Developing ZAP in the LLM Age",
+      "url": "https://www.zaproxy.org/blog/2026-10-13-developing-zap-in-the-llm-age/"
+    }
+  ],
   "group": "features",
   "date": "2024-10-24",
   "status": "draft",

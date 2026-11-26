@@ -1,6 +1,25 @@
 {
   "title": "2020 and 2021: GraphQL, OAST, and retesting",
   "description": "Student Hall of Fame entries for 2020-2021 GSoC and Season of Docs: GraphQL support, OAST, and retesting alerts",
+  "narrative": "Each of these projects probably left a trail of commits, a blog post and an add-on. The ZAP Student Hall of Fame is the public listing that credits their creators. Akshath Kothari is listed for GraphQL Support (2020) and for Out-of-band Application Security Testing (2021). A third entry, Retesting Alerts, belongs to Pranav Saxena (2021).\n\nThe first commit to the GraphQL add-on is dated May 2020, and the first commit to OAST is dated June 2021. Retesting Alerts starts with an initial add-on dated August 2021. Those commits probably mark where each add-on began rather than when it was first released.\n\nFor a small team, the first commit is probably the easiest record to point to when a student's work is credited. For a reader tracing where a feature began, that is probably the most useful date. Each of the three projects has its own story in the atlas, which follows each add-on's later history.",
+  "narrative_sources": [
+    {
+      "label": "ZAP Student Hall of Fame",
+      "url": "https://www.zaproxy.org/student-hall-of-fame/"
+    },
+    {
+      "label": "GraphQL add-on blog post",
+      "url": "https://www.zaproxy.org/blog/2020-08-28-introducing-the-graphql-add-on-for-zap/"
+    },
+    {
+      "label": "OAST blog post",
+      "url": "https://www.zaproxy.org/blog/2021-08-23-oast-with-owasp-zap/"
+    },
+    {
+      "label": "Retest blog post",
+      "url": "https://www.zaproxy.org/blog/2021-08-23-retest-with-zap/"
+    }
+  ],
   "group": "projects",
   "date": "2020",
   "status": "draft",

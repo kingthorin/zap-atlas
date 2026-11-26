@@ -1,6 +1,21 @@
 {
   "title": "zapbot, the ZAP helper bot account",
   "description": "When the zapbot GitHub account and its X account appear, and what zapbot commits in the four repositories, from 2015 to the release automation commits of today.",
+  "narrative": "A commit by zapbot is easy to mistake for a person's work, and it is easy to see why a reader would wonder who the account is. The GitHub account was created in June 2015, with the display name zapbot - ZAP helper bot. The same day it created the comment on issue 74 of the zaproxy repository that the logo notes link to for the original lightning bolt design.\n\nThe GitHub profile gives its location as the cloud and links to a page in its zap-mgmt-scripts repository. Forks of zaproxy, zap-core-help and zap-extensions were created in November 2015, as was zap-mgmt-scripts. The X account zaproxybot says it joined in December 2016, about 18 months after the GitHub account was created.\n\nThe earliest zapbot commits in the data, dated November 2015, are both titled Latest files from Crowdin, one in zaproxy and one in zap-extensions. From June 2021 its commits released add-ons and prepared the next development iteration in zap-extensions, and in August 2021 they began updating localized resources across several repositories. A Webdriver Update commit followed in April 2022.\n\nA few commits record the bot under a longer author name, and the first of them is dated January 2018. A shorter variant first appears in June 2024. Most zapbot commits use the plain name zapbot, and the shorter variant matches the account's display name on GitHub today.",
+  "narrative_sources": [
+    {
+      "label": "zapbot on GitHub",
+      "url": "https://github.com/zapbot"
+    },
+    {
+      "label": "zaproxybot on X",
+      "url": "https://x.com/zaproxybot"
+    },
+    {
+      "label": "Issue 74, comment 108865883",
+      "url": "https://github.com/zaproxy/zaproxy/issues/74#issuecomment-108865883"
+    }
+  ],
   "group": "history",
   "date": "2015-06-04",
   "status": "reviewed",

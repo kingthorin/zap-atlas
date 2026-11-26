@@ -1,6 +1,21 @@
 {
   "title": "The ZAP Docker images",
   "description": "How the docker directory of zaproxy developed: the first Dockerfiles in 2014, packaged scan scripts, live and bare images, a HUD change, and registry changes in 2023 and 2024.",
+  "narrative": "Teams that want ZAP in a pipeline without installing it probably reach for a container image. The first Dockerfiles appeared in September 2014, one for the stable 2.3.1 release and one for weekly builds. Packaged scan scripts followed, starting with a baseline script in May 2016. A full scan script was added in June 2017.\n\nLive and bare images arrived as separate Dockerfiles in 2017. In March 2018 the Docker files moved from build/docker to a top level docker directory. In December 2018 the live image was changed to include the HUD add-on. By June 2019 the live image used Gradle tasks to create the release.\n\nIn June 2023 images began to be published to the GitHub Container Registry, with tags replacing image names. An announcement in August 2023 indicates that the Docker Hub images would move to a new organisation, changing the pull URLs. The same announcement said the GitHub Container Registry images would not be affected. In March 2024 a change stopped pushing images to the OWASP Docker Hub.\n\nThe 2.11.0 post said the Docker stable and bare images will now be updated monthly. Where things stand: images are published to the GitHub Container Registry, and Docker Hub publishing moved to a new organisation in August 2023.",
+  "narrative_sources": [
+    {
+      "label": "ZAP Docker Images in GitHub Container Registry",
+      "url": "https://www.zaproxy.org/blog/2023-06-13-ghcr-docker-images/"
+    },
+    {
+      "label": "ZAP is Joining the Software Security Project",
+      "url": "https://www.zaproxy.org/blog/2023-08-01-zap-is-joining-the-software-security-project/"
+    },
+    {
+      "label": "ZAP 2.11.0",
+      "url": "https://www.zaproxy.org/blog/2021-10-07-zap-2-11-0/"
+    }
+  ],
   "group": "features",
   "date": "2014-09-24",
   "status": "draft",

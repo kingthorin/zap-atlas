@@ -1,6 +1,17 @@
 {
   "title": "The DOM XSS scanner (2015, directly mentored)",
   "description": "The DOM XSS Scanner entry in the Student Hall of Fame and the history of the domxss add-on in zap-extensions.",
+  "narrative": "Easy to see why a DOM based cross site scripting check needs a browser: the flaw lives in the page's own scripts, which run only when a browser loads the page. The Student Hall of Fame lists DOM XSS Scanner for Aabha Biyani in 2015, under the Direct program. The add-on page says it launches browser windows and sends attack payloads to the relevant DOM elements.\n\nThe first commit under the domxss path is dated August 2015. It is titled DOM XSS Active Scan rule and is by the account psiinon. A small follow-up commit came later that same month.\n\nSelenium support came in as a separate add-on commit dated August 2015. In August 2017 a commit changed the add-on to use the Selenium extension and added a skip reason.\n\nA release of the scanner rule add-ons was prepared in June 2019. The add-on is still in zap-extensions. 130 commits touch its folder. The most recent change named in this story is a Selenium library update from December 2024.",
+  "narrative_sources": [
+    {
+      "label": "ZAP Student Hall of Fame",
+      "url": "https://www.zaproxy.org/student-hall-of-fame/"
+    },
+    {
+      "label": "DOM XSS add-on page",
+      "url": "https://www.zaproxy.org/docs/desktop/addons/dom-xss-active-scan-rule/"
+    }
+  ],
   "group": "projects",
   "date": "2015-06",
   "status": "draft",

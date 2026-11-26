@@ -1,6 +1,21 @@
 {
   "title": "Retesting alerts (Pranav Saxena, 2021 GSoC)",
   "description": "The Retest add-on's first commit and release in August 2021, its later history, and the contributor's other commits in zaproxy and zap-extensions that year.",
+  "narrative": "For a tool used mostly by people who test the same application again and again, the hard question is probably whether a fixed alert has really gone away. The Student Hall of Fame lists Pranav Saxena for Retesting Alerts, GSoC, 2021 Summer. A blog post from August 2021 describes generating a Retest Plan from selected alerts, a Verify button, running the plan in the Automation Framework, and a Retest API. The post also says that retesting authenticated alerts is not yet supported.\n\nCommits under the handle pranavsaxena17 appear in zap-extensions and zaproxy from March 2021. The history matches that handle to the student by similarity only. Those earlier commits include variable support for the Automation Framework in May 2021 and a new automation requestor job in June 2021. The automation commits are the add-on that Retest builds on.\n\nThe add-on starts with a commit dated August 2021, and its changelog dates 0.0.1 to the same day as the blog post. The 0.0.1 release allowed retesting for the presence or absence of certain alerts using the Automation Framework.\n\nRelated changes followed in October 2022, with a fix to the plan generator. The changelog lists 0.9.0 in May 2024, 0.10.0 in September 2024 and 0.11.0 in January 2025. The add-on is still under addOns/retest at HEAD, with an unreleased change raising the minimum ZAP version to 2.17.0.",
+  "narrative_sources": [
+    {
+      "label": "ZAP Student Hall of Fame",
+      "url": "https://www.zaproxy.org/student-hall-of-fame/"
+    },
+    {
+      "label": "Retesting alerts blog post (2021-08-23)",
+      "url": "https://www.zaproxy.org/blog/2021-08-23-retest-with-zap/"
+    },
+    {
+      "label": "Retest add-on page",
+      "url": "https://www.zaproxy.org/docs/desktop/addons/retest/"
+    }
+  ],
   "group": "projects",
   "date": "2021-06",
   "status": "reviewed",

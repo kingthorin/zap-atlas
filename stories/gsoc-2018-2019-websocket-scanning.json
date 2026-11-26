@@ -1,6 +1,21 @@
 {
   "title": "Scanning WebSockets (Manos Kirtas, 2018 and 2019 GSoC)",
   "description": "Two Hall of Fame entries for the same student: 2018 phase 1 and 2019 phase 2 of WebSocket scanning, followed through zap-extensions commits and the WebSockets add-on changelog.",
+  "narrative": "Testing WebSocket traffic is probably harder than testing ordinary requests, so a scanner that can handle it would save testers building their own tools. The Student Hall of Fame lists Manos Kirtas twice, for scanning WebSockets in phase 1 (2018 Summer) and phase 2 (2019 Summer). The 2019 wiki page names three goals: passive scanning, a WebSocket TreeMap and active scanning.\n\nThe wiki describes passive scanning as delivered, the TreeMap as in progress, and active scanning as not yet started in earnest. The 2018 phase 1 commits in zap-extensions begin with a regex and non-regex filter commit dated April 2018. Later 2018 commits handled heartbeat messages through the WebSocket Proxy.\n\nThe WebSocket code was moved into a project of its own in April 2019. Passive scanning followed, with a changelog entry dated July 2019 that lists the passive scan infrastructure and eight default scripts (Base64, email, private IP and credit card data, among others). Release websocket v20 is dated July 2019 as well.\n\nA TreeMap commit by Manos Kirtas, dated September 2019, added WebSocketTreeMap.java and node classes. The commits examined do not show an active-scan implementation for WebSockets. The add-on still exists at HEAD, and its changelog reached version 38 in August 2026. A commit of September 2026 added GSPM support for passive scripts.",
+  "narrative_sources": [
+    {
+      "label": "ZAP Student Hall of Fame",
+      "url": "https://www.zaproxy.org/student-hall-of-fame/"
+    },
+    {
+      "label": "GSoC 2019 WebSocket scanning (wiki)",
+      "url": "https://github.com/zaproxy/zaproxy/wiki/GSoC2019_WebSocketScanning"
+    },
+    {
+      "label": "WebSockets add-on page",
+      "url": "https://www.zaproxy.org/docs/desktop/addons/websockets/"
+    }
+  ],
   "group": "projects",
   "date": "2018-06",
   "status": "reviewed",

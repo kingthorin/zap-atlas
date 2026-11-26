@@ -1,6 +1,17 @@
 {
   "title": "The Automation Framework add-on",
   "description": "How the automation add-on began in January 2021, which jobs and add-ons joined it, its use in Docker scripts and the Retest add-on, and its 2026 state, according to commits and CHANGELOGs.",
+  "narrative": "Teams that run ZAP in a build pipeline probably want scans described in a file rather than set up by hand each time. The Automation Framework began as an add-on whose first commit is dated January 2021. An announcement in October 2021 indicates that the 2.11.0 release described the framework as a new way to automate ZAP, expected to become the default option.\n\nSeveral other add-ons added Automation Framework support during 2021, including the Ajax Spider, OpenAPI, SOAP and GraphQL. A Requestor job came in version 0.3.0, in June 2021. A Delay job followed in version 0.8.0, in November 2021. Changes for the Retest add-on arrived in version 0.5.0, in August 2021.\n\nPackaged Docker baseline scans began using the framework in May 2021. A Docker commit in October 2021 said that always updating add-ons on start avoided a bug that could break framework plans. A GUI phase arrived in version 0.4.0, in August 2021. The add-on was promoted to beta in January 2022.\n\nThe spider job was removed, because the Spider add-on provides it. Passive scan jobs were removed once the Passive Scanner add-on took them over. Version 0.52.0 added support for stopping plans and jobs. The newest dated entry in this story is version 0.62.0, from November 2026.",
+  "narrative_sources": [
+    {
+      "label": "ZAP 2.11.0",
+      "url": "https://www.zaproxy.org/blog/2021-10-07-zap-2-11-0/"
+    },
+    {
+      "label": "automation CHANGELOG.md",
+      "url": "https://github.com/zaproxy/zap-extensions/blob/main/addOns/automation/CHANGELOG.md"
+    }
+  ],
   "group": "features",
   "date": "2021-01-14",
   "status": "draft",

@@ -1,6 +1,21 @@
 {
   "title": "GraphQL support (Akshath Kothari, 2020 GSoC)",
   "description": "From an initial commit in May 2020 to the add-on's activity in 2026, following the GraphQL add-on's commits and changelog.",
+  "narrative": "For a tool used mostly by people testing web applications, the hard part of a GraphQL API is probably knowing which queries to send. The Student Hall of Fame lists Akshath Kothari for GraphQL Support, GSoC, 2020 Summer. A blog post from August 2020, written by Akshath Kothari, says the add-on is early-stage with limited functionality. The post lists schema import from a file or URL, introspection, query generation, and generator options.\n\nThe first commit under the add-on's folder, dated May 2020, added the extension class, an API class, a help page and a changelog. Commits by ricekot, the handle the blog post uses, followed from June to August 2020, adding import dialogs, import functionality and query generation. The changelog dates version 0.1.0 to August 2020, with the features of importing a schema and generating queries from it.\n\nLater subjects include exposing options through the API in October 2020 and automation framework support in March 2021. In August 2022 commits switched it to the Spider and Form Handler add-ons, and in October 2022 a commit removed its use of the core spider. Commits from October 2024 added technology detection for GraphQL engines, and later commits added import of introspection responses, including from a URL in February 2026.\n\nThe changelog lists 0.35.0 in October 2026, so the add-on still exists at HEAD. For a small team, an add-on that is still being updated years later probably means the first design held up.",
+  "narrative_sources": [
+    {
+      "label": "ZAP Student Hall of Fame",
+      "url": "https://www.zaproxy.org/student-hall-of-fame/"
+    },
+    {
+      "label": "Introducing the GraphQL add-on for ZAP (blog)",
+      "url": "https://www.zaproxy.org/blog/2020-08-28-introducing-the-graphql-add-on-for-zap/"
+    },
+    {
+      "label": "GraphQL Support add-on page",
+      "url": "https://www.zaproxy.org/docs/desktop/addons/graphql-support/"
+    }
+  ],
   "group": "projects",
   "date": "2020-06",
   "status": "reviewed",

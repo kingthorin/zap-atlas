@@ -1,6 +1,17 @@
 {
   "title": "SAML 2.0 support (Pulasthi Mahawithana, 2013 GSoC)",
   "description": "The 2013 SAML project in the Student Hall of Fame and the history of the saml add-on in zap-extensions.",
+  "narrative": "Single sign-on with SAML is probably common enough in larger organisations that a tester who meets it needs a tool that can examine assertions. The Student Hall of Fame lists SAML 2.0 support, by Pulasthi Mahawithana, as a 2013 Summer GSoC project. The project page says the aim was to \"develop a component for ZAP that will detect and fuzz various elements and attributes of a SAML Assertion\".\n\nThe project page lists pre-releases 0.1-alpha, 0.2-alpha and 1.0-alpha from July to September 2013. In zap-extensions, a commit dated September 2013 added the SAML extension's initial code for the alpha release. Alpha releases such as these probably let a small team collect feedback before a full release. Commits in the following weeks covered bug fixes, UI fixes, documentation and internationalisation.\n\nIn May 2018 a commit removed an unnecessary library, and in April 2019 the add-on was relocated to its own project.\n\nThe add-on is still in zap-extensions, and a commit dated August 2026 updated the capitalisation of a settings button title.",
+  "narrative_sources": [
+    {
+      "label": "ZAP Student Hall of Fame",
+      "url": "https://www.zaproxy.org/student-hall-of-fame/"
+    },
+    {
+      "label": "SAML project page",
+      "url": "https://owasp.org/www-community/initiatives/gsoc/gsoc2013zapsaml"
+    }
+  ],
   "group": "projects",
   "date": "2013-06",
   "status": "reviewed",

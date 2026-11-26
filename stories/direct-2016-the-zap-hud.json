@@ -1,6 +1,25 @@
 {
   "title": "The ZAP HUD (David Scrobonia, 2016-2018)",
   "description": "The HUD lives in its own repository, so this story follows only its traces in zaproxy, zap-extensions, and the credits: registration, Docker, bundling as a main add-on, and the credits entries.",
+  "narrative": "A tester who wants ZAP inside the browser itself probably needs a different kind of interface. The Student Hall of Fame lists David Scrobonia for The ZAP HUD, a Direct project from 2016 to 2018. Its README describes the HUD as an interface that provides the functionality of ZAP directly in the browser.\n\nThe HUD lived in its own repository, which is not one of the repositories this story covers. The earliest zaproxy commit that mentions the HUD is dated November 2018. It adds one line to docs/scanners.md, registering HUD tutorial examples. In December 2018 a commit included the HUD add-on in the live Docker image.\n\nIn June 2019 a commit added a list of main add-ons that named the HUD release. A June 2019 Docker fix removed the steps that cloned the HUD repository. A few zap-extensions commits also name the HUD in their subjects. One, from January 2019, aimed to make JavaScript injection more like the HUD. A search of zaproxy commit messages found no other core change attributed to the HUD.\n\nThe credits page history dates David Scrobonia's addition to March 2019. A September 2020 change removed David Scrobonia from the Core Team list. Where things stand: the HUD is still listed among the main add-ons. Its README says it is no longer under active development.",
+  "narrative_sources": [
+    {
+      "label": "Student Hall of Fame",
+      "url": "https://www.zaproxy.org/student-hall-of-fame/"
+    },
+    {
+      "label": "zap-hud repository",
+      "url": "https://github.com/zaproxy/zap-hud"
+    },
+    {
+      "label": "zap-hud releases",
+      "url": "https://github.com/zaproxy/zap-hud/releases"
+    },
+    {
+      "label": "ZAP credits page (zap-core-help)",
+      "url": "https://github.com/zaproxy/zap-core-help/blob/main/addOns/help/src/main/javahelp/contents/credits.html"
+    }
+  ],
   "group": "projects",
   "date": "2016",
   "status": "reviewed",

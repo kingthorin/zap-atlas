@@ -1,6 +1,13 @@
 {
   "title": "Zest: the graphical scripting language in ZAP",
   "description": "Zest's history with ZAP: a Zest add-on in zap-extensions from 2013, script engine support in the core, its own project in 2019, and Zest script chains in the Automation Framework.",
+  "narrative": "Many ZAP users never write a script, but Zest offers a graphical way to build one. Zest began as a zap-extensions add-on in March 2013, and in April 2013 commits added Zest and started its help pages. An announcement in March 2016 indicates that Zest was \"a graphical security scripting language from the Mozilla Security team.\" For testers who would rather not write code, a graphical language probably lowered the barrier.\n\nIn August 2013 a commit allowed scripts to override interfaces to support Zest, and initial Zest templates were added that same month. In February 2014 a core commit titled Moved Zest scripts from core landed.\n\nZest scripts also handled authentication. Core commits in February 2014 propagated session cookies during Zest authentication, and a November 2014 commit referenced Issue 1411, about missing authentication handling for Zest scripts called from the scanner. For a scanner that logs in before testing, a script that handles login probably matters as much as the script language itself.\n\nZest got its own project in April 2019, and in November 2023 its options moved under a Scripts node. The scripts add-on changelog lists Zest standalone script chains in the Automation Framework Script job from March 2026. The most recent entry cited, from July 2026, lists GUI support for Zest script chains.",
+  "narrative_sources": [
+    {
+      "label": "ZAP Newsletter, 2016 March",
+      "url": "https://www.zaproxy.org/blog/2016-03-29-zap-newsletter-2016-march/"
+    }
+  ],
   "group": "features",
   "date": "2013-03-29",
   "status": "reviewed",

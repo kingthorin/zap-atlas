@@ -1,6 +1,25 @@
 {
   "title": "2022 and 2023: Param Digger, the browser recorder, and Postman",
   "description": "Student Hall of Fame entries for 2022-2023 GSoC: Param Digger, Browser Recorder, and Postman Support",
+  "narrative": "For a small team, the students who build add-ons are easy to lose track of, so a named entry probably matters. The ZAP Student Hall of Fame lists all three. Arkaprabha Chakraborty is credited with Param Digger in 2022. Aryan Gupta is listed for Browser Recorder (2023), and Vitika Soni is listed for Postman Support (2023).\n\nParam Digger began with a commit titled Add initial param miner extension, dated June 2022, and the add-on finds parameters that are not visible in the normal interface. A commit dated August 2022 changed the name from paramminer to paramdigger.\n\nOne Browser Recorder commit adds dialogs for new client statements and is dated July 2023. A commit titled Add Postman add-on is dated June 2023. Dating each project from its first commit probably gives a fairer picture than the Hall of Fame year alone, since the two can differ.\n\nEach of the three projects has its own story in the atlas, which follows its later history.",
+  "narrative_sources": [
+    {
+      "label": "ZAP Student Hall of Fame",
+      "url": "https://www.zaproxy.org/student-hall-of-fame/"
+    },
+    {
+      "label": "The Param Digger add-on (blog, 2022-08-22)",
+      "url": "https://www.zaproxy.org/blog/2022-08-22-the-param-digger-addon/"
+    },
+    {
+      "label": "Browser recorder blog post (2023-09-11)",
+      "url": "https://www.zaproxy.org/blog/2023-09-11-browser-recorder/"
+    },
+    {
+      "label": "Postman add-on blog post (2023-09-25)",
+      "url": "https://www.zaproxy.org/blog/2023-09-25-postman-add-on/"
+    }
+  ],
   "group": "projects",
   "date": "2022",
   "status": "draft",

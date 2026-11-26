@@ -1,6 +1,17 @@
 {
   "title": "WebSocket testing (Robert Koch, 2012 GSoC)",
   "description": "The 2012 WebSocket testing project in the Student Hall of Fame, set beside the commits that moved the code out of core and into the websocket add-on.",
+  "narrative": "For a proxy used mostly by security testers, WebSocket traffic that could not be seen or edited probably left a gap in testing. The Student Hall of Fame lists WebSocket testing (Robert Koch) as a 2012 Summer GSoC project, and the project wiki says it \"aims to adding support for WebSockets to ZAP\". A zaproxy commit dated May 2012 created a branch for the work, and a later commit that month merged trunk into it to keep up with changes.\n\nThe UI came next: a June 2012 commit added new details to a WebSockets UI panel, including opcode and payload length. These commits were in zaproxy, where the WebSocket code was then part of core.\n\nIn January 2013 a zaproxy commit removed the WebSockets add-on, and a zap-extensions commit that same day moved the WebSockets extension out of core. Relocation continued: in April 2016 a commit unloaded components from core, and in April 2019 another relocated the add-on to its own project.\n\nThe current zaproxy tree has no file with websocket in its path. The add-on is still in zap-extensions, with 231 commits in its history, and its latest commit, dated September 2026, is titled \"websocket: Support GSPM for passive scripts\".",
+  "narrative_sources": [
+    {
+      "label": "ZAP Student Hall of Fame",
+      "url": "https://www.zaproxy.org/student-hall-of-fame/"
+    },
+    {
+      "label": "WebSockets project wiki",
+      "url": "https://github.com/zaproxy/zaproxy/wiki/GSoC2012_WebSockets"
+    }
+  ],
   "group": "projects",
   "date": "2012-06",
   "status": "reviewed",

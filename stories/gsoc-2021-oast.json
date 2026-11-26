@@ -1,6 +1,25 @@
 {
   "title": "Out-of-band testing, OAST (Akshath Kothari, 2021 GSoC)",
   "description": "The OAST add-on from its first commit in June 2021 through BOAST, Interactsh, and its use by scan rules, with the matching change in ZAP core.",
+  "narrative": "Some vulnerabilities only show up when a server calls back to a host the scanner never contacted, so a scanner probably needs a way to handle out-of-band testing. The Student Hall of Fame lists Akshath Kothari for Out-of-band Application Security Testing, GSoC, 2021 Summer. A blog post from August 2021 says the OAST add-on lets ZAP communicate with out-of-band testing services. The post says it \"currently supports two services: BOAST and Callbacks\", and notes that Callbacks was previously part of ZAP core.\n\nThe first commit under the add-on's folder is dated June 2021, and the changelog lists 0.1.0 and 0.1.1 in August 2021, with 0.2.0 later that month. Version 0.2.0 added polling frequency for BOAST servers, a table of payloads and canary values, and two example scripts. Support for Interactsh was committed in August 2021 and merged in September 2021. In September 2021 a core change deprecated the callback extension, made by Akshath Kothari.\n\nFrom October 2022, the changelog for 0.13.0 says, BOAST payloads are persisted in the permanent database and polled in future ZAP sessions. The oast add-on depends on the database add-on, which a ZAP session otherwise lacks. The 0.20.0 release in September 2024 raised alerts for interactions from other sessions and added options to trim the permanent database.\n\nLater commits include stopping the polling on shutdown in October 2025 and generating Interactsh identifiers using native alphabets in October 2026. The changelog lists 0.26.0 in September 2026, so the add-on still exists at HEAD.",
+  "narrative_sources": [
+    {
+      "label": "ZAP Student Hall of Fame",
+      "url": "https://www.zaproxy.org/student-hall-of-fame/"
+    },
+    {
+      "label": "OAST blog post (2021-08-23)",
+      "url": "https://www.zaproxy.org/blog/2021-08-23-oast-with-owasp-zap/"
+    },
+    {
+      "label": "oast CHANGELOG.md",
+      "url": "https://github.com/zaproxy/zap-extensions/blob/main/addOns/oast/CHANGELOG.md"
+    },
+    {
+      "label": "OAST Support add-on page",
+      "url": "https://www.zaproxy.org/docs/desktop/addons/oast-support/"
+    }
+  ],
   "group": "projects",
   "date": "2021-06",
   "status": "reviewed",

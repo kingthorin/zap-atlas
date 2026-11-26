@@ -1,6 +1,21 @@
 {
   "title": "The Spider: from core to add-on",
   "description": "How the ZAP Spider (the traditional crawler) is recorded in the zaproxy and zap-extensions histories, with the blog posts around it: code in core since 2012, the 2022 migration of the Spider into the spider add-on, the removal of the core code, and the .DS_Store parser.",
+  "narrative": "Crawling a site is usually one of the first steps in a scan. ZAP's traditional Spider lived in core code from 2010 until its migration in 2022. In May 2012 a new SpiderParam and Spider class were added under org.zaproxy.zap.spider, and the old Paros Proxy spider packages were removed in July 2012. An announcement in December 2012 indicates that the old spider was \"showing its age\", and during ZAP's first year in Google Summer of Code, Cosmin Stefan completely rewrote it.\n\nAn add-on spider with SVG href parsing followed in January 2022, and in April 2022 a migration commit moved the Spider from core to zap-extensions as core deprecated it.\n\nAn announcement in August 2022 indicates that the changes were available for testing in the weekly releases ahead of 2.12, and explained the point of the move: \"the core Spider has been moved to an add-on which means such changes are no longer bound to core/stable releases.\" The post reported that the weekly version took ZAP from a score of 50% to 80% on Google's Security Crawl Maze, and warned that some third-party add-ons using the Spider would stop working with 2.12.\n\nThe core code was removed in January 2026, when a commit titled Remove deprecated spider deleted 22085 lines. The spider add-on's changelog lists version 0.20.0 from April 2026. As of the sources cited, the Spider is an add-on in zap-extensions, and the core spider directory no longer exists in zaproxy.",
+  "narrative_sources": [
+    {
+      "label": "ZAP 2.0.0 and the Google Summer of Code 2012 Projects",
+      "url": "https://www.zaproxy.org/blog/2012-12-10-zap-2-0-0-and-the-google-summer-of-code-2012-projects/"
+    },
+    {
+      "label": "Spider News",
+      "url": "https://www.zaproxy.org/blog/2022-08-30-spider-move/"
+    },
+    {
+      "label": "Spider add-on page",
+      "url": "https://www.zaproxy.org/docs/desktop/addons/spider/"
+    }
+  ],
   "group": "features",
   "date": "2022-04-27",
   "status": "draft",

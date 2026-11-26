@@ -1,6 +1,25 @@
 {
   "title": "The Authentication Helper add-on",
   "description": "The authhelper add-on in zap-extensions from January 2023, with the blog posts that explained each step: browser based, client script, OAuth2, and AI assisted authentication. Earlier authentication work in core is in the Google Summer of Code 2018 story.",
+  "narrative": "Scanning an app behind a login is hard, and easy to see why ZAP built a helper for it. An announcement in January 2023 indicates that a new Authentication Helper add-on was available from the ZAP Marketplace. The post warned that a slight configuration mistake makes authentication fail. It also asked readers for help in making configuration easier.\n\nAn announcement in May 2023 indicates that ZAP can now automatically detect common authentication mechanisms and configure itself, mainly for the Automation Framework. Auto-detection was part of version 0.4.0, dated April 2023.\n\nThe commit Client Script Based Auth (Ajax Spider) is dated July 2024. An announcement in July 2025 indicates that the older form based, JSON based and script based methods are not recommended going forward. An announcement in November 2026 indicates that an LLM drives the browser step by step during AI assisted authentication. The post says the model is only meant to be used once, to work out how to log in.\n\nAfter that, ZAP records the steps and builds a Zest script, so later logins do not use the LLM. The post says ZAP does not send your credentials to the LLM. It also says TOTP is not yet supported. The newest dated item in this story is version 0.44.0 of the add-on, from November 2026.",
+  "narrative_sources": [
+    {
+      "label": "Authentication Help",
+      "url": "https://www.zaproxy.org/blog/2023-01-19-authentication-help/"
+    },
+    {
+      "label": "Authentication Auto-Detection",
+      "url": "https://www.zaproxy.org/blog/2023-05-02-authentication-auto-detection/"
+    },
+    {
+      "label": "Authentication Improvements",
+      "url": "https://www.zaproxy.org/blog/2025-07-03-authentication-improvements/"
+    },
+    {
+      "label": "AI Assisted Authentication",
+      "url": "https://www.zaproxy.org/blog/2026-11-03-ai-assisted-authentication/"
+    }
+  ],
   "group": "features",
   "date": "2023-01-10",
   "status": "draft",

@@ -1,6 +1,13 @@
 {
   "title": "Script scan rules: from core scripts to first-class scan rules",
   "description": "How active and passive scripts became scan rules: script scanners in the core from 2013, their move to the scripts add-on in 2023 and 2024, and scripts treated as first-class scan rules from scripts 45.2.0.",
+  "narrative": "Scripts that check for vulnerabilities have a long history in ZAP. Script support moved into core in July 2013, with classes for active and passive scripts. In February 2015 active scan scripts gained the ability to scan just a URL rather than every parameter.\n\nIn December 2023 a core commit deprecated script scan rules, saying \"These will be made available as part of the scripts add-on.\" The scripts changelog for 45.0.0, dated February 2024, says the scan rule functionality of scripts was moved from the ZAP core to this add-on. The changelog for 45.2.0, dated April 2024, says active and passive scripts with a getMetadata() function are now treated as first-class scan rules.\n\nAn announcement in July 2024 indicates that ZAP scripts are now full scan rules, so any active or passive script that implements getMetadata is exposed as a scan rule. Each such script needs a unique ID or it will not load. The post says all passive scripts and most active scripts in the community-scripts repository were updated to implement getMetadata().\n\nLater changes in 2025 added alert reference overrides in October and a scanHost method for active scripts in November. The latest entry cited, from December 2025, is a fix so that script rules use the attack strength and alert threshold from active scan policies.",
+  "narrative_sources": [
+    {
+      "label": "ZAP Scripts are now Full Scan Rules!",
+      "url": "https://www.zaproxy.org/blog/2024-07-17-script-scan-rules/"
+    }
+  ],
   "group": "features",
   "date": "2013-07-15",
   "status": "draft",

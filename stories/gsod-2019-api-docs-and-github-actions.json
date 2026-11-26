@@ -1,6 +1,25 @@
 {
   "title": "API documentation and GitHub Actions (Nirojan Selvanathan, 2019-2020)",
   "description": "Two Hall of Fame entries for one contributor. Most of the work lives outside the analysed repositories, so this story relies on the official pages, one commit, and the credits history.",
+  "narrative": "For a tool that many teams run from a build script, the documentation probably matters as much as the code. The Student Hall of Fame lists Nirojan Selvanathan for ZAP API documentation, GSoD, 2019 Autumn. The same listing gives a second entry for ZAP GitHub actions, a Direct entry in spring 2020.\n\nThe ZAP API documentation page has sections on exploring and attacking an application, getting results, authentication, advanced settings and an API catalogue. The repository README says it holds the source for that documentation, built with Slate. Neither page fetched mentions Season of Docs or names contributors, so the link to the 2019 entry rests on the Hall of Fame listing alone.\n\nIn February 2020 the only zaproxy commit under this author name added a check for Markdown report files to the Docker scripts. The credits history records him being promoted to the Core Team list that month and moved to the extended team in August 2021.\n\nIn April 2020 a blog post by him describes the ZAP Baseline action, a workflow with a daily cron trigger and a rules file that sets rules to WARN, FAIL, or IGNORE. In May 2020 a second post describes the ZAP full scan action, which runs the spider and an active scan and reports results as GitHub issues. A search of the zaproxy history found no commits for either action, so their code lies outside the repositories analysed here.",
+  "narrative_sources": [
+    {
+      "label": "ZAP Student Hall of Fame",
+      "url": "https://www.zaproxy.org/student-hall-of-fame/"
+    },
+    {
+      "label": "ZAP API documentation",
+      "url": "https://www.zaproxy.org/docs/api/"
+    },
+    {
+      "label": "Automate security testing with ZAP and GitHub Actions (2020-04-09)",
+      "url": "https://www.zaproxy.org/blog/2020-04-09-automate-security-testing-with-zap-and-github-actions/"
+    },
+    {
+      "label": "DAST with ZAP and GitHub Actions (2020-05-15)",
+      "url": "https://www.zaproxy.org/blog/2020-05-15-dynamic-application-security-testing-with-zap-and-github-actions/"
+    }
+  ],
   "group": "projects",
   "date": "2019-10",
   "status": "reviewed",

@@ -1,6 +1,21 @@
 {
   "title": "Weekly releases",
   "description": "How ZAP began publishing weekly builds in October 2012, what the announcement said they were for, and how later features were first tried in the weeklies.",
+  "narrative": "For a tool used mostly by security testers, a full release is probably a major event, so new features can wait to reach users. An October 2012 post by Simon Bennetts explains the decision to start weekly builds. He said he had been struggling with the question of ZAP releases: many enhancements were ready, but he wanted 2.0.0 out of the door as soon as possible. After discussing it with other developers, the plan was a weekly build from the main branch every Monday morning.\n\nThe post listed how a weekly differed from a full release: one cross-platform ZIP and no installers, no release notes, and a version number based on the date. Its intended audience was people who wanted features added since 1.4 without building from source, and testers rather than first time users. \nLater, weeklies became a place where features were tried first. The FlatLaf look and feel commit of February 2020 first appears in a March 2020 weekly tag, and the dark mode post two days later introduced the feature. In August 2022 the spider add-on was included in the weeklies, and the Spider News post asked readers to test the changes in the weekly releases ahead of 2.12. A weekly commit adding the client was dated December 2024, about two weeks before the Client Spider shipped in 2.16.0.\n\nThe zaproxy repository has weekly tags named by date, the earliest from July 2015, and 569 of them are counted. The Releases page leaves them out.",
+  "narrative_sources": [
+    {
+      "label": "ZAP Weekly Releases",
+      "url": "https://www.zaproxy.org/blog/2012-10-22-zap-weekly-releases/"
+    },
+    {
+      "label": "Dark Mode in the Weekly Release",
+      "url": "https://www.zaproxy.org/blog/2020-03-04-dark-mode-in-the-weekly-release/"
+    },
+    {
+      "label": "Spider News",
+      "url": "https://www.zaproxy.org/blog/2022-08-30-spider-move/"
+    }
+  ],
   "group": "history",
   "date": "2012-10-15",
   "status": "draft",

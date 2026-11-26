@@ -1,6 +1,17 @@
 {
   "title": "Zest enhancements (Alessandro Secco, 2013 GSoC)",
   "description": "The 2013 Zest enhancements project in the Student Hall of Fame, set beside the 2013 commits and the later history of the zest add-on.",
+  "narrative": "For ZAP, a tool used mostly by testers, scripts that repeat a set of steps probably save time if the tool can build a loop for them. The Student Hall of Fame lists Zest enhancements (Alessandro Secco) as a 2013 Summer GSoC project. Zest was already in zap-extensions before the summer, and a commit dated May 2013 is titled \"Added zest and mitmConf\".\n\nThe loop work came in August 2013, when a commit added a ZestLoopFile UI with SurroundWith and fuzzer file support. Later commits that month edited the loop UI and changed a dialog because of a new ZestLoopCode. The student's end-of-project post lists, among its results, a loop added to Zest as a new statement.\n\nZest moved to beta in September 2013 and gained basic help that month. It was relocated to its own project in April 2019, and it is still in zap-extensions.\n\nIts latest commit, dated October 2026, fixed a GUI hang when a script runs with parameters, and the add-on's directory has 277 commits.",
+  "narrative_sources": [
+    {
+      "label": "ZAP Student Hall of Fame",
+      "url": "https://www.zaproxy.org/student-hall-of-fame/"
+    },
+    {
+      "label": "Project end-of-term post",
+      "url": "https://seccoalegsoc.blogspot.com/2013/09/gsoc-end-current-status.html"
+    }
+  ],
   "group": "projects",
   "date": "2013-06",
   "status": "reviewed",

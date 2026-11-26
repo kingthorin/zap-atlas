@@ -1,6 +1,17 @@
 {
   "title": "2013: Reporting, Zest, HTTP sessions, and SAML",
   "description": "Student Hall of Fame entries for 2013 Summer GSoC: BIRT Reporting, Zest enhancements, HTTP Session Handling, and SAML 2.0 support",
+  "narrative": "A tester who wants a report from a scan, a recorded script that can loop, or sessions kept apart is probably asking for different parts of ZAP. The Student Hall of Fame lists Rauf Butt for BIRT Reporting, Alessandro Secco for Zest enhancements, Cosmin Stefan for Enhanced HTTP Session Handling and Pulasthi Mahawithana for SAML 2.0 support, each as a 2013 Summer GSoC project. Those are separate parts of the code, so the four could probably be worked on in parallel.\n\nA commit dated October 2013 is titled \"BIRT Reporting with XML data source and Scripting - GSoC 2013 by Rauf Butt\". Zest work appears in August 2013 as a commit titled \"ZestLoopFile UI + SurroundWith + get/add to Fuzzer Files\".\n\nThe session work is the earliest of the four, with its first commit dated August 2012, and the SAML add-on's initial alpha code is dated September 2013.\n\nThe Student Hall of Fame records all four as 2013 Summer GSoC projects.",
+  "narrative_sources": [
+    {
+      "label": "ZAP Student Hall of Fame",
+      "url": "https://www.zaproxy.org/student-hall-of-fame/"
+    },
+    {
+      "label": "SAML 2.0 project page",
+      "url": "https://owasp.org/www-community/initiatives/gsoc/gsoc2013zapsaml"
+    }
+  ],
   "group": "projects",
   "date": "2013",
   "status": "draft",

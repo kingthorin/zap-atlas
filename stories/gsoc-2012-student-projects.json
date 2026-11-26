@@ -1,6 +1,25 @@
 {
   "title": "2012: WebSockets, the Ajax spider, and a crawler redesign",
   "description": "Student Hall of Fame entries for 2012 Summer GSoC: WebSocket testing, Ajax Spider, and crawler redesign with session support",
+  "narrative": "For a tool used mostly by security testers, traffic such as WebSockets, pages built with AJAX and links found by a crawler probably all needed new code in 2012. The Student Hall of Fame lists Robert Koch for WebSocket testing, Guifre Ruiz for Ajax Spider and Cosmin Stefan for a crawler redesign with session support, each as a 2012 Summer GSoC project.\n\nThe WebSocket work began on a branch, with a commit dated May 2012 that reads \"create branch for my GSoC project: Enhancing ZAP with WebSockets\". Ajax Spider work followed in June 2012, when a commit by guifre reads \"modifications needed to run the ajax spider\". The crawler work shows commits dated May and July 2012, including the removal of old Paros Proxy packages.\n\nFor a small team, several parallel changes to the same core code probably meant frequent merges. The Student Hall of Fame records all three as 2012 Summer GSoC projects, and the commits above show the first steps of each.",
+  "narrative_sources": [
+    {
+      "label": "ZAP Student Hall of Fame",
+      "url": "https://www.zaproxy.org/student-hall-of-fame/"
+    },
+    {
+      "label": "WebSockets project wiki",
+      "url": "https://github.com/zaproxy/zaproxy/wiki/GSoC2012_WebSockets"
+    },
+    {
+      "label": "Ajax Spider wiki",
+      "url": "https://github.com/zaproxy/zaproxy/wiki/GSoC2012_AjaxSpider"
+    },
+    {
+      "label": "Crawler redesign wiki",
+      "url": "https://github.com/zaproxy/zaproxy/wiki/Gsoc2012_Redesign_of_site_crawler"
+    }
+  ],
   "group": "projects",
   "date": "2012",
   "status": "draft",

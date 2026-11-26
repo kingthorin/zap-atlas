@@ -1,6 +1,13 @@
 {
   "title": "Scan rules: from core to zap-extensions",
   "description": "The active and passive scan rules moved out of the zaproxy core: into zap-extensions in 2012, into their own add-on projects in 2019, with the script scan rules migrating to the scripts add-on in 2023.",
+  "narrative": "The checks ZAP runs against a site, its scan rules, once lived in the core project. In December 2012, under Issue 428, both zaproxy and zap-extensions recorded the move of active and passive scan rules to zap-extensions, alongside support for extension specific I18N bundles.\n\nA separate home for the rules probably made their releases easier to manage than core's. In April 2019 zap-extensions recorded six relocation commits, covering the active and passive rules and their Beta and Alpha variants. The ascanrules message says it moved files to a project of its own under addOns.\n\nIn December 2023 core deprecated script scan rules, with a message saying \"These will be made available as part of the scripts add-on.\" A scripts add-on commit moving the scan rule functionality from core followed that month. As of the sources cited, the active and passive rules sit in their own add-on projects, and script rules are in the scripts add-on.",
+  "narrative_sources": [
+    {
+      "label": "Passive scan rules add-on page",
+      "url": "https://www.zaproxy.org/docs/desktop/addons/passive-scan-rules/"
+    }
+  ],
   "group": "features",
   "date": "2012-12-08",
   "status": "reviewed",

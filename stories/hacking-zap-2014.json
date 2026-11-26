@@ -1,6 +1,25 @@
 {
   "title": "Hacking ZAP, 2014",
   "description": "A four part blog series from March to April 2014 that invited people to change the ZAP source: why, how to start, and how to write passive and active scan rules.",
+  "narrative": "Anyone who wanted to change a web application security tool probably needed to know where to begin. From March to April 2014 the project's blog ran a four part series. The first post, by Simon Bennetts, was addressed to people who might change the source, and it gave reasons under six headings, among them learning and making ZAP work your way.\n\nThe second post named two projects, zaproxy (the core) and zap-extensions. It explained why most new features went into add-ons: \"Core changes can only be delivered via 'full' ZAP releases\", which the post said typically came a few times a year. Add-ons, by contrast, could be updated often and moved from alpha to beta to release status as they matured.\n\nThe status levels the series described were already in zap-extensions, with commits dated December 2012 and February 2013. The scan rule posts pointed readers to add-ons such as pscanrulesAlpha, and said new rules start there and move up after review. The third post, dated April 2014, called passive rules one of the easiest ways to enhance ZAP, and said they were not allowed to make any new requests.\n\nThe fourth post, dated April 2014, said the opposite for active rules: \"Active scan rules attack the server, and therefore are only run when explicitly invoked by the user.\" It added that rules reporting higher risks run first. The series names a fifth post on extensions, but the blog index lists only four posts.",
+  "narrative_sources": [
+    {
+      "label": "Hacking ZAP #1 - Why should you?",
+      "url": "https://www.zaproxy.org/blog/2014-03-10-hacking-zap-1-why-should-you/"
+    },
+    {
+      "label": "Hacking ZAP #2 - Getting Started",
+      "url": "https://www.zaproxy.org/blog/2014-03-20-hacking-zap-2-getting-started/"
+    },
+    {
+      "label": "Hacking ZAP #3 - Passive scan rules",
+      "url": "https://www.zaproxy.org/blog/2014-04-03-hacking-zap-3-passive-scan-rules/"
+    },
+    {
+      "label": "Hacking ZAP #4 - Active scan rules",
+      "url": "https://www.zaproxy.org/blog/2014-04-30-hacking-zap-4-active-scan-rules/"
+    }
+  ],
   "group": "history",
   "date": "2014-03-10",
   "status": "draft",

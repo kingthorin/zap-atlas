@@ -1,6 +1,21 @@
 {
   "title": "Postman support (Vitika Soni, 2023 GSoC)",
   "description": "The Postman add-on from its first commit in June 2023 to the planned features named in the launch post, and its state at HEAD.",
+  "narrative": "For a tool used mostly by people who already keep API requests in Postman collections, importing one is probably quicker than rebuilding it by hand. The Student Hall of Fame lists Vitika Soni for Postman Support, GSoC, 2023 Summer. A blog post from September 2023 describes importing Postman collections from a local file or URL, entering collection variables as key-value pairs.\n\nThe post lists planned enhancements: import through an API and command line, importing variables defined in the collection, and automation support. The earliest commit listed, Add Postman add-on, is dated June 2023. Commits for importing through the UI, the CLI and the API followed in June and July 2023. The changelog dates the first version, 0.0.1, to September 2023, the same day as the blog post.\n\nSupport for collection JSON variables was committed in October 2023 and is listed under 0.1.0 in the changelog. Automation support was committed in November 2023 and is listed under 0.3.0 in April 2024. These two items match features the blog post listed as planned.\n\nLater commits made the API functional in January 2025 and added statistics in November 2025. The changelog lists 0.10.0 in August 2026, and the add-on still exists at HEAD.",
+  "narrative_sources": [
+    {
+      "label": "ZAP Student Hall of Fame",
+      "url": "https://www.zaproxy.org/student-hall-of-fame/"
+    },
+    {
+      "label": "Postman add-on blog post (2023-09-25)",
+      "url": "https://www.zaproxy.org/blog/2023-09-25-postman-add-on/"
+    },
+    {
+      "label": "Postman Support add-on page",
+      "url": "https://www.zaproxy.org/docs/desktop/addons/postman-support/"
+    }
+  ],
   "group": "projects",
   "date": "2023-06",
   "status": "reviewed",

@@ -1,6 +1,13 @@
 {
   "title": "The Ajax Spider (Guifre Ruiz, 2012 GSoC)",
   "description": "The 2012 Ajax Spider project in the Student Hall of Fame next to the commits that brought it into zap-extensions and kept it maintained.",
+  "narrative": "For ZAP, a tool used mostly by testers of modern sites, a spider that reads only raw HTML probably misses links that JavaScript creates. The Student Hall of Fame lists Ajax Spider (Guifre Ruiz) as a 2012 Summer GSoC project. A zaproxy commit by guifre dated June 2012 is titled \"modifications needed to run the ajax spider\", and a later commit that August created the help documents and credited Crawljax.\n\nThe work reached zap-extensions in August 2012, when a commit merged the spiderAjax branch into trunk. Related changes followed, adding a gear button to the spiderAjax panel and an AJAX Spider status scan at the bottom left of the window. Between 2013 and 2014 the Crawljax library and its dependencies were updated in three separate issues, and in March 2014 the help pages moved into the add-on.\n\nIn April 2019 a commit relocated the add-on to its own project, and it still lives in zap-extensions. Its latest commit is dated October 2026, and its directory holds 294 commits.",
+  "narrative_sources": [
+    {
+      "label": "ZAP Student Hall of Fame",
+      "url": "https://www.zaproxy.org/student-hall-of-fame/"
+    }
+  ],
   "group": "projects",
   "date": "2012-06",
   "status": "reviewed",

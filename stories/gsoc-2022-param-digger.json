@@ -1,6 +1,21 @@
 {
   "title": "Param Digger (Arkaprabha Chakraborty, 2022 GSoC)",
   "description": "An add-on that began as \"param miner\" in June 2022, was renamed to Param Digger in August 2022, and has been maintained since.",
+  "narrative": "Many web applications accept parameters that never appear in the pages a tester browses, so a tool that guesses them probably finds inputs a normal crawl would miss. The Student Hall of Fame lists Arkaprabha Chakraborty for Param Digger, GSoC, 2022 Summer. A blog post from August 2022 says Param Digger finds parameters that are not visible in the normal interface. The post adds that at the time it supported only the URL Guess tab, which uses a list of URL parameters.\n\nThe post also says an earlier version was published on the Marketplace as Param Miner and renamed so it would not be confused with the Burp Suite extension. The commits show the same path: work began on a param miner extension in June 2022. A refactoring commit dated 21 August 2022 changed paramminer to paramdigger, and the changelog's 0.1.0 entry, dated 22 August 2022, renamed options in the GUI and documentation.\n\nHeader guess work followed in August and September 2022, and in April 2023 an output table replaced the output text pane. The changelog lists 0.2.0 in June 2023 and 0.3.0 in July 2024.\n\nThe add-on still exists at HEAD, and the dataset lists its author as ZAP Dev Team and Arkaprabha Chakraborty. For a small team, an add-on still being updated years after its first version probably means the first design held up.",
+  "narrative_sources": [
+    {
+      "label": "ZAP Student Hall of Fame",
+      "url": "https://www.zaproxy.org/student-hall-of-fame/"
+    },
+    {
+      "label": "The Param Digger add-on (blog, 2022-08-22)",
+      "url": "https://www.zaproxy.org/blog/2022-08-22-the-param-digger-addon/"
+    },
+    {
+      "label": "Parameter Digger add-on page",
+      "url": "https://www.zaproxy.org/docs/desktop/addons/parameter-digger/"
+    }
+  ],
   "group": "projects",
   "date": "2022-06",
   "status": "reviewed",

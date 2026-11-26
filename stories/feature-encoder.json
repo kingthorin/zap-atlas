@@ -1,6 +1,17 @@
 {
   "title": "Encode/Decode: from core dialog to the encoder add-on",
   "description": "The encode/decode tool as recorded in the zaproxy and zap-extensions histories: a core extension in the first import, an add-on from 2018, and the core classes' deprecation and removal.",
+  "narrative": "Developers and testers often need a quick encode or decode step while they work, so it is easy to see why a proxy would keep that step close at hand. The first commit, titled Version 1.0.0 in September 2010, already contained an encoder dialog and the older encoder classes. Core commits kept changing the dialog, including a 2014 change to support HTML and JavaScript encoding.\n\nIn October 2018 a zap-extensions commit added an Advanced Encoder Decoder add-on. Work on it continued into May 2020. In May 2020 the add-on was moved to a new encoder directory and given a new add-on ID. The encoder changelog's first entry, 0.1.0, is marked First version. Version 0.2.0 in June 2020 added Base64 character set and line break options, and migrated settings from the core component.\n\nIn May 2020 a core commit deprecated the encoder2 classes, noting that weekly builds now included the add-on. In February 2021 a commit deleted Base64.java, Encoder.java and the encoder2 classes. Its body said the removal was part of the 2.11 milestone.\n\nThe add-on was promoted to Beta in December 2020. The 1.0.0 release in December 2022 promoted it to Release status. It also carried a breaking change to the script process method signature. A PowerShell encoder arrived in March 2023. Morse Code processors and ASCify followed in January 2025. The add-on is at release status. Its most recent entry named here is a resizable input area in March 2026.",
+  "narrative_sources": [
+    {
+      "label": "encoder CHANGELOG.md",
+      "url": "https://github.com/zaproxy/zap-extensions/blob/main/addOns/encoder/CHANGELOG.md"
+    },
+    {
+      "label": "Encode/Decode/Hash add-on page",
+      "url": "https://www.zaproxy.org/docs/desktop/addons/encode-decode-hash/"
+    }
+  ],
   "group": "features",
   "date": "2020-05-18",
   "status": "draft",

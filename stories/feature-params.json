@@ -1,6 +1,7 @@
 {
   "title": "The Params feature: from core to an add-on",
   "description": "How the Params tab and extension is recorded in the zaproxy and zap-extensions histories: introduced in core in 2011 and migrated to the params add-on from 2025.",
+  "narrative": "Many ZAP users rely on the Params tab without thinking about where it came from. The Parameters tab was added to core in October 2011, in a commit that brought in database classes such as RecordParam and TableParam. In 2018 params commits in core added multipart form POST parameters to the tab and let a parameter name be added or removed as an anti-CSRF token.\n\nIn November 2025 zap-extensions began a params add-on, and the earliest commit touching it is Params Initial Relocation. Moving the tab's code into an add-on probably lets it be updated without waiting for a core release.\n\nIn May 2026 a core commit deprecated and unhooked the params extension, adding deprecation annotations to classes such as ExtensionParams and ParamsPanel. In June 2026 zap-extensions updated add-ons to use the params add-on. The most recent entry cited, from June 2026, has add-ons using the params add-on, while core marks its own extension as deprecated.",
   "group": "features",
   "date": "2025-11-11",
   "status": "draft",
