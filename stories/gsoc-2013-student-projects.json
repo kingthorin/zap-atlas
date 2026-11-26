@@ -9,7 +9,7 @@
       "title": "BIRT Reporting",
       "text": "The Hall of Fame lists Rauf Butt for BIRT Reporting (2013 Summer GSoC). The commit \"BIRT Reporting with XML data source and Scripting - GSoC 2013 by Rauf Butt\" is dated 2013-10-09.",
       "entities": [
-        "addon:birt"
+        "repo:zap-extensions"
       ],
       "commits": [
         "commit:zap-extensions:3c61a4b9b0bab0c45f564f9452859899c796b517"

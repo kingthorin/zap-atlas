@@ -19,7 +19,8 @@
           "label": "ZAP Student Hall of Fame",
           "url": "https://www.zaproxy.org/student-hall-of-fame/"
         }
-      ]
+      ],
+      "documents": []
     },
     {
       "title": "Form handling",
@@ -39,7 +40,8 @@
           "label": "Form handling (MWoS) page",
           "url": "https://wiki.mozilla.org/Security/Automation/Winter_Of_Security_2016/ZAP_Form_Handling"
         }
-      ]
+      ],
+      "documents": []
     },
     {
       "title": "ZAP HUD",
@@ -49,7 +51,7 @@
       ],
       "commits": [],
       "documents": [
-        "doc:zap-hud:src/main/javahelp/org/zaproxy/hud/resources/help/contents/hud.html"
+        "doc:zap-hud:src/main/javahelp/org/zaproxy/zap/extension/hud/resources/help/contents/hud.html"
       ],
       "evidence": [
         {
@@ -78,7 +80,8 @@
           "label": "Authentication helper wiki",
           "url": "https://github.com/zaproxy/zaproxy/wiki/GSoC2018AuthenticationhelperAddOn"
         }
-      ]
+      ],
+      "documents": []
     }
   ]
 }

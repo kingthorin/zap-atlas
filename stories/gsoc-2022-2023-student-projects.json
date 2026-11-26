@@ -29,7 +29,8 @@
       "title": "Browser Recorder",
       "text": "Aryan Gupta is listed for Browser Recorder (2023). The commit \"zest: add dialogs for new client statements (#4698)\" is dated 2023-07-05. The page states ZAP was not selected as a GSoC mentoring organisation in 2024.",
       "entities": [
-        "addon:browser-recorder"
+        "addon:client",
+        "addon:zest"
       ],
       "commits": [
         "commit:zap-extensions:e8aa06d24d00a6cbf9a4c74d5046186d925435d5"

@@ -29,7 +29,7 @@
       "title": "Ajax Spider",
       "text": "The Hall of Fame lists Guifre Ruiz for Ajax Spider (2012 Summer GSoC). On 2012-06-22 a commit by guifre reads \"modifications needed to run the ajax spider\". The crawler work shows as \"New SpiderParam in org.zaproxy.zap.spider...\" (2012-05-29) and \"Removed old and unused Spider-related Paros Proxy packages\" (2012-07-12).",
       "entities": [
-        "addon:ajaxspider"
+        "addon:spiderAjax"
       ],
       "commits": [
         "commit:zaproxy:719fb332f2c5d026274bf0b758d4a9d406707097"
