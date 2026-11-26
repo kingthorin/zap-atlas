@@ -1,0 +1,89 @@
+name: CI — build and test the site
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  site:
+    name: Generate data, build and test the site
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Atlas repo
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # 7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # 7.1.0
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install generator dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install tree-sitter tree-sitter-java
+
+      # The generated data is what the site is tested against. Unchanged upstream repositories are replayed from this cache.
+      - name: Restore parsed repositories
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # 6.1.0
+        with:
+          path: sources/.atlas-cache
+          key: atlas-parsed-${{ github.run_id }}
+          restore-keys: atlas-parsed-
+
+      - name: Generate data
+        run: python -m atlas analyze --sources ./sources --output ./data
+
+      - name: Validate generated data
+        run: python -m atlas validate ./data --contract
+
+      - name: Set up Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # 7.1.0
+        with:
+          node-version: "26"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Typecheck
+        working-directory: frontend
+        run: npm run typecheck
+
+      - name: Build frontend
+        working-directory: frontend
+        run: npm run build
+        env:
+          ATLAS_BASE_PATH: /${{ github.event.repository.name }}/
+
+      - name: Bundle data into dist
+        run: |
+          mkdir -p frontend/dist/data
+          cp -r data/. frontend/dist/data/
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # 6.1.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('frontend/package-lock.json') }}
+
+      - name: Browser tests
+        working-directory: frontend
+        env:
+          ATLAS_BASE_PATH: /${{ github.event.repository.name }}/
+          CI: "true"
+        run: |
+          npx playwright install --with-deps chromium
+          npx playwright test
