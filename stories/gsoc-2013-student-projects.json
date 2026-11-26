@@ -1,0 +1,81 @@
+{
+  "title": "2013: Reporting, Zest, HTTP sessions, and SAML",
+  "description": "Student Hall of Fame entries for 2013 Summer GSoC: BIRT Reporting, Zest enhancements, HTTP Session Handling, and SAML 2.0 support",
+  "group": "projects",
+  "date": "2013",
+  "status": "draft",
+  "chapters": [
+    {
+      "title": "BIRT Reporting",
+      "text": "The Hall of Fame lists Rauf Butt for BIRT Reporting (2013 Summer GSoC). The commit \"BIRT Reporting with XML data source and Scripting - GSoC 2013 by Rauf Butt\" is dated 2013-10-09.",
+      "entities": [
+        "addon:birt"
+      ],
+      "commits": [
+        "commit:zap-extensions:3c61a4b9b0bab0c45f564f9452859899c796b517"
+      ],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        },
+        {
+          "label": "SAML 2.0 project page",
+          "url": "https://owasp.org/www-community/initiatives/gsoc/gsoc2013zapsaml"
+        }
+      ]
+    },
+    {
+      "title": "Zest enhancements",
+      "text": "The Hall of Fame lists Alessandro Secco for Zest enhancements (2013 Summer GSoC). Zest work appears as \"ZestLoopFile UI + SurroundWith + get/add to Fuzzer Files\" (2013-08-12).",
+      "entities": [
+        "addon:zest"
+      ],
+      "commits": [
+        "commit:zap-extensions:3d4c9ef50321954e56e012a0d58db8cb5fd67c47"
+      ],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        }
+      ]
+    },
+    {
+      "title": "HTTP Session Handling",
+      "text": "The Hall of Fame lists Cosmin Stefan for Enhanced HTTP Session Handling (2013 Summer GSoC). The earliest commit titled \"Initial version of http sessions handling.\" is dated 2012-08-03.",
+      "entities": [
+        "repo:zaproxy"
+      ],
+      "commits": [
+        "commit:zaproxy:3ea7c0e78785778862cb8aeb69c6f97963e3b512"
+      ],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        }
+      ]
+    },
+    {
+      "title": "SAML 2.0 support",
+      "text": "The Hall of Fame lists Pulasthi Mahawithana for SAML 2.0 support (2013 Summer GSoC). The commit \"Initial version of http sessions handling.\" is dated 2012-08-03, and \"Added SAML extension's initial code for alpha release\" is dated 2013-09-05.",
+      "entities": [
+        "addon:saml"
+      ],
+      "commits": [
+        "commit:zap-extensions:121cb6db808c0a7d5697e4b2755e00dbaeae03a4"
+      ],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        },
+        {
+          "label": "SAML 2.0 project page",
+          "url": "https://owasp.org/www-community/initiatives/gsoc/gsoc2013zapsaml"
+        }
+      ]
+    }
+  ]
+}

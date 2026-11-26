@@ -1,0 +1,49 @@
+{
+  "title": "2018 and 2019: Scanning WebSockets",
+  "description": "Student Hall of Fame entries for WebSocket scanning phases in 2018 and 2019 Summer GSoC",
+  "group": "projects",
+  "date": "2018",
+  "status": "draft",
+  "chapters": [
+    {
+      "title": "WebSocket scanning phase 1",
+      "text": "Manos Kirtas is listed for Scanning websockets, phase 1 (2018 Summer). The commit \"WebSocket regex & non-regex filter #1382 (#1506)\" is dated 2018-04-27.",
+      "entities": [
+        "addon:websocket"
+      ],
+      "commits": [
+        "commit:zap-extensions:dafb0dc21b0a66de0d59fe205b8380d95f44f878"
+      ],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        },
+        {
+          "label": "Phase 2 wiki",
+          "url": "https://github.com/zaproxy/zaproxy/wiki/GSoC2019_WebSocketScanning"
+        }
+      ]
+    },
+    {
+      "title": "WebSocket scanning phase 2",
+      "text": "In 2019, Manos Kirtas is also listed for Scanning websockets, phase 2. The commit \"[WS-Passive-Scan] Infrastructure & Passive Script Plugin\" is dated 2019-07-04. In 2019 Nirojan Selvanathan is also listed for the ZAP API documentation (Season of Docs), which is kept in the separate zap-api-docs repository.",
+      "entities": [
+        "addon:websocket"
+      ],
+      "commits": [
+        "commit:zap-extensions:58dcd717428a5b13cdddd4f41d764cafcf817358"
+      ],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        },
+        {
+          "label": "Phase 2 wiki",
+          "url": "https://github.com/zaproxy/zaproxy/wiki/GSoC2019_WebSocketScanning"
+        }
+      ]
+    }
+  ]
+}

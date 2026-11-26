@@ -1,0 +1,69 @@
+{
+  "title": "2012: WebSockets, the Ajax spider, and a crawler redesign",
+  "description": "Student Hall of Fame entries for 2012 Summer GSoC: WebSocket testing, Ajax Spider, and crawler redesign with session support",
+  "group": "projects",
+  "date": "2012",
+  "status": "draft",
+  "chapters": [
+    {
+      "title": "WebSockets",
+      "text": "The Hall of Fame lists Robert Koch for WebSocket testing (2012 Summer GSoC). A commit dated 2012-05-07 reads \"create branch for my GSoC project: Enhancing ZAP with WebSockets\".",
+      "entities": [
+        "repo:zaproxy"
+      ],
+      "commits": [
+        "commit:zaproxy:19c0591e3dd31d1a0ac70c25ee0b4ebedb99987b"
+      ],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        },
+        {
+          "label": "WebSockets project wiki",
+          "url": "https://github.com/zaproxy/zaproxy/wiki/GSoC2012_WebSockets"
+        }
+      ]
+    },
+    {
+      "title": "Ajax Spider",
+      "text": "The Hall of Fame lists Guifre Ruiz for Ajax Spider (2012 Summer GSoC). On 2012-06-22 a commit by guifre reads \"modifications needed to run the ajax spider\". The crawler work shows as \"New SpiderParam in org.zaproxy.zap.spider...\" (2012-05-29) and \"Removed old and unused Spider-related Paros Proxy packages\" (2012-07-12).",
+      "entities": [
+        "addon:ajaxspider"
+      ],
+      "commits": [
+        "commit:zaproxy:719fb332f2c5d026274bf0b758d4a9d406707097"
+      ],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        },
+        {
+          "label": "Ajax Spider wiki",
+          "url": "https://github.com/zaproxy/zaproxy/wiki/GSoC2012_AjaxSpider"
+        }
+      ]
+    },
+    {
+      "title": "Crawler redesign",
+      "text": "The Hall of Fame lists Cosmin Stefan for a crawler redesign with session support (2012 Summer GSoC). The crawler work shows as \"New SpiderParam in org.zaproxy.zap.spider...\" (2012-05-29) and \"Removed old and unused Spider-related Paros Proxy packages\" (2012-07-12).",
+      "entities": [
+        "repo:zaproxy"
+      ],
+      "commits": [
+        "commit:zaproxy:3698ae0ed2babc9a5f9d0c52616ad5a0382bea53"
+      ],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        },
+        {
+          "label": "Crawler redesign wiki",
+          "url": "https://github.com/zaproxy/zaproxy/wiki/Gsoc2012_Redesign_of_site_crawler"
+        }
+      ]
+    }
+  ]
+}

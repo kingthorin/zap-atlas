@@ -1,0 +1,84 @@
+{
+  "title": "2016 to 2018: Bug tracker, form handling, the HUD, and authentication helper",
+  "description": "Student Hall of Fame entries and add-on developments from 2016-2018: Bug tracker, form handling, ZAP HUD, and authentication helper",
+  "group": "projects",
+  "date": "2016",
+  "status": "draft",
+  "chapters": [
+    {
+      "title": "Bug tracker support",
+      "text": "Sanchit Kapoor's Bug tracker support (2016 Summer, GSoC) shows as \"Added help for Bug Tracker add-on\" (2016-08-27).",
+      "entities": [
+        "addon:bugtracker"
+      ],
+      "commits": [
+        "commit:zap-extensions:380ec655cd93aa3c7731fbf8d3f8e3f6289a2983"
+      ],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        }
+      ]
+    },
+    {
+      "title": "Form handling",
+      "text": "Three students (Ryan Wehe, Christopher Laguna, Rian Franey) are listed for form handling in Mozilla Winter of Security 2016. The commit \"Form Handler Extension\" by Ryan Wehe is dated 2017-03-22.",
+      "entities": [
+        "addon:formhandler"
+      ],
+      "commits": [
+        "commit:zap-extensions:cda47a6f5405971f628ede33a7e471935e647430"
+      ],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        },
+        {
+          "label": "Form handling (MWoS) page",
+          "url": "https://wiki.mozilla.org/Security/Automation/Winter_Of_Security_2016/ZAP_Form_Handling"
+        }
+      ]
+    },
+    {
+      "title": "ZAP HUD",
+      "text": "David Scrobonia's ZAP HUD (2016 to 2018, directly mentored) lives in its own repository, zap-hud. In zaproxy, the commit \"Include the HUD add-on in live Docker image\" (2018-12-05) builds it from source into the live Docker image, and \"Fix Docker live image\" (2019-06-10) removes that step. \"Add main add-ons\" (2019-06-07, the date of release 2.8.0) lists the HUD, version 0.4.0, among the add-ons bundled with ZAP. The HUD is still in the main add-ons list in release 2.17.1 and at the current head, at version 0.19.0.",
+      "entities": [
+        "addon:hud"
+      ],
+      "commits": [],
+      "documents": [
+        "doc:zap-hud:src/main/javahelp/org/zaproxy/hud/resources/help/contents/hud.html"
+      ],
+      "evidence": [
+        {
+          "label": "zap-hud repository",
+          "url": "https://github.com/zaproxy/zap-hud"
+        }
+      ]
+    },
+    {
+      "title": "Authentication helper",
+      "text": "Kajan Mohanagandhirasa's Authentication helper (2018 Summer) is listed. The zaproxy history has pull requests from the GitHub user KajanM merged between 2018-05-28 and 2018-08-28, among them #4682 (dynamic-token-authentication), #4696 (renew-cookie-before-each-login) and #4946 (add-new-default-acsrf-token); a commit by kajan on 2018-05-21 is \"support acsrf token in post-based authentication\".",
+      "entities": [
+        "addon:authhelper"
+      ],
+      "commits": [
+        "commit:zaproxy:7225261142930e7796c9d89fe5bddf48533abc33",
+        "commit:zaproxy:4bc85037771e26bf6a384f4d2801db82633b803d",
+        "commit:zaproxy:9bb6a551ed7c7b6494761b0c9f2372aef8cc6076"
+      ],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        },
+        {
+          "label": "Authentication helper wiki",
+          "url": "https://github.com/zaproxy/zaproxy/wiki/GSoC2018AuthenticationhelperAddOn"
+        }
+      ]
+    }
+  ]
+}

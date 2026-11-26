@@ -1,0 +1,29 @@
+{
+  "title": "2015: DOM XSS Scanner",
+  "description": "Student Hall of Fame entry for 2015 Summer GSoC: DOM XSS Scanner by Aabha Biyani",
+  "group": "projects",
+  "date": "2015",
+  "status": "draft",
+  "chapters": [
+    {
+      "title": "DOM XSS Scanner",
+      "text": "The Hall of Fame credits Aabha Biyani with the DOM XSS Scanner (2015 Summer, directly mentored). The add-on's first commit in zap-extensions, \"DOM XSS Active Scan rule\", is dated 2015-08-21 and was made by psiinon (Simon Bennetts), so the code reached the repository through a core-team member.",
+      "entities": [
+        "addon:domxss"
+      ],
+      "commits": [
+        "commit:zap-extensions:5667b488b99997626f02b7f6be0e9ca87db3326e"
+      ],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        },
+        {
+          "label": "DOM XSS add-on page",
+          "url": "https://www.zaproxy.org/docs/desktop/addons/dom-xss-active-scan-rule/"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "title": "2014: Advanced fuzzing, SOAP scanning, and Access Control",
+  "description": "Student Hall of Fame entries for 2014 Summer GSoC: Advanced fuzzing, SOAP scanning, and Advanced Access Control testing",
+  "group": "projects",
+  "date": "2014",
+  "status": "draft",
+  "chapters": [
+    {
+      "title": "Advanced fuzzing",
+      "text": "The Hall of Fame lists Sebastian Schulze for Advanced fuzzing (2014 Summer GSoC). The commit \"Core packages for multi-fuzzing.\" is dated 2014-06-04.",
+      "entities": [
+        "addon:fuzz"
+      ],
+      "commits": [
+        "commit:zaproxy:4a04c8dbd996bfd337e69ebc98d46ebab1c38f09"
+      ],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        }
+      ]
+    },
+    {
+      "title": "SOAP scanning",
+      "text": "The Hall of Fame lists Alberto Verza for SOAP scanning (2014 Summer GSoC). The commit \"WSDL file import Add-On.\" is dated 2014-04-30. Blog post: https://www.zaproxy.org/blog/2014-09-03-alberto-s-gsoc-2014-project-for-zap-soap-scanner-add-on/",
+      "entities": [
+        "addon:soap"
+      ],
+      "commits": [
+        "commit:zap-extensions:1eb86208be34b81441b9f1cfdaedb43bcb3953d8"
+      ],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        },
+        {
+          "label": "SOAP scanner blog post",
+          "url": "https://www.zaproxy.org/blog/2014-09-03-alberto-s-gsoc-2014-project-for-zap-soap-scanner-add-on/"
+        }
+      ]
+    },
+    {
+      "title": "Advanced Access Control testing",
+      "text": "The Hall of Fame lists Cosmin Stefan for Advanced Access Control testing (2014 Summer GSoC). The commit \"Core packages for multi-fuzzing.\" is dated 2014-06-04.",
+      "entities": [
+        "repo:zaproxy"
+      ],
+      "commits": [
+        "commit:zaproxy:4a04c8dbd996bfd337e69ebc98d46ebab1c38f09"
+      ],
+      "evidence": [
+        {
+          "label": "ZAP Student Hall of Fame",
+          "url": "https://www.zaproxy.org/student-hall-of-fame/"
+        }
+      ]
+    }
+  ]
+}
