@@ -86,8 +86,6 @@ const labelOf = (id: string) =>
   : isFileNode(id) ? pathOf(id).split("/").pop()!
   : isDirNode(id) ? pathOf(id).split("/").slice(-2).join("/")
   : ownerType(id).split(":").slice(2).join(":").split(".").pop()!;
-const lighten = (hex: string) => hex + "99";
-
 interface DirTrie { path: string; dirs: Map<string, DirTrie>; files: string[] }
 
 /** Structural edges for a module expanded into files: module -> directories -> files, single-child directory chains squashed. */
@@ -196,6 +194,20 @@ function expandedPairs(g: ModuleGraph, types: Set<string>, evidence: Set<string>
   return { pairs: [...by.values()], childParent, kinds };
 }
 
+/** Lighten a hex colour by mixing it toward white. Used for file and type child nodes. */
+/** Mix a hex colour toward a target colour by `t` (0 = original, 1 = target). */
+function mixColor(hex: string, target: [number, number, number], t: number): string {
+  const r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
+  const mix = (a: number, b2: number) => Math.round(a + (b2 - a) * t).toString(16).padStart(2, "0");
+  return "#" + mix(r, target[0]) + mix(g, target[1]) + mix(b, target[2]);
+}
+// Type child nodes: repo colour mixed 40% toward a cool purple to signal "zoomed-in code entity"
+const typeColor = (base: string) => mixColor(base, [120, 100, 220], 0.4);
+// File child nodes: repo colour mixed 40% toward a warm teal
+const fileColor = (base: string) => mixColor(base, [20, 180, 160], 0.4);
+// Directory nodes: neutral slate
+const DIR_COLOR = "#94a3b8";
+
 function buildGraph(nodes: string[], pairs: Pair[], typeParent: Map<string, string>, kinds: Map<string, Kind>, pos: Map<string, { x: number; y: number }>, first: boolean, hideIsolated = false): Graph {
   const g = new Graph({ type: "undirected" });
   const total = new Map<string, number>();
@@ -210,9 +222,11 @@ function buildGraph(nodes: string[], pairs: Pair[], typeParent: Map<string, stri
   };
   [...nodes, ...typeParent.keys()].filter(id => !hideIsolated || total.has(id)).forEach((id, i) => {
     const isChild = typeParent.has(id), base = REPO_COLOR[repoOf(isChild ? typeParent.get(id)! : id)] ?? "#7e92a4";
-    const isDir = kinds.get(id) === "dir";
+    const kind = kinds.get(id);
+    const isDir = kind === "dir";
+    const color = isDir ? DIR_COLOR : !isChild ? base : kind === "file" ? fileColor(base) : typeColor(base);
     g.addNode(id, { ...place(id, i), size: isDir ? 3.5 : isChild ? Math.min(9, 2.5 + Math.sqrt(total.get(id) ?? 0) * 0.35) : Math.min(22, 4 + Math.sqrt(total.get(id) ?? 0) * 0.5),
-      label: labelOf(id), color: isDir ? "#94a3b8" : isChild ? lighten(base) : base });
+      label: labelOf(id), color });
   });
   for (const p of pairs) {
     if (!g.hasNode(p.a) || !g.hasNode(p.b)) continue;
@@ -307,17 +321,12 @@ export default function GraphPage() {
   const [colourBy, setColourBy] = useState<ColourBy>("repo");
   const [year, setYear] = useState<number | null>(null);       // null: every year
   const [activity, setActivity] = useState<Record<string, ModuleActivity>>({});
+  const [focusNode, setFocusNode] = useState("");              // pinned centre node for focus mode
+  const [focusHops, setFocusHops] = useState<1 | 2>(1);
+  const [focusHideUtilities, setFocusHideUtilities] = useState(true);
   const box = useRef<HTMLDivElement>(null);
   const [host, setHost] = useState<HTMLDivElement | null>(null);   // wraps the canvas; the sweep overlay is drawn in it
   const [side, setSide] = useState<HTMLDivElement | null>(null);   // beside it: the sweep's contributor names go here when there is room
-  /** Extent of the drawn nodes in viewport pixels: centre and half-width, half-height. */
-  const nodeBounds = useCallback(() => {
-    const s = sigma.current, g = s?.getGraph();
-    if (!s || !g || !g.order) return null;
-    let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
-    g.forEachNode((_, a) => { const p = s.graphToViewport({ x: a.x, y: a.y }); x0 = Math.min(x0, p.x); x1 = Math.max(x1, p.x); y0 = Math.min(y0, p.y); y1 = Math.max(y1, p.y); });
-    return { cx: (x0 + x1) / 2, cy: (y0 + y1) / 2, rx: Math.max(20, (x1 - x0) / 2), ry: Math.max(20, (y1 - y0) / 2) };
-  }, []);
   // A copy of Sigma's layers for the sweep's WebM recording. WebGL canvases are cleared once drawn to the screen, so the
   // copy is made straight after each render, and only while a recording is running.
   const snap = useRef<HTMLCanvasElement | null>(null);
@@ -345,15 +354,6 @@ export default function GraphPage() {
     return () => { cam?.off("updated", cb); };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sigmaKey]);
-  /** Resize to the container, then zoom out just enough to leave a margin round the nodes for the sweep's contributors. */
-  const fitSweep = useCallback(() => {
-    const s = sigma.current;
-    if (!s) return;
-    s.resize();
-    const b = nodeBounds(), { width, height } = s.getDimensions();
-    const k = b ? Math.min((width / 2 - 80) / b.rx, (height / 2 - 50) / b.ry, 1) : 1;
-    if (k < 1) s.getCamera().animate({ ratio: s.getCamera().ratio / k }, { duration: reduceMotion() ? 0 : 300 }); else s.refresh();
-  }, [nodeBounds]);
   const sigma = useRef<Sigma | null>(null);
   const camera = useRef<any>(null);
   const positions = useRef(new Map<string, { x: number; y: number }>());
@@ -401,10 +401,13 @@ export default function GraphPage() {
     loadLanguages().then(setLangRows).catch(() => {});
   }, []);
 
+  const effectiveEvidence = useMemo(
+    () => (focusNode && focusHideUtilities ? new Set([...evidence].filter(e => e !== "syntactic")) : evidence),
+    [evidence, focusNode, focusHideUtilities]);
   const { pairs, childParent: typeParent, kinds } = useMemo(
-    () => (data ? expandedPairs(data, types, evidence, expanded, modes, detail, indexes)
+    () => (data ? expandedPairs(data, types, effectiveEvidence, expanded, modes, detail, indexes)
       : { pairs: [] as Pair[], childParent: new Map<string, string>(), kinds: new Map<string, Kind>() }),
-    [data, types, evidence, expanded, modes, detail, indexes]);
+    [data, types, effectiveEvidence, expanded, modes, detail, indexes]);
   const styleRef = useRef<any>({});
   styleRef.current = { dependents, sizeBy, colourBy, year, activity, years, maxOf, typeParent, kinds, fileActivity, maxFile, lang, langs, hiddenRepos };
   const graph = useMemo(
@@ -428,13 +431,6 @@ export default function GraphPage() {
     const act = actOf(n);
     return st.year != null && !!act && (yearOf(act.first) > st.year || yearOf(act.last) < st.year);
   };
-  // For the sweep overlay: where a module is drawn now (null if it is not shown), kept stable so the animation is not restarted by renders.
-  const sweepPosition = useCallback((id: string) => {
-    const s = sigma.current, g = s?.getGraph();
-    if (!s || !g || !g.hasNode(id) || !id.startsWith("module:") || styleRef.current.hiddenRepos.has(repoOf(id))) return null;
-    const a = g.getNodeAttributes(id);
-    return s.graphToViewport({ x: a.x, y: a.y });
-  }, []);
   const sweepColor = useCallback((id: string) => REPO_COLOR[repoOf(id)] ?? "#7e92a4", []);
   /** Size by activity, colour by recency, and fade by year, applied on top of the graph's own attributes. */
   const styleNode = (n: string, d: any) => {
@@ -456,19 +452,92 @@ export default function GraphPage() {
     return out;
   };
 
+  const focusSet = useMemo(() => {
+    if (!graph || !focusNode || !graph.hasNode(focusNode)) return null;
+    const isHub = (n: string) => graph.degree(n) >= (typeParent.has(n) ? 25 : 35);
+    const dist = new Map<string, number>([[focusNode, 0]]);
+    const queue = [focusNode];
+    for (let i = 0; i < queue.length; i++) {
+      const u = queue[i], d = dist.get(u)!;
+      if (d >= focusHops) continue;
+      graph.forEachNeighbor(u, v => {
+        if (dist.has(v) || isFaded(v)) return;
+        if (focusHideUtilities && v !== focusNode && isHub(v)) return;
+        dist.set(v, d + 1);
+        queue.push(v);
+      });
+    }
+    return dist;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [graph, focusNode, focusHops, focusHideUtilities, hiddenRepos, lang, year, activity, fileActivity, langs, typeParent, kinds]);
+  const focusRef = useRef<{ node: string; set: Map<string, number> | null }>({ node: "", set: null });
+  focusRef.current = { node: focusNode, set: focusSet };
+  const focusModules = useMemo(() => {
+    if (!focusSet) return null;
+    const mods = new Set<string>();
+    for (const id of focusSet.keys()) if (id.startsWith("module:")) mods.add(id);
+    return mods;
+  }, [focusSet]);
+  /** Extent of the drawn nodes in viewport pixels: centre and half-width, half-height. */
+  const nodeBounds = useCallback(() => {
+    const s = sigma.current, g = s?.getGraph();
+    if (!s || !g || !g.order) return null;
+    const foc = focusRef.current.set;
+    let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+    g.forEachNode((n, a) => {
+      if ((foc && !foc.has(n)) || isFaded(n)) return;
+      const p = s.graphToViewport({ x: a.x, y: a.y });
+      x0 = Math.min(x0, p.x); x1 = Math.max(x1, p.x); y0 = Math.min(y0, p.y); y1 = Math.max(y1, p.y);
+    });
+    if (!Number.isFinite(x0)) return null;
+    return { cx: (x0 + x1) / 2, cy: (y0 + y1) / 2, rx: Math.max(20, (x1 - x0) / 2), ry: Math.max(20, (y1 - y0) / 2) };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [focusSet, hiddenRepos, lang, year]);
+  /** Resize to the container, then zoom out just enough to leave a margin round the nodes for the sweep's contributors. */
+  const fitSweep = useCallback(() => {
+    const s = sigma.current;
+    if (!s) return;
+    s.resize();
+    const b = nodeBounds(), { width, height } = s.getDimensions();
+    const k = b ? Math.min((width / 2 - 80) / b.rx, (height / 2 - 50) / b.ry, 1) : 1;
+    if (k < 1) s.getCamera().animate({ ratio: s.getCamera().ratio / k }, { duration: reduceMotion() ? 0 : 300 }); else s.refresh();
+  }, [nodeBounds]);
+  // For the sweep overlay: where a module is drawn now (null if it is not shown), kept stable so the animation is not restarted by renders.
+  const sweepPosition = useCallback((id: string) => {
+    const s = sigma.current, g = s?.getGraph();
+    if (!s || !g || !g.hasNode(id) || !id.startsWith("module:") || isFaded(id)) return null;
+    const foc = focusRef.current.set;
+    if (foc && !foc.has(id)) return null;
+    const a = g.getNodeAttributes(id);
+    return s.graphToViewport({ x: a.x, y: a.y });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [focusSet, hiddenRepos, lang, year]);
+
   useEffect(() => {
     if (!graph || !box.current) return;
     const s = new Sigma(graph, box.current, {
       labelRenderedSizeThreshold: 7, defaultDrawNodeHover: drawHover, defaultDrawNodeLabel: drawLabel, labelColor: { color: isDark() ? "#e2e8f0" : "#334155" }, renderEdgeLabels: false, edgeProgramClasses: { arrow: EdgeArrowProgram },
       nodeReducer: (n, raw) => {
-        const cur = selRef.current, d = styleNode(n, raw);
+        const cur = selRef.current, foc = focusRef.current, d = styleNode(n, raw);
+        if (foc.set) {
+          const hop = foc.set.get(n);
+          if (hop === undefined) return { ...d, hidden: true };
+          if (n === foc.node) return { ...d, highlighted: true, zIndex: 3 };
+          if (n === cur) return { ...d, highlighted: true, zIndex: 2 };
+          return { ...d, zIndex: hop === 1 ? 1 : 0 };
+        }
         if (!cur) return d;
         if (n === cur) return { ...d, highlighted: true, zIndex: 2 };
         return graph.hasNode(cur) && graph.hasEdge(cur, n) ? { ...d, zIndex: 1 } : { ...d, color: isDark() ? "#334155" : "#d5dde6", label: "", zIndex: 0 };
       },
       edgeReducer: (e, d) => {
-        const cur = selRef.current;
+        const cur = selRef.current, foc = focusRef.current;
         if (graph.extremities(e).some(n => isFaded(n))) return { ...d, hidden: true };
+        if (foc.set) {
+          if (graph.extremities(e).some(n => !foc.set!.has(n))) return { ...d, hidden: true };
+          const active = cur && graph.hasExtremity(e, cur) ? cur : foc.node;
+          return graph.hasExtremity(e, active) ? { ...d, color: "#00549e", size: d.size + 1 } : d;
+        }
         return !cur ? d : graph.hasExtremity(e, cur) ? { ...d, color: "#00549e", size: d.size + 1 } : { ...d, hidden: true };
       },
     });
@@ -488,8 +557,20 @@ export default function GraphPage() {
     return () => { camera.current = s.getCamera().getState(); watch.disconnect(); theme.disconnect(); s.kill(); sigma.current = null; };
   }, [graph]);
 
-  useEffect(() => { sigma.current?.refresh(); }, [sel, sizeBy, colourBy, year, activity, fileActivity, lang, hiddenRepos, langs]);
+  useEffect(() => { sigma.current?.refresh(); }, [sel, focusSet, sizeBy, colourBy, year, activity, fileActivity, lang, hiddenRepos, langs]);
   useEffect(() => { if (sel && graph && !graph.hasNode(sel)) setSel(""); }, [graph, sel]);
+  useEffect(() => { if (focusNode && graph && !graph.hasNode(focusNode)) setFocusNode(""); }, [graph, focusNode]);
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.metaKey || e.ctrlKey || e.altKey || e.key.toLowerCase() !== "f") return;
+      const tag = (e.target as HTMLElement | null)?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+      if (focusNode) { e.preventDefault(); setFocusNode(""); }
+      else if (sel) { e.preventDefault(); setFocusNode(sel); }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [focusNode, sel]);
 
   const expand = async (id: string, mode: Mode = "types") => {
     const done = () => { setModes(m => ({ ...m, [id]: mode })); setExpanded(e => (e.includes(id) ? e : [...e, id])); };
@@ -589,6 +670,24 @@ export default function GraphPage() {
         <button className={chip(false)} onClick={() => zoom(1 / 1.5)} aria-label="Zoom out">−</button>
         <button className={chip(false)} onClick={resetView}>Reset view</button>
         {expanded.length > 0 && <button className={chip(false)} onClick={() => setExpanded([])}>Collapse all</button>}
+        {(sel || focusNode) && (
+          <div className="flex flex-wrap items-center gap-1" role="group" aria-label="Focus mode">
+            <button aria-pressed={!!focusNode && focusNode === sel} className={chip(!!focusNode)}
+              title="Lock focus on the selected node (shortcut: F)"
+              onClick={() => setFocusNode(f => (f && (!sel || f === sel) ? "" : sel))}>
+              {focusNode ? (sel && sel !== focusNode ? `Focus: ${labelOf(sel)}` : `Focused: ${labelOf(focusNode)}`) : "Lock focus"}
+            </button>
+            {focusNode && (<>
+              <button aria-pressed={focusHops === 1} className={chip(focusHops === 1)} onClick={() => setFocusHops(1)}>1 hop</button>
+              <button aria-pressed={focusHops === 2} className={chip(focusHops === 2)} onClick={() => setFocusHops(2)}>2 hops</button>
+              <button aria-pressed={focusHideUtilities} className={chip(focusHideUtilities)}
+                title="Hide high-degree hub nodes and syntactic-only edges"
+                onClick={() => setFocusHideUtilities(h => !h)}>Hide hubs &amp; syntactic</button>
+              <button className={chip(true)} onClick={() => setFocusNode("")}>Unlock</button>
+              {focusSet && <span className="text-xs text-slate-500">{focusSet.size} in view</span>}
+            </>)}
+          </div>
+        )}
       </div>
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
         <label>Size by{" "}
@@ -641,7 +740,7 @@ export default function GraphPage() {
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_22rem] xl:grid-cols-[15rem_minmax(0,1fr)_21rem] gap-3 items-start">
         <div className="lg:col-span-2 xl:col-span-1">
           <TreePanel modules={modules} expanded={expanded} modes={modes} detail={detail} sel={sel} loading={loading}
-            faded={id => styleRef.current.hiddenRepos.has(repoOf(id)) || (!!lang && id.startsWith("module:") && (langs.share.get(id)?.get(lang) ?? 0) < LANG_SHARE)}
+            faded={id => styleRef.current.hiddenRepos.has(repoOf(id)) || (!!lang && id.startsWith("module:") && (langs.share.get(id)?.get(lang) ?? 0) < LANG_SHARE) || (!!focusSet && !focusSet.has(id))}
             onSelect={setSel} onToggle={id => (expanded.includes(id) ? collapse(id) : expand(id, "files"))} />
         </div>
         <div className="rounded-xl border border-slate-200 bg-white overflow-hidden">
@@ -657,11 +756,17 @@ export default function GraphPage() {
               <span key={r}><span className="inline-block w-2.5 h-2.5 rounded-full mr-1 align-middle" style={{ background: c }} />{r}</span>)}
             <span>{graph.order - typeParent.size} modules{counts.length > 0 && <> + {counts.map(([l, n]) => `${n} ${l}`).join(", ")}</>} · {graph.size} linked pairs</span>
           </div>
-          {years && <Sweep host={host} side={side} fit={fitSweep} onView={onView} snapshot={sweepSnapshot} bounds={nodeBounds} minYear={years.min} maxYear={years.max} label={short} nodePosition={sweepPosition} colorOf={sweepColor} />}
+          {years && <Sweep host={host} side={side} fit={fitSweep} onView={onView} snapshot={sweepSnapshot} bounds={nodeBounds} minYear={years.min} maxYear={years.max} label={short} nodePosition={sweepPosition} colorOf={sweepColor} focusModules={focusModules} />}
         </div>
         <aside aria-live="polite" className="rounded-xl border border-slate-200 bg-white p-3 text-sm lg:max-h-[calc(60vh+2.5rem)] overflow-y-auto">
           {!sel ? <p className="text-slate-500 italic">Select a module in the graph or the list to see what it is linked to. Expand a module to see its most connected types, or its files and directories.</p> : (<>
-            <h2 className="font-semibold break-all">{labelOf(sel)}</h2>
+            <div className="flex items-start justify-between gap-2">
+              <h2 className="font-semibold break-all">{labelOf(sel)}</h2>
+              <button aria-pressed={focusNode === sel} className={chip(focusNode === sel)}
+                onClick={() => setFocusNode(f => (f === sel ? "" : sel))}>
+                {focusNode === sel ? "Unlock" : "Focus"}
+              </button>
+            </div>
             {isChild ? (
               <div className="text-xs text-slate-500 mb-2 space-y-1">
                 <div>{kindLabel} in <button className="text-indigo-600 hover:underline" onClick={() => setSel(childOf(sel))}>{short(childOf(sel))}</button> ·{" "}

@@ -716,3 +716,63 @@ test("module graph: the add-on dependency view keeps only dependency edges and d
   await expect(summary).not.toHaveText(deps);
   expect(count((await summary.textContent())!)).toBeGreaterThan(80);
 });
+
+test("module graph: focus mode locks a centre node, switches hops, and hides hubs", async ({ page }) => {
+  await page.goto("graph");
+  await page.waitForSelector("canvas");
+  await page.getByLabel("Select a module").selectOption({ label: "automation" });
+  const focusGroup = page.getByRole("group", { name: "Focus mode" });
+  await focusGroup.getByRole("button", { name: "Lock focus" }).click();
+  await expect(focusGroup.getByRole("button", { name: "Focused: automation" })).toBeVisible();
+  const inView = focusGroup.getByText(/^\d+ in view$/);
+  const oneHop = Number((await inView.textContent())!.match(/^(\d+)/)![1]);
+  await focusGroup.getByRole("button", { name: "2 hops" }).click();
+  const twoHops = Number((await inView.textContent())!.match(/^(\d+)/)![1]);
+  expect(twoHops).toBeGreaterThanOrEqual(oneHop);
+  await focusGroup.getByRole("button", { name: "Hide hubs & syntactic" }).click();
+  const withHubs = Number((await inView.textContent())!.match(/^(\d+)/)![1]);
+  expect(withHubs).toBeGreaterThan(twoHops);
+  const firstNeighbour = page.locator("aside tbody tr button").first();
+  const neighbourName = (await firstNeighbour.textContent())!;
+  await firstNeighbour.click();
+  await expect(page.getByRole("heading", { name: neighbourName, level: 2 })).toBeVisible();
+  await expect(focusGroup.getByRole("button", { name: `Focus: ${neighbourName}` })).toBeVisible();
+  await page.keyboard.press("f");
+  await expect(focusGroup.getByRole("button", { name: "Lock focus" })).toBeVisible();
+});
+
+test("graph: sweep adheres to the focused subgraph", async ({ page }) => {
+  await page.goto("graph");
+  await page.waitForSelector("canvas");
+  const minYear = +(await page.getByRole("slider").first().getAttribute("min"))!;
+  const month = page.getByRole("slider", { name: "Month" });
+  await month.evaluate((el: HTMLInputElement, v) => {
+    Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!.call(el, String(v));
+    el.dispatchEvent(new Event("input", { bubbles: true }));
+  }, (2024 - minYear) * 12 + 5);                                                              // 2024-06
+  const summary = page.locator("p[aria-live]", { hasText: /^2024-06: / });
+  await expect(summary).toContainText(/\(\d+\)/);
+  const fullSummary = (await summary.textContent())!;
+  await page.getByLabel("Select a module").selectOption({ label: "automation" });
+  await page.getByRole("group", { name: "Focus mode" }).getByRole("button", { name: "Lock focus" }).click();
+  await expect(summary).not.toHaveText(fullSummary);
+  await page.keyboard.press("f");
+  await expect(summary).toHaveText(fullSummary);
+});
+
+test("graph: sweep month range adapts to the focused module", async ({ page }) => {
+  await page.goto("graph");
+  await page.waitForSelector("canvas");
+  const month = page.getByRole("slider", { name: "Month" });
+  await expect(month).toHaveAttribute("aria-valuetext", /^2010-(0[89]|1)/);
+  const globalMin = +(await month.getAttribute("min"))!;
+  await page.getByLabel("Select a module").selectOption({ label: "ascanrules" });
+  await page.getByRole("group", { name: "Focus mode" }).getByRole("button", { name: "Lock focus" }).click();
+  // The slider's min and current value should jump to the first month ascanrules had a commit (somewhere in 2014)
+  await expect.poll(async () => +(await month.getAttribute("min"))!, { timeout: 10000 }).toBeGreaterThan(globalMin);
+  await expect(month).toHaveAttribute("aria-valuetext", /^2014-/);
+  const focusedMin = +(await month.getAttribute("min"))!;
+  await page.keyboard.press("f");
+  // Unlocking restores the full range
+  await expect.poll(async () => +(await month.getAttribute("min"))!, { timeout: 10000 }).toBeLessThan(focusedMin);
+});

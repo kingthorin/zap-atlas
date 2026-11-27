@@ -84,7 +84,7 @@ Built with D3 modules for scales, zoom, brush and hierarchy, rendered as SVG by 
 Ideas from a Gemini list (written from the project description; it could not open the site), reduced to what is not already built. Order is not priority. "Needs" says what data or work each depends on.
 
 **Graph and code**
-- **Focus mode:** lock a centre node, expand 1 or 2 hops on demand, and hide high-degree utility types and syntactic edges. Expansion into types and files exists; hops and pinning do not.
+- **Focus mode** (done): lock a centre node (`Lock focus` / `Focus` or `F`), expand 1 or 2 hops on demand, and toggle `Hide hubs & syntactic` to hide high-degree utility nodes and syntactic-only edges while inspecting neighbours.
 - **Extension-point map:** choose a core class or interface (ExtensionAdaptor, AbstractPlugin and so on) and list every add-on that extends or implements it, grouped by add-on status. Cross-repository `EXTENDS` and `IMPLEMENTS` edges are in the data. Medium.
 - **Blast radius:** from an add-on or module, highlight everything that depends on it, and everything it depends on, through all levels. The dependency view shows direct links only. Small to medium.
 - **Help-page graph:** hubs, dead ends and cross-add-on help links, from the help link graph that is in the data but not drawn. Medium.

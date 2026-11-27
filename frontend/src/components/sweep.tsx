@@ -8,6 +8,27 @@ const STEP_MS = 1800;           // one month at 1x
 const SIDE_MIN_ROW = 820;       // the names go in a column beside the graph when the graph card is at least this wide
 const PALETTE = ["#e11d74", "#14b8a6", "#6366f1", "#84cc16", "#d946ef", "#06b6d4", "#f97316", "#eab308", "#8b5cf6", "#22c55e", "#ec4899", "#0ea5e9"];
 const OTHER_COLOR = "#64748b";
+
+/** Perceptual distance between two hex colours (Euclidean in linear-ish RGB, good enough for de-clash). */
+function colorDist(a: string, b: string): number {
+  const parse = (h: string) => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
+  const [ar, ag, ab] = parse(a), [br, bg, bb] = parse(b);
+  return Math.sqrt((ar - br) ** 2 + (ag - bg) ** 2 + (ab - bb) ** 2);
+}
+
+/**
+ * Returns a re-ordered copy of PALETTE with colours that are too similar to any of the
+ * `avoid` colours moved to the back, so the first N colours are as distinct as possible
+ * from the nodes the contributors are firing pulses at.
+ */
+function avoidColors(avoid: string[]): string[] {
+  const CLASH = 90; // minimum acceptable Euclidean distance (0–442)
+  if (!avoid.length) return PALETTE;
+  const clashes = (c: string) => avoid.some(a => colorDist(c, a) < CLASH);
+  const safe = PALETTE.filter(c => !clashes(c));
+  const risky = PALETTE.filter(c => clashes(c));
+  return [...safe, ...risky];
+}
 const reduceMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const isDark = () => document.documentElement.classList.contains("dark");
 const clamp = (v: number, a = 0, b = 1) => Math.max(a, Math.min(b, v));
@@ -28,14 +49,16 @@ export interface SweepProps {
   nodePosition: (id: string) => { x: number; y: number } | null;  // viewport position of a module, null when it is not drawn
   colorOf: (id: string) => string;
   label: (id: string) => string;
+  focusModules?: Set<string> | null;                              // when focus mode is active, only include commits to these modules
   minYear: number; maxYear: number;
 }
 
 /** Plays through the months: the people who committed in a month swoop in, send pulses to the modules they touched, and leave. */
-export default function Sweep({ host, side, fit, onView, snapshot, bounds, nodePosition, label, minYear, maxYear }: SweepProps) {
+export default function Sweep({ host, side, fit, onView, snapshot, bounds, nodePosition, colorOf, label, focusModules, minYear, maxYear }: SweepProps) {
   const now = new Date();
-  const last = Math.min((maxYear - minYear) * 12 + 11, (now.getUTCFullYear() - minYear) * 12 + now.getUTCMonth());
+  const defaultLast = Math.min((maxYear - minYear) * 12 + 11, (now.getUTCFullYear() - minYear) * 12 + now.getUTCMonth());
   const [first, setFirst] = useState(0);                       // the first month that has any contribution
+  const [last, setLast] = useState(defaultLast);               // the last month that has any contribution (in focus mode, or up to now)
   const [idx, setIdx] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [engaged, setEngaged] = useState(false);               // the viewer has used the sweep: only then does the names column take space
@@ -59,20 +82,30 @@ export default function Sweep({ host, side, fit, onView, snapshot, bounds, nodeP
 
   useEffect(() => { let live = true; loadAuthorModules(year).then(d => live && setData(d)); return () => { live = false; }; }, [year]);
 
-  // Start at the first month with a contribution, not at January of the first year.
+  // Start at the first month with a contribution (or within the focused modules when focus mode is active), not at January of the first year.
   useEffect(() => {
     let live = true;
     (async () => {
-      for (let y = minYear; y <= maxYear; y++) {
-        const m = Object.keys(await loadAuthorModules(y)).sort()[0];
-        if (!m) continue;
-        const i = (+m.slice(0, 4) - minYear) * 12 + (+m.slice(5, 7) - 1);
-        if (live) { setFirst(i); setIdx(c => Math.max(c, i)); }
-        return;
+      const years = Array.from({ length: maxYear - minYear + 1 }, (_, k) => minYear + k);
+      const all = await Promise.all(years.map(y => loadAuthorModules(y)));
+      let minM = "", maxM = "";
+      for (const d of all) {
+        for (const m of Object.keys(d).sort()) {
+          const hit = !focusModules || d[m].some(([, id]) => focusModules.has(id));
+          if (!hit) continue;
+          if (!minM || m < minM) minM = m;
+          if (!maxM || m > maxM) maxM = m;
+        }
       }
+      if (!live || !minM) return;
+      const toIdx = (m: string) => (+m.slice(0, 4) - minYear) * 12 + (+m.slice(5, 7) - 1);
+      const lo = toIdx(minM), hi = focusModules ? Math.min(defaultLast, toIdx(maxM)) : defaultLast;
+      setFirst(lo);
+      setLast(hi);
+      setIdx(c => Math.min(hi, Math.max(lo, c)));
     })();
     return () => { live = false; };
-  }, [minYear, maxYear]);
+  }, [minYear, maxYear, defaultLast, focusModules]);
 
   // The names go beside the graph when the card is wide enough, otherwise they are drawn on it.
   const row = host?.parentElement ?? null;
@@ -95,16 +128,20 @@ export default function Sweep({ host, side, fit, onView, snapshot, bounds, nodeP
     const by = new Map<string, Actor>();
     for (const [name, id, n] of data[month] ?? []) {
       if (!bots && isBot(name)) continue;
+      if (focusModules && !focusModules.has(id)) continue;
       const a = by.get(name) ?? by.set(name, { name, total: 0, mods: [], color: "" }).get(name)!;
       a.total += n; a.mods.push({ id, n });
     }
     const sorted = [...by.values()].sort((a, b) => b.total - a.total || a.name.localeCompare(b.name));
+    // Build a palette that avoids clashing with the module node colours contributors fire pulses at.
+    const nodeColors = [...new Set(sorted.flatMap(a => a.mods.map(m => colorOf(m.id))))].filter(Boolean);
+    const palette = avoidColors(nodeColors);
     // The text is a comma separated list: a person matches if their name contains any of the parts (ignoring case).
     const terms = pin.split(",").map(t => t.trim().toLowerCase()).filter(Boolean), q = terms.length > 0;
     const matches = (a: Actor) => terms.some(t => a.name.toLowerCase().includes(t));
     if (q && pinMode === "only") {                                   // only the people who match, nobody pooled as Other
       const found: Actor[] = sorted.filter(matches).slice(0, MAX_PINNED).map(a => ({ ...a, pinned: true }));
-      found.forEach((a, i) => { a.color = PALETTE[i % PALETTE.length]; });
+      found.forEach((a, i) => { a.color = palette[i % palette.length]; });
       return found;
     }
     const top = sorted.slice(0, TOP_AUTHORS);
@@ -112,7 +149,7 @@ export default function Sweep({ host, side, fit, onView, snapshot, bounds, nodeP
     const rest = sorted.slice(TOP_AUTHORS).filter(a => !pinned.includes(a));
     const out: Actor[] = [...top, ...pinned.map(a => ({ ...a, pinned: true }))];
     if (q) top.forEach(a => { if (matches(a)) a.pinned = true; });
-    out.forEach((a, i) => { a.color = PALETTE[i % PALETTE.length]; });
+    out.forEach((a, i) => { a.color = palette[i % palette.length]; });
     if (rest.length) {
       const mods = new Map<string, number>();
       for (const a of rest) for (const m of a.mods) mods.set(m.id, (mods.get(m.id) ?? 0) + m.n);
@@ -120,7 +157,7 @@ export default function Sweep({ host, side, fit, onView, snapshot, bounds, nodeP
         mods: [...mods].map(([id, n]) => ({ id, n })).sort((a, b) => b.n - a.n).slice(0, 12) });
     }
     return out;
-  }, [data, month, bots, pin, pinMode]);
+  }, [data, month, bots, pin, pinMode, focusModules, colorOf]);
   const touched = useMemo(() => actors.map(a => ({ ...a, mods: a.mods.filter(m => nodePosition(m.id)) })).filter(a => a.mods.length), [actors, nodePosition]);
 
   useEffect(() => {
